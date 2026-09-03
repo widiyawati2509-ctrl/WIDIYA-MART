@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import ProductCard from '@/components/ProductCard'
 import CategoryGrid from '@/components/CategoryGrid'
 import SearchBar from '@/components/SearchBar'
+import PromoBannerCarousel from '@/components/PromoBannerCarousel'
 import { ShoppingBag } from 'lucide-react'
 
 export default async function HomePage() {
@@ -40,6 +41,11 @@ export default async function HomePage() {
         <SearchBar />
       </div>
 
+      {/* Promo Banner Carousel */}
+      <div className="px-4 mb-5">
+        <PromoBannerCarousel />
+      </div>
+
       {/* Categories */}
       {categories && categories.length > 0 && (
         <section className="px-4 mb-6">
@@ -58,9 +64,8 @@ export default async function HomePage() {
             ))}
           </div>
         ) : (
-          <div className="text-center py-12 text-gray-400">
-            <ShoppingBag className="w-12 h-12 mx-auto mb-2 opacity-30" />
-            <p>Belum ada produk</p>
+          <div className="bg-white border rounded-2xl p-8 text-center text-gray-400">
+            <p className="text-sm">Belum ada produk tersedia</p>
           </div>
         )}
       </section>
