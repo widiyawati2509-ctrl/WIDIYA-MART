@@ -27,6 +27,9 @@ export async function login(prevOrFormData: unknown, maybeFormData?: FormData): 
   }
 
   revalidatePath('/', 'layout')
+  if (parsed.data.email === 'admin@widiyamart.com') {
+    redirect('/admin')
+  }
   redirect('/')
 }
 

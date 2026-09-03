@@ -2,22 +2,47 @@
 'use client'
 
 import { login } from '@/lib/actions/auth'
-import { useActionState } from 'react'
+import { useActionState, useState } from 'react'
 import Link from 'next/link'
-import { ShoppingBag } from 'lucide-react'
+import { ShoppingBag, ShieldCheck } from 'lucide-react'
 
 export default function MasukPage() {
   const [state, formAction, isPending] = useActionState(login, null)
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+
+  const fillAdminCredentials = () => {
+    setEmail('admin@widiyamart.com')
+    setPassword('admin123456')
+  }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-4 bg-gray-50">
+    <div className="min-h-screen flex flex-col items-center justify-center px-4 bg-gray-50 py-8">
       <div className="w-full max-w-sm">
-        <div className="text-center mb-8">
-          <div className="w-16 h-16 bg-green-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+        <div className="text-center mb-6">
+          <div className="w-16 h-16 bg-green-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-sm">
             <ShoppingBag className="w-8 h-8 text-white" />
           </div>
           <h1 className="text-2xl font-bold">Masuk</h1>
           <p className="text-gray-500 text-sm mt-1">Masuk ke akun Widiya Mart kamu</p>
+        </div>
+
+        {/* Quick Admin Access Card */}
+        <div className="bg-amber-50 border border-amber-200 rounded-2xl p-3.5 mb-5">
+          <div className="flex items-center gap-2 mb-1.5">
+            <ShieldCheck className="w-4 h-4 text-amber-600" />
+            <span className="text-xs font-bold text-amber-900">Akses Pemilik Toko (Admin)</span>
+          </div>
+          <p className="text-xs text-amber-700 mb-2.5">
+            Klik tombol di bawah untuk mengisi akun admin secara otomatis:
+          </p>
+          <button
+            type="button"
+            onClick={fillAdminCredentials}
+            className="w-full text-xs font-semibold py-2 px-3 bg-amber-600 hover:bg-amber-700 text-white rounded-xl transition-colors shadow-sm"
+          >
+            Gunakan Akun Admin (1-Klik)
+          </button>
         </div>
 
         <form action={formAction} className="space-y-4">
@@ -33,7 +58,9 @@ export default function MasukPage() {
               type="email"
               name="email"
               required
-              className="w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 bg-white"
               placeholder="email@contoh.com"
             />
           </div>
@@ -44,7 +71,9 @@ export default function MasukPage() {
               type="password"
               name="password"
               required
-              className="w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 bg-white"
               placeholder="••••••••"
             />
           </div>
@@ -52,7 +81,7 @@ export default function MasukPage() {
           <button
             type="submit"
             disabled={isPending}
-            className="w-full bg-green-600 text-white py-3.5 rounded-xl font-semibold hover:bg-green-700 transition-colors disabled:opacity-50"
+            className="w-full bg-green-600 text-white py-3.5 rounded-xl font-semibold hover:bg-green-700 transition-colors disabled:opacity-50 shadow-sm"
           >
             {isPending ? 'Masuk...' : 'Masuk'}
           </button>
