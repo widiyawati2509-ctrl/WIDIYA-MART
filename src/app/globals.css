@@ -1,7 +1,212 @@
 @import "tailwindcss";
 
+/* 1. FONDASI & THEME TOKENS (Catatan Keluarga Design System) */
+@theme {
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --color-accent: var(--color-accent);
+  --color-accent-hover: var(--color-accent-hover);
+  --color-accent-press: var(--color-accent-press);
+  --color-accent-subtle: var(--color-accent-subtle);
+  --color-accent-soft: var(--color-accent-soft);
+  --color-on-accent: var(--color-on-accent);
+  --color-positive: var(--color-positive);
+  --color-positive-hover: var(--color-positive-hover);
+  --color-positive-subtle: var(--color-positive-subtle);
+  --color-positive-soft: var(--color-positive-soft);
+  --color-positive-press: var(--color-positive-press);
+  --color-surface: var(--color-surface);
+  --color-card: var(--color-card);
+  --color-border: var(--color-border);
+  --color-border-strong: var(--color-border-strong);
+  --color-ink: var(--color-ink);
+  --color-muted: var(--color-muted);
+  --color-muted-strong: var(--color-muted-strong);
+  --color-section: var(--color-section);
+  --color-red-600: var(--color-red-600);
+  --color-red-700: var(--color-red-700);
+  --color-amber-600: var(--color-amber-600);
+
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-concentric: 10px;
+
+  --shadow-card: 0 4px 16px rgb(0 0 0 / 0.12), 0 1px 4px rgb(0 0 0 / 0.08);
+  --shadow-pop: 0 24px 48px rgb(0 0 0 / 0.18), 0 10px 20px rgb(0 0 0 / 0.14), 0 2px 5px rgb(0 0 0 / 0.10);
+  --shadow-fab: 0 10px 22px rgb(0 122 255 / 0.4);
+}
+
+:root {
+  --color-accent: #007AFF;
+  --color-accent-hover: #0066D6;
+  --color-accent-press: #0052A3;
+  --color-accent-subtle: #E5F1FF;
+  --color-accent-soft: #C7E2FF;
+  --color-on-accent: #FFFFFF;
+  --color-positive: #1B7A36;
+  --color-positive-hover: #156129;
+  --color-positive-subtle: #E3F8E9;
+  --color-positive-soft: #C2EFD0;
+  --color-positive-press: #124F22;
+  --color-surface: #F2F2F7;
+  --color-card: #FFFFFF;
+  --color-border: color-mix(in srgb, #007AFF 12%, #C6C6C8);
+  --color-border-strong: color-mix(in srgb, #007AFF 16%, #8E8E93);
+  --color-ink: #000000;
+  --color-muted: #6C6C70;
+  --color-muted-strong: #3C3C43;
+  --color-section: #E9E9EB;
+  --color-red-600: #C4160A;
+  --color-red-700: #9E120A;
+  --color-red-50: #FFF2F1;
+  --color-red-100: #FFE5E3;
+  --color-red-200: #FFC7C2;
+  --color-amber-600: #8A6D00;
+  --color-amber-50: #FFFBE5;
+  --color-amber-200: #FFEDA3;
+
+  --shadow-card: 0 4px 16px rgb(0 0 0 / 0.12), 0 1px 4px rgb(0 0 0 / 0.08);
+  --shadow-pop: 0 24px 48px rgb(0 0 0 / 0.18), 0 10px 20px rgb(0 0 0 / 0.14), 0 2px 5px rgb(0 0 0 / 0.10);
+  --shadow-fab: 0 10px 22px rgb(0 122 255 / 0.4);
+}
+
+html.dark {
+  --color-accent: #0A84FF;
+  --color-accent-hover: #3D9FFF;
+  --color-accent-press: #6FB4FF;
+  --color-positive: #30D158;
+  --color-surface: #000000;
+  --color-card: #1C1C1E;
+  --color-border: rgba(255, 255, 255, 0.15);
+  --color-border-strong: rgba(255, 255, 255, 0.25);
+  --color-ink: #FFFFFF;
+  --color-muted: #AEAEB2;
+  --color-muted-strong: #E5E5EA;
+  --color-section: #1C1C1E;
+  --color-red-600: #FF6B5C;
+  --color-amber-600: #FFD60A;
+
+  --shadow-card: 0 4px 16px rgb(0 0 0 / 0.4), 0 1px 4px rgb(0 0 0 / 0.3);
+  --shadow-pop: 0 24px 48px rgb(0 0 0 / 0.6), 0 10px 20px rgb(0 0 0 / 0.45);
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background-color: var(--color-surface);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+}
+
+/* 4 & 5. GAYA KARTU — "LIQUID GLASS" */
+.glass {
+  backdrop-filter: blur(20px) saturate(200%);
+  -webkit-backdrop-filter: blur(20px) saturate(200%);
+  background: rgb(255 255 255 / 0.92);
+  border: 1px solid rgb(0 0 0 / 0.15);
+  box-shadow: var(--shadow-card), inset 0 1px 0 rgb(255 255 255 / 0.5);
+}
+
+html.dark .glass {
+  background: rgb(28 28 30 / 0.92);
+  border: 1px solid rgb(255 255 255 / 0.15);
+  box-shadow: var(--shadow-card), inset 0 1px 0 rgb(255 255 255 / 0.1);
+}
+
+/* Press Feedback */
+.press {
+  transition: transform 150ms;
+}
+.press:active {
+  transform: scale(0.97);
+}
+
+/* Focus Ring */
+.focus-ring {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+.focus-ring:focus-visible {
+  outline: 2px solid var(--color-accent);
+}
+
+/* 6. IKON "3D CHIP" (bevel puffy, bukan flat) */
+.chip-3d {
+  display: grid;
+  place-items: center;
+  color: #fff;
+  box-shadow: inset 0 2px 3px rgb(255 255 255 / 0.5), inset 0 -3px 5px rgb(0 0 0 / 0.18);
+  border-radius: 9999px;
+  position: relative;
+  user-select: none;
+}
+
+.chip-3d-accent {
+  background: linear-gradient(150deg, color-mix(in srgb, var(--color-accent) 45%, white), var(--color-accent));
+  color: #ffffff;
+  box-shadow: inset 0 2px 3px rgb(255 255 255 / 0.5), inset 0 -3px 5px rgb(0 0 0 / 0.18), 0 6px 14px -5px color-mix(in srgb, var(--color-accent) 60%, transparent);
+}
+
+.chip-3d-positive {
+  background: linear-gradient(150deg, color-mix(in srgb, var(--color-positive) 45%, white), var(--color-positive));
+  color: #ffffff;
+  box-shadow: inset 0 2px 3px rgb(255 255 255 / 0.5), inset 0 -3px 5px rgb(0 0 0 / 0.18), 0 6px 14px -5px color-mix(in srgb, var(--color-positive) 60%, transparent);
+}
+
+.chip-3d-negative {
+  background: linear-gradient(150deg, color-mix(in srgb, var(--color-red-600) 45%, white), var(--color-red-600));
+  color: #ffffff;
+  box-shadow: inset 0 2px 3px rgb(255 255 255 / 0.5), inset 0 -3px 5px rgb(0 0 0 / 0.18), 0 6px 14px -5px color-mix(in srgb, var(--color-red-600) 60%, transparent);
+}
+
+.chip-3d-neutral {
+  background: linear-gradient(150deg, #f3f4f6, #e5e7eb);
+  color: #6b7280;
+  box-shadow: inset 0 2px 3px rgb(255 255 255 / 0.8), inset 0 -3px 5px rgb(0 0 0 / 0.08), 0 4px 10px -4px rgb(0 0 0 / 0.08);
+}
+
+html.dark .chip-3d-neutral {
+  background: linear-gradient(150deg, #2c2c2e, #1c1c1e);
+  color: #a1a1aa;
+  box-shadow: inset 0 2px 3px rgb(255 255 255 / 0.15), inset 0 -3px 5px rgb(0 0 0 / 0.5), 0 4px 10px -4px rgb(0 0 0 / 0.4);
+}
+
+/* 12. ANIMASI (durasi & easing persis) */
+@keyframes toast-in {
+  from { opacity: 0; transform: translateY(8px) scale(0.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes pop-in {
+  from { opacity: 0; transform: scale(0.94); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes page-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-toast-in {
+  animation: toast-in 180ms cubic-bezier(0.21, 1.02, 0.73, 1) forwards;
+}
+
+.animate-pop-in {
+  animation: pop-in 160ms cubic-bezier(0.21, 1.02, 0.73, 1) forwards;
+}
+
+.animate-page-in {
+  animation: page-in 220ms cubic-bezier(0.21, 1.02, 0.73, 1) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 /* Scrollbar hide utility */
@@ -50,141 +255,3 @@ body {
   animation: shimmer 1.6s infinite;
   content: '';
 }
-
-/* 3D Soft Button ("Tombol Empuk 3D") System */
-.btn-3d {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 600;
-  transition: all 0.12s cubic-bezier(0.4, 0, 0.2, 1);
-  cursor: pointer;
-  user-select: none;
-}
-
-.btn-3d:active:not(:disabled) {
-  transform: translateY(3px);
-}
-
-.btn-3d-green {
-  background: linear-gradient(180deg, #22c55e 0%, #16a34a 100%);
-  color: #ffffff;
-  border-top: 1px solid rgba(255, 255, 255, 0.35);
-  box-shadow: 0 4px 0 #15803d, 0 6px 12px rgba(22, 163, 74, 0.35);
-}
-
-.btn-3d-green:hover:not(:disabled) {
-  background: linear-gradient(180deg, #27d969 0%, #16a34a 100%);
-  box-shadow: 0 4px 0 #14532d, 0 8px 16px rgba(22, 163, 74, 0.4);
-}
-
-.btn-3d-green:active:not(:disabled) {
-  transform: translateY(3px);
-  box-shadow: 0 1px 0 #15803d, 0 3px 6px rgba(22, 163, 74, 0.25);
-}
-
-.btn-3d-white {
-  background: linear-gradient(180deg, #ffffff 0%, #f9fafb 100%);
-  color: #374151;
-  border: 1px solid #e5e7eb;
-  border-top: 1px solid #ffffff;
-  box-shadow: 0 3px 0 #d1d5db, 0 4px 8px rgba(0, 0, 0, 0.05);
-}
-
-.btn-3d-white:hover:not(:disabled) {
-  background: linear-gradient(180deg, #ffffff 0%, #f3f4f6 100%);
-  box-shadow: 0 3px 0 #9ca3af, 0 6px 10px rgba(0, 0, 0, 0.08);
-}
-
-.btn-3d-white:active:not(:disabled) {
-  transform: translateY(2px);
-  box-shadow: 0 1px 0 #d1d5db, 0 2px 4px rgba(0, 0, 0, 0.04);
-}
-
-.btn-3d-amber {
-  background: linear-gradient(180deg, #f59e0b 0%, #d97706 100%);
-  color: #ffffff;
-  border-top: 1px solid rgba(255, 255, 255, 0.35);
-  box-shadow: 0 4px 0 #b45309, 0 6px 12px rgba(217, 119, 6, 0.35);
-}
-
-.btn-3d-amber:active:not(:disabled) {
-  transform: translateY(3px);
-  box-shadow: 0 1px 0 #b45309, 0 3px 6px rgba(217, 119, 6, 0.25);
-}
-
-.btn-3d-red {
-  background: linear-gradient(180deg, #ef4444 0%, #dc2626 100%);
-  color: #ffffff;
-  border-top: 1px solid rgba(255, 255, 255, 0.35);
-  box-shadow: 0 3px 0 #b91c1c, 0 5px 10px rgba(220, 38, 38, 0.3);
-}
-
-.btn-3d-red:active:not(:disabled) {
-  transform: translateY(2px);
-  box-shadow: 0 1px 0 #b91c1c, 0 2px 4px rgba(220, 38, 38, 0.2);
-}
-
-.btn-3d-card {
-  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 3px 0 #e5e7eb, 0 4px 8px rgba(0, 0, 0, 0.04);
-}
-
-.btn-3d-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 5px 0 #d1d5db, 0 8px 16px rgba(0, 0, 0, 0.08);
-}
-
-.btn-3d-card:active {
-  transform: translateY(2px);
-  box-shadow: 0 1px 0 #e5e7eb, 0 2px 4px rgba(0, 0, 0, 0.04);
-}
-
-/* 6. IKON "3D CHIP" (bevel puffy, bukan flat) */
-.chip-3d {
-  display: grid;
-  place-items: center;
-  color: #fff;
-  box-shadow: inset 0 2px 3px rgba(255, 255, 255, 0.5), inset 0 -3px 5px rgba(0, 0, 0, 0.18);
-  border-radius: 9999px;
-  position: relative;
-  user-select: none;
-}
-
-.chip-3d-accent {
-  background: linear-gradient(150deg, #4ade80, #16a34a);
-  color: #ffffff;
-  box-shadow: inset 0 2px 3px rgba(255, 255, 255, 0.6), inset 0 -3px 5px rgba(0, 0, 0, 0.2), 0 6px 14px -5px rgba(22, 163, 74, 0.45);
-}
-
-.chip-3d-positive {
-  background: linear-gradient(150deg, #34d399, #059669);
-  color: #ffffff;
-  box-shadow: inset 0 2px 3px rgba(255, 255, 255, 0.6), inset 0 -3px 5px rgba(0, 0, 0, 0.2), 0 6px 14px -5px rgba(5, 150, 105, 0.45);
-}
-
-.chip-3d-negative {
-  background: linear-gradient(150deg, #f87171, #dc2626);
-  color: #ffffff;
-  box-shadow: inset 0 2px 3px rgba(255, 255, 255, 0.6), inset 0 -3px 5px rgba(0, 0, 0, 0.2), 0 6px 14px -5px rgba(220, 38, 38, 0.45);
-}
-
-.chip-3d-neutral {
-  background: linear-gradient(150deg, #f3f4f6, #e5e7eb);
-  color: #6b7280;
-  box-shadow: inset 0 2px 3px rgba(255, 255, 255, 0.8), inset 0 -3px 5px rgba(0, 0, 0, 0.08), 0 4px 10px -4px rgba(0, 0, 0, 0.08);
-}
-
-.chip-3d-warning {
-  background: linear-gradient(150deg, #fbbf24, #d97706);
-  color: #ffffff;
-  box-shadow: inset 0 2px 3px rgba(255, 255, 255, 0.6), inset 0 -3px 5px rgba(0, 0, 0, 0.2), 0 6px 14px -5px rgba(217, 119, 6, 0.45);
-}
-
-.chip-3d-info {
-  background: linear-gradient(150deg, #60a5fa, #2563eb);
-  color: #ffffff;
-  box-shadow: inset 0 2px 3px rgba(255, 255, 255, 0.6), inset 0 -3px 5px rgba(0, 0, 0, 0.2), 0 6px 14px -5px rgba(37, 99, 235, 0.45);
-}
-

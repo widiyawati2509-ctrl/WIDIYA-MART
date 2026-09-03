@@ -11,30 +11,33 @@ interface CategoryFilterProps {
 
 export default function CategoryFilter({ categories, activeSlug }: CategoryFilterProps) {
   return (
-    <div className="flex gap-2 overflow-x-auto pb-1.5 pt-0.5 scrollbar-hide">
+    <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide py-1">
       <Link
         href="/kategori"
-        className={`btn-3d flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium ${
+        className={`press inline-flex items-center rounded-full px-3.5 py-1.5 text-xs font-semibold transition shrink-0 ${
           !activeSlug
-            ? 'btn-3d-green'
-            : 'btn-3d-white text-gray-700'
+            ? 'bg-accent-subtle text-accent-press ring-1 ring-inset ring-accent/20'
+            : 'glass text-muted-strong hover:bg-zinc-100'
         }`}
       >
         Semua
       </Link>
-      {categories.map((cat) => (
-        <Link
-          key={cat.id}
-          href={`/kategori?kategori=${cat.slug}`}
-          className={`btn-3d flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium ${
-            activeSlug === cat.slug
-              ? 'btn-3d-green'
-              : 'btn-3d-white text-gray-700'
-          }`}
-        >
-          {cat.nama}
-        </Link>
-      ))}
+      {categories.map((cat) => {
+        const isActive = activeSlug === cat.slug
+        return (
+          <Link
+            key={cat.id}
+            href={`/kategori?kategori=${cat.slug}`}
+            className={`press inline-flex items-center rounded-full px-3.5 py-1.5 text-xs font-semibold transition shrink-0 ${
+              isActive
+                ? 'bg-accent-subtle text-accent-press ring-1 ring-inset ring-accent/20'
+                : 'glass text-muted-strong hover:bg-zinc-100'
+            }`}
+          >
+            {cat.nama}
+          </Link>
+        )
+      })}
     </div>
   )
 }

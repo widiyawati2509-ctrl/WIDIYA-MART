@@ -2,8 +2,9 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { logout } from '@/lib/actions/auth'
-import { User, ShoppingBag, MapPin, ChevronRight, LogOut } from 'lucide-react'
+import { User, ShoppingBag, ChevronRight, LogOut } from 'lucide-react'
 import Link from 'next/link'
+import { Card, Button } from '@/components/ui'
 
 export default async function ProfilPage() {
   const supabase = await createClient()
@@ -23,56 +24,61 @@ export default async function ProfilPage() {
     .eq('user_id', user.id)
 
   return (
-    <div className="max-w-lg mx-auto">
-      <div className="bg-green-600 text-white px-4 pt-10 pb-8">
-        <div className="flex items-center gap-4">
-          <div className="w-14 h-14 rounded-full chip-3d chip-3d-positive shadow-md">
-            <User className="w-7 h-7 text-white" />
+    <div className="max-w-lg mx-auto pb-28">
+      {/* Header Profile */}
+      <div className="glass px-4 pt-8 pb-6 border-b border-border mb-4">
+        <div className="flex items-center gap-3.5">
+          <div className="w-14 h-14 rounded-full chip-3d chip-3d-accent shadow-fab">
+            <User size={26} className="text-white" />
           </div>
-          <div>
-            <h1 className="font-bold text-lg">{profile?.nama || 'Pengguna'}</h1>
-            <p className="text-green-100 text-sm">{user.email}</p>
-            {profile?.no_hp && <p className="text-green-100 text-sm">{profile.no_hp}</p>}
+          <div className="min-w-0 flex-1">
+            <h1 className="font-bold text-lg text-ink truncate">{profile?.nama || 'Pengguna'}</h1>
+            <p className="text-xs text-muted truncate">{user.email}</p>
+            {profile?.no_hp && <p className="text-xs text-muted-strong mt-0.5">{profile.no_hp}</p>}
           </div>
         </div>
       </div>
 
-      <div className="p-4 space-y-3">
-        {/* Stats */}
-        <div className="bg-white border rounded-2xl p-4">
+      <div className="px-4 space-y-3.5">
+        {/* Stat Card */}
+        <Card>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl chip-3d chip-3d-accent">
-                <ShoppingBag className="w-4.5 h-4.5 text-white" />
-              </div>
-              <span className="font-medium">Total Pesanan</span>
+              <span className="chip-3d chip-3d-positive grid size-9 place-items-center rounded-full">
+                <ShoppingBag size={18} />
+              </span>
+              <span className="text-sm font-medium text-muted-strong">Total Pesanan</span>
             </div>
-            <span className="font-bold text-green-600">{orderCount ?? 0} pesanan</span>
+            <span className="font-bold text-lg text-positive tabular-nums">{orderCount ?? 0} pesanan</span>
           </div>
-        </div>
+        </Card>
 
-        {/* Menu */}
-        <div className="bg-white border rounded-2xl divide-y overflow-hidden">
-          <Link href="/pesanan" className="flex items-center justify-between px-4 py-4 hover:bg-gray-50 transition-colors">
+        {/* Grouped Menu List */}
+        <div className="glass divide-y divide-border overflow-hidden rounded-xl">
+          <Link
+            href="/pesanan"
+            className="flex items-center justify-between px-4 py-3.5 hover:bg-zinc-50/50 transition-colors press"
+          >
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl chip-3d chip-3d-neutral">
-                <ShoppingBag className="w-4.5 h-4.5 text-gray-600" />
-              </div>
-              <span className="font-medium">Pesanan Saya</span>
+              <span className="chip-3d chip-3d-neutral grid size-8 place-items-center rounded-full">
+                <ShoppingBag size={16} />
+              </span>
+              <span className="text-sm font-semibold text-ink">Pesanan Saya</span>
             </div>
-            <ChevronRight className="w-4 h-4 text-gray-400" />
+            <ChevronRight size={16} className="text-muted" />
           </Link>
         </div>
 
         {/* Logout */}
-        <form action={logout}>
-          <button
+        <form action={logout} className="pt-2">
+          <Button
             type="submit"
-            className="btn-3d btn-3d-white w-full py-4 rounded-2xl font-medium gap-2 text-red-600 hover:bg-red-50 border-red-200"
+            variant="secondary"
+            className="w-full py-3 text-red-600 hover:text-red-700 hover:bg-red-50"
           >
-            <LogOut className="w-4 h-4 text-red-600" />
-            Keluar
-          </button>
+            <LogOut size={16} />
+            Keluar dari Akun
+          </Button>
         </form>
       </div>
     </div>

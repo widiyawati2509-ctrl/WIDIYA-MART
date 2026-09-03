@@ -5,12 +5,13 @@ import { register } from '@/lib/actions/auth'
 import { useActionState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { Card, Field, Input, Button } from '@/components/ui'
 
 export default function DaftarPage() {
   const [state, formAction, isPending] = useActionState(register, null)
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-4 bg-gray-50 py-8">
+    <div className="min-h-screen flex flex-col items-center justify-center px-4 bg-surface py-8">
       <div className="w-full max-w-sm">
         <div className="text-center mb-6">
           <Image
@@ -18,88 +19,84 @@ export default function DaftarPage() {
             alt="Widiya Mart Logo"
             width={64}
             height={64}
-            className="rounded-2xl mx-auto mb-4 shadow-sm border border-gray-100"
+            className="rounded-2xl mx-auto mb-4 shadow-card border border-white/50"
             priority
           />
-          <h1 className="text-2xl font-bold">Daftar</h1>
-          <p className="text-gray-500 text-sm mt-1">Buat akun Widiya Mart baru</p>
+          <h1 className="text-2xl font-bold text-ink">Daftar Akun</h1>
+          <p className="text-muted text-sm mt-1">Buat akun Widiya Mart baru</p>
         </div>
 
-        <form action={formAction} className="space-y-4">
-          {state?.error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-xl px-4 py-3">
-              {state.error}
-            </div>
-          )}
+        <Card className="p-6">
+          <form action={formAction} className="space-y-3.5">
+            {state?.error && (
+              <div className="rounded-lg bg-red-50 border border-red-200 text-red-600 text-sm px-3.5 py-2.5">
+                {state.error}
+              </div>
+            )}
 
-          <div>
-            <label className="text-sm font-medium text-gray-700 block mb-1">Nama Lengkap</label>
-            <input
-              type="text"
-              name="nama"
-              required
-              className="w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 bg-white"
-              placeholder="Nama lengkap kamu"
-            />
-          </div>
+            <Field label="Nama Lengkap" htmlFor="nama">
+              <Input
+                id="nama"
+                type="text"
+                name="nama"
+                required
+                placeholder="Nama lengkap kamu"
+              />
+            </Field>
 
-          <div>
-            <label className="text-sm font-medium text-gray-700 block mb-1">Email</label>
-            <input
-              type="email"
-              name="email"
-              required
-              className="w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 bg-white"
-              placeholder="email@contoh.com"
-            />
-          </div>
+            <Field label="Email" htmlFor="email">
+              <Input
+                id="email"
+                type="email"
+                name="email"
+                required
+                placeholder="email@contoh.com"
+              />
+            </Field>
 
-          <div>
-            <label className="text-sm font-medium text-gray-700 block mb-1">
-              Nomor HP <span className="text-gray-400 font-normal">(opsional)</span>
-            </label>
-            <input
-              type="tel"
-              name="no_hp"
-              className="w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 bg-white"
-              placeholder="08xxxxxxxxxx"
-            />
-          </div>
+            <Field label="Nomor WhatsApp (opsional)" htmlFor="no_hp">
+              <Input
+                id="no_hp"
+                type="tel"
+                name="no_hp"
+                placeholder="08xxxxxxxxxx"
+              />
+            </Field>
 
-          <div>
-            <label className="text-sm font-medium text-gray-700 block mb-1">Password</label>
-            <input
-              type="password"
-              name="password"
-              required
-              className="w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 bg-white"
-              placeholder="Minimal 6 karakter"
-            />
-          </div>
+            <Field label="Password" htmlFor="password">
+              <Input
+                id="password"
+                type="password"
+                name="password"
+                required
+                placeholder="Minimal 6 karakter"
+              />
+            </Field>
 
-          <div>
-            <label className="text-sm font-medium text-gray-700 block mb-1">Konfirmasi Password</label>
-            <input
-              type="password"
-              name="confirm_password"
-              required
-              className="w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 bg-white"
-              placeholder="Ulangi password"
-            />
-          </div>
+            <Field label="Konfirmasi Password" htmlFor="confirm_password">
+              <Input
+                id="confirm_password"
+                type="password"
+                name="confirm_password"
+                required
+                placeholder="Ulangi password"
+              />
+            </Field>
 
-          <button
-            type="submit"
-            disabled={isPending}
-            className="btn-3d btn-3d-green w-full py-3.5 rounded-xl font-semibold disabled:opacity-50"
-          >
-            {isPending ? 'Mendaftar...' : 'Daftar'}
-          </button>
-        </form>
+            <Button
+              type="submit"
+              variant="primary"
+              disabled={isPending}
+              className="w-full py-3 text-base mt-2"
+            >
+              {isPending ? 'Mendaftar...' : 'Daftar Sekarang'}
+            </Button>
+          </form>
+        </Card>
 
-        <p className="text-center text-sm text-gray-500 mt-6">
+        <p className="text-center text-sm text-muted mt-6">
           Sudah punya akun?{' '}
-          <Link href="/masuk" className="text-green-600 font-medium hover:underline">
+          <Link href="/masuk" className="text-accent-press font-semibold hover:underline">
             Masuk
           </Link>
         </p>

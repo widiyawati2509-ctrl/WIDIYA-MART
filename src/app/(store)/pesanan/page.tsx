@@ -1,9 +1,24 @@
 // @ts-nocheck
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import { formatRupiah, getOrderStatusLabel, getOrderStatusColor } from '@/lib/utils'
+import { formatRupiah, getOrderStatusLabel } from '@/lib/utils'
 import { Package, ChevronRight } from 'lucide-react'
 import Link from 'next/link'
+import { EmptyState, Badge } from '@/components/ui'
+
+function getBadgeVariant(status: string): 'positive' | 'warning' | 'accent' | 'neutral' {
+  switch (status) {
+    case 'selesai':
+      return 'positive'
+    case 'siap_diambil':
+      return 'accent'
+    case 'sedang_disiapkan':
+    case 'menunggu_diproses':
+      return 'warning'
+    default:
+      return 'neutral'
+  }
+}
 
 export default async function PesananPage() {
   const supabase = await createClient()
@@ -20,58 +35,57 @@ export default async function PesananPage() {
   const isEmpty = !orders || orders.length === 0
 
   return (
-    <div className="max-w-lg mx-auto">
-      <div className="sticky top-0 z-10 bg-white px-4 py-4 border-b">
-        <h1 className="font-bold text-xl">Pesanan Saya</h1>
+    <div className="max-w-lg mx-auto pb-28">
+      <div className="glass sticky top-0 z-40 px-4 py-3.5 border-b border-border mb-4">
+        <h1 className="font-bold text-lg text-ink">Pesanan Saya</h1>
+        <p className="text-xs text-muted">Lacak status pesanan yang diambil di toko</p>
       </div>
 
-      {isEmpty ? (
-        <div className="text-center py-20 px-4">
-          <div className="w-20 h-20 rounded-3xl chip-3d chip-3d-neutral mx-auto mb-4 shadow-sm">
-            <Package className="w-10 h-10 text-gray-400" />
+      <div className="px-4">
+        {isEmpty ? (
+          <EmptyState
+            icon={Package}
+            message="Kamu belum memiliki riwayat pesanan."
+            actionHref="/"
+            actionLabel="Mulai Belanja"
+          />
+        ) : (
+          <div className="glass divide-y divide-border overflow-hidden rounded-xl">
+            {orders.map((order) => (
+              <Link key={order.id} href={`/pesanan/${order.id}`} className="block press">
+                <div className="p-4 hover:bg-zinc-50/50 transition-colors">
+                  <div className="flex items-start justify-between mb-1.5">
+                    <div>
+                      <p className="text-xs text-muted">
+                        {new Date(order.created_at).toLocaleDateString('id-ID', {
+                          day: 'numeric',
+                          month: 'long',
+                          year: 'numeric',
+                        })}
+                      </p>
+                      <p className="text-xs font-semibold text-ink mt-0.5">
+                        {order.order_items.length} macam barang
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Badge variant={getBadgeVariant(order.status)}>
+                        {getOrderStatusLabel(order.status)}
+                      </Badge>
+                      <ChevronRight size={16} className="text-muted" />
+                    </div>
+                  </div>
+                  <p className="text-xs text-muted line-clamp-1 mb-2">
+                    {order.order_items.map((i) => `${i.nama_produk} (${i.qty})`).join(', ')}
+                  </p>
+                  <p className="font-bold text-positive text-sm tabular-nums">
+                    {formatRupiah(order.total)}
+                  </p>
+                </div>
+              </Link>
+            ))}
           </div>
-          <p className="text-gray-500 font-medium mb-1">Belum ada pesanan</p>
-          <p className="text-gray-400 text-sm mb-6">Mulai belanja sekarang!</p>
-          <Link
-            href="/"
-            className="btn-3d btn-3d-green px-6 py-3 rounded-2xl gap-2 text-white"
-          >
-            Mulai Belanja
-          </Link>
-        </div>
-      ) : (
-        <div className="p-3 space-y-2.5">
-          {orders.map((order) => (
-            <Link key={order.id} href={`/pesanan/${order.id}`}>
-              <div className="btn-3d-card bg-white p-4 rounded-2xl border transition-all">
-                <div className="flex items-start justify-between mb-2">
-                  <div>
-                    <p className="text-xs text-gray-400 mb-1">
-                      {new Date(order.created_at).toLocaleDateString('id-ID', {
-                        day: 'numeric', month: 'long', year: 'numeric'
-                      })}
-                    </p>
-                    <p className="text-sm text-gray-600">
-                      {order.order_items.length} item
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className={`text-xs px-2 py-1 rounded-full font-medium ${getOrderStatusColor(order.status)}`}>
-                      {getOrderStatusLabel(order.status)}
-                    </span>
-                    <ChevronRight className="w-4 h-4 text-gray-400" />
-                  </div>
-                </div>
-                <div className="text-sm text-gray-500 mb-2">
-                  {order.order_items.slice(0, 2).map((item) => item.nama_produk).join(', ')}
-                  {order.order_items.length > 2 && ` +${order.order_items.length - 2} lainnya`}
-                </div>
-                <p className="font-bold text-green-600">{formatRupiah(order.total)}</p>
-              </div>
-            </Link>
-          ))}
-        </div>
-      )}
+        )}
+      </div>
     </div>
   )
 }

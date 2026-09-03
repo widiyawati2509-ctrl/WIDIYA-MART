@@ -33,44 +33,48 @@ export default async function AdminLayout({
   ]
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-surface">
       {/* Admin header */}
-      <header className="bg-green-700 text-white px-4 py-3 flex items-center justify-between sticky top-0 z-50 shadow-xs">
-        <div className="flex items-center gap-2.5">
+      <header className="glass sticky top-0 z-50 px-4 py-3 border-b border-border flex items-center justify-between">
+        <div className="flex items-center gap-3">
           <Image
             src="/logo.png"
             alt="Widiya Mart Logo"
             width={32}
             height={32}
-            className="rounded-lg shadow-xs border border-white/20"
+            className="rounded-lg shadow-card border border-white/50 shrink-0"
           />
           <div>
-            <p className="font-bold text-sm leading-tight">Admin Panel</p>
-            <p className="text-green-200 text-xs">Widiya Mart</p>
+            <p className="font-bold text-sm text-ink leading-tight">Admin Panel</p>
+            <p className="text-xs text-muted">Widiya Mart</p>
           </div>
         </div>
+
         <div className="flex items-center gap-3">
-          <span className="text-xs text-green-200 font-medium">{profile?.nama}</span>
+          <span className="text-xs text-muted-strong font-medium hidden sm:inline">
+            {profile?.nama}
+          </span>
           <form action={logout}>
             <button
               type="submit"
-              className="btn-3d btn-3d-red p-1.5 rounded-lg text-white"
+              className="press inline-flex items-center gap-1.5 rounded-lg bg-red-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-red-700"
               title="Keluar"
             >
-              <LogOut className="w-3.5 h-3.5" />
+              <LogOut size={14} />
+              <span>Keluar</span>
             </button>
           </form>
         </div>
       </header>
 
       {/* Tab nav */}
-      <nav className="bg-white border-b overflow-x-auto">
-        <div className="flex">
+      <nav className="glass border-b border-border overflow-x-auto scrollbar-hide py-1.5 px-3">
+        <div className="flex gap-1.5 max-w-5xl mx-auto">
           {navLinks.map(({ href, label }) => (
             <Link
               key={href}
               href={href}
-              className="flex-shrink-0 px-4 py-3 text-sm font-medium text-gray-600 hover:text-green-700 hover:bg-gray-50 border-b-2 border-transparent transition-colors"
+              className="press flex-shrink-0 px-3.5 py-1.5 text-xs font-semibold rounded-full text-muted-strong hover:bg-zinc-100 hover:text-ink transition-colors"
             >
               {label}
             </Link>
@@ -78,7 +82,7 @@ export default async function AdminLayout({
         </div>
       </nav>
 
-      <main className="max-w-5xl mx-auto p-4">{children}</main>
+      <main className="max-w-5xl mx-auto p-4 pb-20">{children}</main>
     </div>
   )
 }

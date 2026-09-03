@@ -22,8 +22,8 @@ export default function BottomNav({ cartCount, isLoggedIn }: BottomNavProps) {
   const pathname = usePathname()
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 max-w-lg mx-auto bg-white/95 backdrop-blur-md border-t border-gray-200 z-50 py-1">
-      <div className="flex">
+    <nav className="fixed inset-x-3 bottom-3 max-w-lg mx-auto rounded-full glass z-50 py-1.5 px-1 shadow-card">
+      <div className="flex items-center justify-around">
         {navItems.map(({ href, label, icon: Icon }) => {
           const isActive = pathname === href || (href !== '/' && pathname.startsWith(href))
           const isCart = href === '/keranjang'
@@ -41,21 +41,21 @@ export default function BottomNav({ cartCount, isLoggedIn }: BottomNavProps) {
                 <div
                   className={`w-10 h-8 rounded-xl chip-3d transition-all ${
                     isActive
-                      ? 'chip-3d-accent text-white scale-105'
-                      : 'chip-3d-neutral text-gray-500'
+                      ? 'chip-3d-accent text-white -translate-y-1'
+                      : 'chip-3d-neutral text-muted-strong'
                   }`}
                 >
                   <Icon className="w-4.5 h-4.5" strokeWidth={isActive ? 2.5 : 1.8} />
                 </div>
                 {isCart && cartCount > 0 && (
-                  <span className="absolute -top-1.5 -right-1.5 chip-3d chip-3d-negative text-white text-[10px] w-4.5 h-4.5 font-bold shadow-xs">
+                  <span className="absolute -top-2 -right-2 bg-accent-subtle text-accent-press ring-1 ring-inset ring-accent/20 text-[10px] min-w-4 h-4 px-1 rounded-full flex items-center justify-center font-bold">
                     {cartCount > 9 ? '9+' : cartCount}
                   </span>
                 )}
               </div>
               <span
                 className={`text-[10px] mt-0.5 ${
-                  isActive ? 'font-bold text-green-700' : 'font-medium text-gray-500'
+                  isActive ? 'font-semibold text-accent-press' : 'font-medium text-muted'
                 }`}
               >
                 {label}

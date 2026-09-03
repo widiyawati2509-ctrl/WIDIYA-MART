@@ -4,6 +4,7 @@
 import { useState } from 'react'
 import { addToCart } from '@/lib/actions/cart'
 import { ShoppingCart, Plus, Minus, Check } from 'lucide-react'
+import { Button } from '@/components/ui'
 
 interface AddToCartButtonProps {
   productId: string
@@ -28,56 +29,59 @@ export default function AddToCartButton({ productId, disabled }: AddToCartButton
 
   if (disabled) {
     return (
-      <button disabled className="w-full bg-gray-200 text-gray-400 py-4 rounded-2xl font-semibold cursor-not-allowed">
+      <button
+        disabled
+        className="w-full rounded-lg bg-zinc-200 py-3.5 text-sm font-semibold text-muted cursor-not-allowed"
+      >
         Stok Habis
       </button>
     )
   }
 
   return (
-    <div className="flex gap-3">
-      <div className="flex items-center gap-1.5 bg-gray-100 rounded-2xl p-1 border border-gray-200">
+    <div className="flex gap-2.5 items-center">
+      {/* Counter */}
+      <div className="flex items-center gap-1 glass rounded-lg p-1">
         <button
           type="button"
           onClick={() => setQty((q) => Math.max(1, q - 1))}
-          className="btn-3d btn-3d-white w-9 h-9 rounded-xl flex items-center justify-center text-gray-700"
+          className="press w-8 h-8 flex items-center justify-center rounded-md hover:bg-zinc-100 text-muted-strong"
+          aria-label="Kurangi jumlah"
         >
-          <Minus className="w-4 h-4" />
+          <Minus size={16} />
         </button>
-        <span className="w-7 text-center font-bold text-sm text-gray-800">{qty}</span>
+        <span className="w-6 text-center font-bold text-sm text-ink tabular-nums">{qty}</span>
         <button
           type="button"
           onClick={() => setQty((q) => q + 1)}
-          className="btn-3d btn-3d-white w-9 h-9 rounded-xl flex items-center justify-center text-gray-700"
+          className="press w-8 h-8 flex items-center justify-center rounded-md hover:bg-zinc-100 text-muted-strong"
+          aria-label="Tambah jumlah"
         >
-          <Plus className="w-4 h-4" />
+          <Plus size={16} />
         </button>
       </div>
 
-      <button
-        type="button"
+      {/* Primary Action Button */}
+      <Button
+        variant={added ? 'secondary' : 'primary'}
         onClick={handleAdd}
         disabled={loading || added}
-        className={`btn-3d flex-1 py-4 rounded-2xl font-semibold gap-2 ${
-          added
-            ? 'bg-green-100 text-green-700 border border-green-300'
-            : 'btn-3d-green'
-        } disabled:opacity-70`}
+        className="flex-1 py-3"
       >
         {added ? (
           <>
-            <Check className="w-5 h-5" />
-            Ditambahkan!
+            <Check size={18} className="text-positive" />
+            <span className="text-positive">Ditambahkan!</span>
           </>
         ) : loading ? (
           'Menambahkan...'
         ) : (
           <>
-            <ShoppingCart className="w-5 h-5" />
+            <ShoppingCart size={18} />
             Tambah ke Keranjang
           </>
         )}
-      </button>
+      </Button>
     </div>
   )
 }

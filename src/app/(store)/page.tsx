@@ -4,8 +4,8 @@ import ProductCard from '@/components/ProductCard'
 import CategoryGrid from '@/components/CategoryGrid'
 import SearchBar from '@/components/SearchBar'
 import PromoBannerCarousel from '@/components/PromoBannerCarousel'
+import { Section } from '@/components/ui'
 import Image from 'next/image'
-import { ShoppingBag } from 'lucide-react'
 
 export default async function HomePage() {
   const supabase = await createClient()
@@ -27,24 +27,31 @@ export default async function HomePage() {
     ])
 
   return (
-    <div className="max-w-lg mx-auto">
-      {/* Header */}
-      <div className="bg-green-600 text-white px-4 pt-10 pb-6">
-        <div className="flex items-center gap-2.5 mb-1">
+    <div className="max-w-lg mx-auto pb-24">
+      {/* Apple System Glass Header */}
+      <header className="glass sticky top-0 z-40 px-4 py-3 flex items-center justify-between border-b border-border mb-3">
+        <div className="flex items-center gap-2.5">
           <Image
             src="/logo.png"
             alt="Widiya Mart Logo"
             width={36}
             height={36}
-            className="rounded-xl shadow-sm border border-white/20 shrink-0"
+            className="rounded-xl shadow-card border border-white/40 shrink-0"
+            priority
           />
-          <span className="font-bold text-lg">{storeInfo?.nama_toko ?? 'Widiya Mart'}</span>
+          <div>
+            <h1 className="font-bold text-base leading-tight text-ink">
+              {storeInfo?.nama_toko ?? 'Widiya Mart'}
+            </h1>
+            <p className="text-[11px] text-muted leading-tight">
+              Pesan online, ambil di toko (COD)
+            </p>
+          </div>
         </div>
-        <p className="text-green-100 text-sm">Pesan online, ambil di toko, bayar COD</p>
-      </div>
+      </header>
 
-      {/* Search */}
-      <div className="px-4 -mt-4 mb-4">
+      {/* Search Bar */}
+      <div className="px-4 mb-4">
         <SearchBar />
       </div>
 
@@ -55,27 +62,36 @@ export default async function HomePage() {
 
       {/* Categories */}
       {categories && categories.length > 0 && (
-        <section className="px-4 mb-6">
-          <h2 className="font-semibold text-gray-800 mb-3">Kategori</h2>
-          <CategoryGrid categories={categories} />
-        </section>
+        <div className="px-4 mb-5">
+          <Section title="Kategori Pilihan" description="Pilih kebutuhan harian kamu">
+            <div className="p-1">
+              <CategoryGrid categories={categories} />
+            </div>
+          </Section>
+        </div>
       )}
 
       {/* Products */}
-      <section className="px-4 mb-6">
-        <h2 className="font-semibold text-gray-800 mb-3">Produk Terbaru</h2>
-        {products && products.length > 0 ? (
-          <div className="grid grid-cols-2 gap-3">
-            {products.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
+      <div className="px-4 mb-6">
+        <Section
+          title="Produk Terbaru"
+          description="Kebutuhan segar & stok siap ambil"
+        >
+          <div className="p-1.5">
+            {products && products.length > 0 ? (
+              <div className="grid grid-cols-2 gap-3">
+                {products.map((product) => (
+                  <ProductCard key={product.id} product={product} />
+                ))}
+              </div>
+            ) : (
+              <div className="glass rounded-concentric p-8 text-center text-muted">
+                <p className="text-sm">Belum ada produk tersedia</p>
+              </div>
+            )}
           </div>
-        ) : (
-          <div className="bg-white border rounded-2xl p-8 text-center text-gray-400">
-            <p className="text-sm">Belum ada produk tersedia</p>
-          </div>
-        )}
-      </section>
+        </Section>
+      </div>
     </div>
   )
 }
