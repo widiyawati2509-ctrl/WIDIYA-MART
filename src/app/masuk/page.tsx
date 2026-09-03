@@ -2,19 +2,12 @@
 'use client'
 
 import { login } from '@/lib/actions/auth'
-import { useActionState, useState } from 'react'
+import { useActionState } from 'react'
 import Link from 'next/link'
-import { ShoppingBag, ShieldCheck } from 'lucide-react'
+import { ShoppingBag } from 'lucide-react'
 
 export default function MasukPage() {
   const [state, formAction, isPending] = useActionState(login, null)
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-
-  const fillAdminCredentials = () => {
-    setEmail('admin@widiyamart.com')
-    setPassword('admin123456')
-  }
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-4 bg-gray-50 py-8">
@@ -25,24 +18,6 @@ export default function MasukPage() {
           </div>
           <h1 className="text-2xl font-bold">Masuk</h1>
           <p className="text-gray-500 text-sm mt-1">Masuk ke akun Widiya Mart kamu</p>
-        </div>
-
-        {/* Quick Admin Access Card */}
-        <div className="bg-amber-50 border border-amber-200 rounded-2xl p-3.5 mb-5">
-          <div className="flex items-center gap-2 mb-1.5">
-            <ShieldCheck className="w-4 h-4 text-amber-600" />
-            <span className="text-xs font-bold text-amber-900">Akses Pemilik Toko (Admin)</span>
-          </div>
-          <p className="text-xs text-amber-700 mb-2.5">
-            Klik tombol di bawah untuk mengisi akun admin secara otomatis:
-          </p>
-          <button
-            type="button"
-            onClick={fillAdminCredentials}
-            className="w-full text-xs font-semibold py-2 px-3 bg-amber-600 hover:bg-amber-700 text-white rounded-xl transition-colors shadow-sm"
-          >
-            Gunakan Akun Admin (1-Klik)
-          </button>
         </div>
 
         <form action={formAction} className="space-y-4">
@@ -58,8 +33,6 @@ export default function MasukPage() {
               type="email"
               name="email"
               required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
               className="w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 bg-white"
               placeholder="email@contoh.com"
             />
@@ -71,8 +44,6 @@ export default function MasukPage() {
               type="password"
               name="password"
               required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
               className="w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 bg-white"
               placeholder="••••••••"
             />
