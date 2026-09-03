@@ -28,7 +28,7 @@ export default async function StoreLayout({
   }
 
   return (
-    <div className="min-h-screen pb-20">
+    <div className="max-w-[480px] mx-auto min-h-screen pb-24 relative bg-[var(--paper)]">
       <main className="animate-page-in">{children}</main>
       <BottomNav cartCount={cartCount} isLoggedIn={!!user} />
     </div>

@@ -11,25 +11,27 @@ export default function DaftarPage() {
   const [state, formAction, isPending] = useActionState(register, null)
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-4 bg-surface py-8">
-      <div className="w-full max-w-sm">
+    <div className="min-h-screen flex flex-col items-center justify-center px-4 bg-[var(--paper)] py-8">
+      <div className="w-full max-w-[420px]">
         <div className="text-center mb-6">
-          <Image
-            src="/logo.png"
-            alt="Widiya Mart Logo"
-            width={64}
-            height={64}
-            className="rounded-2xl mx-auto mb-4 shadow-card border border-white/50"
-            priority
-          />
-          <h1 className="text-2xl font-bold text-ink">Daftar Akun</h1>
-          <p className="text-muted text-sm mt-1">Buat akun Widiya Mart baru</p>
+          <div className="w-14 h-14 rounded-[16px] bg-gradient-to-br from-[var(--accent)] to-[var(--accent-2)] flex items-center justify-center mx-auto mb-3 shadow-[0_6px_14px_-2px_rgba(255,107,53,.45),inset_0_1px_0_rgba(255,255,255,.4)]">
+            <Image
+              src="/logo.png"
+              alt="Widiya Mart Logo"
+              width={46}
+              height={46}
+              className="rounded-[12px] object-cover"
+              priority
+            />
+          </div>
+          <h1 className="text-xl font-sora font-bold text-[var(--ink)]">Daftar Akun</h1>
+          <p className="text-[var(--ink-soft)] text-xs mt-0.5 font-medium">Buat akun Widiya Mart baru</p>
         </div>
 
-        <Card className="p-6">
+        <Card className="p-5 border border-[rgba(232,214,205,0.9)]">
           <form action={formAction} className="space-y-3.5">
             {state?.error && (
-              <div className="rounded-lg bg-red-50 border border-red-200 text-red-600 text-sm px-3.5 py-2.5">
+              <div className="rounded-[12px] bg-red-50 border border-red-200 text-[var(--danger)] text-xs font-semibold px-3.5 py-2.5">
                 {state.error}
               </div>
             )}
@@ -87,16 +89,16 @@ export default function DaftarPage() {
               type="submit"
               variant="primary"
               disabled={isPending}
-              className="w-full py-3 text-base mt-2"
+              className="w-full py-3.5 text-sm font-sora font-bold mt-2"
             >
               {isPending ? 'Mendaftar...' : 'Daftar Sekarang'}
             </Button>
           </form>
         </Card>
 
-        <p className="text-center text-sm text-muted mt-6">
+        <p className="text-center text-xs text-[var(--ink-soft)] mt-6 font-medium">
           Sudah punya akun?{' '}
-          <Link href="/masuk" className="text-accent-press font-semibold hover:underline">
+          <Link href="/masuk" className="text-[var(--accent-2)] font-bold hover:underline">
             Masuk
           </Link>
         </p>

@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { createClient } from '@/lib/supabase/server'
 import { notFound, redirect } from 'next/navigation'
-import { formatRupiah, getOrderStatusLabel, getOrderStatusColor } from '@/lib/utils'
+import { formatRupiah, getOrderStatusLabel } from '@/lib/utils'
 import { ChevronLeft, CheckCircle, Clock, MapPin, Phone } from 'lucide-react'
 import Link from 'next/link'
 import PrintReceiptButton from '@/components/PrintReceiptButton'
@@ -32,23 +32,24 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
   const currentIdx = statuses.indexOf(order.status)
 
   return (
-    <div className="max-w-lg mx-auto">
-      <div className="sticky top-0 z-10 bg-white px-4 py-3 flex items-center justify-between border-b print:hidden">
+    <div className="w-full pb-28">
+      {/* Top Header */}
+      <div className="top-header sticky top-0 z-40 bg-[rgba(250,240,235,0.92)] backdrop-blur-md px-4 py-3.5 flex items-center justify-between border-b border-[rgba(232,214,205,0.8)] shadow-[0_4px_20px_-2px_rgba(43,24,16,0.06)] print:hidden">
         <div className="flex items-center gap-2">
-          <Link href="/pesanan" className="p-1 -ml-1 rounded-full hover:bg-gray-100">
+          <Link href="/pesanan" className="press p-1.5 -ml-1 rounded-full hover:bg-[var(--line)]/50 text-[var(--ink)]">
             <ChevronLeft className="w-5 h-5" />
           </Link>
-          <span className="font-bold">Detail Pesanan</span>
+          <h1 className="font-sora font-bold text-sm text-[var(--ink)]">Detail Pesanan</h1>
         </div>
         <PrintReceiptButton />
       </div>
 
-      <div className="p-4 space-y-3">
-        {/* Status */}
-        <div className="bg-white border rounded-2xl p-4">
+      <div className="p-4 space-y-3.5">
+        {/* Status Stepper Card */}
+        <div className="card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[20px] p-4 shadow-3d">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="font-semibold">Status Pesanan</h2>
-            <span className={`text-xs px-3 py-1 rounded-full font-medium ${getOrderStatusColor(order.status)}`}>
+            <h2 className="font-sora font-bold text-sm text-[var(--ink)]">Status Pesanan</h2>
+            <span className="text-[10.5px] font-bold bg-[var(--accent-bg)] text-[var(--accent-2)] px-2.5 py-0.5 rounded-full">
               {getOrderStatusLabel(order.status)}
             </span>
           </div>
@@ -57,13 +58,21 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
             <div className="flex items-center gap-0">
               {statuses.map((s, i) => (
                 <div key={s} className="flex items-center flex-1">
-                  <div className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 text-xs font-bold ${
-                    i <= currentIdx ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-400'
-                  }`}>
-                    {i < currentIdx ? <CheckCircle className="w-4 h-4" /> : i + 1}
+                  <div
+                    className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 text-xs font-bold ${
+                      i <= currentIdx
+                        ? 'bg-gradient-to-br from-[var(--accent)] to-[var(--accent-2)] text-white shadow-xs'
+                        : 'bg-[var(--line)] text-[var(--ink-soft)]'
+                    }`}
+                  >
+                    {i < currentIdx ? <CheckCircle className="w-3.5 h-3.5" /> : i + 1}
                   </div>
                   {i < statuses.length - 1 && (
-                    <div className={`flex-1 h-1 ${i < currentIdx ? 'bg-green-500' : 'bg-gray-200'}`} />
+                    <div
+                      className={`flex-1 h-1 ${
+                        i < currentIdx ? 'bg-[var(--accent)]' : 'bg-[var(--line)]'
+                      }`}
+                    />
                   )}
                 </div>
               ))}
@@ -71,17 +80,21 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
           )}
         </div>
 
-        {/* Store info */}
-        <div className="bg-green-50 border border-green-100 rounded-2xl p-4">
-          <h2 className="font-semibold text-green-800 mb-2 flex items-center gap-2">
-            <MapPin className="w-4 h-4" />
+        {/* Lokasi Pengambilan */}
+        <div className="card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[20px] p-4 shadow-3d">
+          <h2 className="font-sora font-bold text-sm text-[var(--ink)] mb-2 flex items-center gap-2">
+            <MapPin className="w-4 h-4 text-[var(--accent)]" />
             Lokasi Pengambilan
           </h2>
-          <p className="font-medium text-sm">{store?.nama_toko}</p>
-          {store?.alamat_toko && <p className="text-sm text-gray-600 mt-0.5">{store.alamat_toko}, {store.kota}</p>}
+          <p className="font-bold text-xs text-[var(--ink)]">{store?.nama_toko}</p>
+          {store?.alamat_toko && (
+            <p className="text-xs text-[var(--ink-soft)] mt-0.5 font-medium">
+              {store.alamat_toko}, {store.kota}
+            </p>
+          )}
           {store?.jam_operasional && (
-            <p className="text-sm text-gray-500 mt-1 flex items-center gap-1">
-              <Clock className="w-3 h-3" /> {store.jam_operasional}
+            <p className="text-xs text-[var(--ink-soft)] mt-1 flex items-center gap-1 font-medium">
+              <Clock className="w-3.5 h-3.5 text-[var(--accent)]" /> {store.jam_operasional}
             </p>
           )}
           {store?.whatsapp && (
@@ -89,61 +102,63 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
               href={`https://wa.me/${store.whatsapp.replace(/\D/g, '')}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-2 text-sm text-green-600 flex items-center gap-1 font-medium"
+              className="mt-2.5 inline-flex items-center gap-1.5 text-xs font-sora font-bold text-[var(--accent-2)] bg-[var(--accent-bg)] px-3 py-1.5 rounded-full"
             >
-              <Phone className="w-3 h-3" /> Hubungi via WhatsApp
+              <Phone className="w-3.5 h-3.5" /> Hubungi via WhatsApp
             </a>
           )}
         </div>
 
-        {/* Pemesan */}
-        <div className="bg-white border rounded-2xl p-4">
-          <h2 className="font-semibold mb-3">Info Pemesan</h2>
-          <div className="space-y-1 text-sm">
+        {/* Info Pemesan */}
+        <div className="card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[20px] p-4 shadow-3d">
+          <h2 className="font-sora font-bold text-sm text-[var(--ink)] mb-3">Info Pemesan</h2>
+          <div className="space-y-1.5 text-xs font-medium">
             <div className="flex justify-between">
-              <span className="text-gray-500">Nama</span>
-              <span className="font-medium">{order.nama_pemesan}</span>
+              <span className="text-[var(--ink-soft)]">Nama</span>
+              <span className="font-bold text-[var(--ink)]">{order.nama_pemesan}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-500">No. HP</span>
-              <span className="font-medium">{order.no_hp_pemesan}</span>
+              <span className="text-[var(--ink-soft)]">No. HP</span>
+              <span className="font-bold text-[var(--ink)]">{order.no_hp_pemesan}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-500">Pembayaran</span>
-              <span className="font-medium">COD (Bayar di Toko)</span>
+              <span className="text-[var(--ink-soft)]">Pembayaran</span>
+              <span className="font-bold text-[var(--ink)]">COD (Bayar di Toko)</span>
             </div>
             {order.catatan && (
               <div className="flex justify-between">
-                <span className="text-gray-500">Catatan</span>
-                <span className="font-medium text-right max-w-[60%]">{order.catatan}</span>
+                <span className="text-[var(--ink-soft)]">Catatan</span>
+                <span className="font-bold text-right max-w-[60%] text-[var(--ink)]">{order.catatan}</span>
               </div>
             )}
           </div>
         </div>
 
-        {/* Items */}
-        <div className="bg-white border rounded-2xl p-4">
-          <h2 className="font-semibold mb-3">Item Pesanan</h2>
-          <div className="space-y-3">
+        {/* Item Pesanan (Struk Nota Dashed) */}
+        <div className="card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[20px] p-4 shadow-3d">
+          <h2 className="font-sora font-bold text-sm text-[var(--ink)] mb-3">Item Pesanan</h2>
+          <div className="space-y-2.5">
             {order.order_items.map((item) => (
-              <div key={item.id} className="flex justify-between items-start">
+              <div key={item.id} className="flex justify-between items-start text-xs">
                 <div>
-                  <p className="text-sm font-medium">{item.nama_produk}</p>
-                  <p className="text-xs text-gray-500">
+                  <p className="font-bold text-[var(--ink)]">{item.nama_produk}</p>
+                  <p className="text-[var(--ink-soft)]">
                     {formatRupiah(item.harga_saat_beli)} × {item.qty}
                   </p>
                 </div>
-                <span className="text-sm font-bold">{formatRupiah(item.subtotal)}</span>
+                <span className="font-sora font-bold text-[var(--ink)]">{formatRupiah(item.subtotal)}</span>
               </div>
             ))}
           </div>
-          <div className="border-t mt-3 pt-3 flex justify-between font-bold">
-            <span>Total</span>
-            <span className="text-green-600">{formatRupiah(order.total)}</span>
+          <div className="receipt-dashed mt-3 pt-3 flex justify-between items-center text-sm font-bold">
+            <span className="font-sora text-[var(--ink)]">Total Tagihan</span>
+            <span className="font-sora font-bold text-[var(--accent-2)] text-lg tabular-nums">
+              {formatRupiah(order.total)}
+            </span>
           </div>
         </div>
 
-        <p className="text-xs text-gray-400 text-center">
+        <p className="text-[11px] text-[var(--ink-soft)] text-center font-medium">
           ID Pesanan: {order.id.slice(0, 8).toUpperCase()}
         </p>
       </div>

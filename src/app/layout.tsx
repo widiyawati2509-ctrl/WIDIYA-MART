@@ -1,8 +1,16 @@
 // @ts-nocheck
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Suspense } from 'react'
 import TopProgressBar from '@/components/TopProgressBar'
 import './globals.css'
+
+export const viewport: Viewport = {
+  themeColor: '#FF6B35',
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+}
 
 export const metadata: Metadata = {
   title: {
@@ -28,7 +36,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="id">
-      <body className="font-sans antialiased selection:bg-accent/20">
+      <body className="font-sans antialiased bg-[var(--paper)] text-[var(--ink)] selection:bg-[var(--accent)]/20 min-h-screen">
         <Suspense fallback={null}>
           <TopProgressBar />
         </Suspense>

@@ -49,40 +49,40 @@ export default async function CheckoutPage() {
   if (items.length === 0) redirect('/keranjang')
 
   return (
-    <div className="max-w-lg mx-auto pb-24">
-      {/* Header */}
-      <div className="glass sticky top-0 z-40 px-4 py-3.5 border-b border-border mb-4">
-        <h1 className="font-bold text-lg text-ink">Konfirmasi Pesanan</h1>
-        <p className="text-xs text-muted">Periksa kembali data belanjaan kamu</p>
+    <div className="w-full pb-28">
+      {/* Top Header */}
+      <div className="top-header sticky top-0 z-40 px-4 py-3.5 border-b border-[rgba(232,214,205,0.8)] bg-[rgba(250,240,235,0.92)] backdrop-blur-md shadow-[0_4px_20px_-2px_rgba(43,24,16,0.06)] mb-4">
+        <h1 className="font-sora font-bold text-base text-[var(--ink)]">Konfirmasi Pesanan</h1>
+        <p className="text-xs text-[var(--ink-soft)] font-medium">Periksa kembali data belanjaan kamu</p>
       </div>
 
       <form action={createOrder} className="space-y-3.5 px-4">
-        {/* Info pengambilan */}
+        {/* Info Pengambilan */}
         <Card>
           <div className="flex items-center gap-2 mb-3">
-            <span className="chip-3d chip-3d-positive grid size-7 place-items-center rounded-full">
+            <span className="w-7 h-7 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center font-bold">
               <MapPin size={15} />
             </span>
-            <h2 className="font-semibold text-base text-ink">Ambil di Toko</h2>
+            <h2 className="font-sora font-bold text-sm text-[var(--ink)]">Ambil Langsung di Toko</h2>
             <Badge variant="positive" className="ml-auto">Bebas Ongkir</Badge>
           </div>
-          <div className="space-y-2 text-sm">
-            <p className="font-semibold text-ink">{store?.nama_toko}</p>
+          <div className="space-y-2 text-xs">
+            <p className="font-bold text-[var(--ink)]">{store?.nama_toko}</p>
             {store?.alamat_toko && (
-              <p className="text-muted flex gap-2">
-                <MapPin size={16} className="shrink-0 mt-0.5 text-positive" />
+              <p className="text-[var(--ink-soft)] flex gap-2 font-medium">
+                <MapPin size={15} className="shrink-0 mt-0.5 text-emerald-600" />
                 {store.alamat_toko}{store.kota ? `, ${store.kota}` : ''}
               </p>
             )}
             {store?.jam_operasional && (
-              <p className="text-muted flex gap-2">
-                <Clock size={16} className="shrink-0 mt-0.5 text-positive" />
+              <p className="text-[var(--ink-soft)] flex gap-2 font-medium">
+                <Clock size={15} className="shrink-0 mt-0.5 text-emerald-600" />
                 {store.jam_operasional}
               </p>
             )}
             {store?.no_hp_toko && (
-              <p className="text-muted flex gap-2">
-                <Phone size={16} className="shrink-0 mt-0.5 text-positive" />
+              <p className="text-[var(--ink-soft)] flex gap-2 font-medium">
+                <Phone size={15} className="shrink-0 mt-0.5 text-emerald-600" />
                 {store.no_hp_toko}
               </p>
             )}
@@ -92,20 +92,22 @@ export default async function CheckoutPage() {
         {/* Pembayaran */}
         <Card>
           <div className="flex items-center gap-2 mb-2.5">
-            <span className="chip-3d chip-3d-accent grid size-7 place-items-center rounded-full">
+            <span className="w-7 h-7 rounded-xl bg-[var(--accent-bg)] text-[var(--accent-2)] flex items-center justify-center font-bold">
               <ShieldCheck size={15} />
             </span>
-            <h2 className="font-semibold text-base text-ink">Metode Pembayaran</h2>
+            <h2 className="font-sora font-bold text-sm text-[var(--ink)]">Metode Pembayaran</h2>
           </div>
-          <div className="rounded-lg bg-accent-subtle/60 border border-accent/20 p-3 text-sm">
-            <p className="font-semibold text-accent-press">COD (Bayar saat Ambil di Toko)</p>
-            <p className="text-xs text-muted mt-0.5">Bisa bayar tunai atau scan QRIS langsung di kasir toko</p>
+          <div className="rounded-[14px] bg-[var(--accent-bg)] border border-[var(--accent)]/30 p-3 text-xs">
+            <p className="font-bold text-[var(--accent-2)]">COD (Bayar saat Ambil di Toko)</p>
+            <p className="text-[11px] text-[var(--ink-soft)] mt-0.5 font-medium">
+              Bisa bayar tunai atau scan QRIS langsung di kasir toko
+            </p>
           </div>
         </Card>
 
-        {/* Data pemesan */}
-        <Card className="space-y-4">
-          <h2 className="font-semibold text-base text-ink">Data Pemesan</h2>
+        {/* Data Pemesan */}
+        <Card className="space-y-3.5">
+          <h2 className="font-sora font-bold text-sm text-[var(--ink)]">Data Pemesan</h2>
           <Field label="Nama Lengkap" htmlFor="nama_pemesan">
             <Input
               id="nama_pemesan"
@@ -130,37 +132,39 @@ export default async function CheckoutPage() {
               id="catatan"
               name="catatan"
               rows={2}
-              className="focus-ring w-full min-w-0 rounded-lg border border-border-strong bg-card px-3 py-2 text-base text-ink placeholder:text-muted focus:border-accent resize-none"
+              className="w-full min-w-0 rounded-[14px] border border-[var(--line)] bg-white px-3.5 py-2.5 text-sm text-[var(--ink)] placeholder:text-[var(--ink-soft)] shadow-[0_4px_10px_-2px_rgba(43,24,16,.04),inset_0_1px_0_#ffffff] outline-none transition-all focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20 resize-none"
               placeholder="Contoh: tolong pisahkan belanjaan bumbu dapur"
             />
           </Field>
         </Card>
 
-        {/* Ringkasan */}
+        {/* Ringkasan Pesanan (Struk Nota dengan Garis Putus-putus) */}
         <Card>
-          <h2 className="font-semibold text-base text-ink mb-3">Ringkasan Pesanan</h2>
-          <div className="space-y-2 text-sm mb-3 divide-y divide-border">
+          <h2 className="font-sora font-bold text-sm text-[var(--ink)] mb-3">Ringkasan Belanja</h2>
+          <div className="space-y-2 text-xs mb-3">
             {items.map((item) => (
-              <div key={item.id} className="flex justify-between pt-2">
-                <span className="text-muted line-clamp-1 pr-2">
+              <div key={item.id} className="flex justify-between py-1">
+                <span className="text-[var(--ink-soft)] line-clamp-1 pr-2 font-medium">
                   {item.products?.nama} × {item.qty}
                 </span>
-                <span className="font-medium text-ink tabular-nums shrink-0">
+                <span className="font-bold text-[var(--ink)] tabular-nums shrink-0 font-sora">
                   {formatRupiah((item.products?.harga ?? 0) * item.qty)}
                 </span>
               </div>
             ))}
           </div>
-          <div className="border-t border-border pt-3 flex justify-between items-center text-base font-bold text-ink">
-            <span>Total Pembayaran</span>
-            <span className="text-positive text-xl tabular-nums">{formatRupiah(total)}</span>
+          <div className="receipt-dashed pt-3 flex justify-between items-center text-sm font-bold text-[var(--ink)]">
+            <span className="font-sora">Total Tagihan</span>
+            <span className="font-sora font-bold text-[var(--accent-2)] text-xl tabular-nums">
+              {formatRupiah(total)}
+            </span>
           </div>
         </Card>
 
         <Button
           type="submit"
           variant="primary"
-          className="w-full py-4 rounded-xl text-base shadow-fab"
+          className="w-full py-3.5 rounded-[16px] text-base checkout-btn"
         >
           Buat Pesanan — {formatRupiah(total)}
         </Button>

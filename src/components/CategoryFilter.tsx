@@ -15,11 +15,7 @@ export default function CategoryFilter({ categories, activeSlug }: CategoryFilte
       <Link
         href="/kategori"
         prefetch={true}
-        className={`press inline-flex items-center rounded-full px-3.5 py-1.5 text-xs font-semibold transition shrink-0 ${
-          !activeSlug
-            ? 'bg-accent-subtle text-accent-press ring-1 ring-inset ring-accent/20'
-            : 'glass text-muted-strong hover:bg-zinc-100'
-        }`}
+        className={`cat-chip shrink-0 ${!activeSlug ? 'active' : ''}`}
       >
         Semua
       </Link>
@@ -30,11 +26,7 @@ export default function CategoryFilter({ categories, activeSlug }: CategoryFilte
             key={cat.id}
             href={`/kategori?kategori=${cat.slug}`}
             prefetch={true}
-            className={`press inline-flex items-center rounded-full px-3.5 py-1.5 text-xs font-semibold transition shrink-0 ${
-              isActive
-                ? 'bg-accent-subtle text-accent-press ring-1 ring-inset ring-accent/20'
-                : 'glass text-muted-strong hover:bg-zinc-100'
-            }`}
+            className={`cat-chip shrink-0 ${isActive ? 'active' : ''}`}
           >
             {cat.nama}
           </Link>

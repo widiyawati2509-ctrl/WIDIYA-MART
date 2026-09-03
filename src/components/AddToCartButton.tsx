@@ -31,7 +31,7 @@ export default function AddToCartButton({ productId, disabled }: AddToCartButton
     return (
       <button
         disabled
-        className="w-full rounded-lg bg-zinc-200 py-3.5 text-sm font-semibold text-muted cursor-not-allowed"
+        className="w-full rounded-[16px] bg-[var(--line)]/60 py-3.5 text-sm font-semibold text-[var(--ink-soft)] cursor-not-allowed"
       >
         Stok Habis
       </button>
@@ -40,45 +40,47 @@ export default function AddToCartButton({ productId, disabled }: AddToCartButton
 
   return (
     <div className="flex gap-2.5 items-center">
-      {/* Counter */}
-      <div className="flex items-center gap-1 glass rounded-lg p-1">
+      {/* Stepper Qty (10-12px radius, warm paper border) */}
+      <div className="flex items-center gap-1 border border-[var(--line)] bg-white rounded-[12px] p-1 shadow-[0_2px_6px_rgba(43,24,16,0.04)]">
         <button
           type="button"
           onClick={() => setQty((q) => Math.max(1, q - 1))}
-          className="press w-8 h-8 flex items-center justify-center rounded-md hover:bg-zinc-100 text-muted-strong"
+          className="press w-8 h-8 flex items-center justify-center rounded-[10px] hover:bg-[var(--paper)] text-[var(--ink)]"
           aria-label="Kurangi jumlah"
         >
           <Minus size={16} />
         </button>
-        <span className="w-6 text-center font-bold text-sm text-ink tabular-nums">{qty}</span>
+        <span className="w-6 text-center font-sora font-bold text-sm text-[var(--ink)] tabular-nums">
+          {qty}
+        </span>
         <button
           type="button"
           onClick={() => setQty((q) => q + 1)}
-          className="press w-8 h-8 flex items-center justify-center rounded-md hover:bg-zinc-100 text-muted-strong"
+          className="press w-8 h-8 flex items-center justify-center rounded-[10px] hover:bg-[var(--paper)] text-[var(--ink)]"
           aria-label="Tambah jumlah"
         >
           <Plus size={16} />
         </button>
       </div>
 
-      {/* Primary Action Button */}
+      {/* Primary Action Button (Toko Kita add-btn) */}
       <Button
         variant={added ? 'secondary' : 'primary'}
         onClick={handleAdd}
         disabled={loading || added}
-        className="flex-1 py-3"
+        className="flex-1 py-3 text-sm font-sora font-bold"
       >
         {added ? (
           <>
-            <Check size={18} className="text-positive" />
-            <span className="text-positive">Ditambahkan!</span>
+            <Check size={18} className="text-emerald-600" />
+            <span className="text-emerald-600">Ditambahkan!</span>
           </>
         ) : loading ? (
           'Menambahkan...'
         ) : (
           <>
             <ShoppingCart size={18} />
-            Tambah ke Keranjang
+            + Keranjang
           </>
         )}
       </Button>

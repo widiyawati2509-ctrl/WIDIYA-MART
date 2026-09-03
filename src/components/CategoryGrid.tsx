@@ -15,15 +15,6 @@ const categoryEmojis: Record<string, string> = {
   lainnya: '📦',
 }
 
-const categoryChipStyles: Record<string, string> = {
-  sembako: 'chip-3d-warning',
-  minuman: 'chip-3d-info',
-  snack: 'chip-3d-accent',
-  kebersihan: 'chip-3d-positive',
-  perawatan: 'chip-3d-negative',
-  lainnya: 'chip-3d-neutral',
-}
-
 export default function CategoryGrid({ categories }: CategoryGridProps) {
   return (
     <div className="grid grid-cols-3 gap-2.5">
@@ -32,12 +23,14 @@ export default function CategoryGrid({ categories }: CategoryGridProps) {
           key={cat.id}
           href={`/kategori?kategori=${cat.slug}`}
           prefetch={true}
-          className="btn-3d-card flex flex-col items-center gap-1.5 bg-white border rounded-2xl p-3 hover:border-green-300 hover:bg-green-50 transition-all text-center"
+          className="card-3d flex flex-col items-center gap-2 bg-card border border-[rgba(232,214,205,0.9)] rounded-[20px] p-3 text-center shadow-3d hover:border-[var(--accent)] transition-all"
         >
-          <div className={`w-12 h-12 rounded-2xl chip-3d ${categoryChipStyles[cat.slug] ?? 'chip-3d-accent'} text-2xl shadow-sm mb-0.5`}>
+          <div className="w-12 h-12 rounded-[16px] bg-[var(--accent-bg)] shadow-[inset_0_2px_4px_rgba(232,85,33,0.08)] flex items-center justify-center text-2xl">
             {categoryEmojis[cat.slug] ?? '📦'}
           </div>
-          <span className="text-xs font-semibold text-gray-700 leading-tight">{cat.nama}</span>
+          <span className="text-xs font-semibold text-[var(--ink)] leading-tight">
+            {cat.nama}
+          </span>
         </Link>
       ))}
     </div>

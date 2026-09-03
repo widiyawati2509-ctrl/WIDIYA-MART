@@ -33,34 +33,36 @@ export default async function AdminLayout({
   ]
 
   return (
-    <div className="min-h-screen bg-surface">
+    <div className="min-h-screen bg-[var(--paper)]">
       {/* Admin header */}
-      <header className="glass sticky top-0 z-50 px-4 py-3 border-b border-border flex items-center justify-between">
+      <header className="top-header sticky top-0 z-50 px-4 py-3 border-b border-[rgba(232,214,205,0.8)] bg-[rgba(250,240,235,0.92)] backdrop-blur-md shadow-[0_4px_20px_-2px_rgba(43,24,16,0.06)] flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <Image
-            src="/logo.png"
-            alt="Widiya Mart Logo"
-            width={32}
-            height={32}
-            className="rounded-lg shadow-card border border-white/50 shrink-0"
-          />
+          <div className="logo-box flex items-center justify-center p-1 overflow-hidden shrink-0">
+            <Image
+              src="/logo.png"
+              alt="Widiya Mart Logo"
+              width={28}
+              height={28}
+              className="rounded-[8px] object-cover"
+            />
+          </div>
           <div>
-            <p className="font-bold text-sm text-ink leading-tight">Admin Panel</p>
-            <p className="text-xs text-muted">Widiya Mart</p>
+            <p className="font-sora font-bold text-sm text-[var(--ink)] leading-tight">Admin Panel</p>
+            <p className="text-xs text-[var(--ink-soft)] font-medium">Widiya Mart</p>
           </div>
         </div>
 
         <div className="flex items-center gap-3">
-          <span className="text-xs text-muted-strong font-medium hidden sm:inline">
+          <span className="text-xs text-[var(--ink-soft)] font-semibold hidden sm:inline">
             {profile?.nama}
           </span>
           <form action={logout}>
             <button
               type="submit"
-              className="press inline-flex items-center gap-1.5 rounded-lg bg-red-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-red-700"
+              className="press inline-flex items-center gap-1.5 rounded-[12px] bg-[var(--danger)] px-3 py-1.5 text-xs font-sora font-bold text-white shadow-xs"
               title="Keluar"
             >
-              <LogOut size={14} />
+              <LogOut size={13} />
               <span>Keluar</span>
             </button>
           </form>
@@ -68,14 +70,14 @@ export default async function AdminLayout({
       </header>
 
       {/* Tab nav */}
-      <nav className="glass border-b border-border overflow-x-auto scrollbar-hide py-1.5 px-3">
-        <div className="flex gap-1.5 max-w-5xl mx-auto">
+      <nav className="border-b border-[rgba(232,214,205,0.8)] bg-white/70 overflow-x-auto scrollbar-hide py-2 px-3">
+        <div className="flex gap-2 max-w-[480px] mx-auto">
           {navLinks.map(({ href, label }) => (
             <Link
               key={href}
               href={href}
               prefetch={true}
-              className="press flex-shrink-0 px-3.5 py-1.5 text-xs font-semibold rounded-full text-muted-strong hover:bg-zinc-100 hover:text-ink transition-colors"
+              className="cat-chip flex-shrink-0 text-xs font-semibold"
             >
               {label}
             </Link>
@@ -83,7 +85,7 @@ export default async function AdminLayout({
         </div>
       </nav>
 
-      <main className="max-w-5xl mx-auto p-4 pb-20">{children}</main>
+      <main className="max-w-[480px] mx-auto p-4 pb-24">{children}</main>
     </div>
   )
 }

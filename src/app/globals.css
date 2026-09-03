@@ -1,92 +1,49 @@
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
-/* 1. FONDASI & THEME TOKENS (Catatan Keluarga Design System) */
-@theme {
-  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  --color-accent: var(--color-accent);
-  --color-accent-hover: var(--color-accent-hover);
-  --color-accent-press: var(--color-accent-press);
-  --color-accent-subtle: var(--color-accent-subtle);
-  --color-accent-soft: var(--color-accent-soft);
-  --color-on-accent: var(--color-on-accent);
-  --color-positive: var(--color-positive);
-  --color-positive-hover: var(--color-positive-hover);
-  --color-positive-subtle: var(--color-positive-subtle);
-  --color-positive-soft: var(--color-positive-soft);
-  --color-positive-press: var(--color-positive-press);
-  --color-surface: var(--color-surface);
-  --color-card: var(--color-card);
-  --color-border: var(--color-border);
-  --color-border-strong: var(--color-border-strong);
-  --color-ink: var(--color-ink);
-  --color-muted: var(--color-muted);
-  --color-muted-strong: var(--color-muted-strong);
-  --color-section: var(--color-section);
-  --color-red-600: var(--color-red-600);
-  --color-red-700: var(--color-red-700);
-  --color-amber-600: var(--color-amber-600);
-
-  --radius-lg: 12px;
-  --radius-xl: 16px;
-  --radius-concentric: 10px;
-
-  --shadow-card: 0 4px 16px rgb(0 0 0 / 0.12), 0 1px 4px rgb(0 0 0 / 0.08);
-  --shadow-pop: 0 24px 48px rgb(0 0 0 / 0.18), 0 10px 20px rgb(0 0 0 / 0.14), 0 2px 5px rgb(0 0 0 / 0.10);
-  --shadow-fab: 0 10px 22px rgb(0 122 255 / 0.4);
-}
+/* 1. TOKO KITA DESIGN SYSTEM — 3D PUFFY / NEUMORPHIC CORAL */
 
 :root {
-  --color-accent: #007AFF;
-  --color-accent-hover: #0066D6;
-  --color-accent-press: #0052A3;
-  --color-accent-subtle: #E5F1FF;
-  --color-accent-soft: #C7E2FF;
-  --color-on-accent: #FFFFFF;
-  --color-positive: #1B7A36;
-  --color-positive-hover: #156129;
-  --color-positive-subtle: #E3F8E9;
-  --color-positive-soft: #C2EFD0;
-  --color-positive-press: #124F22;
-  --color-surface: #F2F2F7;
-  --color-card: #FFFFFF;
-  --color-border: color-mix(in srgb, #007AFF 12%, #C6C6C8);
-  --color-border-strong: color-mix(in srgb, #007AFF 16%, #8E8E93);
-  --color-ink: #000000;
-  --color-muted: #6C6C70;
-  --color-muted-strong: #3C3C43;
-  --color-section: #E9E9EB;
-  --color-red-600: #C4160A;
-  --color-red-700: #9E120A;
-  --color-red-50: #FFF2F1;
-  --color-red-100: #FFE5E3;
-  --color-red-200: #FFC7C2;
-  --color-amber-600: #8A6D00;
-  --color-amber-50: #FFFBE5;
-  --color-amber-200: #FFEDA3;
+  --navy:      #2B1810;  /* teks gelap tegas / background bottom-nav */
+  --paper:     #FAF0EB;  /* background halaman (krem hangat) */
+  --card:      #FFFFFF;  /* background kartu */
+  --ink:       #23150F;  /* teks utama */
+  --ink-soft:  #70564D;  /* teks sekunder/muted (coklat pudar) */
+  --line:      #E8D6CD;  /* border tipis */
+  --accent:    #FF6B35;  /* oranye-coral utama */
+  --accent-2:  #E85521;  /* oranye lebih gelap (gradient stop 2, hover) */
+  --accent-bg: #FFEBE3;  /* background pucat aksen (badge, thumb kosong) */
+  --danger:    #E74C3C;  /* merah untuk aksi hapus */
+  --app-max:   480px;
 
-  --shadow-card: 0 4px 16px rgb(0 0 0 / 0.12), 0 1px 4px rgb(0 0 0 / 0.08);
-  --shadow-pop: 0 24px 48px rgb(0 0 0 / 0.18), 0 10px 20px rgb(0 0 0 / 0.14), 0 2px 5px rgb(0 0 0 / 0.10);
-  --shadow-fab: 0 10px 22px rgb(0 122 255 / 0.4);
+  /* 3D Puffy Neumorphic Shadow */
+  --shadow-3d: 0 10px 25px -5px rgba(232,85,33,.12), 0 4px 8px -4px rgba(43,24,16,.05), inset 0 1px 0 #ffffff;
+  --shadow-btn: 0 8px 20px -2px rgba(255,107,53,.42), inset 0 1px 0 rgba(255,255,255,.4);
+  --shadow-btn-active: 0 3px 8px -1px rgba(232,85,33,.35), inset 0 2px 4px rgba(0,0,0,.2);
+  --shadow-chip-active: 0 6px 16px -2px rgba(255,107,53,.4), inset 0 1px 0 rgba(255,255,255,.3);
+  --shadow-nav: 0 16px 35px -6px rgba(43,24,16,.5), inset 0 1px 1px rgba(255,255,255,.18);
+  --shadow-pop: 0 20px 40px -10px rgba(0,0,0,.35), inset 0 1px 0 #ffffff;
+
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-html.dark {
-  --color-accent: #0A84FF;
-  --color-accent-hover: #3D9FFF;
-  --color-accent-press: #6FB4FF;
-  --color-positive: #30D158;
-  --color-surface: #000000;
-  --color-card: #1C1C1E;
-  --color-border: rgba(255, 255, 255, 0.15);
-  --color-border-strong: rgba(255, 255, 255, 0.25);
-  --color-ink: #FFFFFF;
-  --color-muted: #AEAEB2;
-  --color-muted-strong: #E5E5EA;
-  --color-section: #1C1C1E;
-  --color-red-600: #FF6B5C;
-  --color-amber-600: #FFD60A;
+@theme {
+  --font-sora: 'Sora', sans-serif;
+  --font-inter: 'Inter', sans-serif;
+  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
 
-  --shadow-card: 0 4px 16px rgb(0 0 0 / 0.4), 0 1px 4px rgb(0 0 0 / 0.3);
-  --shadow-pop: 0 24px 48px rgb(0 0 0 / 0.6), 0 10px 20px rgb(0 0 0 / 0.45);
+  --color-navy: var(--navy);
+  --color-paper: var(--paper);
+  --color-card: var(--card);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-accent-2: var(--accent-2);
+  --color-accent-bg: var(--accent-bg);
+  --color-danger: var(--danger);
+
+  --shadow-3d: var(--shadow-3d);
 }
 
 * {
@@ -94,136 +51,212 @@ html.dark {
 }
 
 body {
-  background-color: var(--color-surface);
-  color: var(--color-ink);
-  font-family: var(--font-sans);
+  background-color: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-inter);
 }
 
-/* 4 & 5. GAYA KARTU — "LIQUID GLASS" */
-.glass {
-  backdrop-filter: blur(20px) saturate(200%);
-  -webkit-backdrop-filter: blur(20px) saturate(200%);
-  background: rgb(255 255 255 / 0.92);
-  border: 1px solid rgb(0 0 0 / 0.15);
-  box-shadow: var(--shadow-card), inset 0 1px 0 rgb(255 255 255 / 0.5);
+h1, h2, h3, h4, h5, h6, .font-heading {
+  font-family: var(--font-sora);
 }
 
-html.dark .glass {
-  background: rgb(28 28 30 / 0.92);
-  border: 1px solid rgb(255 255 255 / 0.15);
-  box-shadow: var(--shadow-card), inset 0 1px 0 rgb(255 255 255 / 0.1);
+/* 3D Puffy Card */
+.card-3d, .product {
+  background: var(--card);
+  border: 1px solid rgba(232, 214, 205, 0.9);
+  border-radius: 20px;
+  box-shadow: var(--shadow-3d);
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease;
 }
 
-/* Press Feedback */
-.press {
-  transition: transform 150ms;
-}
-.press:active {
-  transform: scale(0.97);
+.card-3d:active, .product:active {
+  transform: scale(0.985) translateY(2px);
+  box-shadow: 0 4px 12px -2px rgba(232, 85, 33, 0.08);
 }
 
-/* Focus Ring */
-.focus-ring {
-  outline: 2px solid transparent;
-  outline-offset: 2px;
-}
-.focus-ring:focus-visible {
-  outline: 2px solid var(--color-accent);
-}
-
-/* 6. IKON "3D CHIP" (bevel puffy, bukan flat) */
-.chip-3d {
-  display: grid;
-  place-items: center;
+/* Primary Button (Coral Gradient 3D Puffy) */
+.add-btn, .checkout-btn, .save-btn, .btn-primary {
+  border: none;
+  border-radius: 16px;
+  font-weight: 700;
+  font-family: var(--font-sora);
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
   color: #fff;
-  box-shadow: inset 0 2px 3px rgb(255 255 255 / 0.5), inset 0 -3px 5px rgb(0 0 0 / 0.18);
-  border-radius: 9999px;
-  position: relative;
-  user-select: none;
+  box-shadow: var(--shadow-btn);
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.chip-3d-accent {
-  background: linear-gradient(150deg, color-mix(in srgb, var(--color-accent) 45%, white), var(--color-accent));
-  color: #ffffff;
-  box-shadow: inset 0 2px 3px rgb(255 255 255 / 0.5), inset 0 -3px 5px rgb(0 0 0 / 0.18), 0 6px 14px -5px color-mix(in srgb, var(--color-accent) 60%, transparent);
+.add-btn:active, .checkout-btn:active, .save-btn:active, .btn-primary:active {
+  transform: scale(0.96) translateY(2px);
+  box-shadow: var(--shadow-btn-active);
 }
 
-.chip-3d-positive {
-  background: linear-gradient(150deg, color-mix(in srgb, var(--color-positive) 45%, white), var(--color-positive));
-  color: #ffffff;
-  box-shadow: inset 0 2px 3px rgb(255 255 255 / 0.5), inset 0 -3px 5px rgb(0 0 0 / 0.18), 0 6px 14px -5px color-mix(in srgb, var(--color-positive) 60%, transparent);
+.add-btn:disabled, .checkout-btn:disabled, .save-btn:disabled, .btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
 }
 
-.chip-3d-negative {
-  background: linear-gradient(150deg, color-mix(in srgb, var(--color-red-600) 45%, white), var(--color-red-600));
-  color: #ffffff;
-  box-shadow: inset 0 2px 3px rgb(255 255 255 / 0.5), inset 0 -3px 5px rgb(0 0 0 / 0.18), 0 6px 14px -5px color-mix(in srgb, var(--color-red-600) 60%, transparent);
+/* Navy Button (Dark Gradient) */
+.btn-navy {
+  border: none;
+  border-radius: 16px;
+  font-weight: 700;
+  font-family: var(--font-sora);
+  background: linear-gradient(145deg, #2B1810, #3D221A);
+  color: #fff;
+  box-shadow: 0 8px 20px -2px rgba(43, 24, 16, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.chip-3d-neutral {
-  background: linear-gradient(150deg, #f3f4f6, #e5e7eb);
-  color: #6b7280;
-  box-shadow: inset 0 2px 3px rgb(255 255 255 / 0.8), inset 0 -3px 5px rgb(0 0 0 / 0.08), 0 4px 10px -4px rgb(0 0 0 / 0.08);
+.btn-navy:active {
+  transform: scale(0.96) translateY(2px);
+  box-shadow: 0 3px 8px -1px rgba(43, 24, 16, 0.4), inset 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-html.dark .chip-3d-neutral {
-  background: linear-gradient(150deg, #2c2c2e, #1c1c1e);
-  color: #a1a1aa;
-  box-shadow: inset 0 2px 3px rgb(255 255 255 / 0.15), inset 0 -3px 5px rgb(0 0 0 / 0.5), 0 4px 10px -4px rgb(0 0 0 / 0.4);
+/* Secondary / Cancel Button */
+.cancel-btn, .btn-cancel {
+  background: none;
+  border: 1px solid var(--line);
+  color: var(--ink-soft);
+  border-radius: 16px;
+  font-weight: 600;
+  font-family: var(--font-inter);
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
-/* 12. ANIMASI (durasi & easing persis) */
-@keyframes toast-in {
-  from { opacity: 0; transform: translateY(8px) scale(0.96); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
+.cancel-btn:active, .btn-cancel:active {
+  transform: scale(0.96) translateY(2px);
+  background: var(--paper);
 }
 
-@keyframes pop-in {
-  from { opacity: 0; transform: scale(0.94); }
-  to { opacity: 1; transform: scale(1); }
+/* Category Chips */
+.cat-chip {
+  border: 1px solid var(--line);
+  background: var(--card);
+  color: var(--ink-soft);
+  font-weight: 600;
+  font-size: 12px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  box-shadow: 0 4px 12px -2px rgba(43, 24, 16, 0.05), inset 0 1px 0 #fff;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
+.cat-chip.active {
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: #fff;
+  border-color: var(--accent);
+  box-shadow: var(--shadow-chip-active);
+}
+
+/* Variant & Status Badge */
+.var-badge, .status-badge {
+  font-size: 10.5px;
+  font-weight: 700;
+  background: var(--accent-bg);
+  color: var(--accent-2);
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+/* Input Fields */
+input.field, textarea.field, select.field {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 11px 14px;
+  font-size: 13.5px;
+  background: #ffffff;
+  color: var(--ink);
+  box-shadow: 0 4px 10px -2px rgba(43, 24, 16, 0.04), inset 0 1px 0 #ffffff;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input.field:focus, textarea.field:focus, select.field:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.2), inset 0 1px 0 #ffffff;
+}
+
+/* Header */
+header.top-header {
+  background: rgba(250, 240, 235, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(232, 214, 205, 0.8);
+  box-shadow: 0 4px 20px -2px rgba(43, 24, 16, 0.06);
+}
+
+.logo-box {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  box-shadow: 0 6px 14px -2px rgba(255, 107, 53, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+/* Menu List (Grouped for Settings/Account) */
+.menu-list {
+  background: var(--card);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: var(--shadow-3d);
+  border: 1px solid rgba(232, 214, 205, 0.9);
+}
+
+.menu-list .item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 15px 18px;
+  font-size: 13px;
+  font-weight: 600;
+  border-bottom: 1px solid var(--line);
+  color: var(--ink);
+  transition: background-color 0.15s;
+}
+
+.menu-list .item:last-child {
+  border-bottom: none;
+}
+
+.menu-list .item:active {
+  background: var(--paper);
+}
+
+/* Order / Cart Receipt Dashed Separator */
+.receipt-dashed {
+  border-top: 1px dashed var(--line);
+}
+
+/* General interactive bounce */
+.press {
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.press:active {
+  transform: scale(0.96) translateY(2px);
+}
+
+/* Page Animation */
 @keyframes page-in {
-  from { opacity: 0; transform: translateY(10px); }
+  from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-.animate-toast-in {
-  animation: toast-in 180ms cubic-bezier(0.21, 1.02, 0.73, 1) forwards;
-}
-
-.animate-pop-in {
-  animation: pop-in 160ms cubic-bezier(0.21, 1.02, 0.73, 1) forwards;
-}
-
 .animate-page-in {
-  animation: page-in 220ms cubic-bezier(0.21, 1.02, 0.73, 1) forwards;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *, ::before, ::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
-}
-
-/* Scrollbar hide utility */
-.scrollbar-hide {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
-}
-
-/* Line clamp utilities */
-.line-clamp-2 {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+  animation: page-in 200ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
 /* Shimmer Animation */
@@ -254,4 +287,20 @@ html.dark .chip-3d-neutral {
   );
   animation: shimmer 1.6s infinite;
   content: '';
+}
+
+/* Scrollbar hide */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }

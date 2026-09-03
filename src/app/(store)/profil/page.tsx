@@ -24,17 +24,21 @@ export default async function ProfilPage() {
     .eq('user_id', user.id)
 
   return (
-    <div className="max-w-lg mx-auto pb-28">
+    <div className="w-full pb-28">
       {/* Header Profile */}
-      <div className="glass px-4 pt-8 pb-6 border-b border-border mb-4">
+      <div className="top-header px-4 pt-8 pb-5 border-b border-[rgba(232,214,205,0.8)] bg-[rgba(250,240,235,0.92)] shadow-[0_4px_20px_-2px_rgba(43,24,16,0.06)] mb-4">
         <div className="flex items-center gap-3.5">
-          <div className="w-14 h-14 rounded-full chip-3d chip-3d-accent shadow-fab">
-            <User size={26} className="text-white" />
+          <div className="w-13 h-13 rounded-[16px] bg-gradient-to-br from-[var(--accent)] to-[var(--accent-2)] text-white flex items-center justify-center shadow-[0_6px_14px_-2px_rgba(255,107,53,.45),inset_0_1px_0_rgba(255,255,255,.4)]">
+            <User size={26} />
           </div>
           <div className="min-w-0 flex-1">
-            <h1 className="font-bold text-lg text-ink truncate">{profile?.nama || 'Pengguna'}</h1>
-            <p className="text-xs text-muted truncate">{user.email}</p>
-            {profile?.no_hp && <p className="text-xs text-muted-strong mt-0.5">{profile.no_hp}</p>}
+            <h1 className="font-sora font-bold text-base text-[var(--ink)] truncate">
+              {profile?.nama || 'Pelanggan'}
+            </h1>
+            <p className="text-xs text-[var(--ink-soft)] truncate font-medium">{user.email}</p>
+            {profile?.no_hp && (
+              <p className="text-xs text-[var(--ink)] mt-0.5 font-semibold">{profile.no_hp}</p>
+            )}
           </div>
         </div>
       </div>
@@ -44,28 +48,29 @@ export default async function ProfilPage() {
         <Card>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <span className="chip-3d chip-3d-positive grid size-9 place-items-center rounded-full">
-                <ShoppingBag size={18} />
+              <span className="w-8 h-8 rounded-[10px] bg-[var(--accent-bg)] text-[var(--accent-2)] flex items-center justify-center">
+                <ShoppingBag size={17} />
               </span>
-              <span className="text-sm font-medium text-muted-strong">Total Pesanan</span>
+              <span className="text-xs font-semibold text-[var(--ink)]">Total Pesanan</span>
             </div>
-            <span className="font-bold text-lg text-positive tabular-nums">{orderCount ?? 0} pesanan</span>
+            <span className="font-sora font-bold text-base text-[var(--accent-2)] tabular-nums">
+              {orderCount ?? 0} pesanan
+            </span>
           </div>
         </Card>
 
-        {/* Grouped Menu List */}
-        <div className="glass divide-y divide-border overflow-hidden rounded-xl">
+        {/* Toko Kita Grouped Menu List */}
+        <div className="menu-list">
           <Link
             href="/pesanan"
-            className="flex items-center justify-between px-4 py-3.5 hover:bg-zinc-50/50 transition-colors press"
+            prefetch={true}
+            className="item press"
           >
-            <div className="flex items-center gap-3">
-              <span className="chip-3d chip-3d-neutral grid size-8 place-items-center rounded-full">
-                <ShoppingBag size={16} />
-              </span>
-              <span className="text-sm font-semibold text-ink">Pesanan Saya</span>
-            </div>
-            <ChevronRight size={16} className="text-muted" />
+            <span className="w-7 h-7 rounded-[8px] bg-[var(--paper)] text-[var(--ink-soft)] flex items-center justify-center">
+              <ShoppingBag size={15} />
+            </span>
+            <span className="flex-1 font-semibold text-xs text-[var(--ink)]">Pesanan Saya</span>
+            <ChevronRight size={15} className="text-[var(--ink-soft)]" />
           </Link>
         </div>
 
@@ -74,9 +79,9 @@ export default async function ProfilPage() {
           <Button
             type="submit"
             variant="secondary"
-            className="w-full py-3 text-red-600 hover:text-red-700 hover:bg-red-50"
+            className="w-full py-3 text-xs font-sora font-bold text-[var(--danger)] hover:bg-red-50 hover:border-red-200"
           >
-            <LogOut size={16} />
+            <LogOut size={15} />
             Keluar dari Akun
           </Button>
         </form>

@@ -36,16 +36,18 @@ export default async function KeranjangPage() {
   const isEmpty = items.length === 0
 
   return (
-    <div className="max-w-lg mx-auto pb-32">
-      {/* Header */}
-      <div className="glass sticky top-0 z-40 px-4 py-3.5 border-b border-border flex items-center justify-between mb-4">
-        <h1 className="font-bold text-lg text-ink flex items-center gap-2">
-          <span className="chip-3d chip-3d-accent grid size-8 place-items-center rounded-full">
-            <ShoppingCart size={16} />
+    <div className="w-full pb-36">
+      {/* Top Header */}
+      <div className="top-header sticky top-0 z-40 px-4 py-3.5 border-b border-[rgba(232,214,205,0.8)] bg-[rgba(250,240,235,0.92)] backdrop-blur-md shadow-[0_4px_20px_-2px_rgba(43,24,16,0.06)] flex items-center justify-between mb-4">
+        <h1 className="font-sora font-bold text-base text-[var(--ink)] flex items-center gap-2">
+          <span className="w-7 h-7 rounded-xl bg-[var(--accent-bg)] text-[var(--accent-2)] flex items-center justify-center font-bold">
+            <ShoppingCart size={15} />
           </span>
           Keranjang Belanja
         </h1>
-        <span className="text-xs text-muted font-medium">{items.length} item</span>
+        <span className="text-xs font-semibold text-[var(--ink-soft)] bg-[var(--accent-bg)] text-[var(--accent-2)] px-2.5 py-0.5 rounded-full">
+          {items.length} item
+        </span>
       </div>
 
       <div className="px-4">
@@ -54,43 +56,48 @@ export default async function KeranjangPage() {
             icon={ShoppingCart}
             message="Keranjang belanja kamu masih kosong. Yuk temukan produk kebutuhan harian!"
             actionHref="/kategori"
-            actionLabel="Lihat Produk"
+            actionLabel="Mulai Belanja"
           />
         ) : (
           <>
-            {/* Grouped list of cart items */}
-            <div className="glass divide-y divide-border overflow-hidden rounded-xl mb-4">
+            {/* List-as-Card: Individual 3D cards with gap */}
+            <div className="space-y-3 mb-4">
               {items.map((item) => (
                 <CartItemRow key={item.id} item={item} />
               ))}
             </div>
 
-            {/* Summary */}
-            <Card className="mb-6">
-              <div className="flex justify-between items-center text-base font-semibold text-ink">
-                <span>Total Belanja</span>
-                <span className="text-positive text-xl font-bold tabular-nums">
+            {/* Receipt Summary Card */}
+            <Card className="mb-6 border border-[rgba(232,214,205,0.9)]">
+              <div className="flex justify-between items-center text-sm font-semibold text-[var(--ink)] mb-2">
+                <span>Subtotal ({items.length} item)</span>
+                <span className="font-sora font-bold text-[var(--ink)] tabular-nums">
                   {formatRupiah(total)}
                 </span>
               </div>
-              <p className="text-xs text-muted mt-1">
+              <div className="receipt-dashed pt-2.5 mt-2 flex justify-between items-center">
+                <span className="font-sora font-bold text-[var(--ink)] text-base">Total Tagihan</span>
+                <span className="font-sora font-bold text-[var(--accent-2)] text-xl tabular-nums">
+                  {formatRupiah(total)}
+                </span>
+              </div>
+              <p className="text-[11px] text-[var(--ink-soft)] mt-2 font-medium">
                 *Pembayaran tunai / QRIS (COD) saat ambil langsung di toko
               </p>
             </Card>
 
             {/* Checkout floating button */}
-            <div className="fixed inset-x-4 bottom-20 max-w-lg mx-auto z-40">
+            <div className="fixed bottom-20 left-1/2 -translate-x-1/2 max-w-[480px] w-full px-4 z-40">
               <Link
                 href="/checkout"
                 prefetch={true}
-                className={`w-full flex items-center justify-between ${buttonClass({
+                className={`w-full flex items-center justify-between checkout-btn py-3.5 px-5 rounded-[16px] text-base ${buttonClass({
                   variant: 'primary',
-                  size: 'md',
-                  className: 'py-3.5 px-5 rounded-xl text-base shadow-fab',
+                  size: 'lg',
                 })}`}
               >
-                <span>Checkout ({items.length} item)</span>
-                <div className="flex items-center gap-2 tabular-nums font-bold">
+                <span className="font-sora font-bold">Checkout ({items.length} item)</span>
+                <div className="flex items-center gap-1.5 tabular-nums font-sora font-bold">
                   <span>{formatRupiah(total)}</span>
                   <ArrowRight size={18} />
                 </div>

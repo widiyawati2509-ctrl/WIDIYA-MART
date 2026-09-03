@@ -41,55 +41,67 @@ export default function CartItemRow({ item }: CartItemRowProps) {
   }
 
   return (
-    <div className={`flex gap-3.5 px-4 py-3.5 items-center ${isPending ? 'opacity-50' : ''} transition-opacity`}>
-      <div className="relative w-14 h-14 rounded-lg bg-zinc-50 border border-border shrink-0 overflow-hidden">
+    <div
+      className={`card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[20px] p-3.5 shadow-3d flex gap-3 items-center ${
+        isPending ? 'opacity-50' : ''
+      } transition-opacity`}
+    >
+      {/* Thumbnail */}
+      <div className="relative w-14 h-14 rounded-[14px] bg-[var(--accent-bg)] border border-[var(--line)] shrink-0 overflow-hidden shadow-[inset_0_2px_4px_rgba(232,85,33,0.05)]">
         {product.image_url ? (
           <Image src={product.image_url} alt={product.nama} fill className="object-contain p-1" sizes="56px" />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-zinc-300">
+          <div className="w-full h-full flex items-center justify-center text-[var(--accent)]/40">
             <Package size={20} />
           </div>
         )}
       </div>
 
+      {/* Detail */}
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-semibold text-ink line-clamp-1">{product.nama}</p>
-        <p className="text-positive font-bold text-xs mt-0.5 tabular-nums">{formatRupiah(product.harga)}</p>
+        <p className="text-[13.5px] font-bold text-[var(--ink)] line-clamp-1">{product.nama}</p>
+        <p className="font-sora font-bold text-[var(--accent-2)] text-xs mt-0.5 tabular-nums">
+          {formatRupiah(product.harga)}
+        </p>
 
-        <div className="flex items-center justify-between mt-2">
-          {/* Counter */}
-          <div className="flex items-center gap-1.5 glass rounded-lg px-1.5 py-0.5">
+        <div className="flex items-center justify-between mt-2.5">
+          {/* Stepper Qty */}
+          <div className="flex items-center gap-1 border border-[var(--line)] bg-[var(--paper)] rounded-[10px] px-1.5 py-0.5">
             <button
               type="button"
               onClick={() => updateQty(item.qty - 1)}
               disabled={isPending}
-              className="press w-6 h-6 flex items-center justify-center rounded text-muted-strong hover:text-ink disabled:opacity-30"
+              className="press w-6 h-6 flex items-center justify-center rounded text-[var(--ink-soft)] hover:text-[var(--ink)] disabled:opacity-30"
               aria-label="Kurangi"
             >
-              <Minus size={14} />
+              <Minus size={13} />
             </button>
-            <span className="w-5 text-center text-xs font-bold text-ink tabular-nums">{item.qty}</span>
+            <span className="w-5 text-center text-xs font-sora font-bold text-[var(--ink)] tabular-nums">
+              {item.qty}
+            </span>
             <button
               type="button"
               onClick={() => updateQty(item.qty + 1)}
               disabled={isPending || item.qty >= product.stok}
-              className="press w-6 h-6 flex items-center justify-center rounded text-muted-strong hover:text-ink disabled:opacity-30"
+              className="press w-6 h-6 flex items-center justify-center rounded text-[var(--ink-soft)] hover:text-[var(--ink)] disabled:opacity-30"
               aria-label="Tambah"
             >
-              <Plus size={14} />
+              <Plus size={13} />
             </button>
           </div>
 
           <div className="flex items-center gap-2.5">
-            <span className="text-sm font-bold text-ink tabular-nums">{formatRupiah(product.harga * item.qty)}</span>
+            <span className="text-xs font-sora font-bold text-[var(--ink)] tabular-nums">
+              {formatRupiah(product.harga * item.qty)}
+            </span>
             <button
               type="button"
               onClick={remove}
               disabled={isPending}
-              className="press p-1 text-muted hover:text-red-600 rounded-md transition-colors"
+              className="press p-1.5 text-[var(--ink-soft)] hover:text-[var(--danger)] hover:bg-red-50 rounded-full transition-colors"
               title="Hapus"
             >
-              <Trash2 size={16} />
+              <Trash2 size={15} />
             </button>
           </div>
         </div>
