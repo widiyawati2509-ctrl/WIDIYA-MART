@@ -3,7 +3,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Home, Grid3X3, ShoppingCart, Package, User } from 'lucide-react'
+import { Home3DIcon, Category3DIcon, Cart3DIcon, Orders3DIcon, User3DIcon } from '@/components/icons/NavIcons3D'
 
 interface BottomNavProps {
   cartCount: number
@@ -11,11 +11,11 @@ interface BottomNavProps {
 }
 
 const navItems = [
-  { href: '/', label: 'Beranda', icon: Home },
-  { href: '/kategori', label: 'Kategori', icon: Grid3X3 },
-  { href: '/keranjang', label: 'Keranjang', icon: ShoppingCart },
-  { href: '/pesanan', label: 'Pesanan', icon: Package },
-  { href: '/profil', label: 'Akun', icon: User },
+  { href: '/', label: 'Beranda', IconComponent: Home3DIcon },
+  { href: '/kategori', label: 'Kategori', IconComponent: Category3DIcon },
+  { href: '/keranjang', label: 'Keranjang', IconComponent: Cart3DIcon },
+  { href: '/pesanan', label: 'Pesanan', IconComponent: Orders3DIcon },
+  { href: '/profil', label: 'Akun', IconComponent: User3DIcon },
 ]
 
 export default function BottomNav({ cartCount, isLoggedIn }: BottomNavProps) {
@@ -26,7 +26,7 @@ export default function BottomNav({ cartCount, isLoggedIn }: BottomNavProps) {
       className="fixed left-1/2 -translate-x-1/2 bottom-4 max-w-[calc(480px-32px)] w-[calc(100%-32px)] rounded-[24px] p-1.5 flex items-center justify-between z-50 border border-white/12 shadow-[0_16px_35px_-6px_rgba(43,24,16,.5),inset_0_1px_1px_rgba(255,255,255,.18)]"
       style={{ background: 'linear-gradient(145deg, #2B1810, #1E0F0A)' }}
     >
-      {navItems.map(({ href, label, icon: Icon }) => {
+      {navItems.map(({ href, label, IconComponent }) => {
         const isActive = pathname === href || (href !== '/' && pathname.startsWith(href))
         const isCart = href === '/keranjang'
         const isProfil = href === '/profil'
@@ -52,7 +52,7 @@ export default function BottomNav({ cartCount, isLoggedIn }: BottomNavProps) {
             }
           >
             <div className="relative">
-              <Icon className="w-5 h-5" strokeWidth={isActive ? 2.5 : 1.8} />
+              <IconComponent active={isActive} className="w-5 h-5" />
               {isCart && cartCount > 0 && (
                 <span className="absolute -top-1.5 -right-3 bg-[var(--accent)] text-white text-[9.5px] font-extrabold rounded-full px-1.5 min-w-[16px] h-4 flex items-center justify-center shadow-sm">
                   {cartCount > 9 ? '9+' : cartCount}
