@@ -1,7 +1,8 @@
 // @ts-nocheck
 import { createClient } from '@/lib/supabase/server'
-import { createCategory, updateCategory, deleteCategory } from '@/lib/actions/admin'
-import { Plus, Trash2 } from 'lucide-react'
+import { createCategory } from '@/lib/actions/admin'
+import { Plus } from 'lucide-react'
+import AdminCategoryList from '@/components/admin/AdminCategoryList'
 
 export default async function AdminKategoriPage() {
   const supabase = await createClient()
@@ -41,31 +42,7 @@ export default async function AdminKategoriPage() {
 
       {/* List */}
       <div className="bg-white border rounded-2xl overflow-hidden">
-        {!categories || categories.length === 0 ? (
-          <p className="text-center text-gray-400 py-8 text-sm">Belum ada kategori</p>
-        ) : (
-          <div className="divide-y">
-            {categories.map((cat) => (
-              <div key={cat.id} className="flex items-center gap-3 px-4 py-3">
-                <div className="flex-1">
-                  <p className="font-medium text-sm">{cat.nama}</p>
-                  <p className="text-xs text-gray-400">/{cat.slug}</p>
-                </div>
-                <form action={deleteCategory.bind(null, cat.id)}>
-                  <button
-                    type="submit"
-                    className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors"
-                    onClick={(e) => {
-                      if (!confirm(`Hapus kategori "${cat.nama}"?`)) e.preventDefault()
-                    }}
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                </form>
-              </div>
-            ))}
-          </div>
-        )}
+        <AdminCategoryList categories={categories ?? []} />
       </div>
     </div>
   )
