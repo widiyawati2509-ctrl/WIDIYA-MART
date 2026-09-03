@@ -4,6 +4,7 @@ import ProductCard from '@/components/ProductCard'
 import CategoryGrid from '@/components/CategoryGrid'
 import SearchBar from '@/components/SearchBar'
 import PromoBannerCarousel from '@/components/PromoBannerCarousel'
+import Image from 'next/image'
 import { ShoppingBag } from 'lucide-react'
 
 export default async function HomePage() {
@@ -29,8 +30,14 @@ export default async function HomePage() {
     <div className="max-w-lg mx-auto">
       {/* Header */}
       <div className="bg-green-600 text-white px-4 pt-10 pb-6">
-        <div className="flex items-center gap-2 mb-1">
-          <ShoppingBag className="w-6 h-6" />
+        <div className="flex items-center gap-2.5 mb-1">
+          <Image
+            src="/logo.png"
+            alt="Widiya Mart Logo"
+            width={36}
+            height={36}
+            className="rounded-xl shadow-sm border border-white/20 shrink-0"
+          />
           <span className="font-bold text-lg">{storeInfo?.nama_toko ?? 'Widiya Mart'}</span>
         </div>
         <p className="text-green-100 text-sm">Pesan online, ambil di toko, bayar COD</p>

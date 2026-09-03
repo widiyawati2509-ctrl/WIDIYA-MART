@@ -101,7 +101,7 @@ export default async function AdminPengaturanPage() {
 
           <button
             type="submit"
-            className="bg-green-600 text-white px-6 py-2.5 rounded-xl font-semibold text-sm hover:bg-green-700 transition-colors"
+            className="btn-3d btn-3d-green px-6 py-2.5 rounded-xl font-semibold text-sm"
           >
             Simpan Pengaturan
           </button>

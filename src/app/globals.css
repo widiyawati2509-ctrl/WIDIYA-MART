@@ -50,3 +50,93 @@ body {
   animation: shimmer 1.6s infinite;
   content: '';
 }
+
+/* 3D Soft Button ("Tombol Empuk 3D") System */
+.btn-3d {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  transition: all 0.12s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  user-select: none;
+}
+
+.btn-3d:active:not(:disabled) {
+  transform: translateY(3px);
+}
+
+.btn-3d-green {
+  background: linear-gradient(180deg, #22c55e 0%, #16a34a 100%);
+  color: #ffffff;
+  border-top: 1px solid rgba(255, 255, 255, 0.35);
+  box-shadow: 0 4px 0 #15803d, 0 6px 12px rgba(22, 163, 74, 0.35);
+}
+
+.btn-3d-green:hover:not(:disabled) {
+  background: linear-gradient(180deg, #27d969 0%, #16a34a 100%);
+  box-shadow: 0 4px 0 #14532d, 0 8px 16px rgba(22, 163, 74, 0.4);
+}
+
+.btn-3d-green:active:not(:disabled) {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 #15803d, 0 3px 6px rgba(22, 163, 74, 0.25);
+}
+
+.btn-3d-white {
+  background: linear-gradient(180deg, #ffffff 0%, #f9fafb 100%);
+  color: #374151;
+  border: 1px solid #e5e7eb;
+  border-top: 1px solid #ffffff;
+  box-shadow: 0 3px 0 #d1d5db, 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+.btn-3d-white:hover:not(:disabled) {
+  background: linear-gradient(180deg, #ffffff 0%, #f3f4f6 100%);
+  box-shadow: 0 3px 0 #9ca3af, 0 6px 10px rgba(0, 0, 0, 0.08);
+}
+
+.btn-3d-white:active:not(:disabled) {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 #d1d5db, 0 2px 4px rgba(0, 0, 0, 0.04);
+}
+
+.btn-3d-amber {
+  background: linear-gradient(180deg, #f59e0b 0%, #d97706 100%);
+  color: #ffffff;
+  border-top: 1px solid rgba(255, 255, 255, 0.35);
+  box-shadow: 0 4px 0 #b45309, 0 6px 12px rgba(217, 119, 6, 0.35);
+}
+
+.btn-3d-amber:active:not(:disabled) {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 #b45309, 0 3px 6px rgba(217, 119, 6, 0.25);
+}
+
+.btn-3d-red {
+  background: linear-gradient(180deg, #ef4444 0%, #dc2626 100%);
+  color: #ffffff;
+  border-top: 1px solid rgba(255, 255, 255, 0.35);
+  box-shadow: 0 3px 0 #b91c1c, 0 5px 10px rgba(220, 38, 38, 0.3);
+}
+
+.btn-3d-red:active:not(:disabled) {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 #b91c1c, 0 2px 4px rgba(220, 38, 38, 0.2);
+}
+
+.btn-3d-card {
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 3px 0 #e5e7eb, 0 4px 8px rgba(0, 0, 0, 0.04);
+}
+
+.btn-3d-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 0 #d1d5db, 0 8px 16px rgba(0, 0, 0, 0.08);
+}
+
+.btn-3d-card:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 #e5e7eb, 0 2px 4px rgba(0, 0, 0, 0.04);
+}

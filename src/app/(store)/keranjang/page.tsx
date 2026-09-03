@@ -55,7 +55,7 @@ export default async function KeranjangPage() {
           <p className="text-gray-400 text-sm mb-6">Yuk mulai belanja!</p>
           <Link
             href="/kategori"
-            className="inline-flex items-center gap-2 bg-green-600 text-white px-6 py-3 rounded-full font-medium hover:bg-green-700 transition-colors"
+            className="btn-3d btn-3d-green px-6 py-3 rounded-2xl gap-2"
           >
             Lihat Produk
           </Link>
@@ -78,10 +78,10 @@ export default async function KeranjangPage() {
           </div>
 
           {/* Checkout button */}
-          <div className="fixed bottom-16 left-0 right-0 max-w-lg mx-auto px-4 pb-3">
+          <div className="fixed bottom-16 left-0 right-0 max-w-lg mx-auto px-4 pb-3 z-40">
             <Link
               href="/checkout"
-              className="flex items-center justify-between bg-green-600 text-white px-6 py-4 rounded-2xl hover:bg-green-700 transition-colors shadow-lg"
+              className="btn-3d btn-3d-green w-full flex items-center justify-between px-6 py-4 rounded-2xl text-white"
             >
               <span className="font-semibold">Checkout ({items.length} item)</span>
               <div className="flex items-center gap-2">

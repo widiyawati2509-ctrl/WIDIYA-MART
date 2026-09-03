@@ -31,7 +31,7 @@ function CategoryItem({ cat }: { cat: Category }) {
         type="button"
         disabled={isPending}
         onClick={handleDelete}
-        className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors disabled:opacity-40"
+        className="btn-3d btn-3d-white p-2 text-gray-500 hover:text-red-600 rounded-xl transition-colors disabled:opacity-40 shadow-xs"
         title="Hapus Kategori"
       >
         {isPending ? (

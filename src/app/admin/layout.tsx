@@ -2,6 +2,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import { LogOut } from 'lucide-react'
 import { logout } from '@/lib/actions/auth'
 
@@ -34,16 +35,29 @@ export default async function AdminLayout({
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Admin header */}
-      <header className="bg-green-700 text-white px-4 py-3 flex items-center justify-between sticky top-0 z-50">
-        <div>
-          <p className="font-bold text-sm">Admin Panel</p>
-          <p className="text-green-200 text-xs">Widiya Mart</p>
+      <header className="bg-green-700 text-white px-4 py-3 flex items-center justify-between sticky top-0 z-50 shadow-xs">
+        <div className="flex items-center gap-2.5">
+          <Image
+            src="/logo.png"
+            alt="Widiya Mart Logo"
+            width={32}
+            height={32}
+            className="rounded-lg shadow-xs border border-white/20"
+          />
+          <div>
+            <p className="font-bold text-sm leading-tight">Admin Panel</p>
+            <p className="text-green-200 text-xs">Widiya Mart</p>
+          </div>
         </div>
         <div className="flex items-center gap-3">
-          <span className="text-xs text-green-200">{profile?.nama}</span>
+          <span className="text-xs text-green-200 font-medium">{profile?.nama}</span>
           <form action={logout}>
-            <button type="submit" className="p-1.5 hover:bg-green-600 rounded-lg transition-colors">
-              <LogOut className="w-4 h-4" />
+            <button
+              type="submit"
+              className="btn-3d btn-3d-red p-1.5 rounded-lg text-white"
+              title="Keluar"
+            >
+              <LogOut className="w-3.5 h-3.5" />
             </button>
           </form>
         </div>

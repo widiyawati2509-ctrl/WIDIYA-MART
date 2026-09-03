@@ -64,9 +64,9 @@ export default async function ProfilPage() {
         <form action={logout}>
           <button
             type="submit"
-            className="w-full flex items-center justify-center gap-2 bg-red-50 text-red-600 border border-red-100 rounded-2xl py-4 font-medium hover:bg-red-100 transition-colors"
+            className="btn-3d btn-3d-white w-full py-4 rounded-2xl font-medium gap-2 text-red-600 hover:bg-red-50 border-red-200"
           >
-            <LogOut className="w-4 h-4" />
+            <LogOut className="w-4 h-4 text-red-600" />
             Keluar
           </button>
         </form>

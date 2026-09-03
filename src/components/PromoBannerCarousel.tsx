@@ -93,7 +93,7 @@ export default function PromoBannerCarousel() {
                 </p>
                 <Link
                   href={b.link}
-                  className="inline-flex items-center gap-1.5 text-xs font-semibold bg-white text-green-700 hover:bg-green-50 px-3.5 py-1.5 rounded-xl transition-all shadow-sm active:scale-95"
+                  className="btn-3d btn-3d-white text-xs text-green-700 px-3.5 py-1.5 rounded-xl gap-1.5 shadow-sm"
                 >
                   {b.cta}
                   <ChevronRight className="w-3.5 h-3.5" />

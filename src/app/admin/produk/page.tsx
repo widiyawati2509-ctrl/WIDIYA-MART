@@ -77,7 +77,7 @@ export default async function AdminProdukPage() {
               </div>
             </div>
             <button type="submit"
-              className="bg-green-600 text-white px-6 py-2.5 rounded-xl text-sm font-semibold hover:bg-green-700 transition-colors">
+              className="btn-3d btn-3d-green px-6 py-2.5 rounded-xl text-sm font-semibold">
               Simpan Produk
             </button>
           </form>

@@ -67,11 +67,11 @@ export default function AdminProductList({ products, categories }: AdminProductL
                 </div>
                 <div className="flex gap-2">
                   <button type="submit"
-                    className="flex items-center gap-1.5 bg-green-600 text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-green-700 transition-colors">
+                    className="btn-3d btn-3d-green px-4 py-2 rounded-xl text-sm font-medium gap-1.5">
                     <Check className="w-4 h-4" /> Simpan
                   </button>
                   <button type="button" onClick={() => setEditId(null)}
-                    className="flex items-center gap-1.5 border px-4 py-2 rounded-xl text-sm font-medium hover:bg-gray-50 transition-colors">
+                    className="btn-3d btn-3d-white px-4 py-2 rounded-xl text-sm font-medium gap-1.5">
                     <X className="w-4 h-4" /> Batal
                   </button>
                 </div>
@@ -99,14 +99,16 @@ export default function AdminProductList({ products, categories }: AdminProductL
                   </p>
                   <p className="text-green-600 font-bold text-sm">{formatRupiah(product.harga)}</p>
                 </div>
-                <div className="flex gap-1 shrink-0">
+                <div className="flex gap-1.5 shrink-0">
                   <button onClick={() => setEditId(product.id)}
-                    className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-colors">
+                    className="btn-3d btn-3d-white p-2 text-blue-600 rounded-xl"
+                    title="Edit Produk">
                     <Edit2 className="w-4 h-4" />
                   </button>
                   <form action={deleteProduct.bind(null, product.id)}>
                     <button type="submit"
-                      className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors"
+                      className="btn-3d btn-3d-white p-2 text-red-500 hover:text-red-600 rounded-xl"
+                      title="Nonaktifkan Produk"
                       onClick={(e) => { if (!confirm('Nonaktifkan produk ini?')) e.preventDefault() }}>
                       <Trash2 className="w-4 h-4" />
                     </button>

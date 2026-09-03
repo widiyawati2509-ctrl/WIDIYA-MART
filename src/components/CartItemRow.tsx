@@ -57,30 +57,34 @@ export default function CartItemRow({ item }: CartItemRowProps) {
         <p className="text-green-600 font-bold text-sm mt-0.5">{formatRupiah(product.harga)}</p>
 
         <div className="flex items-center justify-between mt-2">
-          <div className="flex items-center gap-1 bg-gray-100 rounded-xl px-1">
+          <div className="flex items-center gap-1.5 bg-gray-100 rounded-xl p-1 border border-gray-200">
             <button
+              type="button"
               onClick={() => updateQty(item.qty - 1)}
               disabled={isPending}
-              className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-gray-200 transition-colors"
+              className="btn-3d btn-3d-white w-7 h-7 flex items-center justify-center rounded-lg text-gray-700"
             >
               <Minus className="w-3 h-3" />
             </button>
-            <span className="w-6 text-center text-sm font-semibold">{item.qty}</span>
+            <span className="w-6 text-center text-sm font-bold text-gray-800">{item.qty}</span>
             <button
+              type="button"
               onClick={() => updateQty(item.qty + 1)}
               disabled={isPending || item.qty >= product.stok}
-              className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-gray-200 transition-colors disabled:opacity-40"
+              className="btn-3d btn-3d-white w-7 h-7 flex items-center justify-center rounded-lg text-gray-700 disabled:opacity-40"
             >
               <Plus className="w-3 h-3" />
             </button>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2.5">
             <span className="text-sm font-bold">{formatRupiah(product.harga * item.qty)}</span>
             <button
+              type="button"
               onClick={remove}
               disabled={isPending}
-              className="p-1.5 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+              className="btn-3d btn-3d-white p-1.5 text-red-500 hover:text-red-600 rounded-lg shadow-xs"
+              title="Hapus"
             >
               <Trash2 className="w-4 h-4" />
             </button>

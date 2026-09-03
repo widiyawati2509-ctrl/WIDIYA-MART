@@ -2,7 +2,6 @@
 'use client'
 
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import type { Category } from '@/types/database'
 
 interface CategoryFilterProps {
@@ -12,13 +11,13 @@ interface CategoryFilterProps {
 
 export default function CategoryFilter({ categories, activeSlug }: CategoryFilterProps) {
   return (
-    <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
+    <div className="flex gap-2 overflow-x-auto pb-1.5 pt-0.5 scrollbar-hide">
       <Link
         href="/kategori"
-        className={`flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+        className={`btn-3d flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium ${
           !activeSlug
-            ? 'bg-green-600 text-white'
-            : 'bg-white border border-gray-200 text-gray-600 hover:border-green-300'
+            ? 'btn-3d-green'
+            : 'btn-3d-white text-gray-700'
         }`}
       >
         Semua
@@ -27,10 +26,10 @@ export default function CategoryFilter({ categories, activeSlug }: CategoryFilte
         <Link
           key={cat.id}
           href={`/kategori?kategori=${cat.slug}`}
-          className={`flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+          className={`btn-3d flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium ${
             activeSlug === cat.slug
-              ? 'bg-green-600 text-white'
-              : 'bg-white border border-gray-200 text-gray-600 hover:border-green-300'
+              ? 'btn-3d-green'
+              : 'btn-3d-white text-gray-700'
           }`}
         >
           {cat.nama}

@@ -6,8 +6,9 @@ import { Printer } from 'lucide-react'
 export default function PrintReceiptButton() {
   return (
     <button
+      type="button"
       onClick={() => window.print()}
-      className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 border border-gray-300 rounded-xl hover:bg-gray-100 transition-colors text-gray-700 print:hidden"
+      className="btn-3d btn-3d-white inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-xl text-gray-700 print:hidden"
     >
       <Printer className="w-3.5 h-3.5" />
       Cetak Struk

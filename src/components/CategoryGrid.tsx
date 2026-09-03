@@ -22,7 +22,7 @@ export default function CategoryGrid({ categories }: CategoryGridProps) {
         <Link
           key={cat.id}
           href={`/kategori?kategori=${cat.slug}`}
-          className="flex flex-col items-center gap-1.5 bg-white border rounded-2xl p-3 hover:border-green-300 hover:bg-green-50 transition-colors text-center"
+          className="btn-3d-card flex flex-col items-center gap-1.5 bg-white border rounded-2xl p-3 hover:border-green-300 hover:bg-green-50 transition-all text-center"
         >
           <span className="text-2xl">{categoryEmojis[cat.slug] ?? '📦'}</span>
           <span className="text-xs font-medium text-gray-700 leading-tight">{cat.nama}</span>

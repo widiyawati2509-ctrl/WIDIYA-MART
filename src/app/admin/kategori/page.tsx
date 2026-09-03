@@ -32,7 +32,7 @@ export default async function AdminKategoriPage() {
             />
             <button
               type="submit"
-              className="bg-green-600 text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-green-700 transition-colors"
+              className="btn-3d btn-3d-green px-5 py-2 rounded-xl text-sm font-medium"
             >
               Simpan
             </button>

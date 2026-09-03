@@ -154,7 +154,7 @@ export default async function CheckoutPage() {
 
         <button
           type="submit"
-          className="w-full bg-green-600 text-white py-4 rounded-2xl font-bold text-base hover:bg-green-700 transition-colors shadow-lg"
+          className="btn-3d btn-3d-green w-full py-4 rounded-2xl font-bold text-base"
         >
           Buat Pesanan — {formatRupiah(total)}
         </button>

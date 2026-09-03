@@ -36,29 +36,32 @@ export default function AddToCartButton({ productId, disabled }: AddToCartButton
 
   return (
     <div className="flex gap-3">
-      <div className="flex items-center gap-2 bg-gray-100 rounded-2xl px-2">
+      <div className="flex items-center gap-1.5 bg-gray-100 rounded-2xl p-1 border border-gray-200">
         <button
+          type="button"
           onClick={() => setQty((q) => Math.max(1, q - 1))}
-          className="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-gray-200 transition-colors"
+          className="btn-3d btn-3d-white w-9 h-9 rounded-xl flex items-center justify-center text-gray-700"
         >
           <Minus className="w-4 h-4" />
         </button>
-        <span className="w-6 text-center font-semibold text-sm">{qty}</span>
+        <span className="w-7 text-center font-bold text-sm text-gray-800">{qty}</span>
         <button
+          type="button"
           onClick={() => setQty((q) => q + 1)}
-          className="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-gray-200 transition-colors"
+          className="btn-3d btn-3d-white w-9 h-9 rounded-xl flex items-center justify-center text-gray-700"
         >
           <Plus className="w-4 h-4" />
         </button>
       </div>
 
       <button
+        type="button"
         onClick={handleAdd}
         disabled={loading || added}
-        className={`flex-1 flex items-center justify-center gap-2 py-4 rounded-2xl font-semibold transition-all ${
+        className={`btn-3d flex-1 py-4 rounded-2xl font-semibold gap-2 ${
           added
-            ? 'bg-green-100 text-green-700'
-            : 'bg-green-600 text-white hover:bg-green-700'
+            ? 'bg-green-100 text-green-700 border border-green-300'
+            : 'btn-3d-green'
         } disabled:opacity-70`}
       >
         {added ? (

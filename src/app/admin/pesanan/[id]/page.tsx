@@ -92,12 +92,12 @@ export default async function AdminOrderDetailPage({ params }: AdminOrderDetailP
                     <button
                       type="submit"
                       disabled={isCurrent}
-                      className={`w-full text-left px-4 py-3 rounded-xl text-sm font-medium border transition-colors ${
+                      className={`w-full text-left px-4 py-3 rounded-xl text-sm font-medium border transition-all ${
                         isCurrent
-                          ? 'bg-green-50 border-green-300 text-green-700 cursor-default'
+                          ? 'bg-green-50 border-green-300 text-green-700 cursor-default font-bold'
                           : value === 'dibatalkan'
-                          ? 'hover:bg-red-50 border-gray-200 text-red-600 hover:border-red-200'
-                          : 'hover:bg-gray-50 border-gray-200 text-gray-700'
+                          ? 'btn-3d btn-3d-white hover:bg-red-50 border-red-200 text-red-600'
+                          : 'btn-3d btn-3d-white text-gray-700'
                       }`}
                     >
                       {isCurrent ? '✓ ' : ''}{label}
