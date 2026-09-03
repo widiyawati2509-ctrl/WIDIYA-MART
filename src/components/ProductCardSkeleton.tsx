@@ -3,9 +3,7 @@ export default function ProductCardSkeleton() {
   return (
     <div className="bg-white border rounded-2xl overflow-hidden shadow-xs animate-pulse">
       {/* Image Skeleton */}
-      <div className="aspect-square bg-gray-200 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full animate-[shimmer_1.5s_infinite]" />
-      </div>
+      <div className="aspect-square bg-gray-200 relative overflow-hidden animate-shimmer" />
       {/* Info Skeleton */}
       <div className="p-3 space-y-2">
         <div className="h-3.5 bg-gray-200 rounded-md w-4/5" />

@@ -20,14 +20,24 @@ export async function login(prevOrFormData: unknown, maybeFormData?: FormData): 
   }
 
   const supabase = await createClient()
-  const { error } = await supabase.auth.signInWithPassword(parsed.data)
+  const { data: authData, error } = await supabase.auth.signInWithPassword(parsed.data)
 
   if (error) {
     return { error: 'Email atau password salah' }
   }
 
+  let isAdmin = false
+  if (authData?.user) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', authData.user.id)
+      .single()
+    isAdmin = profile?.role === 'admin'
+  }
+
   revalidatePath('/', 'layout')
-  if (parsed.data.email === 'admin@widiyamart.com') {
+  if (isAdmin) {
     redirect('/admin')
   }
   redirect('/')

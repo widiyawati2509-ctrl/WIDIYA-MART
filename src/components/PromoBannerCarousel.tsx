@@ -43,19 +43,27 @@ const banners = [
 
 export default function PromoBannerCarousel() {
   const [current, setCurrent] = useState(0)
+  const [isPaused, setIsPaused] = useState(false)
 
   useEffect(() => {
+    if (isPaused) return
     const timer = setInterval(() => {
       setCurrent((prev) => (prev + 1) % banners.length)
     }, 4000)
     return () => clearInterval(timer)
-  }, [])
+  }, [isPaused])
 
   const nextSlide = () => setCurrent((prev) => (prev + 1) % banners.length)
   const prevSlide = () => setCurrent((prev) => (prev - 1 + banners.length) % banners.length)
 
   return (
-    <div className="relative overflow-hidden rounded-2xl shadow-sm group">
+    <div
+      className="relative overflow-hidden rounded-2xl shadow-sm group"
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+      onTouchStart={() => setIsPaused(true)}
+      onTouchEnd={() => setIsPaused(false)}
+    >
       {/* Slides */}
       <div
         className="flex transition-transform duration-500 ease-out"
