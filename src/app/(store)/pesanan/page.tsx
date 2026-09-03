@@ -27,21 +27,23 @@ export default async function PesananPage() {
 
       {isEmpty ? (
         <div className="text-center py-20 px-4">
-          <Package className="w-16 h-16 mx-auto mb-4 text-gray-200" />
+          <div className="w-20 h-20 rounded-3xl chip-3d chip-3d-neutral mx-auto mb-4 shadow-sm">
+            <Package className="w-10 h-10 text-gray-400" />
+          </div>
           <p className="text-gray-500 font-medium mb-1">Belum ada pesanan</p>
           <p className="text-gray-400 text-sm mb-6">Mulai belanja sekarang!</p>
           <Link
             href="/"
-            className="inline-flex items-center gap-2 bg-green-600 text-white px-6 py-3 rounded-full font-medium hover:bg-green-700 transition-colors"
+            className="btn-3d btn-3d-green px-6 py-3 rounded-2xl gap-2 text-white"
           >
             Mulai Belanja
           </Link>
         </div>
       ) : (
-        <div className="divide-y">
+        <div className="p-3 space-y-2.5">
           {orders.map((order) => (
             <Link key={order.id} href={`/pesanan/${order.id}`}>
-              <div className="bg-white px-4 py-4 hover:bg-gray-50 transition-colors">
+              <div className="btn-3d-card bg-white p-4 rounded-2xl border transition-all">
                 <div className="flex items-start justify-between mb-2">
                   <div>
                     <p className="text-xs text-gray-400 mb-1">

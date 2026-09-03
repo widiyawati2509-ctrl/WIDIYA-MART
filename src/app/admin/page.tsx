@@ -38,20 +38,20 @@ export default async function AdminDashboardPage() {
   const totalRevenue = (ordersTotal.data ?? []).reduce((sum: number, o: { total: number }) => sum + o.total, 0)
 
   const stats = [
-    { label: 'Pesanan Hari Ini', value: ordersToday.count ?? 0, icon: ShoppingBag, color: 'bg-blue-50 text-blue-600' },
-    { label: 'Omzet Hari Ini', value: formatRupiah(todayRevenue), icon: TrendingUp, color: 'bg-green-50 text-green-600' },
-    { label: 'Produk Stok Menipis', value: lowStockProducts.data?.length ?? 0, icon: AlertTriangle, color: 'bg-orange-50 text-orange-600' },
-    { label: 'Total Omzet', value: formatRupiah(totalRevenue), icon: Package, color: 'bg-purple-50 text-purple-600' },
+    { label: 'Pesanan Hari Ini', value: ordersToday.count ?? 0, icon: ShoppingBag, chip: 'chip-3d-info' },
+    { label: 'Omzet Hari Ini', value: formatRupiah(todayRevenue), icon: TrendingUp, chip: 'chip-3d-positive' },
+    { label: 'Produk Stok Menipis', value: lowStockProducts.data?.length ?? 0, icon: AlertTriangle, chip: 'chip-3d-warning' },
+    { label: 'Total Omzet', value: formatRupiah(totalRevenue), icon: Package, chip: 'chip-3d-accent' },
   ]
 
   return (
     <div>
       <h1 className="text-xl font-bold mb-4">Dashboard</h1>
       <div className="grid grid-cols-2 gap-3 mb-6">
-        {stats.map(({ label, value, icon: Icon, color }) => (
-          <div key={label} className="bg-white border rounded-2xl p-4">
-            <div className={`w-9 h-9 rounded-xl ${color} flex items-center justify-center mb-2`}>
-              <Icon className="w-4 h-4" />
+        {stats.map(({ label, value, icon: Icon, chip }) => (
+          <div key={label} className="btn-3d-card bg-white border rounded-2xl p-4 transition-all">
+            <div className={`w-10 h-10 rounded-2xl chip-3d ${chip} mb-2 shadow-sm`}>
+              <Icon className="w-5 h-5 text-white" />
             </div>
             <p className="text-2xl font-bold">{value}</p>
             <p className="text-xs text-gray-500 mt-0.5">{label}</p>

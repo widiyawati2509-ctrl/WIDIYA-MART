@@ -61,7 +61,9 @@ export default async function KategoriPage({ searchParams }: KategoriPageProps) 
           </>
         ) : (
           <div className="text-center py-16 text-gray-400">
-            <Package className="w-12 h-12 mx-auto mb-2 opacity-30" />
+            <div className="w-16 h-16 rounded-3xl chip-3d chip-3d-neutral mx-auto mb-3 shadow-xs">
+              <Package className="w-8 h-8 text-gray-400" />
+            </div>
             <p className="font-medium">Produk tidak ditemukan</p>
             {q && <p className="text-sm mt-1">Coba kata kunci lain</p>}
           </div>

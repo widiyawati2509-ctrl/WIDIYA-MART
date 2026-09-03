@@ -50,7 +50,9 @@ export default async function KeranjangPage() {
 
       {isEmpty ? (
         <div className="text-center py-20 px-4">
-          <ShoppingCart className="w-16 h-16 mx-auto mb-4 text-gray-200" />
+          <div className="w-20 h-20 rounded-3xl chip-3d chip-3d-neutral mx-auto mb-4 shadow-sm">
+            <ShoppingCart className="w-10 h-10 text-gray-400" />
+          </div>
           <p className="text-gray-500 font-medium mb-1">Keranjang masih kosong</p>
           <p className="text-gray-400 text-sm mb-6">Yuk mulai belanja!</p>
           <Link

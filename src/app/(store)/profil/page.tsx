@@ -26,8 +26,8 @@ export default async function ProfilPage() {
     <div className="max-w-lg mx-auto">
       <div className="bg-green-600 text-white px-4 pt-10 pb-8">
         <div className="flex items-center gap-4">
-          <div className="w-14 h-14 rounded-full bg-white/20 flex items-center justify-center">
-            <User className="w-7 h-7" />
+          <div className="w-14 h-14 rounded-full chip-3d chip-3d-positive shadow-md">
+            <User className="w-7 h-7 text-white" />
           </div>
           <div>
             <h1 className="font-bold text-lg">{profile?.nama || 'Pengguna'}</h1>
@@ -42,7 +42,9 @@ export default async function ProfilPage() {
         <div className="bg-white border rounded-2xl p-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <ShoppingBag className="w-5 h-5 text-green-500" />
+              <div className="w-9 h-9 rounded-xl chip-3d chip-3d-accent">
+                <ShoppingBag className="w-4.5 h-4.5 text-white" />
+              </div>
               <span className="font-medium">Total Pesanan</span>
             </div>
             <span className="font-bold text-green-600">{orderCount ?? 0} pesanan</span>
@@ -53,7 +55,9 @@ export default async function ProfilPage() {
         <div className="bg-white border rounded-2xl divide-y overflow-hidden">
           <Link href="/pesanan" className="flex items-center justify-between px-4 py-4 hover:bg-gray-50 transition-colors">
             <div className="flex items-center gap-3">
-              <ShoppingBag className="w-5 h-5 text-gray-400" />
+              <div className="w-9 h-9 rounded-xl chip-3d chip-3d-neutral">
+                <ShoppingBag className="w-4.5 h-4.5 text-gray-600" />
+              </div>
               <span className="font-medium">Pesanan Saya</span>
             </div>
             <ChevronRight className="w-4 h-4 text-gray-400" />
