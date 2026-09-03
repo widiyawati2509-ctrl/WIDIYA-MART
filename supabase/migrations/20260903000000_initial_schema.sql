@@ -1,5 +1,5 @@
 -- =========================================================
--- Widiya Mart — Initial Schema + RLS (100% Idempotent)
+-- Widiya Mart — Initial Schema + RLS (100% Non-Recursive & Idempotent)
 -- =========================================================
 
 -- ── Extensions ──────────────────────────────────────────
@@ -16,6 +16,20 @@ create table if not exists public.profiles (
 
 alter table public.profiles enable row level security;
 
+-- Helper function with SECURITY DEFINER to bypass RLS recursion
+create or replace function public.is_admin()
+returns boolean
+language sql
+security definer
+set search_path = public
+stable
+as $$
+  select coalesce(
+    (select role = 'admin' from public.profiles where id = auth.uid()),
+    false
+  );
+$$;
+
 drop policy if exists "User lihat profil sendiri" on public.profiles;
 create policy "User lihat profil sendiri"
   on public.profiles for select
@@ -29,12 +43,7 @@ create policy "User update profil sendiri"
 drop policy if exists "Admin akses semua profil" on public.profiles;
 create policy "Admin akses semua profil"
   on public.profiles for all
-  using (
-    exists (
-      select 1 from public.profiles p
-      where p.id = auth.uid() and p.role = 'admin'
-    )
-  );
+  using (public.is_admin());
 
 -- Auto-create profile on signup
 create or replace function public.handle_new_user()
@@ -75,12 +84,7 @@ create policy "Semua bisa lihat kategori"
 drop policy if exists "Admin kelola kategori" on public.categories;
 create policy "Admin kelola kategori"
   on public.categories for all
-  using (
-    exists (
-      select 1 from public.profiles p
-      where p.id = auth.uid() and p.role = 'admin'
-    )
-  );
+  using (public.is_admin());
 
 -- ── products ────────────────────────────────────────────
 create table if not exists public.products (
@@ -107,12 +111,7 @@ create policy "Semua bisa lihat produk aktif"
 drop policy if exists "Admin kelola produk" on public.products;
 create policy "Admin kelola produk"
   on public.products for all
-  using (
-    exists (
-      select 1 from public.profiles p
-      where p.id = auth.uid() and p.role = 'admin'
-    )
-  );
+  using (public.is_admin());
 
 -- Auto-update updated_at
 create or replace function public.set_updated_at()
@@ -150,12 +149,7 @@ create policy "User kelola alamat sendiri"
 drop policy if exists "Admin lihat semua alamat" on public.addresses;
 create policy "Admin lihat semua alamat"
   on public.addresses for select
-  using (
-    exists (
-      select 1 from public.profiles p
-      where p.id = auth.uid() and p.role = 'admin'
-    )
-  );
+  using (public.is_admin());
 
 -- ── carts + cart_items ──────────────────────────────────
 create table if not exists public.carts (
@@ -234,12 +228,7 @@ create policy "User buat pesanan"
 drop policy if exists "Admin kelola semua pesanan" on public.orders;
 create policy "Admin kelola semua pesanan"
   on public.orders for all
-  using (
-    exists (
-      select 1 from public.profiles p
-      where p.id = auth.uid() and p.role = 'admin'
-    )
-  );
+  using (public.is_admin());
 
 drop trigger if exists orders_updated_at on public.orders;
 create trigger orders_updated_at
@@ -282,12 +271,7 @@ create policy "User buat item pesanan"
 drop policy if exists "Admin kelola semua item pesanan" on public.order_items;
 create policy "Admin kelola semua item pesanan"
   on public.order_items for all
-  using (
-    exists (
-      select 1 from public.profiles p
-      where p.id = auth.uid() and p.role = 'admin'
-    )
-  );
+  using (public.is_admin());
 
 -- ── store_info ──────────────────────────────────────────
 create table if not exists public.store_info (
@@ -312,12 +296,7 @@ create policy "Semua bisa lihat info toko"
 drop policy if exists "Admin update info toko" on public.store_info;
 create policy "Admin update info toko"
   on public.store_info for all
-  using (
-    exists (
-      select 1 from public.profiles p
-      where p.id = auth.uid() and p.role = 'admin'
-    )
-  );
+  using (public.is_admin());
 
 insert into public.store_info (id, nama_toko) values (1, 'Widiya Mart')
   on conflict (id) do nothing;
@@ -337,10 +316,7 @@ create policy "Admin upload foto produk"
   on storage.objects for insert
   with check (
     bucket_id = 'products'
-    and exists (
-      select 1 from public.profiles p
-      where p.id = auth.uid() and p.role = 'admin'
-    )
+    and public.is_admin()
   );
 
 drop policy if exists "Admin hapus foto produk" on storage.objects;
@@ -348,10 +324,7 @@ create policy "Admin hapus foto produk"
   on storage.objects for delete
   using (
     bucket_id = 'products'
-    and exists (
-      select 1 from public.profiles p
-      where p.id = auth.uid() and p.role = 'admin'
-    )
+    and public.is_admin()
   );
 
 -- ── Seed categories ─────────────────────────────────────

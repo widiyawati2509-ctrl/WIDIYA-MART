@@ -5,6 +5,7 @@ import { formatRupiah, getOrderStatusLabel, getOrderStatusColor } from '@/lib/ut
 import { updateOrderStatus } from '@/lib/actions/orders'
 import { ChevronLeft } from 'lucide-react'
 import Link from 'next/link'
+import PrintReceiptButton from '@/components/PrintReceiptButton'
 
 interface AdminOrderDetailProps {
   params: Promise<{ id: string }>
@@ -32,11 +33,14 @@ export default async function AdminOrderDetailPage({ params }: AdminOrderDetailP
 
   return (
     <div>
-      <div className="flex items-center gap-2 mb-4">
-        <Link href="/admin/pesanan" className="p-1 hover:bg-gray-100 rounded-lg">
-          <ChevronLeft className="w-5 h-5" />
-        </Link>
-        <h1 className="text-xl font-bold">Detail Pesanan</h1>
+      <div className="flex items-center justify-between mb-4 print:hidden">
+        <div className="flex items-center gap-2">
+          <Link href="/admin/pesanan" className="p-1 hover:bg-gray-100 rounded-lg">
+            <ChevronLeft className="w-5 h-5" />
+          </Link>
+          <h1 className="text-xl font-bold">Detail Pesanan</h1>
+        </div>
+        <PrintReceiptButton />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

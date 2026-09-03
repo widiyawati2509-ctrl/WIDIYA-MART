@@ -4,6 +4,7 @@ import { notFound, redirect } from 'next/navigation'
 import { formatRupiah, getOrderStatusLabel, getOrderStatusColor } from '@/lib/utils'
 import { ChevronLeft, CheckCircle, Clock, MapPin, Phone } from 'lucide-react'
 import Link from 'next/link'
+import PrintReceiptButton from '@/components/PrintReceiptButton'
 
 interface OrderDetailPageProps {
   params: Promise<{ id: string }>
@@ -32,11 +33,14 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
 
   return (
     <div className="max-w-lg mx-auto">
-      <div className="sticky top-0 z-10 bg-white px-4 py-3 flex items-center gap-2 border-b">
-        <Link href="/pesanan" className="p-1 -ml-1 rounded-full hover:bg-gray-100">
-          <ChevronLeft className="w-5 h-5" />
-        </Link>
-        <span className="font-bold">Detail Pesanan</span>
+      <div className="sticky top-0 z-10 bg-white px-4 py-3 flex items-center justify-between border-b print:hidden">
+        <div className="flex items-center gap-2">
+          <Link href="/pesanan" className="p-1 -ml-1 rounded-full hover:bg-gray-100">
+            <ChevronLeft className="w-5 h-5" />
+          </Link>
+          <span className="font-bold">Detail Pesanan</span>
+        </div>
+        <PrintReceiptButton />
       </div>
 
       <div className="p-4 space-y-3">
