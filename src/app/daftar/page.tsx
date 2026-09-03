@@ -7,12 +7,7 @@ import Link from 'next/link'
 import { ShoppingBag } from 'lucide-react'
 
 export default function DaftarPage() {
-  const [state, formAction, isPending] = useActionState(
-    async (_: { error?: string } | null, formData: FormData) => {
-      return await register(formData) as { error?: string } | null
-    },
-    null
-  )
+  const [state, formAction, isPending] = useActionState(register, null)
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-4 bg-gray-50">

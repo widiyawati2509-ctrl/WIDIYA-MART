@@ -6,7 +6,9 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { loginSchema, registerSchema } from '@/lib/validations'
 
-export async function login(_prev: unknown, formData: FormData): Promise<{ error?: string } | void> {
+export async function login(prevOrFormData: unknown, maybeFormData?: FormData): Promise<{ error?: string } | void> {
+  const formData = (maybeFormData instanceof FormData ? maybeFormData : prevOrFormData) as FormData
+
   const raw = {
     email: formData.get('email') as string,
     password: formData.get('password') as string,
@@ -28,7 +30,9 @@ export async function login(_prev: unknown, formData: FormData): Promise<{ error
   redirect('/')
 }
 
-export async function register(_prev: unknown, formData: FormData): Promise<{ error?: string } | void> {
+export async function register(prevOrFormData: unknown, maybeFormData?: FormData): Promise<{ error?: string } | void> {
+  const formData = (maybeFormData instanceof FormData ? maybeFormData : prevOrFormData) as FormData
+
   const raw = {
     nama: formData.get('nama') as string,
     email: formData.get('email') as string,
