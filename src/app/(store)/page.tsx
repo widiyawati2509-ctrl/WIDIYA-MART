@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { createClient } from '@/lib/supabase/server'
+import { createPublicClient } from '@/lib/supabase/server'
 import ProductCard from '@/components/ProductCard'
 import CategoryGrid from '@/components/CategoryGrid'
 import SearchBar from '@/components/SearchBar'
@@ -7,8 +7,10 @@ import PromoBannerCarousel from '@/components/PromoBannerCarousel'
 import { Section } from '@/components/ui'
 import Image from 'next/image'
 
+export const revalidate = 60
+
 export default async function HomePage() {
-  const supabase = await createClient()
+  const supabase = createPublicClient()
 
   const [{ data: categories }, { data: products }, { data: storeInfo }] =
     await Promise.all([

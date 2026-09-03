@@ -14,6 +14,7 @@ export default function CategoryFilter({ categories, activeSlug }: CategoryFilte
     <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide py-1">
       <Link
         href="/kategori"
+        prefetch={true}
         className={`press inline-flex items-center rounded-full px-3.5 py-1.5 text-xs font-semibold transition shrink-0 ${
           !activeSlug
             ? 'bg-accent-subtle text-accent-press ring-1 ring-inset ring-accent/20'
@@ -28,6 +29,7 @@ export default function CategoryFilter({ categories, activeSlug }: CategoryFilte
           <Link
             key={cat.id}
             href={`/kategori?kategori=${cat.slug}`}
+            prefetch={true}
             className={`press inline-flex items-center rounded-full px-3.5 py-1.5 text-xs font-semibold transition shrink-0 ${
               isActive
                 ? 'bg-accent-subtle text-accent-press ring-1 ring-inset ring-accent/20'

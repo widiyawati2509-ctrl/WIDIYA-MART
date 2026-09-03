@@ -74,6 +74,7 @@ export default async function AdminLayout({
             <Link
               key={href}
               href={href}
+              prefetch={true}
               className="press flex-shrink-0 px-3.5 py-1.5 text-xs font-semibold rounded-full text-muted-strong hover:bg-zinc-100 hover:text-ink transition-colors"
             >
               {label}

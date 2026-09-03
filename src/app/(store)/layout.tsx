@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { createClient } from '@/lib/supabase/server'
+import { createClient, getAuthUser } from '@/lib/supabase/server'
 import BottomNav from '@/components/BottomNav'
 
 export default async function StoreLayout({
@@ -7,11 +7,11 @@ export default async function StoreLayout({
 }: {
   children: React.ReactNode
 }) {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const user = await getAuthUser()
 
   let cartCount = 0
   if (user) {
+    const supabase = await createClient()
     const { data: cart } = await supabase
       .from('carts')
       .select('id')
@@ -29,7 +29,7 @@ export default async function StoreLayout({
 
   return (
     <div className="min-h-screen pb-20">
-      <main>{children}</main>
+      <main className="animate-page-in">{children}</main>
       <BottomNav cartCount={cartCount} isLoggedIn={!!user} />
     </div>
   )

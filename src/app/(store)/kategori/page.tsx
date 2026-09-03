@@ -1,10 +1,12 @@
 // @ts-nocheck
-import { createClient } from '@/lib/supabase/server'
+import { createPublicClient } from '@/lib/supabase/server'
 import ProductCard from '@/components/ProductCard'
 import CategoryFilter from '@/components/CategoryFilter'
 import SearchBar from '@/components/SearchBar'
 import { EmptyState } from '@/components/ui'
 import { Package } from 'lucide-react'
+
+export const revalidate = 30
 
 interface KategoriPageProps {
   searchParams: Promise<{ q?: string; kategori?: string }>
@@ -12,32 +14,25 @@ interface KategoriPageProps {
 
 export default async function KategoriPage({ searchParams }: KategoriPageProps) {
   const { q, kategori } = await searchParams
-  const supabase = await createClient()
+  const supabase = createPublicClient()
 
-  const [{ data: categories }, productsResult] = await Promise.all([
-    supabase.from('categories').select('*').order('urutan'),
-    (async () => {
-      let query = supabase
-        .from('products')
-        .select('*, categories(nama, slug)')
-        .eq('is_active', true)
-        .gt('stok', 0)
+  const { data: categories } = await supabase.from('categories').select('*').order('urutan')
 
-      if (q) query = query.ilike('nama', `%${q}%`)
-      if (kategori) {
-        const { data: cat } = await supabase
-          .from('categories')
-          .select('id')
-          .eq('slug', kategori)
-          .single()
-        if (cat) query = query.eq('category_id', cat.id)
-      }
+  let query = supabase
+    .from('products')
+    .select('*, categories(nama, slug)')
+    .eq('is_active', true)
+    .gt('stok', 0)
 
-      return query.order('nama')
-    })(),
-  ])
+  if (q) query = query.ilike('nama', `%${q}%`)
+  if (kategori && categories) {
+    const matchedCategory = categories.find((c) => c.slug === kategori)
+    if (matchedCategory) {
+      query = query.eq('category_id', matchedCategory.id)
+    }
+  }
 
-  const products = productsResult.data
+  const { data: products } = await query.order('nama')
 
   return (
     <div className="max-w-lg mx-auto pb-28">

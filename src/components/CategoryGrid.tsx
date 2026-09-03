@@ -31,6 +31,7 @@ export default function CategoryGrid({ categories }: CategoryGridProps) {
         <Link
           key={cat.id}
           href={`/kategori?kategori=${cat.slug}`}
+          prefetch={true}
           className="btn-3d-card flex flex-col items-center gap-1.5 bg-white border rounded-2xl p-3 hover:border-green-300 hover:bg-green-50 transition-all text-center"
         >
           <div className={`w-12 h-12 rounded-2xl chip-3d ${categoryChipStyles[cat.slug] ?? 'chip-3d-accent'} text-2xl shadow-sm mb-0.5`}>

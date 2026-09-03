@@ -52,7 +52,7 @@ export default async function PesananPage() {
         ) : (
           <div className="glass divide-y divide-border overflow-hidden rounded-xl">
             {orders.map((order) => (
-              <Link key={order.id} href={`/pesanan/${order.id}`} className="block press">
+              <Link key={order.id} href={`/pesanan/${order.id}`} prefetch={true} className="block press">
                 <div className="p-4 hover:bg-zinc-50/50 transition-colors">
                   <div className="flex items-start justify-between mb-1.5">
                     <div>

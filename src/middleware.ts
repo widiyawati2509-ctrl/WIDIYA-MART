@@ -2,6 +2,33 @@ import { NextResponse, type NextRequest } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
 
 export async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl
+
+  const isAuthRequired =
+    pathname.startsWith('/pesanan') ||
+    pathname.startsWith('/profil') ||
+    pathname.startsWith('/admin')
+  const isAuthPage = pathname === '/masuk' || pathname === '/daftar'
+
+  // Fast path for public routes: no auth check needed, respond in < 1ms
+  if (!isAuthRequired && !isAuthPage) {
+    return NextResponse.next({ request })
+  }
+
+  // Fast path: check cookie existence before triggering external Supabase calls
+  const allCookies = request.cookies.getAll()
+  const hasAuthCookie = allCookies.some(
+    (c) => c.name.startsWith('sb-') && c.name.includes('-auth-token')
+  )
+
+  if (!hasAuthCookie) {
+    if (isAuthRequired) {
+      return NextResponse.redirect(new URL('/masuk', request.url))
+    }
+    return NextResponse.next({ request })
+  }
+
+  // User has session cookie, verify auth status
   let supabaseResponse = NextResponse.next({ request })
 
   const supabase = createServerClient(
@@ -29,25 +56,13 @@ export async function middleware(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
-  const { pathname } = request.nextUrl
-
   // Protect auth-required routes
-  if (pathname.startsWith('/pesanan') || pathname.startsWith('/profil')) {
-    if (!user) {
-      return NextResponse.redirect(new URL('/masuk', request.url))
-    }
-  }
-
-  // Protect admin routes
-  if (pathname.startsWith('/admin')) {
-    if (!user) {
-      return NextResponse.redirect(new URL('/masuk', request.url))
-    }
-    // Role check handled in layout
+  if (isAuthRequired && !user) {
+    return NextResponse.redirect(new URL('/masuk', request.url))
   }
 
   // Redirect logged-in users away from auth pages
-  if ((pathname === '/masuk' || pathname === '/daftar') && user) {
+  if (isAuthPage && user) {
     return NextResponse.redirect(new URL('/', request.url))
   }
 

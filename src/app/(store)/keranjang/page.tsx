@@ -82,6 +82,7 @@ export default async function KeranjangPage() {
             <div className="fixed inset-x-4 bottom-20 max-w-lg mx-auto z-40">
               <Link
                 href="/checkout"
+                prefetch={true}
                 className={`w-full flex items-center justify-between ${buttonClass({
                   variant: 'primary',
                   size: 'md',

@@ -35,6 +35,7 @@ export default function BottomNav({ cartCount, isLoggedIn }: BottomNavProps) {
             <Link
               key={href}
               href={resolvedHref}
+              prefetch={true}
               className="flex-1 flex flex-col items-center justify-center py-1 transition-all active:scale-95"
             >
               <div className="relative">

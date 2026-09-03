@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { createClient } from '@/lib/supabase/server'
+import { createPublicClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import { formatRupiah } from '@/lib/utils'
@@ -7,19 +7,28 @@ import AddToCartButton from '@/components/AddToCartButton'
 import { ChevronLeft, Package } from 'lucide-react'
 import Link from 'next/link'
 import type { Metadata } from 'next'
+import { cache } from 'react'
+
+export const revalidate = 60
 
 interface ProductPageProps {
   params: Promise<{ slug: string }>
 }
 
+const getProduct = cache(async (slug: string) => {
+  const supabase = createPublicClient()
+  const { data } = await supabase
+    .from('products')
+    .select('*, categories(nama, slug)')
+    .eq('slug', slug)
+    .eq('is_active', true)
+    .single()
+  return data
+})
+
 export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
   const { slug } = await params
-  const supabase = await createClient()
-  const { data: product } = await supabase
-    .from('products')
-    .select('nama, deskripsi')
-    .eq('slug', slug)
-    .single()
+  const product = await getProduct(slug)
 
   if (!product) return { title: 'Produk tidak ditemukan' }
   return {
@@ -30,17 +39,11 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
 
 export default async function ProductPage({ params }: ProductPageProps) {
   const { slug } = await params
-  const supabase = await createClient()
-
-  const { data: product } = await supabase
-    .from('products')
-    .select('*, categories(nama, slug)')
-    .eq('slug', slug)
-    .eq('is_active', true)
-    .single()
+  const product = await getProduct(slug)
 
   if (!product) notFound()
 
+  const supabase = createPublicClient()
   const { data: related } = await supabase
     .from('products')
     .select('*')

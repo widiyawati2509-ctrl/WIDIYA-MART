@@ -14,7 +14,7 @@ export default function ProductCard({ product }: ProductCardProps) {
   const outOfStock = product.stok === 0
 
   return (
-    <Link href={`/produk/${product.slug}`} className="block group press">
+    <Link href={`/produk/${product.slug}`} prefetch={true} className="block group press">
       <div
         className={`glass rounded-xl overflow-hidden transition-all duration-200 ${
           outOfStock ? 'opacity-60' : ''
