@@ -28,18 +28,23 @@ export async function createProduct(formData: FormData): Promise<void> {
 
   let image_url: string | null = null
   const imageFile = formData.get('image') as File | null
-  if (imageFile && imageFile.size > 0) {
-    const ext = imageFile.name.split('.').pop()
-    const path = `${slug}.${ext}`
-    const { error: uploadError } = await supabase.storage
-      .from('products')
-      .upload(path, imageFile, { upsert: true })
+  const ALLOWED_MIME = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg']
+  const MAX_FILE_SIZE = 5 * 1024 * 1024 // 5MB
 
-    if (!uploadError) {
-      const { data: urlData } = supabase.storage
+  if (imageFile && imageFile.size > 0) {
+    if (imageFile.size <= MAX_FILE_SIZE && ALLOWED_MIME.includes(imageFile.type)) {
+      const ext = imageFile.name.split('.').pop()?.toLowerCase() || 'jpg'
+      const path = `${slug}.${ext}`
+      const { error: uploadError } = await supabase.storage
         .from('products')
-        .getPublicUrl(path)
-      image_url = urlData.publicUrl
+        .upload(path, imageFile, { upsert: true })
+
+      if (!uploadError) {
+        const { data: urlData } = supabase.storage
+          .from('products')
+          .getPublicUrl(path)
+        image_url = urlData.publicUrl
+      }
     }
   }
 
