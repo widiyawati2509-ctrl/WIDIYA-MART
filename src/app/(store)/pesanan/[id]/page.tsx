@@ -5,6 +5,7 @@ import { formatRupiah, getOrderStatusLabel, formatWhatsAppUrl } from '@/lib/util
 import { ChevronLeft, CheckCircle, Clock, MapPin, Phone } from 'lucide-react'
 import Link from 'next/link'
 import PrintReceiptButton from '@/components/PrintReceiptButton'
+import DeleteOrderButton from '@/components/admin/DeleteOrderButton'
 
 interface OrderDetailPageProps {
   params: Promise<{ id: string }>
@@ -159,6 +160,14 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
               {formatRupiah(order.total)}
             </span>
           </div>
+        </div>
+
+        <div className="pt-2">
+          <DeleteOrderButton
+            orderId={order.id}
+            orderNumber={order.id.slice(0, 8).toUpperCase()}
+            redirectTo="/pesanan"
+          />
         </div>
 
         <p className="text-[11px] text-[var(--ink-soft)] text-center font-medium">

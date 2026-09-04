@@ -6,6 +6,7 @@ import { updateOrderStatus } from '@/lib/actions/orders'
 import { ChevronLeft } from 'lucide-react'
 import Link from 'next/link'
 import PrintReceiptButton from '@/components/PrintReceiptButton'
+import DeleteOrderButton from '@/components/admin/DeleteOrderButton'
 
 interface AdminOrderDetailProps {
   params: Promise<{ id: string }>
@@ -109,6 +110,7 @@ export default async function AdminOrderDetailPage({ params }: AdminOrderDetailP
                 )
               })}
             </div>
+            <DeleteOrderButton orderId={order.id} orderNumber={order.id.slice(0, 8).toUpperCase()} />
           </div>
         </div>
 
