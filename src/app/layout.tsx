@@ -13,19 +13,29 @@ export const viewport: Viewport = {
 }
 
 export const metadata: Metadata = {
+  applicationName: 'Widiya Mart',
   title: {
     default: 'Widiya Mart',
     template: '%s | Widiya Mart',
   },
   description: 'Belanja kebutuhan sehari-hari di Widiya Mart. Pesan online, ambil di toko, bayar COD.',
+  manifest: '/manifest.webmanifest',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'Widiya Mart',
+  },
   icons: {
     icon: [
       { url: '/favicon.ico', sizes: '32x32' },
+      { url: '/icon-192.png', sizes: '192x192', type: 'image/png' },
       { url: '/icon.png', sizes: '512x512', type: 'image/png' },
     ],
     apple: [
       { url: '/apple-icon.png', sizes: '180x180', type: 'image/png' },
+      { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
     ],
+    shortcut: ['/icon.png'],
   },
 }
 

@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import { formatRupiah } from '@/lib/utils'
 import AddToCartButton from '@/components/AddToCartButton'
+import ProductDetailInteractive from '@/components/ProductDetailInteractive'
 import ProductCard from '@/components/ProductCard'
 import { ChevronLeft, Package } from 'lucide-react'
 import Link from 'next/link'
@@ -90,39 +91,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
         )}
       </div>
 
-      {/* Info Card */}
-      <div className="mx-4 mt-3 card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[20px] p-4 shadow-3d">
-        {product.categories && (
-          <Link
-            href={`/kategori?kategori=${product.categories.slug}`}
-            className="inline-block bg-[var(--accent-bg)] text-[var(--accent-2)] text-[10.5px] font-bold px-2.5 py-0.5 rounded-full mb-2"
-          >
-            {product.categories.nama}
-          </Link>
-        )}
-        <h1 className="text-base font-sora font-bold text-[var(--ink)] leading-snug mb-1">
-          {product.nama}
-        </h1>
-        <p className="font-sora font-bold text-2xl text-[var(--accent-2)] mb-2 tabular-nums">
-          {formatRupiah(product.harga)}
-        </p>
-        <p className="text-xs text-[var(--ink-soft)] font-medium">
-          Stok:{' '}
-          <span className={product.stok <= 5 ? 'text-[var(--danger)] font-bold' : 'text-[var(--ink)] font-semibold'}>
-            {product.stok} tersisa
-          </span>
-        </p>
-      </div>
-
-      {/* Description */}
-      {product.deskripsi && (
-        <div className="mx-4 mt-3 card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[20px] p-4 shadow-3d">
-          <h2 className="font-sora font-bold text-sm text-[var(--ink)] mb-2">Deskripsi Produk</h2>
-          <p className="text-[var(--ink-soft)] text-xs leading-relaxed whitespace-pre-line font-inter">
-            {product.deskripsi}
-          </p>
-        </div>
-      )}
+      {/* Interactive Info Card, Variants, Description & Floating Cart */}
+      <ProductDetailInteractive product={product} />
 
       {/* Related Products */}
       {related && related.length > 0 && (
@@ -135,13 +105,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
           </div>
         </div>
       )}
-
-      {/* Floating Add to cart */}
-      <div className="fixed bottom-20 left-1/2 -translate-x-1/2 max-w-[480px] w-full px-4 z-40">
-        <div className="bg-[var(--paper)]/95 backdrop-blur-md p-2.5 rounded-[20px] border border-[rgba(232,214,205,0.9)] shadow-[0_10px_25px_-5px_rgba(232,85,33,0.15)]">
-          <AddToCartButton productId={product.id} disabled={outOfStock} />
-        </div>
-      </div>
     </div>
   )
 }

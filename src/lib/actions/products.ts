@@ -4,7 +4,7 @@
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 import { productSchema } from '@/lib/validations'
-import { slugify } from '@/lib/utils'
+import { slugify, serializeProductVariants } from '@/lib/utils'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type SupabaseClient = any
@@ -48,10 +48,23 @@ export async function createProduct(formData: FormData): Promise<void> {
     }
   }
 
+  const variantsJson = formData.get('variants') as string | null
+  let finalDeskripsi = parsed.data.deskripsi ?? ''
+  if (variantsJson) {
+    try {
+      const parsedVariants = JSON.parse(variantsJson)
+      if (Array.isArray(parsedVariants)) {
+        finalDeskripsi = serializeProductVariants(finalDeskripsi, parsedVariants)
+      }
+    } catch {
+      // fallback
+    }
+  }
+
   await supabase.from('products').insert({
     nama: parsed.data.nama,
     slug,
-    deskripsi: parsed.data.deskripsi,
+    deskripsi: finalDeskripsi,
     harga: parsed.data.harga,
     stok: parsed.data.stok,
     category_id: parsed.data.category_id ?? null,
@@ -95,9 +108,22 @@ export async function updateProduct(id: string, formData: FormData): Promise<voi
     }
   }
 
+  const variantsJson = formData.get('variants') as string | null
+  let finalDeskripsi = parsed.data.deskripsi ?? ''
+  if (variantsJson) {
+    try {
+      const parsedVariants = JSON.parse(variantsJson)
+      if (Array.isArray(parsedVariants)) {
+        finalDeskripsi = serializeProductVariants(finalDeskripsi, parsedVariants)
+      }
+    } catch {
+      // fallback
+    }
+  }
+
   const updateData: Record<string, unknown> = {
     nama: parsed.data.nama,
-    deskripsi: parsed.data.deskripsi,
+    deskripsi: finalDeskripsi,
     harga: parsed.data.harga,
     stok: parsed.data.stok,
     category_id: parsed.data.category_id ?? null,

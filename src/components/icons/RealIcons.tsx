@@ -178,49 +178,276 @@ export function PerawatanRealIcon({ className = 'w-10 h-10' }: { className?: str
   )
 }
 
-// 6. Lainnya (Kotak Paket Belanja 3D dengan Pita)
-export function LainnyaRealIcon({ className = 'w-10 h-10' }: { className?: string }) {
+// 6. Skincare (Botol Pipet Serum Glowing 3D)
+export function SkincareRealIcon({ className = 'w-10 h-10' }: { className?: string }) {
   return (
     <svg viewBox="0 0 64 64" className={className} fill="none">
       <defs>
-        <linearGradient id="boxTop" x1="0" y1="0" x2="1" y2="1">
-          <stop stopColor="#FFCC80" />
-          <stop offset="1" stopColor="#FFA726" />
-        </linearGradient>
-        <linearGradient id="boxLeft" x1="0" y1="0" x2="1" y2="1">
-          <stop stopColor="#FB8C00" />
-          <stop offset="1" stopColor="#E65100" />
-        </linearGradient>
-        <linearGradient id="boxRight" x1="0" y1="0" x2="1" y2="1">
-          <stop stopColor="#F57C00" />
-          <stop offset="1" stopColor="#BF360C" />
+        <radialGradient id="serumBottle" cx="35%" cy="35%" r="70%">
+          <stop stopColor="#FCE4EC" />
+          <stop offset="0.4" stopColor="#F48FB1" />
+          <stop offset="0.8" stopColor="#EC407A" />
+          <stop offset="1" stopColor="#AD1457" />
+        </radialGradient>
+        <linearGradient id="dropperCap" x1="0" y1="0" x2="1" y2="1">
+          <stop stopColor="#FFE082" />
+          <stop offset="0.6" stopColor="#FFB300" />
+          <stop offset="1" stopColor="#FF8F00" />
         </linearGradient>
       </defs>
       {/* Shadow */}
-      <ellipse cx="32" cy="56" rx="22" ry="5" fill="#2B1810" opacity="0.16" />
-      {/* Isometric 3D Box Top */}
-      <polygon points="32,16 52,25 32,34 12,25" fill="url(#boxTop)" />
-      {/* Left Face */}
-      <polygon points="12,25 32,34 32,54 12,45" fill="url(#boxLeft)" />
-      {/* Right Face */}
-      <polygon points="32,34 52,25 52,45 32,54" fill="url(#boxRight)" />
-      {/* Tape & Ribbon */}
-      <polygon points="30,17 34,19 34,35 30,33" fill="#FFE082" />
-      <polygon points="20,21 24,23 44,14 40,12" fill="#FFE082" />
-      {/* Parcel Label */}
-      <polygon points="36,36 46,31 46,39 36,44" fill="#FFFFFF" opacity="0.9" />
-      <line x1="38" y1="36" x2="44" y2="33" stroke="#2B1810" strokeWidth="1" />
-      <line x1="38" y1="39" x2="44" y2="36" stroke="#2B1810" strokeWidth="1" />
+      <ellipse cx="32" cy="56" rx="18" ry="5" fill="#2B1810" opacity="0.16" />
+      {/* Dropper Pipette Top Rubber */}
+      <path d="M28 14 C28 10, 36 10, 36 14 L36 18 H28 Z" fill="#FFFFFF" />
+      {/* Rose Gold Collar */}
+      <rect x="25" y="18" width="14" height="6" rx="2" fill="url(#dropperCap)" />
+      {/* Glass Bottle Body */}
+      <rect x="20" y="24" width="24" height="30" rx="8" fill="url(#serumBottle)" />
+      {/* Glossy Sheen */}
+      <path d="M24 28 L24 50" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" opacity="0.6" />
+      {/* Glass Glow Drop */}
+      <circle cx="48" cy="20" r="4.5" fill="#F8BBD0" stroke="#FFFFFF" strokeWidth="1.5" />
+      <path d="M48 13 L45 19 H51 Z" fill="#F8BBD0" />
+      <circle cx="47" cy="18" r="1.5" fill="#FFFFFF" />
+      {/* Sparkle */}
+      <path d="M40 38 L42 42 L46 44 L42 46 L40 50 L38 46 L34 44 L38 42 Z" fill="#FFFFFF" opacity="0.9" />
     </svg>
   )
 }
 
-// Map helper
+// 7. Peralatan Dapur (Panci Memasak 3D + Spatula)
+export function PeralatanDapurRealIcon({ className = 'w-10 h-10' }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 64 64" className={className} fill="none">
+      <defs>
+        <linearGradient id="potGrad" x1="0" y1="0" x2="1" y2="1">
+          <stop stopColor="#FF8A65" />
+          <stop offset="0.5" stopColor="#E64A19" />
+          <stop offset="1" stopColor="#BF360C" />
+        </linearGradient>
+        <linearGradient id="spatulaGrad" x1="0" y1="0" x2="1" y2="1">
+          <stop stopColor="#FFE082" />
+          <stop offset="1" stopColor="#FFA000" />
+        </linearGradient>
+      </defs>
+      {/* Shadow */}
+      <ellipse cx="32" cy="56" rx="22" ry="5" fill="#2B1810" opacity="0.16" />
+      {/* Cooking Pot Base */}
+      <path d="M12 28 C12 28, 14 52, 32 52 C50 52, 52 28, 52 28 Z" fill="url(#potGrad)" />
+      {/* Pot Rim */}
+      <ellipse cx="32" cy="28" rx="20" ry="5" fill="#FFAB91" />
+      <ellipse cx="32" cy="28" rx="18" ry="4" fill="#D84315" />
+      {/* Handles */}
+      <path d="M8 29 C5 29, 5 35, 12 36" stroke="#BF360C" strokeWidth="3" strokeLinecap="round" fill="none" />
+      <path d="M56 29 C59 29, 59 35, 52 36" stroke="#BF360C" strokeWidth="3" strokeLinecap="round" fill="none" />
+      {/* Pot highlight sheen */}
+      <path d="M18 34 C20 46, 26 50, 32 50" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" opacity="0.5" />
+      {/* Wooden Spatula tilted */}
+      <path d="M42 10 L48 14 L36 32 L32 29 Z" fill="url(#spatulaGrad)" />
+      <rect x="42" y="9" width="10" height="7" rx="2" transform="rotate(35 42 9)" fill="#FFB74D" />
+      {/* Delicious steam vapors */}
+      <path d="M26 22 Q24 16 28 12" stroke="#FFFFFF" strokeWidth="2" strokeLinecap="round" opacity="0.6" />
+      <path d="M33 20 Q36 14 32 10" stroke="#FFFFFF" strokeWidth="2" strokeLinecap="round" opacity="0.7" />
+    </svg>
+  )
+}
+
+// 8. Peralatan Mandi (Dispenser Sabun & Spons Busa 3D)
+export function PeralatanMandiRealIcon({ className = 'w-10 h-10' }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 64 64" className={className} fill="none">
+      <defs>
+        <linearGradient id="bathGrad" x1="0" y1="0" x2="1" y2="1">
+          <stop stopColor="#4DD0E1" />
+          <stop offset="0.5" stopColor="#00ACC1" />
+          <stop offset="1" stopColor="#006064" />
+        </linearGradient>
+        <radialGradient id="bathPuff" cx="35%" cy="35%" r="65%">
+          <stop stopColor="#E1F5FE" />
+          <stop offset="0.6" stopColor="#81D4FA" />
+          <stop offset="1" stopColor="#0288D1" />
+        </radialGradient>
+      </defs>
+      {/* Shadow */}
+      <ellipse cx="32" cy="56" rx="20" ry="5" fill="#2B1810" opacity="0.16" />
+      {/* Dispenser Body */}
+      <rect x="14" y="24" width="22" height="30" rx="7" fill="url(#bathGrad)" />
+      {/* Pump Cap */}
+      <rect x="22" y="19" width="6" height="5" fill="#CFD8DC" />
+      <path d="M18 16 H30 L28 19 H20 Z" fill="#ECEFF1" />
+      <path d="M18 16 L14 18" stroke="#ECEFF1" strokeWidth="2.5" strokeLinecap="round" />
+      {/* Dispenser Sheen */}
+      <rect x="17" y="28" width="2" height="22" rx="1" fill="#FFFFFF" opacity="0.5" />
+      {/* Fluffy Bath Sponge / Loofah in front */}
+      <circle cx="44" cy="42" r="13" fill="url(#bathPuff)" />
+      <circle cx="44" cy="42" r="10" fill="#B3E5FC" opacity="0.7" />
+      {/* Floating Bubbles */}
+      <circle cx="46" cy="22" r="5" fill="#E0F7FA" stroke="#4DD0E1" strokeWidth="1.5" />
+      <circle cx="53" cy="30" r="3.5" fill="#E0F7FA" stroke="#4DD0E1" strokeWidth="1" />
+      <circle cx="39" cy="16" r="2.5" fill="#E0F7FA" stroke="#4DD0E1" strokeWidth="1" />
+    </svg>
+  )
+}
+
+// 9. Peralatan Bayi (Botol Susu Bayi Lucu 3D)
+export function PeralatanBayiRealIcon({ className = 'w-10 h-10' }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 64 64" className={className} fill="none">
+      <defs>
+        <linearGradient id="bottleGrad" x1="0" y1="0" x2="1" y2="1">
+          <stop stopColor="#FFF9C4" />
+          <stop offset="0.4" stopColor="#FFF176" />
+          <stop offset="0.8" stopColor="#FFD54F" />
+          <stop offset="1" stopColor="#FFB300" />
+        </linearGradient>
+        <linearGradient id="nippleGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop stopColor="#FFE0B2" />
+          <stop offset="1" stopColor="#FFB74D" />
+        </linearGradient>
+      </defs>
+      {/* Shadow */}
+      <ellipse cx="32" cy="56" rx="18" ry="5" fill="#2B1810" opacity="0.16" />
+      {/* Soft Silicone Nipple */}
+      <path d="M28 17 C28 11, 36 11, 36 17 Z" fill="url(#nippleGrad)" />
+      <rect x="29" y="16" width="6" height="2" rx="1" fill="#FFA726" />
+      {/* Ring Cap */}
+      <rect x="22" y="18" width="20" height="6" rx="3" fill="#81D4FA" />
+      {/* Baby Milk Bottle Body */}
+      <rect x="20" y="24" width="24" height="30" rx="8" fill="#FFFFFF" stroke="#E1F5FE" strokeWidth="1" />
+      {/* Milk Content inside */}
+      <path d="M21 34 C21 34, 26 36, 32 36 C38 36, 43 34, 43 34 L43 46 C43 50, 40 53, 36 53 L28 53 C24 53, 21 50, 21 46 Z" fill="url(#bottleGrad)" />
+      {/* Measurement lines */}
+      <line x1="24" y1="36" x2="28" y2="36" stroke="#90CAF9" strokeWidth="1.5" strokeLinecap="round" />
+      <line x1="24" y1="41" x2="28" y2="41" stroke="#90CAF9" strokeWidth="1.5" strokeLinecap="round" />
+      <line x1="24" y1="46" x2="28" y2="46" stroke="#90CAF9" strokeWidth="1.5" strokeLinecap="round" />
+      {/* Little Cute Heart */}
+      <path d="M34 43 C33 41, 31 42, 31 43.5 C31 45, 34 47, 34 47 C34 47, 37 45, 37 43.5 C37 42, 35 41, 34 43 Z" fill="#F06292" />
+      {/* Bottle shine */}
+      <rect x="22" y="26" width="2" height="24" rx="1" fill="#FFFFFF" opacity="0.8" />
+    </svg>
+  )
+}
+
+// 10. Aksesoris (Jepit Pita Rambut Cantik 3D)
+export function AksesorisRealIcon({ className = 'w-10 h-10' }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 64 64" className={className} fill="none">
+      <defs>
+        <radialGradient id="ribbonGrad" cx="40%" cy="30%" r="70%">
+          <stop stopColor="#FF8A80" />
+          <stop offset="0.5" stopColor="#FF5252" />
+          <stop offset="1" stopColor="#D50000" />
+        </radialGradient>
+        <radialGradient id="pearlCenter" cx="35%" cy="35%" r="65%">
+          <stop stopColor="#FFFFFF" />
+          <stop offset="0.6" stopColor="#FFF9C4" />
+          <stop offset="1" stopColor="#FFD54F" />
+        </radialGradient>
+      </defs>
+      {/* Shadow */}
+      <ellipse cx="32" cy="54" rx="22" ry="5" fill="#2B1810" opacity="0.16" />
+      {/* Left Bow Loop */}
+      <path d="M32 30 C20 18, 10 24, 12 36 C14 46, 26 38, 32 34 Z" fill="url(#ribbonGrad)" />
+      <path d="M16 26 C14 32, 20 36, 26 33" stroke="#FFCDD2" strokeWidth="1.5" strokeLinecap="round" opacity="0.6" />
+      {/* Right Bow Loop */}
+      <path d="M32 30 C44 18, 54 24, 52 36 C50 46, 38 38, 32 34 Z" fill="url(#ribbonGrad)" />
+      <path d="M48 26 C50 32, 44 36, 38 33" stroke="#FFCDD2" strokeWidth="1.5" strokeLinecap="round" opacity="0.6" />
+      {/* Ribbon Tails */}
+      <path d="M29 34 L18 52 L26 50 L31 36 Z" fill="#D50000" />
+      <path d="M35 34 L46 52 L38 50 L33 36 Z" fill="#D50000" />
+      {/* Center Sparkling Pearl Knot */}
+      <circle cx="32" cy="32" r="7" fill="url(#pearlCenter)" />
+      <circle cx="30" cy="30" r="2" fill="#FFFFFF" />
+      {/* Glistening Stars */}
+      <path d="M50 16 L51.5 20 L55.5 21.5 L51.5 23 L50 27 L48.5 23 L44.5 21.5 L48.5 20 Z" fill="#FFD700" />
+      <circle cx="14" cy="18" r="1.5" fill="#FFD700" />
+    </svg>
+  )
+}
+
+// 11. Dekorasi (Pot Tanaman Hias Estetik 3D)
+export function DekorasiRealIcon({ className = 'w-10 h-10' }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 64 64" className={className} fill="none">
+      <defs>
+        <linearGradient id="potClay" x1="0" y1="0" x2="1" y2="1">
+          <stop stopColor="#FFAB91" />
+          <stop offset="0.6" stopColor="#FF7043" />
+          <stop offset="1" stopColor="#D84315" />
+        </linearGradient>
+        <radialGradient id="leafGreen" cx="35%" cy="30%" r="70%">
+          <stop stopColor="#A5D6A7" />
+          <stop offset="0.5" stopColor="#66BB6A" />
+          <stop offset="1" stopColor="#2E7D32" />
+        </radialGradient>
+      </defs>
+      {/* Shadow */}
+      <ellipse cx="32" cy="56" rx="18" ry="5" fill="#2B1810" opacity="0.16" />
+      {/* Plant Pot */}
+      <polygon points="20,36 44,36 41,54 23,54" fill="url(#potClay)" />
+      <ellipse cx="32" cy="36" rx="12" ry="3.5" fill="#FFCCBC" />
+      {/* Pot Sheen */}
+      <path d="M24 38 L25 52" stroke="#FFFFFF" strokeWidth="2" strokeLinecap="round" opacity="0.5" />
+      {/* Lush Green Succulent / Plant Leaves */}
+      <path d="M32 36 C32 20, 24 12, 18 16 C16 26, 26 34, 32 36 Z" fill="url(#leafGreen)" />
+      <path d="M32 36 C32 20, 40 12, 46 16 C48 26, 38 34, 32 36 Z" fill="url(#leafGreen)" />
+      <path d="M32 36 C28 22, 32 10, 32 10 C32 10, 36 22, 32 36 Z" fill="#81C784" />
+      {/* Little Blossom */}
+      <circle cx="32" cy="18" r="3" fill="#F48FB1" />
+      <circle cx="32" cy="18" r="1.5" fill="#FFF59D" />
+    </svg>
+  )
+}
+
+// 12. Lainnya (Tas Belanja Toko Hangat 3D)
+export function LainnyaRealIcon({ className = 'w-10 h-10' }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 64 64" className={className} fill="none">
+      <defs>
+        <linearGradient id="toteBag" x1="0" y1="0" x2="1" y2="1">
+          <stop stopColor="#FFAB91" />
+          <stop offset="0.5" stopColor="#FF7043" />
+          <stop offset="1" stopColor="#E64A19" />
+        </linearGradient>
+      </defs>
+      {/* Shadow */}
+      <ellipse cx="32" cy="56" rx="20" ry="5" fill="#2B1810" opacity="0.16" />
+      {/* Shopping Bag Body */}
+      <path d="M16 24 L20 53 C20 55, 44 55, 44 53 L48 24 Z" fill="url(#toteBag)" />
+      {/* Bag handles */}
+      <path d="M25 24 V16 C25 10, 39 10, 39 16 V24" stroke="#FFE0B2" strokeWidth="4" strokeLinecap="round" fill="none" />
+      {/* Front emblem / smile */}
+      <circle cx="32" cy="38" r="7" fill="#FFFFFF" opacity="0.25" />
+      <path d="M28 37 Q32 42 36 37" stroke="#FFFFFF" strokeWidth="2" strokeLinecap="round" fill="none" />
+      {/* Bag sheen */}
+      <path d="M20 28 L23 49" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" opacity="0.5" />
+      {/* Little items peeking out */}
+      <circle cx="28" cy="22" r="3.5" fill="#81C784" />
+      <rect x="33" y="19" width="5" height="6" rx="1.5" fill="#FFD54F" />
+    </svg>
+  )
+}
+
+// Comprehensive Category Icons Map covering all slugs and variations
 export const REAL_CATEGORY_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
   sembako: SembakoRealIcon,
   minuman: MinumanRealIcon,
+  susu: MinumanRealIcon,
   snack: SnackRealIcon,
+  camilan: SnackRealIcon,
   kebersihan: KebersihanRealIcon,
+  pembersih: KebersihanRealIcon,
   perawatan: PerawatanRealIcon,
+  skincare: SkincareRealIcon,
+  'peralatan-dapur': PeralatanDapurRealIcon,
+  dapur: PeralatanDapurRealIcon,
+  'peralatan-mandi': PeralatanMandiRealIcon,
+  'peraltan-mandi': PeralatanMandiRealIcon,
+  mandi: PeralatanMandiRealIcon,
+  'peralatan-bayi': PeralatanBayiRealIcon,
+  bayi: PeralatanBayiRealIcon,
+  aksesoris: AksesorisRealIcon,
+  dekorasi: DekorasiRealIcon,
   lainnya: LainnyaRealIcon,
 }
+

@@ -3,9 +3,9 @@
 
 import { useState } from 'react'
 import Image from 'next/image'
-import { formatRupiah } from '@/lib/utils'
+import { formatRupiah, parseProductVariants, type ProductVariant } from '@/lib/utils'
 import { updateProduct, deleteProduct } from '@/lib/actions/products'
-import { Package, Edit2, Trash2, X, Check } from 'lucide-react'
+import { Package, Edit2, Trash2, X, Check, Plus, Layers, AlertCircle } from 'lucide-react'
 import type { Product, Category } from '@/types/database'
 
 interface AdminProductListProps {
@@ -13,8 +13,319 @@ interface AdminProductListProps {
   categories: Category[]
 }
 
+function ProductItemRow({
+  product,
+  categories,
+  isEditing,
+  onStartEdit,
+  onCancelEdit,
+}: {
+  product: Product & { categories: { nama: string } | null }
+  categories: Category[]
+  isEditing: boolean
+  onStartEdit: () => void
+  onCancelEdit: () => void
+}) {
+  const { cleanDeskripsi, variants: initialVariants } = parseProductVariants(product.deskripsi)
+  const [variants, setVariants] = useState<ProductVariant[]>(initialVariants)
+
+  const handleAddVariant = () => {
+    setVariants((prev) => [...prev, { nama: '', harga: undefined, stok: undefined }])
+  }
+
+  const handleRemoveVariant = (idx: number) => {
+    setVariants((prev) => prev.filter((_, i) => i !== idx))
+  }
+
+  const handleUpdateVariant = (
+    idx: number,
+    field: keyof ProductVariant,
+    value: string | number | undefined
+  ) => {
+    setVariants((prev) => {
+      const updated = [...prev]
+      updated[idx] = { ...updated[idx], [field]: value }
+      return updated
+    })
+  }
+
+  if (isEditing) {
+    return (
+      <form
+        action={async (fd) => {
+          await updateProduct(product.id, fd)
+          onCancelEdit()
+        }}
+        encType="multipart/form-data"
+        className="space-y-4 bg-[var(--paper)]/50 p-4 rounded-2xl border border-[var(--line)]"
+      >
+        <div className="flex items-center justify-between pb-2 border-b border-[var(--line)]">
+          <span className="text-xs font-sora font-bold text-[var(--ink)] flex items-center gap-1.5">
+            <Edit2 className="w-3.5 h-3.5 text-[var(--accent)]" /> Edit Informasi Produk
+          </span>
+          <span className="text-[11px] text-[var(--ink-soft)]">ID: {product.id.slice(0, 8)}...</span>
+        </div>
+
+        <div className="grid grid-cols-2 gap-3">
+          <div className="col-span-2">
+            <label className="text-[11px] font-bold text-[var(--ink)] block mb-1">Nama Produk *</label>
+            <input
+              type="text"
+              name="nama"
+              defaultValue={product.nama}
+              required
+              className="w-full border rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent)] bg-white font-medium"
+            />
+          </div>
+
+          <div>
+            <label className="text-[11px] font-bold text-[var(--ink)] block mb-1">Harga Dasar (Rp) *</label>
+            <input
+              type="number"
+              name="harga"
+              defaultValue={product.harga}
+              min="0"
+              required
+              className="w-full border rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent)] bg-white font-sora font-semibold"
+              placeholder="Harga"
+            />
+          </div>
+
+          <div>
+            <label className="text-[11px] font-bold text-[var(--ink)] block mb-1">Total Stok *</label>
+            <input
+              type="number"
+              name="stok"
+              defaultValue={product.stok}
+              min="0"
+              required
+              className="w-full border rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent)] bg-white font-semibold"
+              placeholder="Stok"
+            />
+          </div>
+
+          <div>
+            <label className="text-[11px] font-bold text-[var(--ink)] block mb-1">Kategori</label>
+            <select
+              name="category_id"
+              defaultValue={product.category_id ?? ''}
+              className="w-full border rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent)] bg-white"
+            >
+              <option value="">-- Tanpa Kategori --</option>
+              {categories.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.nama}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="text-[11px] font-bold text-[var(--ink)] block mb-1">Status Penjualan</label>
+            <select
+              name="is_active"
+              defaultValue={product.is_active ? 'true' : 'false'}
+              className="w-full border rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent)] bg-white"
+            >
+              <option value="true">Aktif (Tampil di Toko)</option>
+              <option value="false">Nonaktif (Disembunyikan)</option>
+            </select>
+          </div>
+
+          <div className="col-span-2">
+            <label className="text-[11px] font-bold text-[var(--ink)] block mb-1">Ganti Foto Produk (Opsional)</label>
+            <input
+              type="file"
+              name="image"
+              accept="image/*"
+              className="w-full text-sm text-[var(--ink-soft)] file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-[var(--accent-bg)] file:text-[var(--accent-2)] cursor-pointer"
+            />
+          </div>
+
+          <div className="col-span-2">
+            <label className="text-[11px] font-bold text-[var(--ink)] block mb-1">Deskripsi Produk</label>
+            <textarea
+              name="deskripsi"
+              defaultValue={cleanDeskripsi}
+              rows={2}
+              className="w-full border rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent)] resize-none bg-white font-inter"
+              placeholder="Deskripsi produk..."
+            />
+          </div>
+
+          {/* Opsi Tambah Varian Produk */}
+          <div className="col-span-2 bg-[var(--paper)] border border-[rgba(232,214,205,0.9)] rounded-[18px] p-3.5 space-y-3 shadow-xs">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="w-7 h-7 rounded-xl bg-[var(--accent-bg)] text-[var(--accent-2)] flex items-center justify-center shadow-xs">
+                  <Layers className="w-4 h-4" />
+                </div>
+                <div>
+                  <h4 className="text-xs font-sora font-bold text-[var(--ink)]">
+                    Varian Produk (Opsi Pilihan)
+                  </h4>
+                  <p className="text-[10.5px] text-[var(--ink-soft)] font-medium">
+                    Tambahkan opsi seperti rasa, ukuran, atau kemasan
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={handleAddVariant}
+                className="btn-3d btn-3d-coral px-3 py-1.5 text-xs font-bold rounded-xl flex items-center gap-1 shadow-sm"
+              >
+                <Plus className="w-3.5 h-3.5" /> Tambah Varian
+              </button>
+            </div>
+
+            {variants.length === 0 ? (
+              <div className="text-center py-3 px-2 text-xs text-[var(--ink-soft)] bg-white/70 rounded-xl border border-dashed border-[var(--line)]">
+                Belum ada varian (produk tunggal). Klik <strong className="text-[var(--accent-2)]">&ldquo;+ Tambah Varian&rdquo;</strong> jika produk memiliki pilihan berbeda.
+              </div>
+            ) : (
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 px-1 text-[10px] font-bold text-[var(--ink-soft)] uppercase tracking-wider">
+                  <span className="flex-1">Nama Varian *</span>
+                  <span className="w-28">Harga (Opsional)</span>
+                  <span className="w-20">Stok</span>
+                  <span className="w-7 text-center">Aksi</span>
+                </div>
+                {variants.map((v, idx) => (
+                  <div key={idx} className="flex items-center gap-2 bg-white p-2 rounded-xl border border-[var(--line)] shadow-xs">
+                    <input
+                      type="text"
+                      placeholder="Misal: Refill 650g / Rasa Cokelat"
+                      value={v.nama}
+                      onChange={(e) => handleUpdateVariant(idx, 'nama', e.target.value)}
+                      required
+                      className="flex-1 border rounded-lg px-2.5 py-1.5 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
+                    />
+                    <input
+                      type="number"
+                      placeholder="Harga (Rp)"
+                      value={v.harga ?? ''}
+                      onChange={(e) =>
+                        handleUpdateVariant(idx, 'harga', e.target.value ? Number(e.target.value) : undefined)
+                      }
+                      className="w-28 border rounded-lg px-2.5 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-[var(--accent)] font-sora font-medium"
+                      title="Kosongkan jika harga sama dengan produk utama"
+                    />
+                    <input
+                      type="number"
+                      placeholder="Stok"
+                      value={v.stok ?? ''}
+                      onChange={(e) =>
+                        handleUpdateVariant(idx, 'stok', e.target.value ? Number(e.target.value) : undefined)
+                      }
+                      className="w-20 border rounded-lg px-2.5 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-[var(--accent)] font-medium"
+                      title="Stok varian ini"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveVariant(idx)}
+                      className="w-7 h-7 flex items-center justify-center text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors"
+                      title="Hapus varian ini"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Hidden Input serializing variants */}
+            <input type="hidden" name="variants" value={JSON.stringify(variants)} />
+          </div>
+        </div>
+
+        <div className="flex gap-2 pt-2 border-t border-[var(--line)]">
+          <button
+            type="submit"
+            className="btn-3d btn-3d-coral px-4 py-2 rounded-xl text-xs font-sora font-bold flex items-center gap-1.5 shadow-sm"
+          >
+            <Check className="w-4 h-4" /> Simpan Perubahan
+          </button>
+          <button
+            type="button"
+            onClick={onCancelEdit}
+            className="btn-3d btn-3d-white px-4 py-2 rounded-xl text-xs font-sora font-bold text-[var(--ink-soft)] flex items-center gap-1.5"
+          >
+            <X className="w-4 h-4" /> Batal
+          </button>
+        </div>
+      </form>
+    )
+  }
+
+  return (
+    <div className="flex items-center gap-3">
+      <div className="relative w-12 h-12 rounded-xl bg-[var(--paper)] border border-[var(--line)] shrink-0 overflow-hidden shadow-xs">
+        {product.image_url ? (
+          <Image src={product.image_url} alt={product.nama} fill className="object-contain p-1" sizes="48px" />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-[var(--accent)]/40">
+            <Package className="w-5 h-5" />
+          </div>
+        )}
+      </div>
+
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-2 flex-wrap mb-0.5">
+          <p className="font-bold text-sm text-[var(--ink)] truncate">{product.nama}</p>
+          {!product.is_active && (
+            <span className="text-[10px] font-bold bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full shrink-0">
+              Nonaktif
+            </span>
+          )}
+          {initialVariants.length > 0 && (
+            <span className="text-[10px] font-bold bg-[var(--accent-bg)] text-[var(--accent-2)] px-2 py-0.5 rounded-full border border-[rgba(232,85,33,0.15)] flex items-center gap-1 shrink-0">
+              <Layers className="w-3 h-3" /> {initialVariants.length} Varian
+            </span>
+          )}
+        </div>
+
+        <p className="text-xs text-[var(--ink-soft)]">
+          {product.categories?.nama ?? 'Tanpa Kategori'} · Stok Total: {product.stok}
+        </p>
+
+        {initialVariants.length > 0 && (
+          <p className="text-[11px] text-[var(--ink-soft)] truncate font-medium mt-0.5">
+            Opsi: {initialVariants.map((v) => v.nama).join(' • ')}
+          </p>
+        )}
+
+        <p className="text-[var(--accent-2)] font-sora font-bold text-sm mt-0.5 tabular-nums">
+          {formatRupiah(product.harga)}
+        </p>
+      </div>
+
+      <div className="flex gap-1.5 shrink-0">
+        <button
+          onClick={onStartEdit}
+          className="btn-3d btn-3d-white p-2 text-blue-600 rounded-xl"
+          title="Edit Produk & Varian"
+        >
+          <Edit2 className="w-4 h-4" />
+        </button>
+        <form action={deleteProduct.bind(null, product.id)}>
+          <button
+            type="submit"
+            className="btn-3d btn-3d-white p-2 text-red-500 hover:text-red-600 rounded-xl"
+            title="Nonaktifkan Produk"
+            onClick={(e) => {
+              if (!confirm('Nonaktifkan produk ini?')) e.preventDefault()
+            }}
+          >
+            <Trash2 className="w-4 h-4" />
+          </button>
+        </form>
+      </div>
+    </div>
+  )
+}
+
 export default function AdminProductList({ products, categories }: AdminProductListProps) {
-  const [editId, setEditId] = useState<string | null>(null)
+  const [editingId, setEditingId] = useState<string | null>(null)
 
   if (products.length === 0) {
     return (
@@ -26,99 +337,21 @@ export default function AdminProductList({ products, categories }: AdminProductL
   }
 
   return (
-    <div className="bg-white border rounded-2xl overflow-hidden">
-      <div className="divide-y">
+    <div className="bg-white border rounded-2xl overflow-hidden shadow-xs">
+      <div className="divide-y divide-[var(--line)]">
         {products.map((product) => (
-          <div key={product.id} className="p-4">
-            {editId === product.id ? (
-              <form
-                action={async (fd) => {
-                  await updateProduct(product.id, fd)
-                  setEditId(null)
-                }}
-                encType="multipart/form-data"
-                className="space-y-3"
-              >
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="col-span-2">
-                    <input type="text" name="nama" defaultValue={product.nama} required
-                      className="w-full border rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500" />
-                  </div>
-                  <input type="number" name="harga" defaultValue={product.harga} min="0" required
-                    className="border rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500" placeholder="Harga" />
-                  <input type="number" name="stok" defaultValue={product.stok} min="0" required
-                    className="border rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500" placeholder="Stok" />
-                  <select name="category_id" defaultValue={product.category_id ?? ''}
-                    className="border rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500">
-                    <option value="">-- Tanpa Kategori --</option>
-                    {categories.map((c) => <option key={c.id} value={c.id}>{c.nama}</option>)}
-                  </select>
-                  <select name="is_active" defaultValue={product.is_active ? 'true' : 'false'}
-                    className="border rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500">
-                    <option value="true">Aktif</option>
-                    <option value="false">Nonaktif</option>
-                  </select>
-                  <div className="col-span-2">
-                    <input type="file" name="image" accept="image/*"
-                      className="w-full text-sm text-gray-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-sm file:bg-green-50 file:text-green-700" />
-                  </div>
-                  <textarea name="deskripsi" defaultValue={product.deskripsi ?? ''} rows={2}
-                    className="col-span-2 border rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 resize-none" placeholder="Deskripsi" />
-                </div>
-                <div className="flex gap-2">
-                  <button type="submit"
-                    className="btn-3d btn-3d-green px-4 py-2 rounded-xl text-sm font-medium gap-1.5">
-                    <Check className="w-4 h-4" /> Simpan
-                  </button>
-                  <button type="button" onClick={() => setEditId(null)}
-                    className="btn-3d btn-3d-white px-4 py-2 rounded-xl text-sm font-medium gap-1.5">
-                    <X className="w-4 h-4" /> Batal
-                  </button>
-                </div>
-              </form>
-            ) : (
-              <div className="flex items-center gap-3">
-                <div className="relative w-12 h-12 rounded-xl bg-gray-50 border shrink-0 overflow-hidden">
-                  {product.image_url ? (
-                    <Image src={product.image_url} alt={product.nama} fill className="object-contain p-1" sizes="48px" />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-gray-200">
-                      <Package className="w-5 h-5" />
-                    </div>
-                  )}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <p className="font-medium text-sm truncate">{product.nama}</p>
-                    {!product.is_active && (
-                      <span className="text-xs bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded-full shrink-0">Nonaktif</span>
-                    )}
-                  </div>
-                  <p className="text-xs text-gray-500">
-                    {product.categories?.nama ?? 'Tanpa Kategori'} · Stok: {product.stok}
-                  </p>
-                  <p className="text-green-600 font-bold text-sm">{formatRupiah(product.harga)}</p>
-                </div>
-                <div className="flex gap-1.5 shrink-0">
-                  <button onClick={() => setEditId(product.id)}
-                    className="btn-3d btn-3d-white p-2 text-blue-600 rounded-xl"
-                    title="Edit Produk">
-                    <Edit2 className="w-4 h-4" />
-                  </button>
-                  <form action={deleteProduct.bind(null, product.id)}>
-                    <button type="submit"
-                      className="btn-3d btn-3d-white p-2 text-red-500 hover:text-red-600 rounded-xl"
-                      title="Nonaktifkan Produk"
-                      onClick={(e) => { if (!confirm('Nonaktifkan produk ini?')) e.preventDefault() }}>
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </form>
-                </div>
-              </div>
-            )}
+          <div key={product.id} className="p-4 transition-colors">
+            <ProductItemRow
+              product={product}
+              categories={categories}
+              isEditing={editingId === product.id}
+              onStartEdit={() => setEditingId(product.id)}
+              onCancelEdit={() => setEditingId(null)}
+            />
           </div>
         ))}
       </div>
     </div>
   )
 }
+

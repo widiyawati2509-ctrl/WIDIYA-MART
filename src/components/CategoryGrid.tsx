@@ -11,7 +11,8 @@ export default function CategoryGrid({ categories }: CategoryGridProps) {
   return (
     <div className="grid grid-cols-3 gap-2.5">
       {categories.map((cat) => {
-        const IconComponent = REAL_CATEGORY_ICONS[cat.slug] ?? LainnyaRealIcon
+        const normalizedSlug = (cat.slug || '').toLowerCase().trim().replace(/_/g, '-')
+        const IconComponent = REAL_CATEGORY_ICONS[normalizedSlug] ?? LainnyaRealIcon
 
         return (
           <Link
