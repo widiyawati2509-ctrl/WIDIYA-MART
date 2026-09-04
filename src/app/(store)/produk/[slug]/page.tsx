@@ -1,12 +1,9 @@
 // @ts-nocheck
 import { createPublicClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
-import Image from 'next/image'
-import { formatRupiah } from '@/lib/utils'
-import AddToCartButton from '@/components/AddToCartButton'
 import ProductDetailInteractive from '@/components/ProductDetailInteractive'
 import ProductCard from '@/components/ProductCard'
-import { ChevronLeft, Package } from 'lucide-react'
+import { ChevronLeft } from 'lucide-react'
 import Link from 'next/link'
 import type { Metadata } from 'next'
 import { cache } from 'react'
@@ -46,15 +43,22 @@ export default async function ProductPage({ params }: ProductPageProps) {
   if (!product) notFound()
 
   const supabase = createPublicClient()
-  const { data: related } = await supabase
-    .from('products')
-    .select('*')
-    .eq('category_id', product.category_id ?? '')
-    .eq('is_active', true)
-    .neq('id', product.id)
-    .limit(4)
+  const [relatedResult, storeResult] = await Promise.all([
+    supabase
+      .from('products')
+      .select('*')
+      .eq('category_id', product.category_id ?? '')
+      .eq('is_active', true)
+      .neq('id', product.id)
+      .limit(4),
+    supabase
+      .from('store_info')
+      .select('whatsapp, no_hp_toko')
+      .single(),
+  ])
 
-  const outOfStock = product.stok === 0
+  const related = relatedResult.data
+  const storePhone = storeResult.data?.whatsapp || storeResult.data?.no_hp_toko || '087816182036'
 
   return (
     <div className="w-full pb-36">
@@ -66,33 +70,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
         <span className="font-sora font-bold text-sm text-[var(--ink)] truncate">{product.nama}</span>
       </div>
 
-      {/* Image Gallery */}
-      <div className="mx-4 mt-3 relative aspect-square rounded-[20px] bg-[var(--accent-bg)] border border-[rgba(232,214,205,0.9)] overflow-hidden shadow-[inset_0_2px_4px_rgba(232,85,33,0.05)]">
-        {product.image_url ? (
-          <Image
-            src={product.image_url}
-            alt={product.nama}
-            fill
-            className="object-contain p-6"
-            sizes="(max-width: 480px) 100vw, 480px"
-            priority
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center text-[var(--accent)]/40">
-            <Package className="w-20 h-20 stroke-[1.2]" />
-          </div>
-        )}
-        {outOfStock && (
-          <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-            <span className="bg-white text-[var(--ink)] font-bold px-4 py-1.5 rounded-full text-xs shadow-md">
-              Stok Habis
-            </span>
-          </div>
-        )}
-      </div>
-
-      {/* Interactive Info Card, Variants, Description & Floating Cart */}
-      <ProductDetailInteractive product={product} />
+      {/* Interactive Image Gallery, Variants, Description, WhatsApp & Floating Cart */}
+      <ProductDetailInteractive product={product} storePhone={storePhone} />
 
       {/* Related Products */}
       {related && related.length > 0 && (
