@@ -6,6 +6,7 @@ import SearchBar from '@/components/SearchBar'
 import PromoBannerCarousel from '@/components/PromoBannerCarousel'
 import { Section } from '@/components/ui'
 import Image from 'next/image'
+import Link from 'next/link'
 
 export const revalidate = 60
 
@@ -64,10 +65,20 @@ export default async function HomePage() {
         <PromoBannerCarousel />
       </div>
 
-      {/* Categories */}
+      {/* Categories (Minimalist Space-Saving Strip) */}
       {categories && categories.length > 0 && (
-        <div className="px-4 mb-5">
-          <Section title="Kategori Pilihan" description="Pilih kebutuhan harian kamu">
+        <div className="px-4 mb-4">
+          <Section
+            title="Kategori"
+            action={
+              <Link
+                href="/kategori"
+                className="text-xs font-sora font-bold text-[var(--accent-2)] hover:underline flex items-center gap-0.5"
+              >
+                Lihat Semua &rarr;
+              </Link>
+            }
+          >
             <CategoryGrid categories={categories} />
           </Section>
         </div>
