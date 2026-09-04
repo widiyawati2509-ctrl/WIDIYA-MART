@@ -5,6 +5,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { LogOut } from 'lucide-react'
 import { logout } from '@/lib/actions/auth'
+import AdminOrderNotifier from '@/components/admin/AdminOrderNotifier'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -106,6 +107,7 @@ export default async function AdminLayout({
         </div>
       </nav>
 
+      <AdminOrderNotifier />
       <main className="max-w-[480px] mx-auto p-4 pb-24">{children}</main>
     </div>
   )
