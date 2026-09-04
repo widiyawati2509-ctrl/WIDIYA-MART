@@ -1,10 +1,10 @@
 // @ts-nocheck
 'use client'
 
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { Bell, X, ArrowRight, Volume2, VolumeX } from 'lucide-react'
+import { Bell, X, ArrowRight, Volume2, VolumeX, Smartphone } from 'lucide-react'
 import Link from 'next/link'
 import { formatRupiah } from '@/lib/utils'
 
@@ -19,15 +19,18 @@ export default function AdminOrderNotifier() {
   const router = useRouter()
   const [notification, setNotification] = useState<NewOrderNotification | null>(null)
   const [soundEnabled, setSoundEnabled] = useState(true)
-  const [hasInteracted, setHasInteracted] = useState(false)
+  const [testSent, setTestSent] = useState(false)
   const audioCtxRef = useRef<AudioContext | null>(null)
+  const lastOrderIdRef = useRef<string | null>(null)
+  const initialLoadDoneRef = useRef(false)
 
-  // Initialize or resume AudioContext on first user tap/interaction
+  // Initialize or resume AudioContext on first tap
   useEffect(() => {
     const unlockAudio = () => {
-      setHasInteracted(true)
       if (!audioCtxRef.current) {
-        const AudioContextClass = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext
+        const AudioContextClass =
+          window.AudioContext ||
+          (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext
         if (AudioContextClass) {
           audioCtxRef.current = new AudioContextClass()
         }
@@ -47,11 +50,13 @@ export default function AdminOrderNotifier() {
     }
   }, [])
 
-  const playChime = () => {
+  const playChime = useCallback(() => {
     if (!soundEnabled) return
 
     try {
-      const AudioContextClass = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext
+      const AudioContextClass =
+        window.AudioContext ||
+        (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext
       if (!AudioContextClass) return
 
       const ctx = audioCtxRef.current || new AudioContextClass()
@@ -73,7 +78,7 @@ export default function AdminOrderNotifier() {
       }
 
       const now = ctx.currentTime
-      // Cash-register chime sequence: G5 -> C6 -> E6
+      // Cash-register chime: G5 -> C6 -> E6
       playNote(784.0, now, 0.35)
       playNote(1046.5, now + 0.15, 0.45)
       playNote(1318.5, now + 0.32, 0.65)
@@ -84,19 +89,77 @@ export default function AdminOrderNotifier() {
     // Vibrate phone if supported
     if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
       try {
-        navigator.vibrate([250, 100, 250])
+        navigator.vibrate([300, 100, 300])
       } catch {
         // ignore
       }
     }
-  }
+  }, [soundEnabled])
 
+  // Fire Android Native System Notification & In-app popup
+  const fireNotification = useCallback((order: NewOrderNotification) => {
+    setNotification(order)
+    playChime()
+    router.refresh()
+
+    const title = 'Pesanan Baru Masuk! 🎉'
+    const body = `Pesanan dari ${order.nama_pemesan || 'Pelanggan'} - Total ${formatRupiah(order.total || 0)}`
+
+    // 1. Android Native Javascript Interface (Triggers Notification Tray on Android Phone!)
+    if (typeof window !== 'undefined') {
+      const host = window as unknown as {
+        AndroidHost?: { showNotification: (t: string, m: string) => void }
+        Android?: { showNotification: (t: string, m: string) => void }
+      }
+
+      if (host.AndroidHost?.showNotification) {
+        try {
+          host.AndroidHost.showNotification(title, body)
+        } catch (e) {
+          console.error('AndroidHost notif error:', e)
+        }
+      } else if (host.Android?.showNotification) {
+        try {
+          host.Android.showNotification(title, body)
+        } catch (e) {
+          console.error('Android notif error:', e)
+        }
+      } else if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
+        try {
+          new Notification(title, { body })
+        } catch (e) {
+          console.error('Web notification error:', e)
+        }
+      }
+    }
+  }, [playChime, router])
+
+  // Real-time listener + Polling Fallback
   useEffect(() => {
     const supabase = createClient()
 
-    // Listen to real-time INSERTs on orders table
+    // 1. Initial fetch to establish baseline latest order ID
+    const initBaseline = async () => {
+      try {
+        const { data } = await supabase
+          .from('orders')
+          .select('id')
+          .order('created_at', { ascending: false })
+          .limit(1)
+        if (data && data.length > 0) {
+          lastOrderIdRef.current = data[0].id
+        }
+        initialLoadDoneRef.current = true
+      } catch (e) {
+        console.warn('Init baseline error:', e)
+        initialLoadDoneRef.current = true
+      }
+    }
+    initBaseline()
+
+    // 2. Supabase Realtime channel
     const channel = supabase
-      .channel('admin-order-notifier')
+      .channel('admin-realtime-orders')
       .on(
         'postgres_changes',
         {
@@ -106,22 +169,71 @@ export default function AdminOrderNotifier() {
         },
         (payload) => {
           const newOrder = payload.new as NewOrderNotification
-          setNotification(newOrder)
-          playChime()
-          router.refresh()
+          if (newOrder && newOrder.id !== lastOrderIdRef.current) {
+            lastOrderIdRef.current = newOrder.id
+            fireNotification(newOrder)
+          }
         }
       )
       .subscribe()
 
+    // 3. Fallback Poller every 10s (ensures notifications fire even if WebSocket is sleeping/throttled)
+    const poller = setInterval(async () => {
+      if (!initialLoadDoneRef.current) return
+      try {
+        const { data } = await supabase
+          .from('orders')
+          .select('id, nama_pemesan, total, created_at')
+          .order('created_at', { ascending: false })
+          .limit(1)
+
+        if (data && data.length > 0) {
+          const latest = data[0] as NewOrderNotification
+          if (lastOrderIdRef.current && latest.id !== lastOrderIdRef.current) {
+            lastOrderIdRef.current = latest.id
+            fireNotification(latest)
+          } else if (!lastOrderIdRef.current) {
+            lastOrderIdRef.current = latest.id
+          }
+        }
+      } catch {
+        // network silent retry
+      }
+    }, 10000)
+
     return () => {
       supabase.removeChannel(channel)
+      clearInterval(poller)
     }
-  }, [soundEnabled, router])
+  }, [fireNotification])
+
+  // Handler for manual test button
+  const handleTestNotification = () => {
+    setTestSent(true)
+    setTimeout(() => setTestSent(false), 3000)
+
+    fireNotification({
+      id: 'test-' + Date.now(),
+      nama_pemesan: 'Pembeli Percobaan (Tes)',
+      total: 75000,
+      created_at: new Date().toISOString(),
+    })
+  }
 
   return (
     <>
-      {/* Floating Audio Toggle in header/corner */}
-      <div className="fixed bottom-4 right-4 z-40">
+      {/* Floating Control Bar: Tes Notifikasi HP & Suara Bel */}
+      <div className="fixed bottom-4 right-4 z-40 flex items-center gap-2">
+        <button
+          onClick={handleTestNotification}
+          type="button"
+          className="press flex items-center gap-1.5 px-3 py-2 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-lg text-[11px] font-sora font-bold active:scale-95 transition-all"
+          title="Uji coba notifikasi di layar HP Anda"
+        >
+          <Smartphone className="w-3.5 h-3.5" />
+          <span>{testSent ? '✓ Terkirim!' : 'Tes Notif HP'}</span>
+        </button>
+
         <button
           onClick={() => {
             const next = !soundEnabled
@@ -130,7 +242,7 @@ export default function AdminOrderNotifier() {
           }}
           type="button"
           className="press flex items-center gap-1.5 px-3 py-2 rounded-full bg-white/95 border border-[rgba(232,214,205,0.9)] shadow-lg text-[11px] font-sora font-semibold text-[var(--ink)] backdrop-blur-md active:scale-95 transition-all"
-          title={soundEnabled ? 'Matikan suara notifikasi' : 'Aktifkan suara notifikasi'}
+          title={soundEnabled ? 'Matikan suara bel' : 'Aktifkan suara bel'}
         >
           {soundEnabled ? (
             <>
