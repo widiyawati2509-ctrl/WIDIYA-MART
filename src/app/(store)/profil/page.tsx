@@ -2,7 +2,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { logout } from '@/lib/actions/auth'
-import { User, ShoppingBag, ChevronRight, LogOut } from 'lucide-react'
+import { User, ShoppingBag, ChevronRight, LogOut, ShieldCheck } from 'lucide-react'
 import Link from 'next/link'
 import { Card, Button } from '@/components/ui'
 
@@ -115,7 +115,7 @@ export default async function ProfilPage() {
         </Card>
 
         {/* Toko Kita Grouped Menu List */}
-        <div className="menu-list">
+        <div className="menu-list space-y-1">
           <Link
             href="/pesanan"
             prefetch={true}
@@ -125,6 +125,18 @@ export default async function ProfilPage() {
               <ShoppingBag size={15} />
             </span>
             <span className="flex-1 font-semibold text-xs text-[var(--ink)]">Pesanan Saya</span>
+            <ChevronRight size={15} className="text-[var(--ink-soft)]" />
+          </Link>
+
+          <Link
+            href="/kebijakan-privasi"
+            prefetch={true}
+            className="item press"
+          >
+            <span className="w-7 h-7 rounded-[8px] bg-[var(--paper)] text-[var(--ink-soft)] flex items-center justify-center">
+              <ShieldCheck size={15} />
+            </span>
+            <span className="flex-1 font-semibold text-xs text-[var(--ink)]">Kebijakan Privasi</span>
             <ChevronRight size={15} className="text-[var(--ink-soft)]" />
           </Link>
         </div>
