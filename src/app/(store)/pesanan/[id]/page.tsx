@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { createClient } from '@/lib/supabase/server'
 import { notFound, redirect } from 'next/navigation'
-import { formatRupiah, getOrderStatusLabel } from '@/lib/utils'
+import { formatRupiah, getOrderStatusLabel, formatWhatsAppUrl } from '@/lib/utils'
 import { ChevronLeft, CheckCircle, Clock, MapPin, Phone } from 'lucide-react'
 import Link from 'next/link'
 import PrintReceiptButton from '@/components/PrintReceiptButton'
@@ -97,12 +97,15 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
               <Clock className="w-3.5 h-3.5 text-[var(--accent)]" /> {store.jam_operasional}
             </p>
           )}
-          {store?.whatsapp && (
+          {(store?.whatsapp || store?.no_hp_toko) && (
             <a
-              href={`https://wa.me/${store.whatsapp.replace(/\D/g, '')}`}
+              href={formatWhatsAppUrl(
+                store.whatsapp || store.no_hp_toko,
+                `Halo Admin Widiya Mart, saya ingin menanyakan pesanan #${order.id.slice(0, 8).toUpperCase()}`
+              )}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-2.5 inline-flex items-center gap-1.5 text-xs font-sora font-bold text-[var(--accent-2)] bg-[var(--accent-bg)] px-3 py-1.5 rounded-full"
+              className="mt-2.5 inline-flex items-center gap-1.5 text-xs font-sora font-bold text-[var(--accent-2)] bg-[var(--accent-bg)] px-3 py-1.5 rounded-full hover:brightness-95 transition-all active:scale-95"
             >
               <Phone className="w-3.5 h-3.5" /> Hubungi via WhatsApp
             </a>

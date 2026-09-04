@@ -45,6 +45,20 @@ export function getSupabaseImageUrl(
   return `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${bucket}/${path}`
 }
 
+export function formatWhatsAppUrl(phone: string, text?: string): string {
+  let cleaned = phone.replace(/\D/g, '')
+  if (cleaned.startsWith('0')) {
+    cleaned = '62' + cleaned.slice(1)
+  } else if (!cleaned.startsWith('62')) {
+    cleaned = '62' + cleaned
+  }
+  const baseUrl = `https://wa.me/${cleaned}`
+  if (text) {
+    return `${baseUrl}?text=${encodeURIComponent(text)}`
+  }
+  return baseUrl
+}
+
 export interface ProductVariant {
   id?: string
   nama: string
