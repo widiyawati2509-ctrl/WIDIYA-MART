@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="coral_primary">#FF6B35</color>
+    <color name="coral_primary_dark">#E55320</color>
+    <color name="coral_accent">#FF8C42</color>
+    <color name="bg_paper">#FAF0EB</color>
+    <color name="ink_main">#2B1810</color>
+    <color name="ink_soft">#7C6D66</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="divider">#E8D6CD</color>
+</resources>

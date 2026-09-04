@@ -11,13 +11,16 @@ export default function TopProgressBar() {
 
   useEffect(() => {
     // When route changes complete, fill and fade out
-    if (loading) {
+    const fillTimer = setTimeout(() => {
       setProgress(100)
-      const timer = setTimeout(() => {
-        setLoading(false)
-        setProgress(0)
-      }, 200)
-      return () => clearTimeout(timer)
+    }, 0)
+    const resetTimer = setTimeout(() => {
+      setLoading(false)
+      setProgress(0)
+    }, 250)
+    return () => {
+      clearTimeout(fillTimer)
+      clearTimeout(resetTimer)
     }
   }, [pathname, searchParams])
 

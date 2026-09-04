@@ -5,7 +5,7 @@ import { useState } from 'react'
 import Image from 'next/image'
 import { formatRupiah, parseProductVariants, type ProductVariant } from '@/lib/utils'
 import { updateProduct, deleteProduct } from '@/lib/actions/products'
-import { Package, Edit2, Trash2, X, Check, Plus, Layers, AlertCircle } from 'lucide-react'
+import { Package, Edit2, Trash2, X, Check, Plus, Layers } from 'lucide-react'
 import type { Product, Category } from '@/types/database'
 
 interface AdminProductListProps {
