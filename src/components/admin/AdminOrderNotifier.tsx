@@ -4,7 +4,7 @@
 import { useEffect, useState, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { Bell, X, ArrowRight, Volume2, VolumeX, Smartphone } from 'lucide-react'
+import { Bell, X, ArrowRight, Volume2, VolumeX } from 'lucide-react'
 import Link from 'next/link'
 import { formatRupiah } from '@/lib/utils'
 
@@ -19,7 +19,6 @@ export default function AdminOrderNotifier() {
   const router = useRouter()
   const [notification, setNotification] = useState<NewOrderNotification | null>(null)
   const [soundEnabled, setSoundEnabled] = useState(true)
-  const [testSent, setTestSent] = useState(false)
   const audioCtxRef = useRef<AudioContext | null>(null)
   const lastOrderIdRef = useRef<string | null>(null)
   const initialLoadDoneRef = useRef(false)
@@ -207,33 +206,10 @@ export default function AdminOrderNotifier() {
     }
   }, [fireNotification])
 
-  // Handler for manual test button
-  const handleTestNotification = () => {
-    setTestSent(true)
-    setTimeout(() => setTestSent(false), 3000)
-
-    fireNotification({
-      id: 'test-' + Date.now(),
-      nama_pemesan: 'Pembeli Percobaan (Tes)',
-      total: 75000,
-      created_at: new Date().toISOString(),
-    })
-  }
-
   return (
     <>
-      {/* Floating Control Bar: Tes Notifikasi HP & Suara Bel */}
+      {/* Floating Control Bar: Suara Bel */}
       <div className="fixed bottom-4 right-4 z-40 flex items-center gap-2">
-        <button
-          onClick={handleTestNotification}
-          type="button"
-          className="press flex items-center gap-1.5 px-3 py-2 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-lg text-[11px] font-sora font-bold active:scale-95 transition-all"
-          title="Uji coba notifikasi di layar HP Anda"
-        >
-          <Smartphone className="w-3.5 h-3.5" />
-          <span>{testSent ? '✓ Terkirim!' : 'Tes Notif HP'}</span>
-        </button>
-
         <button
           onClick={() => {
             const next = !soundEnabled

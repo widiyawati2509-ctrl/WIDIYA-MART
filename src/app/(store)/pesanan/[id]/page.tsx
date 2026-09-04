@@ -41,7 +41,7 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
           </Link>
           <h1 className="font-sora font-bold text-sm text-[var(--ink)]">Detail Pesanan</h1>
         </div>
-        <PrintReceiptButton />
+        <PrintReceiptButton order={order} store={store} />
       </div>
 
       <div className="p-4 space-y-3.5">

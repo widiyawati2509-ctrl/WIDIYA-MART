@@ -23,11 +23,14 @@ export default async function AdminOrderDetailPage({ params }: AdminOrderDetailP
   const { id } = await params
   const supabase = await createClient()
 
-  const { data: order } = await supabase
-    .from('orders')
-    .select('*, order_items(*)')
-    .eq('id', id)
-    .single()
+  const [{ data: order }, { data: store }] = await Promise.all([
+    supabase
+      .from('orders')
+      .select('*, order_items(*)')
+      .eq('id', id)
+      .single(),
+    supabase.from('store_info').select('*').single(),
+  ])
 
   if (!order) notFound()
 
@@ -40,7 +43,7 @@ export default async function AdminOrderDetailPage({ params }: AdminOrderDetailP
           </Link>
           <h1 className="text-xl font-bold">Detail Pesanan</h1>
         </div>
-        <PrintReceiptButton />
+        <PrintReceiptButton order={order} store={store} />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

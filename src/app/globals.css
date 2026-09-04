@@ -314,3 +314,50 @@ header.top-header {
 .animate-bounce-short {
   animation: slideDownBounce 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
+
+/* ==========================================================================
+   PRINT STYLES: FORMAT STRUK THERMAL BERSIH (TANPA HEADER/FOOTER/URL WEB)
+   ========================================================================== */
+@page {
+  margin: 0;
+  size: auto;
+}
+
+@media print {
+  html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Sembunyikan seluruh UI web, header, footer, tombol, dan navigasi */
+  body * {
+    visibility: hidden !important;
+  }
+
+  /* Tampilkan hanya area struk pembelian */
+  #receipt-print-area,
+  #receipt-print-area * {
+    visibility: visible !important;
+  }
+
+  #receipt-print-area {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    max-width: 78mm !important; /* Standar kertas kasir/thermal roll 80mm/58mm */
+    margin: 0 auto !important;
+    padding: 8mm 6mm !important;
+    display: block !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    box-shadow: none !important;
+    border: none !important;
+    z-index: 999999 !important;
+  }
+}
+
