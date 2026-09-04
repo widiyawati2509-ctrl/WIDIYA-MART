@@ -32,9 +32,16 @@ export default async function ProfilPage() {
             <User size={26} />
           </div>
           <div className="min-w-0 flex-1">
-            <h1 className="font-sora font-bold text-base text-[var(--ink)] truncate">
-              {profile?.nama || 'Pelanggan'}
-            </h1>
+            <div className="flex items-center gap-2">
+              <h1 className="font-sora font-bold text-base text-[var(--ink)] truncate">
+                {profile?.nama || 'Pelanggan'}
+              </h1>
+              {profile?.role === 'admin' && (
+                <span className="text-[10px] font-sora font-extrabold px-2 py-0.5 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-xs">
+                  ADMIN
+                </span>
+              )}
+            </div>
             <p className="text-xs text-[var(--ink-soft)] truncate font-medium">{user.email}</p>
             {profile?.no_hp && (
               <p className="text-xs text-[var(--ink)] mt-0.5 font-semibold">{profile.no_hp}</p>
@@ -44,6 +51,54 @@ export default async function ProfilPage() {
       </div>
 
       <div className="px-4 space-y-3.5">
+        {/* Admin Panel Quick Access (if admin) */}
+        {profile?.role === 'admin' && (
+          <div className="card-3d bg-gradient-to-br from-[#2B1810] to-[#1E0F0A] text-white rounded-[20px] p-4 shadow-[0_12px_28px_-4px_rgba(43,24,16,0.4)] border border-amber-500/30">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2.5">
+                <span className="w-8 h-8 rounded-[12px] bg-amber-500/20 text-amber-400 flex items-center justify-center text-base">
+                  👑
+                </span>
+                <div>
+                  <h2 className="font-sora font-bold text-sm text-white leading-tight">Panel Pemilik Toko</h2>
+                  <p className="text-[11px] text-amber-200/80 font-medium">Akses penuh pengelolaan toko</p>
+                </div>
+              </div>
+              <Link
+                href="/admin"
+                prefetch={true}
+                className="press px-3 py-1.5 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 text-white text-xs font-sora font-bold shadow-sm active:scale-95"
+              >
+                Buka Admin &rarr;
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-3 gap-2 pt-2 border-t border-white/10 text-center">
+              <Link
+                href="/admin/pesanan"
+                prefetch={true}
+                className="py-1.5 px-2 rounded-xl bg-white/5 hover:bg-white/10 text-[11px] font-medium text-white/90 transition-colors"
+              >
+                📦 Pesanan
+              </Link>
+              <Link
+                href="/admin/produk"
+                prefetch={true}
+                className="py-1.5 px-2 rounded-xl bg-white/5 hover:bg-white/10 text-[11px] font-medium text-white/90 transition-colors"
+              >
+                🏷️ Produk
+              </Link>
+              <Link
+                href="/admin/pengaturan"
+                prefetch={true}
+                className="py-1.5 px-2 rounded-xl bg-white/5 hover:bg-white/10 text-[11px] font-medium text-white/90 transition-colors"
+              >
+                ⚙️ Pengaturan
+              </Link>
+            </div>
+          </div>
+        )}
+
         {/* Stat Card */}
         <Card>
           <div className="flex items-center justify-between">

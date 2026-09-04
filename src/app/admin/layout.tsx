@@ -3,7 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
-import { LogOut } from 'lucide-react'
+import { LogOut, ShoppingBag } from 'lucide-react'
 import { logout } from '@/lib/actions/auth'
 import AdminOrderNotifier from '@/components/admin/AdminOrderNotifier'
 import type { Metadata } from 'next'
@@ -74,18 +74,24 @@ export default async function AdminLayout({
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
-          <span className="text-xs text-[var(--ink-soft)] font-semibold hidden sm:inline">
-            {profile?.nama}
-          </span>
+        <div className="flex items-center gap-2">
+          <Link
+            href="/"
+            prefetch={true}
+            className="press inline-flex items-center gap-1.5 rounded-[12px] bg-white border border-[rgba(232,214,205,0.9)] px-2.5 py-1.5 text-xs font-sora font-bold text-[var(--ink)] shadow-xs hover:bg-[var(--accent-bg)] active:scale-95 transition-all"
+            title="Lihat Tampilan Toko"
+          >
+            <ShoppingBag size={13} className="text-[var(--accent)]" />
+            <span className="hidden xs:inline">Lihat Toko</span>
+          </Link>
           <form action={logout}>
             <button
               type="submit"
-              className="press inline-flex items-center gap-1.5 rounded-[12px] bg-[var(--danger)] px-3 py-1.5 text-xs font-sora font-bold text-white shadow-xs"
+              className="press inline-flex items-center gap-1.5 rounded-[12px] bg-[var(--danger)] px-2.5 py-1.5 text-xs font-sora font-bold text-white shadow-xs"
               title="Keluar"
             >
               <LogOut size={13} />
-              <span>Keluar</span>
+              <span className="hidden xs:inline">Keluar</span>
             </button>
           </form>
         </div>
