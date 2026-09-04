@@ -5,6 +5,27 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { LogOut } from 'lucide-react'
 import { logout } from '@/lib/actions/auth'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Admin Panel | Widiya Mart',
+  applicationName: 'Widiya Mart Admin',
+  manifest: '/admin-manifest.json',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'Widiya Admin',
+  },
+  icons: {
+    icon: [
+      { url: '/admin-icon-192.png', sizes: '192x192', type: 'image/png' },
+      { url: '/admin-icon.png', sizes: '512x512', type: 'image/png' },
+    ],
+    apple: [
+      { url: '/admin-apple-icon.png', sizes: '180x180', type: 'image/png' },
+    ],
+  },
+}
 
 export default async function AdminLayout({
   children,

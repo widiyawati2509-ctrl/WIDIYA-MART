@@ -1,0 +1,29 @@
+{
+  "name": "Widiya Mart Admin",
+  "short_name": "Admin Widiya",
+  "description": "Panel Pengelola Toko Widiya Mart",
+  "start_url": "/admin",
+  "display": "standalone",
+  "background_color": "#FAF0EB",
+  "theme_color": "#2B1810",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/admin-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/admin-icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/admin-apple-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ]
+}
