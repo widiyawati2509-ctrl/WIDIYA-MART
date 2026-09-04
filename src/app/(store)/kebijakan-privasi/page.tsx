@@ -3,8 +3,8 @@ import Link from 'next/link'
 import { ChevronLeft, ShieldCheck } from 'lucide-react'
 
 export const metadata = {
-  title: 'Kebijakan Privasi - Widiya Mart',
-  description: 'Kebijakan privasi dan perlindungan data pengguna aplikasi Widiya Mart.',
+  title: 'Kebijakan Privasi - TOKO MIRING',
+  description: 'Kebijakan privasi dan perlindungan data pengguna aplikasi TOKO MIRING.',
 }
 
 export default function KebijakanPrivasiPage() {
@@ -22,13 +22,13 @@ export default function KebijakanPrivasiPage() {
         <div className="card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[20px] p-4 shadow-3d space-y-3">
           <div className="flex items-center gap-2 text-[var(--accent-2)] font-sora font-bold text-sm">
             <ShieldCheck className="w-5 h-5" />
-            <span>Kebijakan Privasi Widiya Mart</span>
+            <span>Kebijakan Privasi TOKO MIRING</span>
           </div>
           <p className="text-[var(--ink-soft)]">
             Terakhir diperbarui: September 2026
           </p>
           <p>
-            Widiya Mart menghormati privasi pengguna dan berkomitmen untuk melindungi data pribadi yang Anda bagikan saat menggunakan aplikasi dan layanan kami. Kebijakan Privasi ini menjelaskan bagaimana kami mengumpulkan, menggunakan, dan melindungi informasi Anda.
+            TOKO MIRING menghormati privasi pengguna dan berkomitmen untuk melindungi data pribadi yang Anda bagikan saat menggunakan aplikasi dan layanan kami. Kebijakan Privasi ini menjelaskan bagaimana kami mengumpulkan, menggunakan, dan melindungi informasi Anda.
           </p>
         </div>
 
@@ -75,7 +75,7 @@ export default function KebijakanPrivasiPage() {
         <div className="card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[20px] p-4 shadow-3d space-y-2">
           <h2 className="font-sora font-bold text-xs text-[var(--ink)]">5. Kontak Layanan Pelanggan</h2>
           <p className="text-[var(--ink-soft)]">
-            Jika Anda memiliki pertanyaan seputar Kebijakan Privasi ini, Anda dapat menghubungi Widiya Mart melalui kontak kasir toko atau WhatsApp yang tertera di aplikasi.
+            Jika Anda memiliki pertanyaan seputar Kebijakan Privasi ini, Anda dapat menghubungi TOKO MIRING melalui kontak kasir toko atau WhatsApp yang tertera di aplikasi.
           </p>
         </div>
       </div>

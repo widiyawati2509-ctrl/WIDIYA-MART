@@ -17,7 +17,7 @@ export default function DaftarPage() {
           <div className="w-14 h-14 rounded-[16px] bg-gradient-to-br from-[var(--accent)] to-[var(--accent-2)] flex items-center justify-center mx-auto mb-3 shadow-[0_6px_14px_-2px_rgba(255,107,53,.45),inset_0_1px_0_rgba(255,255,255,.4)]">
             <Image
               src="/logo.png"
-              alt="Widiya Mart Logo"
+              alt="TOKO MIRING Logo"
               width={46}
               height={46}
               className="rounded-[12px] object-cover"
@@ -25,7 +25,7 @@ export default function DaftarPage() {
             />
           </div>
           <h1 className="text-xl font-sora font-bold text-[var(--ink)]">Daftar Akun</h1>
-          <p className="text-[var(--ink-soft)] text-xs mt-0.5 font-medium">Buat akun Widiya Mart baru</p>
+          <p className="text-[var(--ink-soft)] text-xs mt-0.5 font-medium">Buat akun TOKO MIRING baru</p>
         </div>
 
         <Card className="p-5 border border-[rgba(232,214,205,0.9)]">

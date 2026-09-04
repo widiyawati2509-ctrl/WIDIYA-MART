@@ -37,7 +37,7 @@ export default async function HomePage() {
           <div className="logo-box flex items-center justify-center p-1 overflow-hidden shrink-0 shadow-[0_6px_14px_-2px_rgba(255,107,53,.45),inset_0_1px_0_rgba(255,255,255,.4)]">
             <Image
               src="/logo.png"
-              alt="Widiya Mart Logo"
+              alt="TOKO MIRING Logo"
               width={34}
               height={34}
               className="rounded-[10px] object-cover"
@@ -46,7 +46,7 @@ export default async function HomePage() {
           </div>
           <div>
             <h1 className="font-sora font-bold text-[15px] leading-tight text-[var(--ink)]">
-              {storeInfo?.nama_toko ?? 'Widiya Mart'}
+              {storeInfo?.nama_toko ?? 'TOKO MIRING'}
             </h1>
             <p className="text-[11px] text-[var(--ink-soft)] leading-tight font-medium">
               Pesan online, ambil di toko (COD)

@@ -13,17 +13,17 @@ export const viewport: Viewport = {
 }
 
 export const metadata: Metadata = {
-  applicationName: 'Widiya Mart',
+  applicationName: 'TOKO MIRING',
   title: {
-    default: 'Widiya Mart',
-    template: '%s | Widiya Mart',
+    default: 'TOKO MIRING',
+    template: '%s | TOKO MIRING',
   },
-  description: 'Belanja kebutuhan sehari-hari di Widiya Mart. Pesan online, ambil di toko, bayar COD.',
+  description: 'Belanja kebutuhan sehari-hari di TOKO MIRING. Pesan online, ambil di toko, bayar COD.',
   manifest: '/manifest.webmanifest',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
-    title: 'Widiya Mart',
+    title: 'TOKO MIRING',
   },
   icons: {
     icon: [

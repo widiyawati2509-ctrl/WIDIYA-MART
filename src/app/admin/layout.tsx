@@ -9,13 +9,13 @@ import AdminOrderNotifier from '@/components/admin/AdminOrderNotifier'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Admin Panel | Widiya Mart',
-  applicationName: 'Widiya Mart Admin',
+  title: 'Admin Panel | TOKO MIRING',
+  applicationName: 'TOKO MIRING Admin',
   manifest: '/admin-manifest.json',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
-    title: 'Widiya Admin',
+    title: 'TOKO MIRING Admin',
   },
   icons: {
     icon: [
@@ -62,7 +62,7 @@ export default async function AdminLayout({
           <div className="logo-box flex items-center justify-center p-1 overflow-hidden shrink-0">
             <Image
               src="/logo.png"
-              alt="Widiya Mart Logo"
+              alt="TOKO MIRING Logo"
               width={28}
               height={28}
               className="rounded-[8px] object-cover"
@@ -70,7 +70,7 @@ export default async function AdminLayout({
           </div>
           <div>
             <p className="font-sora font-bold text-sm text-[var(--ink)] leading-tight">Admin Panel</p>
-            <p className="text-xs text-[var(--ink-soft)] font-medium">Widiya Mart</p>
+            <p className="text-xs text-[var(--ink-soft)] font-medium">TOKO MIRING</p>
           </div>
         </div>
 

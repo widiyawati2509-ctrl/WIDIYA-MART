@@ -49,7 +49,7 @@ export default async function AdminDashboardPage() {
     <div className="space-y-4">
       <div>
         <h1 className="text-xl font-sora font-bold text-[var(--ink)]">Ringkasan Toko</h1>
-        <p className="text-xs text-[var(--ink-soft)] mt-0.5 font-medium">Pantau kinerja penjualan dan operasional Widiya Mart</p>
+        <p className="text-xs text-[var(--ink-soft)] mt-0.5 font-medium">Pantau kinerja penjualan dan operasional TOKO MIRING</p>
       </div>
 
       {/* Summary Cards */}

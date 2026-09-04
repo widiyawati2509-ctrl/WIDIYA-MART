@@ -1,7 +1,7 @@
 <resources>
-    <string name="app_name">Widiya Mart</string>
+    <string name="app_name">TOKO MIRING</string>
     <string name="web_url">https://widiya-mart.vercel.app</string>
     <string name="no_internet_title">Koneksi Terputus</string>
-    <string name="no_internet_msg">Pastikan ponsel kamu terhubung ke jaringan internet untuk berbelanja di Widiya Mart.</string>
+    <string name="no_internet_msg">Pastikan ponsel kamu terhubung ke jaringan internet untuk berbelanja di TOKO MIRING.</string>
     <string name="btn_retry">Coba Lagi</string>
 </resources>
