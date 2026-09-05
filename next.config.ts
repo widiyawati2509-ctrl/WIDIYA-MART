@@ -21,7 +21,7 @@ const nextConfig: NextConfig = {
           },
           {
             key: 'Content-Disposition',
-            value: 'attachment; filename="TOKO-MIRING.apk"',
+            value: 'attachment; filename="PENGENJEK-MART.apk"',
           },
           {
             key: 'Cache-Control',

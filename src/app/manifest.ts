@@ -2,9 +2,9 @@ import type { MetadataRoute } from 'next'
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'TOKO MIRING',
-    short_name: 'TOKO MIRING',
-    description: 'Belanja kebutuhan sehari-hari di TOKO MIRING. Pesan online, ambil di toko, bayar COD.',
+    name: 'PENGENJEK MART',
+    short_name: 'PENGENJEK MART',
+    description: 'Belanja kebutuhan sehari-hari di PENGENJEK MART. Pesan online, ambil di toko, bayar COD.',
     start_url: '/',
     display: 'standalone',
     background_color: '#FAF0EB',

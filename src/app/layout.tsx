@@ -13,17 +13,17 @@ export const viewport: Viewport = {
 }
 
 export const metadata: Metadata = {
-  applicationName: 'TOKO MIRING',
+  applicationName: 'PENGENJEK MART',
   title: {
-    default: 'TOKO MIRING',
-    template: '%s | TOKO MIRING',
+    default: 'PENGENJEK MART',
+    template: '%s | PENGENJEK MART',
   },
-  description: 'Belanja kebutuhan sehari-hari di TOKO MIRING. Pesan online, ambil di toko, bayar COD.',
+  description: 'Belanja kebutuhan sehari-hari di PENGENJEK MART. Pesan online, ambil di toko, bayar COD.',
   manifest: '/manifest.webmanifest',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
-    title: 'TOKO MIRING',
+    title: 'PENGENJEK MART',
   },
   icons: {
     icon: [

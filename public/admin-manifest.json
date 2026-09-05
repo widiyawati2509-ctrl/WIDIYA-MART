@@ -1,7 +1,7 @@
 {
-  "name": "TOKO MIRING Admin",
-  "short_name": "Admin Toko Miring",
-  "description": "Panel Pengelola TOKO MIRING",
+  "name": "PENGENJEK MART Admin",
+  "short_name": "Admin PENGENJEK MART",
+  "description": "Panel Pengelola PENGENJEK MART",
   "start_url": "/admin",
   "display": "standalone",
   "background_color": "#FAF0EB",

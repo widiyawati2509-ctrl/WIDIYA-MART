@@ -9,13 +9,13 @@ import AdminOrderNotifier from '@/components/admin/AdminOrderNotifier'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Admin Panel | TOKO MIRING',
-  applicationName: 'TOKO MIRING Admin',
+  title: 'Admin Panel | PENGENJEK MART',
+  applicationName: 'PENGENJEK MART Admin',
   manifest: '/admin-manifest.json',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
-    title: 'TOKO MIRING Admin',
+    title: 'PENGENJEK MART Admin',
   },
   icons: {
     icon: [
@@ -62,7 +62,7 @@ export default async function AdminLayout({
           <div className="logo-box flex items-center justify-center p-1 overflow-hidden shrink-0">
             <Image
               src="/logo.png"
-              alt="TOKO MIRING Logo"
+              alt="PENGENJEK MART Logo"
               width={28}
               height={28}
               className="rounded-[8px] object-cover"
@@ -70,7 +70,7 @@ export default async function AdminLayout({
           </div>
           <div>
             <p className="font-sora font-bold text-sm text-[var(--ink)] leading-tight">Admin Panel</p>
-            <p className="text-xs text-[var(--ink-soft)] font-medium">TOKO MIRING</p>
+            <p className="text-xs text-[var(--ink-soft)] font-medium">PENGENJEK MART</p>
           </div>
         </div>
 

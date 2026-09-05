@@ -93,7 +93,7 @@ export default function PrintReceiptButton({ order, store }: PrintReceiptButtonP
       {/* Header Toko */}
       <div className="text-center mb-2">
         <h1 className="text-sm font-black tracking-wider uppercase">
-          {store?.nama_toko || 'TOKO MIRING'}
+          {store?.nama_toko || 'PENGENJEK MART'}
         </h1>
         {store?.alamat_toko && (
           <p className="text-[11px] leading-tight text-gray-800 mt-0.5">

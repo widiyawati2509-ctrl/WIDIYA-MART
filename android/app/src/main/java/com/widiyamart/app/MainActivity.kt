@@ -100,7 +100,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val descriptionText = "Pemberitahuan untuk pesanan baru di TOKO MIRING"
+            val descriptionText = "Pemberitahuan untuk pesanan baru di PENGENJEK MART"
             val importance = NotificationManager.IMPORTANCE_HIGH
             val channel = NotificationChannel(CHANNEL_ID, CHANNEL_NAME, importance).apply {
                 description = descriptionText
@@ -269,7 +269,7 @@ class MainActivity : AppCompatActivity() {
         @JavascriptInterface
         fun showNotification(title: String?, message: String?) {
             runOnUiThread {
-                val notifTitle = if (title.isNullOrEmpty()) "Pesanan Baru TOKO MIRING" else title
+                val notifTitle = if (title.isNullOrEmpty()) "Pesanan Baru PENGENJEK MART" else title
                 val notifMessage = if (message.isNullOrEmpty()) "Ada pesanan baru masuk! Silakan periksa aplikasi." else message
                 triggerNativeNotification(notifTitle, notifMessage)
             }
@@ -369,7 +369,7 @@ class MainActivity : AppCompatActivity() {
                     } else {
                         Toast.makeText(
                             this@MainActivity,
-                            "Tekan sekali lagi untuk keluar dari TOKO MIRING",
+                            "Tekan sekali lagi untuk keluar dari PENGENJEK MART",
                             Toast.LENGTH_SHORT
                         ).show()
                         backPressedTime = System.currentTimeMillis()

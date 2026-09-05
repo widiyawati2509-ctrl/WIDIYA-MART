@@ -4,8 +4,8 @@ import Link from 'next/link'
 import { Download, ChevronLeft, AlertCircle, CheckCircle2, ShieldCheck } from 'lucide-react'
 
 export const metadata = {
-  title: 'Download Aplikasi Android - TOKO MIRING',
-  description: 'Download aplikasi resmi TOKO MIRING untuk HP Android.',
+  title: 'Download Aplikasi Android - PENGENJEK MART',
+  description: 'Download aplikasi resmi PENGENJEK MART untuk HP Android.',
 }
 
 export default function UnduhApkPage() {
@@ -25,7 +25,7 @@ export default function UnduhApkPage() {
           <div className="w-20 h-20 rounded-[22px] bg-gradient-to-br from-[var(--accent)] to-[var(--accent-2)] flex items-center justify-center mx-auto shadow-lg p-1.5">
             <Image
               src="/logo.png"
-              alt="TOKO MIRING Icon"
+              alt="PENGENJEK MART Icon"
               width={76}
               height={76}
               className="rounded-[18px] object-cover"
@@ -35,14 +35,14 @@ export default function UnduhApkPage() {
 
           <div>
             <h2 className="font-sora font-bold text-lg text-[var(--ink)]">
-              TOKO MIRING
+              PENGENJEK MART
             </h2>
             <p className="text-xs text-[var(--ink-soft)] font-medium mt-0.5">
               Aplikasi Resmi Belanja Sembako &amp; Kebutuhan Harian
             </p>
             <div className="flex items-center justify-center gap-2 mt-2">
               <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
-                Versi 1.0.3 (Terbaru)
+                Versi 1.0.4 (Terbaru)
               </span>
               <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-orange-50 text-orange-700 border border-orange-200">
                 Ukuran 4.7 MB
@@ -52,8 +52,8 @@ export default function UnduhApkPage() {
 
           {/* Download Button */}
           <a
-            href="https://github.com/widiyawati2509-ctrl/WIDIYA-MART/raw/main/android/release/TOKO-MIRING.apk"
-            download="TOKO-MIRING.apk"
+            href="https://github.com/widiyawati2509-ctrl/WIDIYA-MART/raw/main/android/release/PENGENJEK-MART.apk"
+            download="PENGENJEK-MART.apk"
             className="press w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-[var(--accent)] to-[var(--accent-2)] text-white font-sora font-bold text-sm shadow-btn flex items-center justify-center gap-2 active:scale-95 transition-all"
           >
             <Download className="w-4 h-4" />
@@ -104,7 +104,7 @@ export default function UnduhApkPage() {
               <div>
                 <p className="font-bold text-[11.5px]">Buka dari Aplikasi "File Saya / My Files"</p>
                 <p className="text-[11px] text-[var(--ink-soft)] mt-0.5">
-                  Jika di browser Chrome terlihat stuck, buka aplikasi <strong>File Saya</strong> bawaan HP Anda ➔ buka folder <strong>Download</strong> ➔ klik file <strong>TOKO-MIRING.apk</strong> untuk langsung menginstal.
+                  Jika di browser Chrome terlihat stuck, buka aplikasi <strong>File Saya</strong> bawaan HP Anda ➔ buka folder <strong>Download</strong> ➔ klik file <strong>PENGENJEK-MART.apk</strong> untuk langsung menginstal.
                 </p>
               </div>
             </div>

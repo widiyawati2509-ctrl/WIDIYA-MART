@@ -129,7 +129,7 @@ class OrderAlarmReceiver : BroadcastReceiver() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val importance = NotificationManager.IMPORTANCE_HIGH
             val channel = NotificationChannel(channelId, MainActivity.CHANNEL_NAME, importance).apply {
-                description = "Pemberitahuan untuk pesanan baru di TOKO MIRING"
+                description = "Pemberitahuan untuk pesanan baru di PENGENJEK MART"
                 enableVibration(true)
                 vibrationPattern = longArrayOf(0, 500, 200, 500)
                 val audioAttributes = AudioAttributes.Builder()

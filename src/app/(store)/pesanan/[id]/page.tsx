@@ -102,7 +102,7 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
             <a
               href={formatWhatsAppUrl(
                 store.whatsapp || store.no_hp_toko,
-                `Halo Admin TOKO MIRING, saya ingin menanyakan pesanan #${order.id.slice(0, 8).toUpperCase()}`
+                `Halo Admin PENGENJEK MART, saya ingin menanyakan pesanan #${order.id.slice(0, 8).toUpperCase()}`
               )}
               target="_blank"
               rel="noopener noreferrer"

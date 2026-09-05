@@ -34,7 +34,7 @@ export default function ProductDetailInteractive({ product, storePhone = '087816
   const isOutOfStock = activeStock === 0
 
   const getWhatsAppMessage = () => {
-    let msg = `Halo Admin TOKO MIRING, saya ingin menanyakan apakah stok produk ini masih ada?\n\n*${product.nama}*\nHarga: ${formatRupiah(activePrice)}`
+    let msg = `Halo Admin PENGENJEK MART, saya ingin menanyakan apakah stok produk ini masih ada?\n\n*${product.nama}*\nHarga: ${formatRupiah(activePrice)}`
     if (selectedVariant?.nama) {
       msg += `\nVarian: ${selectedVariant.nama}`
     }
