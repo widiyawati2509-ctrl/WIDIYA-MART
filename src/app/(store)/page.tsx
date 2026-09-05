@@ -7,6 +7,7 @@ import PromoBannerCarousel from '@/components/PromoBannerCarousel'
 import { Section } from '@/components/ui'
 import Image from 'next/image'
 import Link from 'next/link'
+import { Bookmark } from 'lucide-react'
 
 import { getPublicPromos } from '@/lib/actions/promos'
 
@@ -56,6 +57,17 @@ export default async function HomePage() {
             </p>
           </div>
         </div>
+
+        {/* Quick Link to Daftar Belanja */}
+        <Link
+          href="/daftar-belanja"
+          prefetch={true}
+          className="press flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-[rgba(232,214,205,0.9)] shadow-xs hover:border-amber-400 text-[var(--ink)] text-xs font-sora font-semibold transition-all active:scale-95"
+          title="Daftar Belanja (Produk Dicatat)"
+        >
+          <Bookmark size={14} className="text-amber-500 fill-amber-500/20" />
+          <span>Catatan</span>
+        </Link>
       </header>
 
       {/* Search Bar */}

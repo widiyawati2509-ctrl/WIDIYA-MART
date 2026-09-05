@@ -33,6 +33,7 @@ export default function ProductDetailInteractive({ product, storePhone = '087816
   const [touchStartX, setTouchStartX] = useState<number | null>(null)
   const [isWishlisted, setIsWishlisted] = useState(false)
   const [savingWishlist, setSavingWishlist] = useState(false)
+  const [toastMessage, setToastMessage] = useState<string | null>(null)
 
   // Check localStorage on mount
   useEffect(() => {
@@ -53,6 +54,8 @@ export default function ProductDetailInteractive({ product, storePhone = '087816
     setSavingWishlist(true)
     const nextState = !isWishlisted
     setIsWishlisted(nextState)
+    setToastMessage(nextState ? 'Produk berhasil dicatat ke Daftar Belanja!' : 'Produk dihapus dari Daftar Belanja')
+    setTimeout(() => setToastMessage(null), 3500)
 
     // Save/remove to localStorage immediately
     try {
@@ -467,6 +470,25 @@ export default function ProductDetailInteractive({ product, storePhone = '087816
           </div>
         </div>
       </div>
+
+      {/* Floating Notification Toast when Saved */}
+      {toastMessage && (
+        <div className="fixed bottom-36 left-1/2 -translate-x-1/2 max-w-[calc(480px-32px)] w-[calc(100%-32px)] z-50 animate-bounce-short">
+          <div className="bg-[#2B1810] text-white p-3 rounded-2xl shadow-xl flex items-center justify-between border border-amber-500/40">
+            <div className="flex items-center gap-2 text-xs">
+              <BookmarkCheck size={17} className="text-amber-400 shrink-0" />
+              <span className="font-medium">{toastMessage}</span>
+            </div>
+            <Link
+              href="/daftar-belanja"
+              prefetch={true}
+              className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-white text-[11px] font-sora font-bold shrink-0 transition-transform active:scale-95 shadow-sm"
+            >
+              Lihat Daftar &rarr;
+            </Link>
+          </div>
+        </div>
+      )}
 
       {/* Modal Konfirmasi Tanya Stok via WA */}
       {showStockModal && (
