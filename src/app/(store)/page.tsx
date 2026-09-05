@@ -24,7 +24,7 @@ export default async function HomePage() {
         .order('urutan'),
       supabase
         .from('products')
-        .select('id, nama, slug, harga, stok, image_url, diskon_persen, badge_text, categories(nama, slug)')
+        .select('id, nama, slug, harga, stok, image_url, categories(nama, slug)')
         .eq('is_active', true)
         .gt('stok', 0)
         .order('created_at', { ascending: false })

@@ -197,7 +197,7 @@ export async function fetchMoreCatalogProducts(params: {
 
     let query = supabase
       .from('products')
-      .select('id, nama, slug, harga, stok, image_url, diskon_persen, badge_text, category_id, categories(nama, slug)')
+      .select('id, nama, slug, harga, stok, image_url, category_id, categories(nama, slug)')
       .eq('is_active', true)
       .gt('stok', 0)
 

@@ -12,7 +12,7 @@ export default async function AdminDashboardPage() {
   const today = new Date()
   today.setHours(0, 0, 0, 0)
 
-  const [ordersToday, ordersTotal, lowStockProducts, recentOrders] = await Promise.all([
+  const [ordersToday, ordersTotal, lowStockProducts, recentOrders, totalProducts] = await Promise.all([
     supabase
       .from('orders')
       .select('total', { count: 'exact' })
@@ -33,15 +33,19 @@ export default async function AdminDashboardPage() {
       .select('id, status, total, nama_pemesan, created_at')
       .order('created_at', { ascending: false })
       .limit(5),
+    supabase
+      .from('products')
+      .select('id', { count: 'exact' })
+      .eq('is_active', true),
   ])
 
   const todayRevenue = (ordersToday.data ?? []).reduce((sum: number, o: { total: number }) => sum + o.total, 0)
   const totalRevenue = (ordersTotal.data ?? []).reduce((sum: number, o: { total: number }) => sum + o.total, 0)
 
   const stats = [
-    { label: 'Pesanan Hari Ini', value: ordersToday.count ?? 0, icon: ShoppingBag, color: 'text-[var(--accent-2)]' },
+    { label: 'Pesanan Hari Ini', value: ordersToday.count ?? 0, icon: ShoppingBag, color: 'text-[var(--accent-2)]', href: '/admin/pesanan' },
+    { label: 'Total Produk Aktif', value: `${totalProducts.count ?? 0} produk`, icon: Package, color: 'text-[var(--ink)]', href: '/admin/produk' },
     { label: 'Omzet Hari Ini', value: formatRupiah(todayRevenue), icon: TrendingUp, color: 'text-[var(--accent-2)]' },
-    { label: 'Stok Menipis', value: lowStockProducts.data?.length ?? 0, icon: AlertTriangle, color: 'text-[var(--danger)]' },
     { label: 'Total Omzet Toko', value: formatRupiah(totalRevenue), icon: Package, color: 'text-[var(--ink)]' },
   ]
 
@@ -54,17 +58,27 @@ export default async function AdminDashboardPage() {
 
       {/* Summary Cards */}
       <div className="grid grid-cols-2 gap-3">
-        {stats.map(({ label, value, icon: Icon, color }) => (
-          <div key={label} className="card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[20px] p-3.5 shadow-3d press">
-            <div className="flex items-center gap-2 mb-2">
-              <span className="w-8 h-8 rounded-[12px] bg-[var(--accent-bg)] text-[var(--accent-2)] flex items-center justify-center">
-                <Icon size={16} />
-              </span>
-              <p className="text-xs font-semibold text-[var(--ink-soft)] leading-tight">{label}</p>
+        {stats.map(({ label, value, icon: Icon, color, href }) => {
+          const content = (
+            <div className="card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[20px] p-3.5 shadow-3d press h-full flex flex-col justify-between">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="w-8 h-8 rounded-[12px] bg-[var(--accent-bg)] text-[var(--accent-2)] flex items-center justify-center">
+                  <Icon size={16} />
+                </span>
+                <p className="text-xs font-semibold text-[var(--ink-soft)] leading-tight">{label}</p>
+              </div>
+              <p className={`text-base font-sora font-bold tabular-nums ${color}`}>{value}</p>
             </div>
-            <p className={`text-base font-sora font-bold tabular-nums ${color}`}>{value}</p>
-          </div>
-        ))}
+          )
+
+          return href ? (
+            <Link key={label} href={href} prefetch={true} className="block">
+              {content}
+            </Link>
+          ) : (
+            <div key={label}>{content}</div>
+          )
+        })}
       </div>
 
       {/* Low Stock Warning */}

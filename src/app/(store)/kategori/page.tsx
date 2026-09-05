@@ -24,7 +24,7 @@ export default async function KategoriPage({ searchParams }: KategoriPageProps) 
 
   let query = supabase
     .from('products')
-    .select('id, nama, slug, harga, stok, image_url, diskon_persen, badge_text, category_id, categories(nama, slug)', { count: 'exact' })
+    .select('id, nama, slug, harga, stok, image_url, category_id, categories(nama, slug)', { count: 'exact' })
     .eq('is_active', true)
     .gt('stok', 0)
 
