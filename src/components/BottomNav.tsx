@@ -3,7 +3,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Home3DIcon, Category3DIcon, Cart3DIcon, Orders3DIcon, User3DIcon } from '@/components/icons/NavIcons3D'
+import { Home, LayoutGrid, ShoppingCart, ShoppingBag, User } from 'lucide-react'
 
 interface BottomNavProps {
   cartCount: number
@@ -11,11 +11,11 @@ interface BottomNavProps {
 }
 
 const navItems = [
-  { href: '/', label: 'Beranda', IconComponent: Home3DIcon },
-  { href: '/kategori', label: 'Kategori', IconComponent: Category3DIcon },
-  { href: '/keranjang', label: 'Keranjang', IconComponent: Cart3DIcon },
-  { href: '/pesanan', label: 'Pesanan', IconComponent: Orders3DIcon },
-  { href: '/profil', label: 'Akun', IconComponent: User3DIcon },
+  { href: '/', label: 'Beranda', IconComponent: Home },
+  { href: '/kategori', label: 'Kategori', IconComponent: LayoutGrid },
+  { href: '/keranjang', label: 'Keranjang', IconComponent: ShoppingCart },
+  { href: '/pesanan', label: 'Pesanan', IconComponent: ShoppingBag },
+  { href: '/profil', label: 'Akun', IconComponent: User },
 ]
 
 export default function BottomNav({ cartCount, isLoggedIn }: BottomNavProps) {
@@ -52,7 +52,12 @@ export default function BottomNav({ cartCount, isLoggedIn }: BottomNavProps) {
             }
           >
             <div className="relative">
-              <IconComponent active={isActive} className="w-5 h-5" />
+              <IconComponent
+                className={`w-5 h-5 transition-transform ${
+                  isActive ? 'scale-110 text-white' : 'text-[#A8928B]'
+                }`}
+                strokeWidth={isActive ? 2.3 : 1.8}
+              />
               {isCart && cartCount > 0 && (
                 <span className="absolute -top-1.5 -right-3 bg-[var(--accent)] text-white text-[var(--text-caption)] font-extrabold rounded-full px-1.5 min-w-[16px] h-4 flex items-center justify-center shadow-sm">
                   {cartCount > 9 ? '9+' : cartCount}
