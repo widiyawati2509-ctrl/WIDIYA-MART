@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import { createCategory } from '@/lib/actions/admin'
 import { Plus } from 'lucide-react'
 import AdminCategoryList from '@/components/admin/AdminCategoryList'
+import AdminPageTitle from '@/components/admin/AdminPageTitle'
 
 export default async function AdminKategoriPage() {
   const supabase = await createClient()
@@ -13,7 +14,15 @@ export default async function AdminKategoriPage() {
 
   return (
     <div>
-      <h1 className="text-xl font-bold mb-4">Manajemen Kategori</h1>
+      <AdminPageTitle
+        title="Kelola Kategori"
+        subtitle="Daftar dan urutan kategori produk"
+        rightSlot={
+          <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-[var(--accent-bg)] text-[var(--accent-2)]">
+            {categories?.length ?? 0} kategori
+          </span>
+        }
+      />
 
       {/* Add form */}
       <details className="bg-white border rounded-2xl mb-4">

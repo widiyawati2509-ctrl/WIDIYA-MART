@@ -32,7 +32,7 @@ export default async function AdminPoinPage() {
   ])
 
   return (
-    <div className="p-4 max-w-4xl mx-auto pb-20">
+    <div>
       <AdminLoyaltyManager
         config={config}
         transactions={transactions || []}

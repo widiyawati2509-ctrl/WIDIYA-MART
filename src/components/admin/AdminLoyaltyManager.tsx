@@ -5,6 +5,7 @@ import { useState, useTransition } from 'react'
 import { updateLoyaltyConfig, type LoyaltyConfig } from '@/lib/actions/loyalty'
 import { formatRupiah } from '@/lib/utils'
 import { Coins, Save, Loader2, Sparkles, TrendingUp, History, ShieldCheck } from 'lucide-react'
+import AdminPageTitle from './AdminPageTitle'
 
 interface AdminLoyaltyManagerProps {
   config: LoyaltyConfig
@@ -51,12 +52,10 @@ export default function AdminLoyaltyManager({ config: initialConfig, transaction
       )}
 
       {/* Header */}
-      <div>
-        <h2 className="font-sora font-bold text-sm text-[var(--ink)]">Pengaturan Skema Poin Loyalitas</h2>
-        <p className="text-xs text-[var(--ink-soft)] font-medium">
-          Atur perolehan dan rasio tukar poin belanja (fleksibel via database)
-        </p>
-      </div>
+      <AdminPageTitle
+        title="Poin Loyalitas"
+        subtitle="Atur perolehan dan rasio tukar poin belanja (fleksibel via database)"
+      />
 
       {/* Quick Stats Grid */}
       <div className="grid grid-cols-2 gap-3">

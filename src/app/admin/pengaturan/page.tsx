@@ -1,6 +1,7 @@
 // @ts-nocheck
 import { createClient } from '@/lib/supabase/server'
 import { updateStoreInfo } from '@/lib/actions/admin'
+import AdminPageTitle from '@/components/admin/AdminPageTitle'
 
 export default async function AdminPengaturanPage() {
   const supabase = await createClient()
@@ -8,7 +9,10 @@ export default async function AdminPengaturanPage() {
 
   return (
     <div>
-      <h1 className="text-xl font-bold mb-4">Pengaturan Toko</h1>
+      <AdminPageTitle
+        title="Pengaturan Toko"
+        subtitle="Informasi toko, kontak WhatsApp, dan jam operasional"
+      />
 
       <div className="bg-white border rounded-2xl p-4">
         <form action={updateStoreInfo} className="space-y-4">

@@ -27,6 +27,7 @@ import {
   PackageOpen,
   Filter
 } from 'lucide-react'
+import AdminPageTitle from './AdminPageTitle'
 
 interface OrderItem {
   count?: number
@@ -188,36 +189,31 @@ export default function AdminOrdersList({ initialOrders, initialStatus }: AdminO
   return (
     <div className="space-y-4">
       {/* Header & Page Title */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div>
-          <h1 className="text-xl font-sora font-bold text-[var(--ink)]">
-            Manajemen Pesanan
-          </h1>
-          <p className="text-xs text-[var(--ink-soft)] font-medium">
-            Total {orders.length} riwayat transaksi masuk
-          </p>
-        </div>
-
-        {/* Global Delete All Shortcut */}
-        {orders.length > 0 && (
-          <button
-            type="button"
-            onClick={() => {
-              setConfirmModal({
-                isOpen: true,
-                mode: 'all',
-                count: orders.length,
-              })
-            }}
-            disabled={isPending}
-            className="self-start sm:self-auto press inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-red-200 text-red-600 hover:bg-red-50 text-xs font-sora font-semibold transition-all active:scale-95"
-            title="Hapus seluruh riwayat pesanan"
-          >
-            <Trash2 className="w-3.5 h-3.5" />
-            <span>Hapus Semua Riwayat</span>
-          </button>
-        )}
-      </div>
+      <AdminPageTitle
+        title="Kelola Pesanan"
+        subtitle={`Total ${orders.length} riwayat transaksi masuk`}
+        className="mb-0"
+        rightSlot={
+          orders.length > 0 ? (
+            <button
+              type="button"
+              onClick={() => {
+                setConfirmModal({
+                  isOpen: true,
+                  mode: 'all',
+                  count: orders.length,
+                })
+              }}
+              disabled={isPending}
+              className="self-start sm:self-auto press inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-red-200 text-red-600 hover:bg-red-50 text-xs font-sora font-semibold transition-all active:scale-95"
+              title="Hapus seluruh riwayat pesanan"
+            >
+              <Trash2 className="w-3.5 h-3.5" />
+              <span>Hapus Semua Riwayat</span>
+            </button>
+          ) : null
+        }
+      />
 
       {/* Notification Toast */}
       {feedbackMsg && (

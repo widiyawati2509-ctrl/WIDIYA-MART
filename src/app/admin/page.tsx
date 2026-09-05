@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import { formatRupiah, getOrderStatusLabel } from '@/lib/utils'
 import { ShoppingBag, TrendingUp, AlertTriangle, Package, ChevronRight } from 'lucide-react'
 import Link from 'next/link'
+import AdminPageTitle from '@/components/admin/AdminPageTitle'
 import { Card, Section, Badge, buttonClass } from '@/components/ui'
 
 export default async function AdminDashboardPage() {
@@ -51,10 +52,10 @@ export default async function AdminDashboardPage() {
 
   return (
     <div className="space-y-4">
-      <div>
-        <h1 className="text-xl font-sora font-bold text-[var(--ink)]">Ringkasan Toko</h1>
-        <p className="text-xs text-[var(--ink-soft)] mt-0.5 font-medium">Pantau kinerja penjualan dan operasional PENGENJEK MART</p>
-      </div>
+      <AdminPageTitle
+        title="Ringkasan Toko"
+        subtitle="Pantau kinerja penjualan dan operasional PENGENJEK MART"
+      />
 
       {/* Summary Cards */}
       <div className="grid grid-cols-2 gap-3">

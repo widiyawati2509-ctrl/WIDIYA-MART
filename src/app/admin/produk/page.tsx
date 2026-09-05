@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import { formatRupiah } from '@/lib/utils'
 import { createProduct } from '@/lib/actions/products'
 import AdminProductList from '@/components/admin/AdminProductList'
+import AdminPageTitle from '@/components/admin/AdminPageTitle'
 import { Plus } from 'lucide-react'
 
 export default async function AdminProdukPage() {
@@ -18,10 +19,15 @@ export default async function AdminProdukPage() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-4">
-        <h1 className="text-xl font-bold">Manajemen Produk</h1>
-        <span className="text-sm text-gray-500">{products?.length ?? 0} produk</span>
-      </div>
+      <AdminPageTitle
+        title="Kelola Produk"
+        subtitle="Daftar produk, stok, dan kelola harga jual"
+        rightSlot={
+          <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-[var(--accent-bg)] text-[var(--accent-2)]">
+            {products?.length ?? 0} produk
+          </span>
+        }
+      />
 
       {/* Add product form */}
       <details className="bg-white border rounded-2xl mb-4 group">

@@ -28,7 +28,7 @@ export default async function AdminPromoPage() {
   ])
 
   return (
-    <div className="p-4 max-w-4xl mx-auto pb-20">
+    <div>
       <AdminPromoList
         initialPromos={promos || []}
         products={products || []}

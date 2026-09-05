@@ -3,10 +3,9 @@ import { createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
 import { formatRupiah, getOrderStatusLabel, getOrderStatusColor } from '@/lib/utils'
 import { updateOrderStatus } from '@/lib/actions/orders'
-import { ChevronLeft } from 'lucide-react'
-import Link from 'next/link'
 import PrintReceiptButton from '@/components/PrintReceiptButton'
 import DeleteOrderButton from '@/components/admin/DeleteOrderButton'
+import AdminPageTitle from '@/components/admin/AdminPageTitle'
 
 interface AdminOrderDetailProps {
   params: Promise<{ id: string }>
@@ -37,15 +36,13 @@ export default async function AdminOrderDetailPage({ params }: AdminOrderDetailP
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-4 print:hidden">
-        <div className="flex items-center gap-2">
-          <Link href="/admin/pesanan" className="p-1 hover:bg-gray-100 rounded-lg">
-            <ChevronLeft className="w-5 h-5" />
-          </Link>
-          <h1 className="text-xl font-bold">Detail Pesanan</h1>
-        </div>
-        <PrintReceiptButton order={order} store={store} />
-      </div>
+      <AdminPageTitle
+        title="Detail Pesanan"
+        subtitle={`ID: #${order.id.slice(0, 8).toUpperCase()}`}
+        backHref="/admin/pesanan"
+        className="print:hidden"
+        rightSlot={<PrintReceiptButton order={order} store={store} />}
+      />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Left */}

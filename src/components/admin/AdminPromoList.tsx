@@ -5,6 +5,7 @@ import { useState, useTransition } from 'react'
 import Image from 'next/image'
 import { createPromo, updatePromo, deletePromo, type PromoItem } from '@/lib/actions/promos'
 import { Sparkles, Plus, Edit2, Trash2, Check, X, ImagePlus, Loader2, Tag, ExternalLink } from 'lucide-react'
+import AdminPageTitle from './AdminPageTitle'
 
 interface AdminPromoListProps {
   initialPromos: PromoItem[]
@@ -84,20 +85,20 @@ export default function AdminPromoList({ initialPromos, products }: AdminPromoLi
       )}
 
       {/* Top action bar */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="font-sora font-bold text-sm text-[var(--ink)]">Banner Promo & Diskon</h2>
-          <p className="text-xs text-[var(--ink-soft)] font-medium">Kelola banner promo homepage dan katalog</p>
-        </div>
-        <button
-          type="button"
-          onClick={handleOpenNew}
-          className="press inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-gradient-to-r from-[var(--accent)] to-[var(--accent-2)] text-white text-xs font-sora font-bold shadow-sm active:scale-95 transition-all"
-        >
-          <Plus size={14} />
-          <span>Tambah Promo</span>
-        </button>
-      </div>
+      <AdminPageTitle
+        title="Kelola Promo"
+        subtitle="Kelola banner promo homepage dan diskon produk"
+        rightSlot={
+          <button
+            type="button"
+            onClick={handleOpenNew}
+            className="press inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-gradient-to-r from-[var(--accent)] to-[var(--accent-2)] text-white text-xs font-sora font-bold shadow-sm active:scale-95 transition-all"
+          >
+            <Plus size={14} />
+            <span>Tambah Promo</span>
+          </button>
+        }
+      />
 
       {/* Promos List */}
       <div className="space-y-3">
