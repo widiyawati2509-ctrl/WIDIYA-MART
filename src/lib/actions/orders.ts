@@ -230,16 +230,68 @@ export async function createOrder(formData: FormData): Promise<{ error?: string;
       catatan: parsed.data.catatan || null,
     }
 
-    const { data: order, error: orderError } = await supabase
+    let order = null
+    const { data: orderFull, error: orderFullError } = await supabase
       .from('orders')
       .insert(orderPayload)
       .select('id')
       .single()
 
-    if (orderError || !order) {
-      console.error('Order creation error:', orderError)
+    if (orderFullError) {
+      const isColumnMissing =
+        orderFullError.message?.includes('column') ||
+        orderFullError.message?.includes('schema cache') ||
+        orderFullError.message?.includes('alamat_pengiriman') ||
+        orderFullError.code === 'PGRST204'
+
+      if (isColumnMissing) {
+        console.warn('Orders table missing columns, saving shipping info in catatan:', orderFullError.message)
+
+        // Construct detailed catatan so no address or shipping data is lost
+        const shippingNotes = [
+          parsed.data.catatan ? `Catatan: ${parsed.data.catatan}` : '',
+          metodePengiriman === 'antar_alamat'
+            ? `[Pengantaran ke: ${alamatPengiriman || '-'} | Ongkir: Rp ${serverOngkir.toLocaleString('id-ID')} | Jarak: ${verifiedJarakKm ?? '-'} km]`
+            : '[Metode: Ambil di Toko]',
+          diskonPoin > 0 ? `[Poin Digunakan: ${poinToRedeem} (Diskon Rp ${diskonPoin.toLocaleString('id-ID')})]` : '',
+        ]
+          .filter(Boolean)
+          .join('\n')
+
+        const compatiblePayload = {
+          user_id: user.id,
+          subtotal,
+          total: finalTotal,
+          nama_pemesan: parsed.data.nama_pemesan,
+          no_hp_pemesan: parsed.data.no_hp_pemesan,
+          catatan: shippingNotes || null,
+        }
+
+        const { data: compatOrder, error: compatError } = await supabase
+          .from('orders')
+          .insert(compatiblePayload)
+          .select('id')
+          .single()
+
+        if (compatError || !compatOrder) {
+          console.error('Order creation error on compatible payload:', compatError)
+          await rollbackStock()
+          return { error: `Gagal membuat pesanan: ${compatError?.message || 'Database error'}` }
+        }
+
+        order = compatOrder
+      } else {
+        console.error('Order creation error:', orderFullError)
+        await rollbackStock()
+        return { error: `Gagal membuat pesanan: ${orderFullError.message || 'Database error'}` }
+      }
+    } else {
+      order = orderFull
+    }
+
+    if (!order) {
       await rollbackStock()
-      return { error: `Gagal membuat pesanan: ${orderError?.message || 'Database error'}` }
+      return { error: 'Gagal membuat pesanan (ID tidak didapatkan)' }
     }
 
     // Record points debit transaction if redeemed
