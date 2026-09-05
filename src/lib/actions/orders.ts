@@ -232,14 +232,23 @@ export async function updateOrderStatus(orderId: string, status: string): Promis
           if (config.is_active && orderData.total >= config.min_order_amount) {
             const earned = Math.floor(orderData.total / config.threshold_amount) * config.points_per_threshold
             if (earned > 0) {
-              await supabase.from('loyalty_transactions').insert({
-                user_id: orderData.user_id,
-                order_id: orderId,
-                points: earned,
-                type: 'earned',
-                description: `Poin belanja pesanan COD #${orderId.slice(0, 8)}`,
-              })
-              await supabase.from('orders').update({ poin_didapat: earned }).eq('id', orderId)
+              try {
+                await supabase.from('loyalty_transactions').insert({
+                  user_id: orderData.user_id,
+                  order_id: orderId,
+                  points: earned,
+                  type: 'earned',
+                  description: `Poin belanja pesanan COD #${orderId.slice(0, 8).toUpperCase()}`,
+                })
+              } catch (txErr) {
+                console.warn('loyalty_transactions table not ready:', txErr)
+              }
+
+              try {
+                await supabase.from('orders').update({ poin_didapat: earned }).eq('id', orderId)
+              } catch {
+                // Column might not exist before migration
+              }
             }
           }
         }
@@ -254,6 +263,7 @@ export async function updateOrderStatus(orderId: string, status: string): Promis
   revalidatePath('/pesanan')
   revalidatePath(`/pesanan/${orderId}`)
   revalidatePath('/poin')
+  revalidatePath('/profil')
   return { success: true }
 }
 

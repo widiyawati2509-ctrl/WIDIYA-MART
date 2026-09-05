@@ -112,22 +112,70 @@ export async function getUserLoyaltySummary(targetUserId?: string) {
 
     const config = await getLoyaltyConfig()
 
-    const { data: txs, error } = await supabase
+    // 1. Fetch transactions from loyalty_transactions table if available
+    const { data: txs, error: txsError } = await supabase
       .from('loyalty_transactions')
       .select('*')
       .eq('user_id', userId)
       .order('created_at', { ascending: false })
 
-    if (error) {
-      return {
-        totalPoints: 0,
-        redeemValue: 0,
-        transactions: [],
-        config,
+    let transactions = Array.isArray(txs) ? [...txs] : []
+    const creditedOrderIds = new Set(
+      transactions
+        .filter((t) => t.type === 'earned' && t.order_id)
+        .map((t) => t.order_id)
+    )
+
+    // 2. Fetch completed orders to ensure all completed orders are awarded points
+    const { data: completedOrders } = await supabase
+      .from('orders')
+      .select('id, total, created_at')
+      .eq('user_id', userId)
+      .eq('status', 'selesai')
+      .order('created_at', { ascending: false })
+
+    if (completedOrders && completedOrders.length > 0) {
+      for (const ord of completedOrders) {
+        if (!creditedOrderIds.has(ord.id)) {
+          const ordTotal = Number(ord.total) || 0
+          if (ordTotal >= config.min_order_amount) {
+            const earned = Math.floor(ordTotal / config.threshold_amount) * config.points_per_threshold
+            if (earned > 0) {
+              const syntheticTx = {
+                id: `order_${ord.id}`,
+                user_id: userId,
+                order_id: ord.id,
+                points: earned,
+                type: 'earned',
+                description: `Poin belanja pesanan COD #${ord.id.slice(0, 8).toUpperCase()}`,
+                created_at: ord.created_at,
+              }
+              transactions.push(syntheticTx)
+              creditedOrderIds.add(ord.id)
+
+              // If loyalty_transactions table exists, try persisting in background
+              if (!txsError) {
+                supabase
+                  .from('loyalty_transactions')
+                  .insert({
+                    user_id: userId,
+                    order_id: ord.id,
+                    points: earned,
+                    type: 'earned',
+                    description: `Poin belanja pesanan COD #${ord.id.slice(0, 8).toUpperCase()}`,
+                  })
+                  .then(() => {})
+                  .catch(() => {})
+              }
+            }
+          }
+        }
       }
     }
 
-    const transactions = txs || []
+    // Sort transactions by date desc
+    transactions.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+
     const totalPoints = transactions.reduce((sum: number, tx: any) => sum + (Number(tx.points) || 0), 0)
     const activePoints = Math.max(0, totalPoints)
     const redeemValue = activePoints * config.redeem_rate
