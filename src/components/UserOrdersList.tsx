@@ -177,7 +177,7 @@ export default function UserOrdersList({ initialOrders }: UserOrdersListProps) {
             className={`p-3 rounded-2xl text-xs font-medium flex items-center justify-between shadow-sm animate-bounce-short ${
               feedbackMsg.type === 'success'
                 ? 'bg-emerald-50 border border-emerald-200 text-emerald-800'
-                : 'bg-red-50 border border-red-200 text-red-800'
+                : 'bg-[var(--danger)]/10 border border-[var(--danger)]/20 text-[var(--danger)]'
             }`}
           >
             <span>{feedbackMsg.text}</span>
@@ -285,7 +285,7 @@ export default function UserOrdersList({ initialOrders }: UserOrdersListProps) {
                         {isSelected ? (
                           <CheckSquare className="w-5 h-5 text-[var(--accent)]" />
                         ) : (
-                          <Square className="w-5 h-5 text-gray-300 hover:text-gray-500" />
+                          <Square className="w-5 h-5 text-[var(--line)] hover:text-[var(--ink-soft)]" />
                         )}
                       </div>
                     )}

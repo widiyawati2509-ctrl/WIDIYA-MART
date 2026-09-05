@@ -52,9 +52,9 @@ export default function ProductReviewFormModal({
       <button
         type="button"
         onClick={() => setIsOpen(true)}
-        className="inline-flex items-center gap-1 text-[var(--text-caption)] font-sora font-bold text-amber-800 bg-amber-50 hover:bg-amber-100 border border-amber-200/80 px-2.5 py-1 rounded-full active:scale-95 transition-all"
+        className="inline-flex items-center gap-1 text-[var(--text-caption)] font-sora font-bold text-[var(--warning)] bg-[var(--warning)]/10 hover:bg-[var(--warning)]/20 border border-[var(--warning)]/30 px-2.5 py-1 rounded-full active:scale-95 transition-all"
       >
-        <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
+        <Star className="w-3 h-3 fill-[var(--warning)] text-[var(--warning)]" />
         <span>{hasSubmitted ? 'Ulas Lagi' : 'Beri Ulasan'}</span>
       </button>
 
@@ -71,7 +71,7 @@ export default function ProductReviewFormModal({
               <button
                 type="button"
                 onClick={() => setIsOpen(false)}
-                className="p-1.5 rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors"
+                className="p-1.5 rounded-full hover:bg-[var(--paper)] text-[var(--ink-soft)] hover:text-[var(--ink)] transition-colors"
               >
                 <X size={18} />
               </button>
@@ -79,7 +79,7 @@ export default function ProductReviewFormModal({
 
             <form onSubmit={handleSubmit} className="space-y-4">
               {/* Star Rating Selector */}
-              <div className="text-center py-2 bg-amber-50/50 rounded-2xl border border-amber-100/80">
+              <div className="text-center py-2 bg-[var(--warning)]/5 rounded-2xl border border-[var(--warning)]/20">
                 <p className="text-xs font-sora font-semibold text-[var(--ink-soft)] mb-1.5">
                   Berapa bintang untuk produk ini?
                 </p>
@@ -97,14 +97,14 @@ export default function ProductReviewFormModal({
                         size={28}
                         className={`transition-colors ${
                           star <= (hoverRating ?? rating)
-                            ? 'fill-amber-400 text-amber-400'
-                            : 'text-gray-300'
+                            ? 'fill-[var(--warning)] text-[var(--warning)]'
+                            : 'text-[var(--line)]'
                         }`}
                       />
                     </button>
                   ))}
                 </div>
-                <p className="text-xs font-sora font-bold text-amber-700 mt-1">
+                <p className="text-xs font-sora font-bold text-[var(--warning)] mt-1">
                   {rating === 5 && 'Sangat Puas ⭐⭐⭐⭐⭐'}
                   {rating === 4 && 'Puas ⭐⭐⭐⭐'}
                   {rating === 3 && 'Cukup Puas ⭐⭐⭐'}
@@ -133,7 +133,7 @@ export default function ProductReviewFormModal({
                   className={`p-3 rounded-xl text-xs font-medium flex items-center gap-2 ${
                     statusMsg.type === 'success'
                       ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
-                      : 'bg-red-50 text-red-700 border border-red-200'
+                      : 'bg-[var(--danger)]/10 text-[var(--danger)] border border-[var(--danger)]/20'
                   }`}
                 >
                   {statusMsg.type === 'success' ? (

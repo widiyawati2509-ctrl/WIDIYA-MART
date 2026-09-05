@@ -261,7 +261,7 @@ export default function UserOrderNotifier() {
       case 'selesai':
         return <CheckCircle2 className="w-5 h-5 text-blue-600" />
       case 'dibatalkan':
-        return <AlertOctagon className="w-5 h-5 text-red-600" />
+        return <AlertOctagon className="w-5 h-5 text-[var(--danger)]" />
       default:
         return <Bell className="w-5 h-5 text-[var(--accent)]" />
     }
@@ -276,9 +276,9 @@ export default function UserOrderNotifier() {
       case 'selesai':
         return 'bg-blue-100 text-blue-800 border-blue-200'
       case 'dibatalkan':
-        return 'bg-red-100 text-red-800 border-red-200'
+        return 'bg-[var(--danger)]/10 text-[var(--danger)] border-[var(--danger)]/20'
       default:
-        return 'bg-amber-100 text-amber-800 border-amber-200'
+        return 'bg-[var(--warning)]/10 text-[var(--warning)] border-[var(--warning)]/20'
     }
   }
 
@@ -311,7 +311,7 @@ export default function UserOrderNotifier() {
           <button
             type="button"
             onClick={() => setNotification(null)}
-            className="p-1 rounded-full text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors shrink-0"
+            className="p-1 rounded-full text-[var(--ink-soft)] hover:text-[var(--ink)] hover:bg-[var(--paper)] transition-colors shrink-0"
             aria-label="Tutup notifikasi"
           >
             <X size={15} />

@@ -130,21 +130,21 @@ export default async function ProfilPage() {
 
         {/* Admin Panel Quick Access (if admin) */}
         {profile?.role === 'admin' && (
-          <div className="card-3d bg-gradient-to-br from-[#2B1810] to-[#1E0F0A] text-white rounded-[var(--radius-lg)] p-4 shadow-[0_12px_28px_-4px_rgba(43,24,16,0.4)] border border-amber-500/30">
+          <div className="card-3d bg-gradient-to-br from-[#2B1810] to-[#1E0F0A] text-white rounded-[var(--radius-lg)] p-4 shadow-[0_12px_28px_-4px_rgba(43,24,16,0.4)] border border-[var(--warning)]/30">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2.5">
-                <span className="w-8 h-8 rounded-[var(--radius-sm)] bg-amber-500/20 text-amber-400 flex items-center justify-center text-base">
+                <span className="w-8 h-8 rounded-[var(--radius-sm)] bg-[var(--warning)]/20 text-[var(--warning)] flex items-center justify-center text-base">
                   👑
                 </span>
                 <div>
                   <h2 className="font-sora font-bold text-sm text-white leading-tight">Panel Pemilik Toko</h2>
-                  <p className="text-[var(--text-caption)] text-amber-200/80 font-medium">Akses penuh pengelolaan toko</p>
+                  <p className="text-[var(--text-caption)] text-white/80 font-medium">Akses penuh pengelolaan toko</p>
                 </div>
               </div>
               <Link
                 href="/admin"
                 prefetch={true}
-                className="press px-3 py-1.5 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 text-white text-xs font-sora font-bold shadow-sm active:scale-95"
+                className="press px-3 py-1.5 rounded-full bg-gradient-to-r from-[var(--accent)] to-[var(--accent-2)] text-white text-xs font-sora font-bold shadow-sm active:scale-95"
               >
                 Buka Admin &rarr;
               </Link>
@@ -186,21 +186,21 @@ export default async function ProfilPage() {
         {/* Loyalty Points Banner Card */}
         <Link
           href="/poin"
-          className="block card-3d bg-gradient-to-r from-amber-500/15 via-orange-500/10 to-amber-500/15 border border-amber-300/60 rounded-[var(--radius-lg)] p-4 shadow-3d press transition-all"
+          className="block card-3d bg-gradient-to-r from-[var(--warning)]/15 via-orange-500/10 to-[var(--warning)]/15 border border-[var(--warning)]/40 rounded-[var(--radius-lg)] p-4 shadow-3d press transition-all"
         >
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <span className="w-10 h-10 rounded-[var(--radius-md)] bg-amber-500 text-white flex items-center justify-center shadow-md">
+              <span className="w-10 h-10 rounded-[var(--radius-md)] bg-[var(--warning)] text-white flex items-center justify-center shadow-md">
                 <Coins size={20} />
               </span>
               <div>
                 <p className="text-[var(--text-caption)] font-medium text-[var(--ink-soft)]">Poin Belanja Saya</p>
                 <p className="font-sora font-extrabold text-base text-[var(--ink)] tabular-nums">
-                  {userPoints.toLocaleString('id-ID')} <span className="text-xs font-semibold text-amber-600">Poin</span>
+                  {userPoints.toLocaleString('id-ID')} <span className="text-xs font-semibold text-[var(--warning)]">Poin</span>
                 </p>
               </div>
             </div>
-            <div className="flex items-center gap-1 text-xs font-sora font-bold text-amber-700 bg-amber-100/80 px-3 py-1.5 rounded-full">
+            <div className="flex items-center gap-1 text-xs font-sora font-bold text-[var(--warning)] bg-[var(--warning)]/10 px-3 py-1.5 rounded-full border border-[var(--warning)]/20">
               <span>Tukar Poin</span>
               <ChevronRight size={13} />
             </div>

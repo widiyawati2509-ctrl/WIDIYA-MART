@@ -51,7 +51,7 @@ export default function ProductReviewsSection({ reviews }: ProductReviewsSection
         {total > 0 && (
           <div className="text-right">
             <div className="flex items-center gap-1 justify-end">
-              <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
+              <Star className="w-4 h-4 fill-[var(--warning)] text-[var(--warning)]" />
               <span className="font-sora font-extrabold text-sm text-[var(--ink)]">{avg}</span>
               <span className="text-[var(--text-caption)] text-[var(--ink-soft)] font-medium">/ 5</span>
             </div>
@@ -64,8 +64,8 @@ export default function ProductReviewsSection({ reviews }: ProductReviewsSection
 
       {total === 0 ? (
         <div className="py-6 text-center">
-          <div className="w-10 h-10 rounded-full bg-amber-50 text-amber-500 flex items-center justify-center mx-auto mb-2">
-            <Star className="w-5 h-5 fill-amber-200 text-amber-400" />
+          <div className="w-10 h-10 rounded-full bg-[var(--warning)]/10 text-[var(--warning)] flex items-center justify-center mx-auto mb-2">
+            <Star className="w-5 h-5 fill-[var(--warning)]/30 text-[var(--warning)]" />
           </div>
           <p className="text-xs font-sora font-bold text-[var(--ink)]">Belum Ada Ulasan</p>
           <p className="text-[var(--text-caption)] text-[var(--ink-soft)] max-w-[240px] mx-auto mt-0.5">
@@ -100,8 +100,8 @@ export default function ProductReviewsSection({ reviews }: ProductReviewsSection
                     size={12}
                     className={
                       star <= rev.rating
-                        ? 'fill-amber-400 text-amber-400'
-                        : 'text-gray-300'
+                        ? 'fill-[var(--warning)] text-[var(--warning)]'
+                        : 'text-[var(--line)]'
                     }
                   />
                 ))}

@@ -437,7 +437,7 @@ export default function ProductDetailInteractive({ product, storePhone = '087816
             aria-label="Tanya stok via WhatsApp"
           >
             <MessageCircle size={18} className="shrink-0" />
-            <span className="hidden min-[380px]:inline text-[var(--text-caption)] font-sora font-bold mt-0.5 leading-tight whitespace-nowrap">
+            <span className="action-bar-label text-[var(--text-caption)] font-sora font-bold mt-0.5 leading-tight whitespace-nowrap">
               Tanya Stok
             </span>
           </a>
@@ -460,10 +460,10 @@ export default function ProductDetailInteractive({ product, storePhone = '087816
               className={`shrink-0 transition-transform duration-200 ${
                 isWishlisted
                   ? 'fill-rose-500 text-rose-500 stroke-[2] scale-110'
-                  : 'text-gray-400 stroke-[1.8]'
+                  : 'text-[var(--ink-soft)] stroke-[1.8]'
               }`}
             />
-            <span className={`hidden min-[380px]:inline text-[var(--text-caption)] font-sora font-bold mt-0.5 leading-tight whitespace-nowrap ${
+            <span className={`action-bar-label text-[var(--text-caption)] font-sora font-bold mt-0.5 leading-tight whitespace-nowrap ${
               isWishlisted ? 'text-rose-600' : 'text-[var(--ink)]'
             }`}>
               {isWishlisted ? 'Disukai' : 'Suka'}

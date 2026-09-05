@@ -111,7 +111,7 @@ export default function WishlistHeartButton({
       className={`press inline-flex items-center justify-center gap-1.5 rounded-full transition-all active:scale-90 ${
         isWishlisted
           ? 'bg-rose-50 text-rose-600 border border-rose-200 hover:bg-rose-100'
-          : 'bg-white hover:bg-rose-50 text-gray-400 hover:text-rose-500 border border-[rgba(232,214,205,0.9)]'
+          : 'bg-white hover:bg-rose-50 text-[var(--ink-soft)] hover:text-rose-500 border border-[rgba(232,214,205,0.9)]'
       } ${showLabel ? 'px-3 py-1.5' : 'w-8 h-8'} ${className}`}
     >
       <Heart

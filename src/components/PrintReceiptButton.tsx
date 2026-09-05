@@ -96,13 +96,13 @@ export default function PrintReceiptButton({ order, store }: PrintReceiptButtonP
           {store?.nama_toko || 'PENGENJEK MART'}
         </h1>
         {store?.alamat_toko && (
-          <p className="text-[var(--text-caption)] leading-tight text-gray-800 mt-0.5">
+          <p className="text-[var(--text-caption)] leading-tight text-[var(--ink)] mt-0.5">
             {store.alamat_toko}
             {store.kota ? `, ${store.kota}` : ''}
           </p>
         )}
         {(store?.whatsapp || store?.no_hp_toko) && (
-          <p className="text-[var(--text-caption)] text-gray-800">
+          <p className="text-[var(--text-caption)] text-[var(--ink)]">
             Telp/WA: {store.whatsapp || store.no_hp_toko}
           </p>
         )}
@@ -152,7 +152,7 @@ export default function PrintReceiptButton({ order, store }: PrintReceiptButtonP
               <div className="font-semibold text-black leading-tight">
                 {item.nama_produk}
               </div>
-              <div className="flex justify-between text-gray-900 text-[var(--text-caption)]">
+              <div className="flex justify-between text-[var(--ink)] text-[var(--text-caption)]">
                 <span>
                   {item.qty} × {formatRp(item.harga_saat_beli)}
                 </span>
@@ -181,12 +181,12 @@ export default function PrintReceiptButton({ order, store }: PrintReceiptButtonP
           <span>TOTAL BAYAR</span>
           <span>{formatRp(order?.total || 0)}</span>
         </div>
-        <div className="flex justify-between pt-0.5 text-[var(--text-caption)] text-gray-800">
+        <div className="flex justify-between pt-0.5 text-[var(--text-caption)] text-[var(--ink)]">
           <span>Metode Bayar</span>
           <span>Tunai / COD di Toko</span>
         </div>
         {order?.catatan && (
-          <div className="text-[var(--text-caption)] text-gray-800 pt-1 italic">
+          <div className="text-[var(--text-caption)] text-[var(--ink)] pt-1 italic">
             Catatan: {order.catatan}
           </div>
         )}
@@ -197,7 +197,7 @@ export default function PrintReceiptButton({ order, store }: PrintReceiptButtonP
       {/* Footer Struk */}
       <div className="text-center text-[var(--text-caption)] leading-tight space-y-1">
         <div className="font-bold">TERIMA KASIH ATAS KUNJUNGAN ANDA</div>
-        <div className="text-gray-800">
+        <div className="text-[var(--ink)]">
           Harap simpan struk ini saat mengambil pesanan di kasir toko.
         </div>
       </div>

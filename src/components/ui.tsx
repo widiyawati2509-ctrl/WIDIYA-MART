@@ -16,7 +16,7 @@ export function buttonClass({
   className = '',
 }: ButtonClassProps = {}): string {
   const base =
-    'inline-flex items-center justify-center gap-1.5 whitespace-nowrap font-sora font-bold transition-all active:scale-[0.96] active:translate-y-[2px] disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100 disabled:shadow-none'
+    'inline-flex items-center justify-center gap-1.5 font-sora font-bold transition-all active:scale-[0.96] active:translate-y-[2px] disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100 disabled:shadow-none'
 
   const variants = {
     primary:

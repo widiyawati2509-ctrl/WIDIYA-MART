@@ -228,7 +228,7 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
             </div>
           )}
           {order.poin_didapat > 0 && (
-            <div className="pt-1.5 flex justify-between items-center text-xs text-amber-700 font-semibold">
+            <div className="pt-1.5 flex justify-between items-center text-xs text-[var(--warning)] font-semibold">
               <span>Poin Didapat dari Pesanan</span>
               <span>+{order.poin_didapat} Poin</span>
             </div>

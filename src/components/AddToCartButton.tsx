@@ -68,7 +68,7 @@ export default function AddToCartButton({ productId, disabled }: AddToCartButton
         variant={added ? 'secondary' : 'primary'}
         onClick={handleAdd}
         disabled={loading || added}
-        className="flex-1 min-w-[102px] h-10 xs:h-11 px-2.5 xs:px-4 py-2 text-xs xs:text-sm font-sora font-bold whitespace-nowrap shrink-0 sm:shrink"
+        className="flex-1 min-w-0 h-10 px-2 sm:px-3 py-2 text-xs sm:text-sm font-sora font-bold leading-tight"
       >
         {added ? (
           <>

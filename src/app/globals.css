@@ -91,6 +91,16 @@ h1, h2, h3, h4, h5, h6, .font-heading {
   font-family: var(--font-sora);
 }
 
+/* Responsive Action Bar on Narrow Screens (< 380px) */
+.action-bar-label {
+  display: none;
+}
+@media (min-width: 380px) {
+  .action-bar-label {
+    display: inline;
+  }
+}
+
 /* 3D Puffy Card */
 .card-3d, .product {
   background: var(--card);

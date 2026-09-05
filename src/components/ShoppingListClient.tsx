@@ -304,11 +304,11 @@ export default function ShoppingListClient({ initialItems }: ShoppingListClientP
                     sizes="64px"
                   />
                 ) : (
-                  <Package className="w-6 h-6 text-gray-400" />
+                  <Package className="w-6 h-6 text-[var(--ink-soft)]" />
                 )}
                 {isOutOfStock && (
                   <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                    <span className="text-[var(--text-caption)] bg-white text-red-600 font-bold px-1 rounded">Habis</span>
+                    <span className="text-[var(--text-caption)] bg-white text-[var(--danger)] font-bold px-1 rounded">Habis</span>
                   </div>
                 )}
               </Link>

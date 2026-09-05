@@ -214,12 +214,12 @@ export default function CheckoutFormClient({
             className={`p-3 rounded-2xl border text-left transition-all relative flex flex-col justify-between ${
               metodePengiriman === 'ambil_di_toko'
                 ? 'border-[var(--accent)] bg-[var(--accent-bg)] shadow-[0_4px_12px_rgba(255,107,53,0.12)] ring-1 ring-[var(--accent)]'
-                : 'border-[var(--line)] bg-white hover:border-gray-300'
+                : 'border-[var(--line)] bg-white hover:border-[var(--line)]'
             }`}
           >
             <div className="flex items-center justify-between mb-2">
               <span className={`w-8 h-8 rounded-xl flex items-center justify-center ${
-                metodePengiriman === 'ambil_di_toko' ? 'bg-[var(--accent)] text-white' : 'bg-gray-100 text-gray-600'
+                metodePengiriman === 'ambil_di_toko' ? 'bg-[var(--accent)] text-white' : 'bg-[var(--paper)] text-[var(--ink-soft)]'
               }`}>
                 <Store size={16} />
               </span>
@@ -245,12 +245,12 @@ export default function CheckoutFormClient({
             className={`p-3 rounded-2xl border text-left transition-all relative flex flex-col justify-between ${
               metodePengiriman === 'antar_alamat'
                 ? 'border-[var(--accent)] bg-[var(--accent-bg)] shadow-[0_4px_12px_rgba(255,107,53,0.12)] ring-1 ring-[var(--accent)]'
-                : 'border-[var(--line)] bg-white hover:border-gray-300'
+                : 'border-[var(--line)] bg-white hover:border-[var(--line)]'
             }`}
           >
             <div className="flex items-center justify-between mb-2">
               <span className={`w-8 h-8 rounded-xl flex items-center justify-center ${
-                metodePengiriman === 'antar_alamat' ? 'bg-[var(--accent)] text-white' : 'bg-gray-100 text-gray-600'
+                metodePengiriman === 'antar_alamat' ? 'bg-[var(--accent)] text-white' : 'bg-[var(--paper)] text-[var(--ink-soft)]'
               }`}>
                 <Truck size={16} />
               </span>
@@ -312,7 +312,7 @@ export default function CheckoutFormClient({
             </h2>
             {jarakKm !== null && (
               <span className={`text-[var(--text-caption)] font-bold px-2 py-0.5 rounded-full ${
-                ongkir === 0 ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-amber-50 text-amber-700 border border-amber-200'
+                ongkir === 0 ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-[var(--warning)]/10 text-[var(--warning)] border border-[var(--warning)]/30'
               }`}>
                 {jarakKm} km dari Toko
               </span>
@@ -320,10 +320,10 @@ export default function CheckoutFormClient({
           </div>
 
           {/* GPS Auto-Detect Button */}
-          <div className="p-3 rounded-2xl bg-amber-50/70 border border-amber-200/80 space-y-2">
+          <div className="p-3 rounded-2xl bg-[var(--warning)]/10 border border-[var(--warning)]/30 space-y-2">
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center shrink-0">
+                <div className="w-8 h-8 rounded-xl bg-[var(--warning)]/20 text-[var(--warning)] flex items-center justify-center shrink-0">
                   <Navigation size={15} className={geoStatus === 'locating' ? 'animate-spin' : ''} />
                 </div>
                 <div>
@@ -348,13 +348,13 @@ export default function CheckoutFormClient({
               <div className={`p-2.5 rounded-xl text-xs font-medium flex items-start gap-2 ${
                 geoStatus === 'success' 
                   ? (ongkir === 0 ? 'bg-emerald-100/80 text-emerald-800' : 'bg-orange-100/80 text-orange-900')
-                  : 'bg-red-50 text-red-700'
+                  : 'bg-[var(--danger)]/10 text-[var(--danger)]'
               }`}>
                 <Info size={14} className="shrink-0 mt-0.5" />
                 <div className="flex-1">
                   <span>{geoMessage}</span>
                   {geoStatus === 'success' && ongkir === 0 && (
-                    <p className="text-[var(--text-caption)] font-bold text-emerald-800 mt-0.5">
+                     <p className="text-[var(--text-caption)] font-bold text-emerald-800 mt-0.5">
                       🎉 Biaya Ongkir: GRATIS (Rp 0)
                     </p>
                   )}
@@ -371,7 +371,7 @@ export default function CheckoutFormClient({
           {/* Manual Address Input */}
           <div className="space-y-1.5">
             <label htmlFor="alamat_pengiriman" className="text-xs font-sora font-bold text-[var(--ink)] flex items-center justify-between">
-              <span>Alamat Lengkap Pengiriman <span className="text-red-500">*</span></span>
+              <span>Alamat Lengkap Pengiriman <span className="text-[var(--danger)]">*</span></span>
               <span className="text-[var(--text-caption)] text-[var(--ink-soft)] font-normal">Patokan rumah / RT / RW</span>
             </label>
             <textarea
@@ -411,7 +411,7 @@ export default function CheckoutFormClient({
         <h2 className="font-sora font-bold text-sm text-[var(--ink)]">Data Pemesan</h2>
         <div className="space-y-1">
           <label htmlFor="nama_pemesan" className="text-xs font-sora font-bold text-[var(--ink)]">
-            Nama Lengkap <span className="text-red-500">*</span>
+            Nama Lengkap <span className="text-[var(--danger)]">*</span>
           </label>
           <input
             id="nama_pemesan"
@@ -424,7 +424,7 @@ export default function CheckoutFormClient({
         </div>
         <div className="space-y-1">
           <label htmlFor="no_hp_pemesan" className="text-xs font-sora font-bold text-[var(--ink)]">
-            Nomor WhatsApp <span className="text-red-500">*</span>
+            Nomor WhatsApp <span className="text-[var(--danger)]">*</span>
           </label>
           <input
             id="no_hp_pemesan"
@@ -455,13 +455,13 @@ export default function CheckoutFormClient({
         <Card>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2.5">
-              <span className="w-8 h-8 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center font-bold">
+              <span className="w-8 h-8 rounded-xl bg-[var(--warning)]/20 text-[var(--warning)] flex items-center justify-center font-bold">
                 <Coins size={16} />
               </span>
               <div>
                 <h3 className="font-sora font-bold text-xs text-[var(--ink)] flex items-center gap-1">
                   <span>Tukar Poin Toko</span>
-                  <span className="text-[var(--text-caption)] text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">
+                  <span className="text-[var(--text-caption)] text-[var(--warning)] bg-[var(--warning)]/10 px-2 py-0.5 rounded-full border border-[var(--warning)]/30">
                     {availablePoints} Poin
                   </span>
                 </h3>
@@ -480,7 +480,7 @@ export default function CheckoutFormClient({
                 onChange={(e) => setUsePoints(e.target.checked)}
                 className="sr-only peer"
               />
-              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-500"></div>
+              <div className="w-11 h-6 bg-[var(--line)] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-[var(--line)] after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[var(--accent)]"></div>
             </label>
           </div>
 
@@ -520,7 +520,7 @@ export default function CheckoutFormClient({
             <Truck size={12} className="text-[var(--accent)]" />
             Biaya Pengiriman
             {metodePengiriman === 'antar_alamat' && jarakKm !== null && (
-              <span className="text-[var(--text-caption)] text-gray-500">({jarakKm} km)</span>
+              <span className="text-[var(--text-caption)] text-[var(--ink-soft)]">({jarakKm} km)</span>
             )}
           </span>
           <span className={`tabular-nums font-bold font-sora ${ongkir === 0 ? 'text-emerald-700' : 'text-[var(--ink)]'}`}>
