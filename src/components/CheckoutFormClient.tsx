@@ -1,10 +1,11 @@
 // @ts-nocheck
 'use client'
 
-import { useState } from 'react'
+import { useState, useTransition } from 'react'
+import { useRouter } from 'next/navigation'
 import { formatRupiah } from '@/lib/utils'
 import { createOrder } from '@/lib/actions/orders'
-import { Coins, Check, Sparkles } from 'lucide-react'
+import { Coins, Check, Sparkles, Loader2, AlertCircle } from 'lucide-react'
 import { Card, Button } from '@/components/ui'
 
 interface CheckoutFormClientProps {
@@ -28,6 +29,7 @@ export default function CheckoutFormClient({
   loyaltySummary,
   children,
 }: CheckoutFormClientProps) {
+  const router = useRouter()
   const config = loyaltySummary?.config
   const availablePoints = loyaltySummary?.totalPoints ?? 0
   const canUseLoyalty = config?.is_active && availablePoints > 0
@@ -39,13 +41,37 @@ export default function CheckoutFormClient({
   const maxRedeemablePoints = Math.min(availablePoints, maxPointsNeeded)
 
   const [usePoints, setUsePoints] = useState(false)
+  const [isPending, startTransition] = useTransition()
+  const [errorMsg, setErrorMsg] = useState<string | null>(null)
 
   const pointsToUse = usePoints ? maxRedeemablePoints : 0
   const discountAmount = pointsToUse * redeemRate
   const finalTotal = Math.max(0, subtotal - discountAmount)
 
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    setErrorMsg(null)
+    const form = e.currentTarget
+    const formData = new FormData(form)
+
+    startTransition(async () => {
+      try {
+        const res = await createOrder(formData)
+        if (res?.error) {
+          setErrorMsg(res.error)
+          window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })
+        } else if (res?.orderId) {
+          window.location.href = `/pesanan/${res.orderId}`
+        }
+      } catch (err: any) {
+        if (err?.message?.includes('NEXT_REDIRECT')) return
+        setErrorMsg(err?.message || 'Terjadi gangguan saat memproses pesanan')
+      }
+    })
+  }
+
   return (
-    <form action={createOrder} className="space-y-3.5 px-4">
+    <form onSubmit={handleSubmit} className="space-y-3.5 px-4">
       {children}
 
       {/* Loyalty Points Redemption Toggle */}
@@ -123,12 +149,36 @@ export default function CheckoutFormClient({
         </div>
       </Card>
 
+      {errorMsg && (
+        <div className="p-3.5 rounded-2xl bg-red-50 border border-red-200 text-red-700 text-xs font-semibold flex items-center justify-between shadow-sm animate-fade-in">
+          <div className="flex items-center gap-2">
+            <AlertCircle size={16} className="text-red-500 shrink-0" />
+            <span>{errorMsg}</span>
+          </div>
+          <button
+            type="button"
+            onClick={() => setErrorMsg(null)}
+            className="text-red-400 hover:text-red-600 px-1 py-0.5 rounded"
+          >
+            ✕
+          </button>
+        </div>
+      )}
+
       <Button
         type="submit"
         variant="primary"
-        className="w-full py-3.5 rounded-[16px] text-base checkout-btn"
+        disabled={isPending}
+        className="w-full py-3.5 rounded-[16px] text-base checkout-btn flex items-center justify-center gap-2"
       >
-        Buat Pesanan — {formatRupiah(finalTotal)}
+        {isPending ? (
+          <>
+            <Loader2 className="w-5 h-5 animate-spin" />
+            <span>Memproses Pesanan...</span>
+          </>
+        ) : (
+          <span>Buat Pesanan — {formatRupiah(finalTotal)}</span>
+        )}
       </Button>
     </form>
   )

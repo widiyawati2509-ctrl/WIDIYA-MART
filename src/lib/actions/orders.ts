@@ -12,78 +12,82 @@ import { addToCart } from '@/lib/actions/cart'
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type SupabaseClient = any
 
-export async function createOrder(formData: FormData): Promise<{ error?: string } | void> {
-  const supabase: SupabaseClient = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return { error: 'Silakan login terlebih dahulu' }
+export async function createOrder(formData: FormData): Promise<{ error?: string; success?: boolean; orderId?: string }> {
+  try {
+    const supabase: SupabaseClient = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return { error: 'Silakan login terlebih dahulu' }
 
-  const raw = {
-    nama_pemesan: formData.get('nama_pemesan') as string,
-    no_hp_pemesan: formData.get('no_hp_pemesan') as string,
-    catatan: formData.get('catatan') as string,
-  }
-
-  const parsed = checkoutSchema.safeParse(raw)
-  if (!parsed.success) return { error: parsed.error.issues[0].message }
-
-  // Get cart items
-  const { data: cart } = await supabase
-    .from('carts')
-    .select('id')
-    .eq('user_id', user.id)
-    .single()
-
-  if (!cart) return { error: 'Keranjang kosong' }
-
-  const { data: items } = await supabase
-    .from('cart_items')
-    .select('qty, products(id, nama, harga, stok)')
-    .eq('cart_id', cart.id)
-
-  if (!items || items.length === 0) return { error: 'Keranjang kosong' }
-
-  // Validate stock
-  for (const item of items) {
-    const product = item.products as { id: string; nama: string; harga: number; stok: number } | null
-    if (!product) return { error: 'Produk tidak ditemukan' }
-    if (product.stok < item.qty) {
-      return { error: `Stok ${product.nama} tidak cukup (tersisa ${product.stok})` }
+    const raw = {
+      nama_pemesan: (formData.get('nama_pemesan') as string)?.trim() || '',
+      no_hp_pemesan: (formData.get('no_hp_pemesan') as string)?.replace(/[\s\-\.]/g, '')?.trim() || '',
+      catatan: (formData.get('catatan') as string)?.trim() || '',
     }
-  }
 
-  const subtotal = items.reduce((sum: number, item: { qty: number; products: unknown }) => {
-    const product = item.products as { harga: number } | null
-    return sum + (product?.harga ?? 0) * item.qty
-  }, 0)
+    const parsed = checkoutSchema.safeParse(raw)
+    if (!parsed.success) {
+      return { error: parsed.error.issues[0]?.message || 'Data pemesan tidak lengkap / nomor HP tidak valid' }
+    }
 
-  // Loyalty points deduction handling
-  const poinToRedeem = Math.max(0, parseInt(formData.get('poin_digunakan') as string) || 0)
-  let diskonPoin = 0
-  let finalTotal = subtotal
+    // Get cart items
+    const { data: cart } = await supabase
+      .from('carts')
+      .select('id')
+      .eq('user_id', user.id)
+      .single()
 
-  if (poinToRedeem > 0) {
-    try {
-      const config = await getLoyaltyConfig()
-      if (config.is_active) {
-        const summary = await getUserLoyaltySummary(user.id)
-        const userMaxPoints = summary?.totalPoints ?? 0
-        const validPoints = Math.min(poinToRedeem, userMaxPoints)
+    if (!cart) return { error: 'Keranjang belanja kosong' }
 
-        if (validPoints > 0) {
-          const maxDiscount = Math.floor(subtotal * (config.max_redeem_percentage / 100))
-          diskonPoin = Math.min(validPoints * config.redeem_rate, maxDiscount)
-          finalTotal = Math.max(0, subtotal - diskonPoin)
-        }
+    const { data: items } = await supabase
+      .from('cart_items')
+      .select('qty, products(id, nama, harga, stok)')
+      .eq('cart_id', cart.id)
+
+    if (!items || items.length === 0) return { error: 'Keranjang belanja kosong' }
+
+    // Validate stock
+    for (const item of items) {
+      const product = item.products as { id: string; nama: string; harga: number; stok: number } | null
+      if (!product) return { error: 'Produk tidak ditemukan' }
+      if (product.stok < item.qty) {
+        return { error: `Stok ${product.nama} tidak cukup (tersisa ${product.stok})` }
       }
-    } catch (e) {
-      console.warn('Loyalty points calculation error:', e)
     }
-  }
 
-  // Create order
-  const { data: order, error: orderError } = await supabase
-    .from('orders')
-    .insert({
+    const subtotal = items.reduce((sum: number, item: { qty: number; products: unknown }) => {
+      const product = item.products as { harga: number } | null
+      return sum + (product?.harga ?? 0) * item.qty
+    }, 0)
+
+    // Loyalty points deduction handling
+    const poinToRedeem = Math.max(0, parseInt(formData.get('poin_digunakan') as string) || 0)
+    let diskonPoin = 0
+    let finalTotal = subtotal
+
+    if (poinToRedeem > 0) {
+      try {
+        const config = await getLoyaltyConfig()
+        if (config?.is_active) {
+          const summary = await getUserLoyaltySummary(user.id)
+          const userMaxPoints = summary?.totalPoints ?? 0
+          const validPoints = Math.min(poinToRedeem, userMaxPoints)
+
+          if (validPoints > 0) {
+            const maxDiscount = Math.floor(subtotal * (config.max_redeem_percentage / 100))
+            diskonPoin = Math.min(validPoints * config.redeem_rate, maxDiscount)
+            finalTotal = Math.max(0, subtotal - diskonPoin)
+          }
+        }
+      } catch (e) {
+        console.warn('Loyalty points calculation error:', e)
+      }
+    }
+
+    // Create order with fallback for non-migrated schema
+    let order = null
+
+    // 1. Attempt with loyalty columns
+    const fullPayload = {
       user_id: user.id,
       subtotal,
       total: finalTotal,
@@ -91,59 +95,99 @@ export async function createOrder(formData: FormData): Promise<{ error?: string 
       diskon_poin: diskonPoin,
       nama_pemesan: parsed.data.nama_pemesan,
       no_hp_pemesan: parsed.data.no_hp_pemesan,
-      catatan: parsed.data.catatan,
-    })
-    .select('id')
-    .single()
+      catatan: parsed.data.catatan || null,
+    }
 
-  if (orderError || !order) return { error: 'Gagal membuat pesanan' }
+    const { data: orderFull, error: orderFullError } = await supabase
+      .from('orders')
+      .insert(fullPayload)
+      .select('id')
+      .single()
 
-  // Record points debit transaction if redeemed
-  if (diskonPoin > 0 && poinToRedeem > 0) {
-    try {
-      await supabase.from('loyalty_transactions').insert({
+    if (orderFullError) {
+      console.warn('Full order insert failed, falling back to basic schema:', orderFullError.message)
+      const basicPayload = {
         user_id: user.id,
+        subtotal,
+        total: finalTotal,
+        nama_pemesan: parsed.data.nama_pemesan,
+        no_hp_pemesan: parsed.data.no_hp_pemesan,
+        catatan: parsed.data.catatan || null,
+      }
+
+      const { data: orderBasic, error: orderBasicError } = await supabase
+        .from('orders')
+        .insert(basicPayload)
+        .select('id')
+        .single()
+
+      if (orderBasicError || !orderBasic) {
+        console.error('Basic order insert error:', orderBasicError)
+        return { error: `Gagal membuat pesanan: ${orderBasicError?.message || 'Database error'}` }
+      }
+      order = orderBasic
+    } else {
+      order = orderFull
+    }
+
+    if (!order) return { error: 'Gagal membuat pesanan (ID tidak didapatkan)' }
+
+    // Record points debit transaction if redeemed
+    if (diskonPoin > 0 && poinToRedeem > 0) {
+      try {
+        await supabase.from('loyalty_transactions').insert({
+          user_id: user.id,
+          order_id: order.id,
+          points: -poinToRedeem,
+          type: 'redeemed',
+          description: `Diskon Rp ${diskonPoin.toLocaleString('id-ID')} pada pesanan #${order.id.slice(0, 8)}`,
+        })
+      } catch (e) {
+        console.warn('Failed to insert loyalty redemption record:', e)
+      }
+    }
+
+    // Create order items
+    const orderItems = items.map((item: { qty: number; products: unknown }) => {
+      const product = item.products as { id: string; nama: string; harga: number } | null
+      return {
         order_id: order.id,
-        points: -poinToRedeem,
-        type: 'redeemed',
-        description: `Diskon Rp ${diskonPoin.toLocaleString('id-ID')} pada pesanan #${order.id.slice(0, 8)}`,
-      })
-    } catch (e) {
-      console.warn('Failed to insert loyalty redemption record:', e)
+        product_id: product?.id ?? null,
+        nama_produk: product?.nama ?? '',
+        harga_saat_beli: product?.harga ?? 0,
+        qty: item.qty,
+        subtotal: (product?.harga ?? 0) * item.qty,
+      }
+    })
+
+    const { error: itemsError } = await supabase.from('order_items').insert(orderItems)
+    if (itemsError) {
+      console.error('Failed to insert order items:', itemsError)
+      return { error: `Gagal menyimpan rincian pesanan: ${itemsError.message}` }
     }
+
+    // Decrement stock
+    for (const item of items) {
+      const product = item.products as { id: string; stok: number } | null
+      if (product) {
+        await supabase
+          .from('products')
+          .update({ stok: Math.max(0, product.stok - item.qty) })
+          .eq('id', product.id)
+      }
+    }
+
+    // Clear cart
+    await supabase.from('cart_items').delete().eq('cart_id', cart.id)
+
+    revalidatePath('/pesanan')
+    revalidatePath('/keranjang')
+
+    return { success: true, orderId: order.id }
+  } catch (err: any) {
+    console.error('createOrder unexpected error:', err)
+    return { error: err?.message || 'Terjadi kesalahan sistem saat membuat pesanan' }
   }
-
-  // Create order items
-  const orderItems = items.map((item: { qty: number; products: unknown }) => {
-    const product = item.products as { id: string; nama: string; harga: number } | null
-    return {
-      order_id: order.id,
-      product_id: product?.id ?? null,
-      nama_produk: product?.nama ?? '',
-      harga_saat_beli: product?.harga ?? 0,
-      qty: item.qty,
-      subtotal: (product?.harga ?? 0) * item.qty,
-    }
-  })
-
-  await supabase.from('order_items').insert(orderItems)
-
-  // Decrement stock
-  for (const item of items) {
-    const product = item.products as { id: string; stok: number } | null
-    if (product) {
-      await supabase
-        .from('products')
-        .update({ stok: product.stok - item.qty })
-        .eq('id', product.id)
-    }
-  }
-
-  // Clear cart
-  await supabase.from('cart_items').delete().eq('cart_id', cart.id)
-
-  revalidatePath('/pesanan')
-  redirect(`/pesanan/${order.id}`)
 }
 
 export async function updateOrderStatus(orderId: string, status: string): Promise<{ error?: string; success?: boolean }> {

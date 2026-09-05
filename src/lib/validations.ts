@@ -22,10 +22,12 @@ export const registerSchema = z.object({
 })
 
 export const checkoutSchema = z.object({
-  nama_pemesan: z.string().min(2, 'Nama minimal 2 karakter'),
+  nama_pemesan: z.string().min(2, 'Nama pemesan minimal 2 karakter'),
   no_hp_pemesan: z
     .string()
-    .regex(/^(\+62|62|0)8[1-9][0-9]{6,10}$/, 'Nomor HP tidak valid'),
+    .min(9, 'Nomor WhatsApp minimal 9 digit')
+    .max(16, 'Nomor WhatsApp maksimal 16 digit')
+    .regex(/^(\+62|62|0)[0-9]{8,13}$/, 'Format nomor WhatsApp tidak valid (contoh: 081234567890)'),
   catatan: z.string().max(500).optional(),
 })
 
