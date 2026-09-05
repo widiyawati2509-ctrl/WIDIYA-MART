@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import Link from 'next/link'
+import PageHeader from '@/components/PageHeader'
 import { getUserLoyaltySummary } from '@/lib/actions/loyalty'
 import { formatRupiah } from '@/lib/utils'
 import { ChevronLeft, Coins, Award, Sparkles, TrendingUp, History, Info } from 'lucide-react'
@@ -25,20 +25,17 @@ export default async function PoinPage() {
   return (
     <div className="w-full pb-28">
       {/* Top Header */}
-      <div className="top-header sticky top-0 z-40 bg-[rgba(250,240,235,0.92)] backdrop-blur-md px-4 py-3.5 flex items-center justify-between border-b border-[rgba(232,214,205,0.8)] shadow-[0_4px_20px_-2px_rgba(43,24,16,0.06)]">
-        <div className="flex items-center gap-2">
-          <Link href="/profil" className="press p-1.5 -ml-1 rounded-full hover:bg-[var(--line)]/50 text-[var(--ink)]">
-            <ChevronLeft className="w-5 h-5" />
-          </Link>
-          <div>
-            <h1 className="font-sora font-bold text-sm text-[var(--ink)]">Poin Saya</h1>
-            <p className="text-[10.5px] text-[var(--ink-soft)] font-medium">Program Loyalitas Toko</p>
-          </div>
-        </div>
-        <span className="w-8 h-8 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center">
-          <Coins size={16} />
-        </span>
-      </div>
+      <PageHeader
+        title="Poin Saya"
+        subtitle="Program Loyalitas Toko"
+        showBack={true}
+        backHref="/profil"
+        rightSlot={
+          <span className="w-8 h-8 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center shadow-xs">
+            <Coins size={16} />
+          </span>
+        }
+      />
 
       <div className="p-4 space-y-3.5">
         {/* Main Points Card */}

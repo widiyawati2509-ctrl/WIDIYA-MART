@@ -1,6 +1,7 @@
 // @ts-nocheck
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
+import PageHeader from '@/components/PageHeader'
 import CartItemRow from '@/components/CartItemRow'
 import { formatRupiah } from '@/lib/utils'
 import { ShoppingCart, ArrowRight } from 'lucide-react'
@@ -38,17 +39,18 @@ export default async function KeranjangPage() {
   return (
     <div className="w-full pb-36">
       {/* Top Header */}
-      <div className="top-header sticky top-0 z-40 px-4 py-3.5 border-b border-[rgba(232,214,205,0.8)] bg-[rgba(250,240,235,0.92)] backdrop-blur-md shadow-[0_4px_20px_-2px_rgba(43,24,16,0.06)] flex items-center justify-between mb-4">
-        <h1 className="font-sora font-bold text-base text-[var(--ink)] flex items-center gap-2">
-          <span className="w-7 h-7 rounded-xl bg-[var(--accent-bg)] text-[var(--accent-2)] flex items-center justify-center font-bold">
-            <ShoppingCart size={15} />
-          </span>
-          Keranjang Belanja
-        </h1>
-        <span className="text-xs font-semibold text-[var(--ink-soft)] bg-[var(--accent-bg)] text-[var(--accent-2)] px-2.5 py-0.5 rounded-full">
-          {items.length} item
-        </span>
-      </div>
+      <PageHeader
+        title="Keranjang Belanja"
+        subtitle={items.length > 0 ? `${items.length} item dalam keranjang` : 'Keranjang Anda kosong'}
+        rightSlot={
+          items.length > 0 ? (
+            <span className="text-xs font-semibold bg-[var(--accent-bg)] text-[var(--accent-2)] px-2.5 py-0.5 rounded-full">
+              {items.length} item
+            </span>
+          ) : null
+        }
+        className="mb-4"
+      />
 
       <div className="px-4">
         {isEmpty ? (

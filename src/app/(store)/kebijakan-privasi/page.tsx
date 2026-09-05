@@ -1,6 +1,6 @@
 // @ts-nocheck
-import Link from 'next/link'
-import { ChevronLeft, ShieldCheck } from 'lucide-react'
+import PageHeader from '@/components/PageHeader'
+import { ShieldCheck } from 'lucide-react'
 
 export const metadata = {
   title: 'Kebijakan Privasi - PENGENJEK MART',
@@ -11,12 +11,12 @@ export default function KebijakanPrivasiPage() {
   return (
     <div className="w-full pb-28">
       {/* Top Header */}
-      <div className="top-header sticky top-0 z-40 bg-[rgba(250,240,235,0.92)] backdrop-blur-md px-4 py-3.5 flex items-center gap-2 border-b border-[rgba(232,214,205,0.8)] shadow-[0_4px_20px_-2px_rgba(43,24,16,0.06)]">
-        <Link href="/" className="press p-1.5 -ml-1 rounded-full hover:bg-[var(--line)]/50 text-[var(--ink)]">
-          <ChevronLeft className="w-5 h-5" />
-        </Link>
-        <h1 className="font-sora font-bold text-sm text-[var(--ink)]">Kebijakan Privasi</h1>
-      </div>
+      <PageHeader
+        title="Kebijakan Privasi"
+        subtitle="Perlindungan & privasi data pengguna"
+        showBack={true}
+        backHref="/"
+      />
 
       <div className="p-4 space-y-4 text-xs text-[var(--ink)] leading-relaxed">
         <div className="card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[20px] p-4 shadow-3d space-y-3">

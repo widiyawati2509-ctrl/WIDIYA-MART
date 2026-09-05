@@ -5,6 +5,7 @@ import { formatRupiah, getOrderStatusLabel, formatWhatsAppUrl } from '@/lib/util
 import { ChevronLeft, CheckCircle, Clock, MapPin, Phone, Truck, Star } from 'lucide-react'
 import Link from 'next/link'
 import PrintReceiptButton from '@/components/PrintReceiptButton'
+import PageHeader from '@/components/PageHeader'
 import DeleteOrderButton from '@/components/admin/DeleteOrderButton'
 import ReorderButton from '@/components/ReorderButton'
 import ProductReviewFormModal from '@/components/ProductReviewFormModal'
@@ -40,15 +41,14 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
   return (
     <div className="w-full pb-28">
       {/* Top Header */}
-      <div className="top-header sticky top-0 z-40 bg-[rgba(250,240,235,0.92)] backdrop-blur-md px-4 py-3.5 flex items-center justify-between border-b border-[rgba(232,214,205,0.8)] shadow-[0_4px_20px_-2px_rgba(43,24,16,0.06)] print:hidden">
-        <div className="flex items-center gap-2">
-          <Link href="/pesanan" className="press p-1.5 -ml-1 rounded-full hover:bg-[var(--line)]/50 text-[var(--ink)]">
-            <ChevronLeft className="w-5 h-5" />
-          </Link>
-          <h1 className="font-sora font-bold text-sm text-[var(--ink)]">Detail Pesanan</h1>
-        </div>
-        <PrintReceiptButton order={order} store={store} />
-      </div>
+      <PageHeader
+        title="Detail Pesanan"
+        subtitle={`ID: #${order.id.slice(0, 8).toUpperCase()}`}
+        showBack={true}
+        backHref="/pesanan"
+        printHidden={true}
+        rightSlot={<PrintReceiptButton order={order} store={store} />}
+      />
 
       <div className="p-4 space-y-3.5">
         {/* Status Stepper Card */}

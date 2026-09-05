@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation'
 import ProductDetailInteractive from '@/components/ProductDetailInteractive'
 import ProductCard from '@/components/ProductCard'
 import ProductReviewsSection from '@/components/ProductReviewsSection'
-import { ChevronLeft } from 'lucide-react'
+import PageHeader from '@/components/PageHeader'
 import Link from 'next/link'
 import type { Metadata } from 'next'
 import { cache } from 'react'
@@ -70,12 +70,12 @@ export default async function ProductPage({ params }: ProductPageProps) {
   return (
     <div className="w-full pb-36">
       {/* Top Header */}
-      <div className="top-header sticky top-0 z-40 bg-[rgba(250,240,235,0.92)] backdrop-blur-md px-4 py-3 flex items-center gap-2 border-b border-[rgba(232,214,205,0.8)] shadow-[0_4px_20px_-2px_rgba(43,24,16,0.06)]">
-        <Link href="/kategori" className="press p-1.5 -ml-1 rounded-full hover:bg-[var(--line)]/50 text-[var(--ink)]">
-          <ChevronLeft className="w-5 h-5" />
-        </Link>
-        <span className="font-sora font-bold text-sm text-[var(--ink)] truncate">{product.nama}</span>
-      </div>
+      <PageHeader
+        title={product.nama}
+        subtitle={product.categories?.nama || 'Detail Produk'}
+        showBack={true}
+        backHref="/kategori"
+      />
 
       {/* Interactive Image Gallery, Variants, Description, WhatsApp & Floating Cart */}
       <ProductDetailInteractive product={product} storePhone={storePhone} />

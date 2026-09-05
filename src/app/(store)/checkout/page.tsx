@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { getUserLoyaltySummary } from '@/lib/actions/loyalty'
 import CheckoutFormClient from '@/components/CheckoutFormClient'
+import PageHeader from '@/components/PageHeader'
 
 export default async function CheckoutPage() {
   const supabase = await createClient()
@@ -50,10 +51,13 @@ export default async function CheckoutPage() {
   return (
     <div className="w-full pb-28">
       {/* Top Header */}
-      <div className="top-header sticky top-0 z-40 px-4 py-3.5 border-b border-[rgba(232,214,205,0.8)] bg-[rgba(250,240,235,0.92)] backdrop-blur-md shadow-[0_4px_20px_-2px_rgba(43,24,16,0.06)] mb-4">
-        <h1 className="font-sora font-bold text-base text-[var(--ink)]">Konfirmasi Pesanan</h1>
-        <p className="text-xs text-[var(--ink-soft)] font-medium">Periksa kembali data belanjaan kamu</p>
-      </div>
+      <PageHeader
+        title="Konfirmasi Pesanan"
+        subtitle="Periksa kembali data belanjaan kamu"
+        showBack={true}
+        backHref="/keranjang"
+        className="mb-4"
+      />
 
       <CheckoutFormClient
         items={items}

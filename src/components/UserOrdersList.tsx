@@ -4,6 +4,7 @@
 import { useState, useTransition } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import PageHeader from '@/components/PageHeader'
 import { formatRupiah, getOrderStatusLabel } from '@/lib/utils'
 import { deleteOrders, deleteAllOrders, deleteSingleOrder, reorderItems } from '@/lib/actions/orders'
 import { 
@@ -145,16 +146,11 @@ export default function UserOrdersList({ initialOrders }: UserOrdersListProps) {
   return (
     <div className="space-y-4">
       {/* Top Header */}
-      <div className="top-header sticky top-0 z-40 px-4 py-3.5 border-b border-[rgba(232,214,205,0.8)] bg-[rgba(250,240,235,0.92)] backdrop-blur-md shadow-[0_4px_20px_-2px_rgba(43,24,16,0.06)] flex items-center justify-between">
-        <div>
-          <h1 className="font-sora font-bold text-base text-[var(--ink)]">Pesanan Saya</h1>
-          <p className="text-xs text-[var(--ink-soft)] font-medium">
-            {orders.length > 0 ? `${orders.length} riwayat pesanan` : 'Lacak status pesanan'}
-          </p>
-        </div>
-
-        {orders.length > 0 && (
-          <div className="flex items-center gap-2">
+      <PageHeader
+        title="Pesanan Saya"
+        subtitle={orders.length > 0 ? `${orders.length} riwayat pesanan` : 'Lacak status pesanan'}
+        rightSlot={
+          orders.length > 0 ? (
             <button
               type="button"
               onClick={() => {
@@ -170,9 +166,9 @@ export default function UserOrdersList({ initialOrders }: UserOrdersListProps) {
             >
               {isSelectMode ? 'Batal' : 'Pilih / Hapus'}
             </button>
-          </div>
-        )}
-      </div>
+          ) : null
+        }
+      />
 
       {/* Feedback Toast */}
       {feedbackMsg && (

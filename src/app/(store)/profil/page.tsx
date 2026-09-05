@@ -7,6 +7,7 @@ import { getShoppingList } from '@/lib/actions/shopping-list'
 import { getOrderStatusLabel, formatRupiah } from '@/lib/utils'
 import { User, ShoppingBag, ChevronRight, LogOut, ShieldCheck, Coins, Bookmark, Heart, Bell, Clock, PackageCheck, AlertCircle } from 'lucide-react'
 import Link from 'next/link'
+import PageHeader from '@/components/PageHeader'
 import { Card, Button } from '@/components/ui'
 
 export default async function ProfilPage() {
@@ -37,17 +38,25 @@ export default async function ProfilPage() {
 
   return (
     <div className="w-full pb-28">
-      {/* Header Profile */}
-      <div className="top-header px-4 pt-8 pb-5 border-b border-[rgba(232,214,205,0.8)] bg-[rgba(250,240,235,0.92)] shadow-[0_4px_20px_-2px_rgba(43,24,16,0.06)] mb-4">
-        <div className="flex items-center gap-3.5">
-          <div className="w-13 h-13 rounded-[16px] bg-gradient-to-br from-[var(--accent)] to-[var(--accent-2)] text-white flex items-center justify-center shadow-[0_6px_14px_-2px_rgba(255,107,53,.45),inset_0_1px_0_rgba(255,255,255,.4)]">
-            <User size={26} />
+      {/* Sticky Top Header */}
+      <PageHeader
+        title="Profil Saya"
+        subtitle="Pengaturan akun & riwayat belanja"
+        sticky={true}
+        className="mb-4"
+      />
+
+      <div className="px-4 space-y-3.5">
+        {/* User Identity Card */}
+        <div className="card-3d bg-white border border-[rgba(232,214,205,0.9)] rounded-[24px] p-4 shadow-3d flex items-center gap-3.5">
+          <div className="w-13 h-13 rounded-[16px] bg-gradient-to-br from-[var(--accent)] to-[var(--accent-2)] text-white flex items-center justify-center shadow-[0_6px_14px_-2px_rgba(255,107,53,.45),inset_0_1px_0_rgba(255,255,255,.4)] shrink-0">
+            <User size={24} />
           </div>
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2">
-              <h1 className="font-sora font-bold text-base text-[var(--ink)] truncate">
+              <h2 className="font-sora font-bold text-base text-[var(--ink)] truncate">
                 {profile?.nama || 'Pelanggan'}
-              </h1>
+              </h2>
               {profile?.role === 'admin' && (
                 <span className="text-[10px] font-sora font-extrabold px-2 py-0.5 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-xs">
                   ADMIN
@@ -60,9 +69,6 @@ export default async function ProfilPage() {
             )}
           </div>
         </div>
-      </div>
-
-      <div className="px-4 space-y-3.5">
         {/* Notifikasi Status Pesanan Aktif (Feature 4) */}
         {activeOrders.length > 0 && (
           <div className="space-y-2.5">
