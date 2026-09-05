@@ -5,10 +5,10 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { getShoppingList } from '@/lib/actions/shopping-list'
 import ShoppingListClient from '@/components/ShoppingListClient'
-import { ChevronLeft, Bookmark } from 'lucide-react'
+import { ChevronLeft, Heart } from 'lucide-react'
 
 export const metadata = {
-  title: 'Daftar Belanja | PENGENJEK MART',
+  title: 'Daftar Belanja & Favorit | PENGENJEK MART',
 }
 
 export default async function DaftarBelanjaPage() {
@@ -28,12 +28,12 @@ export default async function DaftarBelanjaPage() {
             <ChevronLeft className="w-5 h-5" />
           </Link>
           <div>
-            <h1 className="font-sora font-bold text-sm text-[var(--ink)]">Daftar Belanja</h1>
-            <p className="text-[10.5px] text-[var(--ink-soft)] font-medium">Catatan belanja yang disimpan</p>
+            <h1 className="font-sora font-bold text-sm text-[var(--ink)]">Daftar Belanja & Favorit</h1>
+            <p className="text-[10.5px] text-[var(--ink-soft)] font-medium">Produk yang disukai & dicatat</p>
           </div>
         </div>
-        <span className="w-8 h-8 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center">
-          <Bookmark size={16} />
+        <span className="w-8 h-8 rounded-full bg-rose-50 text-rose-600 flex items-center justify-center shadow-xs">
+          <Heart size={16} className="fill-rose-500/30" />
         </span>
       </div>
 

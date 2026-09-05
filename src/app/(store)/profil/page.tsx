@@ -5,7 +5,7 @@ import { logout } from '@/lib/actions/auth'
 import { getUserLoyaltySummary } from '@/lib/actions/loyalty'
 import { getShoppingList } from '@/lib/actions/shopping-list'
 import { getOrderStatusLabel, formatRupiah } from '@/lib/utils'
-import { User, ShoppingBag, ChevronRight, LogOut, ShieldCheck, Coins, Bookmark, Bell, Clock, PackageCheck, AlertCircle } from 'lucide-react'
+import { User, ShoppingBag, ChevronRight, LogOut, ShieldCheck, Coins, Bookmark, Heart, Bell, Clock, PackageCheck, AlertCircle } from 'lucide-react'
 import Link from 'next/link'
 import { Card, Button } from '@/components/ui'
 
@@ -208,12 +208,12 @@ export default async function ProfilPage() {
             prefetch={true}
             className="item press"
           >
-            <span className="w-7 h-7 rounded-[8px] bg-[var(--paper)] text-[var(--ink-soft)] flex items-center justify-center">
-              <Bookmark size={15} />
+            <span className="w-7 h-7 rounded-[8px] bg-rose-50 text-rose-500 flex items-center justify-center">
+              <Heart size={15} className="fill-rose-500/30" />
             </span>
-            <span className="flex-1 font-semibold text-xs text-[var(--ink)]">Daftar Belanja (Wishlist)</span>
+            <span className="flex-1 font-semibold text-xs text-[var(--ink)]">Daftar Favorit (Disukai)</span>
             {shoppingListCount > 0 && (
-              <span className="text-[10px] font-bold bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full mr-1">
+              <span className="text-[10px] font-bold bg-rose-100 text-rose-700 px-2 py-0.5 rounded-full mr-1">
                 {shoppingListCount}
               </span>
             )}

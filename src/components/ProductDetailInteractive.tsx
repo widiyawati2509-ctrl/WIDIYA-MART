@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { formatRupiah, parseProductVariants, formatWhatsAppUrl, type ProductVariant } from '@/lib/utils'
 import AddToCartButton from '@/components/AddToCartButton'
-import { Layers, Check, MessageCircle, Package, X, ArrowRight, ChevronLeft, ChevronRight, Bookmark, BookmarkCheck } from 'lucide-react'
+import { Layers, Check, MessageCircle, Package, X, ArrowRight, ChevronLeft, ChevronRight, Bookmark, BookmarkCheck, Heart } from 'lucide-react'
 import Link from 'next/link'
 import { toggleShoppingListItem } from '@/lib/actions/shopping-list'
 
@@ -439,25 +439,30 @@ export default function ProductDetailInteractive({ product, storePhone = '087816
             <span className="text-[9.5px] font-sora font-bold mt-0.5 leading-tight">Tanya Stok</span>
           </a>
 
-          {/* Simpan ke Daftar Belanja (Wishlist / Shopping List) */}
+          {/* Tombol Love / Favorit */}
           <button
             type="button"
             onClick={handleToggleWishlist}
             disabled={savingWishlist}
-            className={`press flex flex-col items-center justify-center px-3 py-2.5 rounded-[16px] border transition-all shrink-0 active:scale-95 shadow-sm ${
+            className={`press flex flex-col items-center justify-center px-3.5 py-2.5 rounded-[16px] border transition-all shrink-0 active:scale-95 shadow-sm ${
               isWishlisted
-                ? 'bg-amber-500 text-white border-amber-600'
-                : 'bg-white hover:bg-amber-50 text-[var(--ink)] border-[rgba(232,214,205,0.9)]'
+                ? 'bg-rose-50 text-rose-600 border-rose-200'
+                : 'bg-white hover:bg-rose-50 text-[var(--ink)] border-[rgba(232,214,205,0.9)]'
             }`}
-            title={isWishlisted ? 'Tersimpan di Daftar Belanja' : 'Simpan ke Daftar Belanja'}
+            title={isWishlisted ? 'Tersimpan di Favorit' : 'Suka / Simpan Produk'}
           >
-            {isWishlisted ? (
-              <BookmarkCheck size={17} className="text-white" />
-            ) : (
-              <Bookmark size={17} className="text-amber-600" />
-            )}
-            <span className="text-[9.5px] font-sora font-bold mt-0.5 leading-tight">
-              {isWishlisted ? 'Tersimpan' : 'Catat'}
+            <Heart
+              size={18}
+              className={`transition-transform duration-200 ${
+                isWishlisted
+                  ? 'fill-rose-500 text-rose-500 stroke-[2] scale-110'
+                  : 'text-gray-400 stroke-[1.8]'
+              }`}
+            />
+            <span className={`text-[9.5px] font-sora font-bold mt-0.5 leading-tight ${
+              isWishlisted ? 'text-rose-600' : 'text-[var(--ink)]'
+            }`}>
+              {isWishlisted ? 'Disukai' : 'Suka'}
             </span>
           </button>
 
@@ -474,17 +479,17 @@ export default function ProductDetailInteractive({ product, storePhone = '087816
       {/* Floating Notification Toast when Saved */}
       {toastMessage && (
         <div className="fixed bottom-36 left-1/2 -translate-x-1/2 max-w-[calc(480px-32px)] w-[calc(100%-32px)] z-50 animate-bounce-short">
-          <div className="bg-[#2B1810] text-white p-3 rounded-2xl shadow-xl flex items-center justify-between border border-amber-500/40">
+          <div className="bg-[#2B1810] text-white p-3 rounded-2xl shadow-xl flex items-center justify-between border border-rose-500/40">
             <div className="flex items-center gap-2 text-xs">
-              <BookmarkCheck size={17} className="text-amber-400 shrink-0" />
+              <Heart size={17} className="fill-rose-500 text-rose-500 shrink-0" />
               <span className="font-medium">{toastMessage}</span>
             </div>
             <Link
               href="/daftar-belanja"
               prefetch={true}
-              className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-white text-[11px] font-sora font-bold shrink-0 transition-transform active:scale-95 shadow-sm"
+              className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-rose-500 to-pink-500 text-white text-[11px] font-sora font-bold shrink-0 transition-transform active:scale-95 shadow-sm"
             >
-              Lihat Daftar &rarr;
+              Lihat Favorit &rarr;
             </Link>
           </div>
         </div>

@@ -3,6 +3,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { formatRupiah } from '@/lib/utils'
 import { Package } from 'lucide-react'
+import WishlistHeartButton from '@/components/WishlistHeartButton'
 import type { Product } from '@/types/database'
 
 interface ProductCardProps {
@@ -77,10 +78,13 @@ export default function ProductCard({ product }: ProductCardProps) {
           {formatRupiah(product.harga)}
         </p>
 
-        {/* Stok */}
-        <p className="text-[11px] text-[var(--ink-soft)] font-medium">
-          {outOfStock ? 'Stok kosong' : `Stok: ${product.stok}`}
-        </p>
+        {/* Stok & Tombol Love (Favorit) */}
+        <div className="mt-2 pt-2 border-t border-[rgba(232,214,205,0.7)] flex items-center justify-between">
+          <p className="text-[11px] text-[var(--ink-soft)] font-medium">
+            {outOfStock ? 'Stok kosong' : `Stok: ${product.stok}`}
+          </p>
+          <WishlistHeartButton product={product} />
+        </div>
       </div>
     </Link>
   )
