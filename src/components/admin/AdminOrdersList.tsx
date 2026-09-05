@@ -25,11 +25,18 @@ import {
   Loader2, 
   X,
   PackageOpen,
-  Filter
+  Filter,
+  FileSpreadsheet
 } from 'lucide-react'
 import AdminPageTitle from './AdminPageTitle'
+import AdminOrderExportCsvModal from './AdminOrderExportCsvModal'
 
 interface OrderItem {
+  id?: string
+  nama_produk?: string
+  qty?: number
+  harga_saat_beli?: number
+  subtotal?: number
   count?: number
 }
 
@@ -37,9 +44,13 @@ interface Order {
   id: string
   nama_pemesan: string
   no_hp_pemesan: string
+  subtotal?: number
+  ongkir?: number
   total: number
   status: string
   created_at: string
+  metode_pengiriman?: string
+  alamat_pengiriman?: string
   order_items?: OrderItem[]
 }
 
@@ -63,6 +74,7 @@ export default function AdminOrdersList({ initialOrders, initialStatus }: AdminO
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
   const [searchQuery, setSearchQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState(initialStatus || 'all')
+  const [isCsvModalOpen, setIsCsvModalOpen] = useState(false)
   const [isPending, startTransition] = useTransition()
 
   // Modal confirm state
@@ -194,24 +206,36 @@ export default function AdminOrdersList({ initialOrders, initialStatus }: AdminO
         subtitle={`Total ${orders.length} riwayat transaksi masuk`}
         className="mb-0"
         rightSlot={
-          orders.length > 0 ? (
+          <div className="flex flex-wrap items-center gap-2">
             <button
               type="button"
-              onClick={() => {
-                setConfirmModal({
-                  isOpen: true,
-                  mode: 'all',
-                  count: orders.length,
-                })
-              }}
-              disabled={isPending}
-              className="self-start sm:self-auto press inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-red-200 text-[var(--danger)] hover:bg-red-50 text-xs font-sora font-semibold transition-all active:scale-95"
-              title="Hapus seluruh riwayat pesanan"
+              onClick={() => setIsCsvModalOpen(true)}
+              className="press inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-emerald-300 text-emerald-800 bg-emerald-50 hover:bg-emerald-100 text-xs font-sora font-bold transition-all active:scale-95 shadow-xs"
+              title="Export riwayat transaksi ke file CSV"
             >
-              <Trash2 className="w-3.5 h-3.5" />
-              <span>Hapus Semua Riwayat</span>
+              <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-600" />
+              <span>Export CSV</span>
             </button>
-          ) : null
+
+            {orders.length > 0 && (
+              <button
+                type="button"
+                onClick={() => {
+                  setConfirmModal({
+                    isOpen: true,
+                    mode: 'all',
+                    count: orders.length,
+                  })
+                }}
+                disabled={isPending}
+                className="press inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-red-200 text-[var(--danger)] hover:bg-red-50 text-xs font-sora font-semibold transition-all active:scale-95"
+                title="Hapus seluruh riwayat pesanan"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+                <span>Hapus Semua Riwayat</span>
+              </button>
+            )}
+          </div>
         }
       />
 
@@ -536,6 +560,13 @@ export default function AdminOrdersList({ initialOrders, initialStatus }: AdminO
           </div>
         </div>
       )}
+
+      {/* Export CSV Modal */}
+      <AdminOrderExportCsvModal
+        isOpen={isCsvModalOpen}
+        onClose={() => setIsCsvModalOpen(false)}
+        orders={orders}
+      />
     </div>
   )
 }

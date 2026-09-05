@@ -2,6 +2,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { getUserLoyaltySummary } from '@/lib/actions/loyalty'
+import { getUserAddresses } from '@/lib/actions/addresses'
 import CheckoutFormClient from '@/components/CheckoutFormClient'
 import PageHeader from '@/components/PageHeader'
 
@@ -11,7 +12,7 @@ export default async function CheckoutPage() {
 
   if (!user) redirect('/masuk')
 
-  const [profileResult, cartResult, storeResult, loyaltySummary] = await Promise.all([
+  const [profileResult, cartResult, storeResult, loyaltySummary, addressesResult] = await Promise.all([
     supabase.from('profiles').select('nama, no_hp').eq('id', user.id).single(),
     (async () => {
       const { data: cart } = await supabase
@@ -40,11 +41,13 @@ export default async function CheckoutPage() {
     })(),
     supabase.from('store_info').select('nama_toko, alamat_toko, kota, jam_operasional, no_hp_toko').single(),
     getUserLoyaltySummary(user.id),
+    getUserAddresses(),
   ])
 
   const profile = profileResult.data
   const { items, total } = cartResult
   const store = storeResult.data
+  const savedAddresses = addressesResult.data || []
 
   if (items.length === 0) redirect('/keranjang')
 
@@ -65,6 +68,7 @@ export default async function CheckoutPage() {
         store={store}
         profile={profile}
         loyaltySummary={loyaltySummary}
+        savedAddresses={savedAddresses}
       />
     </div>
   )

@@ -19,8 +19,10 @@ import {
   ShieldCheck, 
   CheckCircle2, 
   Navigation,
-  Info
+  Info,
+  Bookmark
 } from 'lucide-react'
+import { UserAddress } from '@/types/database'
 import { Card, Button, Badge } from '@/components/ui'
 
 // Fixed store coordinates: PENGENJEK MART (Pengenjek, Jonggat, Lombok Tengah)
@@ -67,6 +69,7 @@ interface CheckoutFormClientProps {
   subtotal: number
   store?: StoreInfoData | null
   profile?: ProfileData | null
+  savedAddresses?: UserAddress[]
   loyaltySummary: {
     totalPoints: number
     redeemValue: number
@@ -83,6 +86,7 @@ export default function CheckoutFormClient({
   subtotal,
   store,
   profile,
+  savedAddresses = [],
   loyaltySummary,
 }: CheckoutFormClientProps) {
   const router = useRouter()
@@ -90,13 +94,84 @@ export default function CheckoutFormClient({
   const availablePoints = loyaltySummary?.totalPoints ?? 0
   const canUseLoyalty = config?.is_active && availablePoints > 0
 
+  // Default address if any
+  const defaultAddr = savedAddresses?.find((a) => a.is_default) || savedAddresses?.[0] || null
+
   // Delivery & shipping states
   const [metodePengiriman, setMetodePengiriman] = useState<'ambil_di_toko' | 'antar_alamat'>('ambil_di_toko')
-  const [alamatPengiriman, setAlamatPengiriman] = useState('')
-  const [geoStatus, setGeoStatus] = useState<'idle' | 'locating' | 'success' | 'error'>('idle')
-  const [geoMessage, setGeoMessage] = useState<string>('')
-  const [jarakKm, setJarakKm] = useState<number | null>(null)
-  const [userCoords, setUserCoords] = useState<{ lat: number; lng: number } | null>(null)
+  const [selectedAddressId, setSelectedAddressId] = useState<string>(defaultAddr ? defaultAddr.id : 'manual')
+  const [alamatPengiriman, setAlamatPengiriman] = useState(defaultAddr?.alamat_lengkap || '')
+  const [userCoords, setUserCoords] = useState<{ lat: number; lng: number } | null>(
+    defaultAddr && defaultAddr.lat !== null && defaultAddr.long !== null
+      ? { lat: Number(defaultAddr.lat), lng: Number(defaultAddr.long) }
+      : null
+  )
+  const [jarakKm, setJarakKm] = useState<number | null>(() => {
+    if (defaultAddr && defaultAddr.lat !== null && defaultAddr.long !== null) {
+      return calculateHaversineDistance(
+        STORE_COORDS.lat,
+        STORE_COORDS.lng,
+        Number(defaultAddr.lat),
+        Number(defaultAddr.long)
+      )
+    }
+    return null
+  })
+  const [geoStatus, setGeoStatus] = useState<'idle' | 'locating' | 'success' | 'error'>(
+    defaultAddr && defaultAddr.lat !== null ? 'success' : 'idle'
+  )
+  const [geoMessage, setGeoMessage] = useState<string>(() => {
+    if (defaultAddr && defaultAddr.lat !== null && defaultAddr.long !== null) {
+      const d = calculateHaversineDistance(
+        STORE_COORDS.lat,
+        STORE_COORDS.lng,
+        Number(defaultAddr.lat),
+        Number(defaultAddr.long)
+      )
+      return d <= 7.0
+        ? `Alamat "${defaultAddr.label}" (~${d} km). Radius \u2264 7 km: GRATIS ONGKIR!`
+        : `Alamat "${defaultAddr.label}" (~${d} km dari toko). Jarak di atas 7 km: Ongkir flat Rp 15.000.`
+    }
+    return ''
+  })
+
+  const handleSelectSavedAddress = (addrId: string) => {
+    setSelectedAddressId(addrId)
+    if (addrId === 'manual') {
+      setAlamatPengiriman('')
+      setUserCoords(null)
+      setJarakKm(null)
+      setGeoStatus('idle')
+      setGeoMessage('')
+      return
+    }
+
+    const addr = savedAddresses.find((a) => a.id === addrId)
+    if (addr) {
+      setAlamatPengiriman(addr.alamat_lengkap)
+      if (addr.lat !== null && addr.long !== null) {
+        const d = calculateHaversineDistance(
+          STORE_COORDS.lat,
+          STORE_COORDS.lng,
+          Number(addr.lat),
+          Number(addr.long)
+        )
+        setUserCoords({ lat: Number(addr.lat), lng: Number(addr.long) })
+        setJarakKm(d)
+        setGeoStatus('success')
+        if (d <= 7.0) {
+          setGeoMessage(`Alamat "${addr.label}" (~${d} km). Radius \u2264 7 km: GRATIS ONGKIR!`)
+        } else {
+          setGeoMessage(`Alamat "${addr.label}" (~${d} km dari toko). Jarak di atas 7 km: Ongkir flat Rp 15.000.`)
+        }
+      } else {
+        setUserCoords(null)
+        setJarakKm(null)
+        setGeoStatus('idle')
+        setGeoMessage(`Alamat "${addr.label}" belum memiliki titik GPS tersimpan. Anda dapat menekan Cek GPS untuk menghitung radius.`)
+      }
+    }
+  }
 
   // Determine ongkir
   let ongkir = 0
@@ -323,6 +398,35 @@ export default function CheckoutFormClient({
             )}
           </div>
 
+          {/* Saved Addresses Picker */}
+          {savedAddresses && savedAddresses.length > 0 && (
+            <div className="space-y-1.5 p-3 rounded-2xl bg-[var(--paper)] border border-[var(--line)]">
+              <label className="text-xs font-sora font-bold text-[var(--ink)] flex items-center justify-between">
+                <span className="flex items-center gap-1.5">
+                  <Bookmark size={13} className="text-[var(--accent-2)]" />
+                  Gunakan Alamat Tersimpan
+                </span>
+                <span className="text-[10px] text-[var(--accent-2)] font-semibold">
+                  {savedAddresses.length} Tersimpan
+                </span>
+              </label>
+
+              <select
+                value={selectedAddressId}
+                onChange={(e) => handleSelectSavedAddress(e.target.value)}
+                aria-label="Pilih Alamat Pengiriman Tersimpan"
+                className="w-full text-xs font-medium p-2.5 rounded-[var(--radius-md)] border border-[rgba(232,214,205,0.9)] bg-white focus:outline-hidden focus:border-[var(--accent-2)] focus:ring-1 focus:ring-[var(--accent-2)]"
+              >
+                {savedAddresses.map((addr) => (
+                  <option key={addr.id} value={addr.id}>
+                    {addr.label} {addr.is_default ? '(Utama)' : ''} {addr.lat !== null ? '📍' : ''} — {addr.alamat_lengkap.slice(0, 45)}...
+                  </option>
+                ))}
+                <option value="manual">+ Input Alamat Baru / Lainnya</option>
+              </select>
+            </div>
+          )}
+
           {/* GPS Auto-Detect Button */}
           <div className="p-3 rounded-2xl bg-[var(--warning)]/10 border border-[var(--warning)]/30 space-y-2">
             <div className="flex items-center justify-between gap-2">
@@ -383,7 +487,12 @@ export default function CheckoutFormClient({
               name="alamat_pengiriman"
               rows={3}
               value={alamatPengiriman}
-              onChange={(e) => setAlamatPengiriman(e.target.value)}
+              onChange={(e) => {
+                setAlamatPengiriman(e.target.value)
+                if (selectedAddressId !== 'manual') {
+                  setSelectedAddressId('manual')
+                }
+              }}
               placeholder="Contoh: Jl. Raya Pengenjek RT 03, rumah pagar putih samping musholla Al-Ikhlas"
               required={metodePengiriman === 'antar_alamat'}
               className="w-full min-w-0 rounded-[var(--radius-md)] border border-[var(--line)] bg-white px-3.5 py-2.5 text-xs text-[var(--ink)] placeholder:text-[var(--ink-soft)] shadow-[0_4px_10px_-2px_rgba(43,24,16,.04),inset_0_1px_0_#ffffff] outline-none transition-all focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20 resize-none"

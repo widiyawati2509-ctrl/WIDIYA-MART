@@ -4,10 +4,12 @@ import { redirect } from 'next/navigation'
 import { logout } from '@/lib/actions/auth'
 import { getUserLoyaltySummary } from '@/lib/actions/loyalty'
 import { getShoppingList } from '@/lib/actions/shopping-list'
+import { getUserAddresses } from '@/lib/actions/addresses'
 import { getOrderStatusLabel, formatRupiah } from '@/lib/utils'
 import { User, ShoppingBag, ChevronRight, LogOut, ShieldCheck, Coins, Bookmark, Heart, Bell, Clock, PackageCheck, AlertCircle } from 'lucide-react'
 import Link from 'next/link'
 import PageHeader from '@/components/PageHeader'
+import UserAddressManager from '@/components/UserAddressManager'
 import { Card, Button } from '@/components/ui'
 
 export default async function ProfilPage() {
@@ -16,7 +18,7 @@ export default async function ProfilPage() {
 
   if (!user) redirect('/masuk')
 
-  const [profileResult, orderCountResult, loyaltySummary, shoppingListResult, activeOrdersResult] = await Promise.all([
+  const [profileResult, orderCountResult, loyaltySummary, shoppingListResult, activeOrdersResult, addressesResult] = await Promise.all([
     supabase.from('profiles').select('nama, role, no_hp').eq('id', user.id).single(),
     supabase.from('orders').select('*', { count: 'exact', head: true }).eq('user_id', user.id),
     getUserLoyaltySummary(user.id),
@@ -28,6 +30,7 @@ export default async function ProfilPage() {
       .in('status', ['menunggu_diproses', 'diproses', 'siap_diambil'])
       .order('created_at', { ascending: false })
       .limit(3),
+    getUserAddresses(),
   ])
 
   const profile = profileResult.data
@@ -35,6 +38,7 @@ export default async function ProfilPage() {
   const userPoints = loyaltySummary?.totalPoints ?? 0
   const shoppingListCount = shoppingListResult.data?.length ?? 0
   const activeOrders = activeOrdersResult.data ?? []
+  const savedAddresses = addressesResult.data ?? []
 
   return (
     <div className="w-full pb-28">
@@ -206,6 +210,9 @@ export default async function ProfilPage() {
             </div>
           </div>
         </Link>
+
+        {/* User Address Manager */}
+        <UserAddressManager initialAddresses={savedAddresses} />
 
         {/* Toko Kita Grouped Menu List */}
         <div className="menu-list space-y-1">

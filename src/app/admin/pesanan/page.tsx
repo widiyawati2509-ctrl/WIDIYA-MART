@@ -12,7 +12,7 @@ export default async function AdminPesananPage({
 
   const { data: orders } = await supabase
     .from('orders')
-    .select('*, order_items(count)')
+    .select('*, order_items(id, nama_produk, qty, harga_saat_beli, subtotal)')
     .order('created_at', { ascending: false })
 
   return <AdminOrdersList initialOrders={orders || []} initialStatus={params?.status} />

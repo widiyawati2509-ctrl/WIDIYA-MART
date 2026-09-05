@@ -329,6 +329,41 @@ export type Database = {
           created_at?: string
         }
       }
+      user_addresses: {
+        Row: {
+          id: string
+          user_id: string
+          label: string
+          alamat_lengkap: string
+          lat: number | null
+          long: number | null
+          is_default: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          label: string
+          alamat_lengkap: string
+          lat?: number | null
+          long?: number | null
+          is_default?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          label?: string
+          alamat_lengkap?: string
+          lat?: number | null
+          long?: number | null
+          is_default?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+      }
     }
     Enums: {
       order_status: 'menunggu_diproses' | 'diproses' | 'siap_diambil' | 'selesai' | 'dibatalkan'
@@ -341,6 +376,7 @@ export type Profile = Database['public']['Tables']['profiles']['Row']
 export type Category = Database['public']['Tables']['categories']['Row']
 export type Product = Database['public']['Tables']['products']['Row']
 export type Address = Database['public']['Tables']['addresses']['Row']
+export type UserAddress = Database['public']['Tables']['user_addresses']['Row']
 export type Cart = Database['public']['Tables']['carts']['Row']
 export type CartItem = Database['public']['Tables']['cart_items']['Row']
 export type Order = Database['public']['Tables']['orders']['Row']
