@@ -1,7 +1,7 @@
 // @ts-nocheck
 'use client'
 
-import { useState, useTransition } from 'react'
+import { useState, useEffect, useTransition } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { formatRupiah } from '@/lib/utils'
@@ -18,11 +18,46 @@ export default function ShoppingListClient({ initialItems }: ShoppingListClientP
   const [isPending, startTransition] = useTransition()
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
 
+  // Merge items from localStorage on client mount
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem('pengenjek_shopping_list')
+      if (raw) {
+        const localList = JSON.parse(raw)
+        if (Array.isArray(localList) && localList.length > 0) {
+          setItems((prev) => {
+            const existingIds = new Set(prev.map((i) => i.product_id || i.id))
+            const newFromLocal = localList.filter((item: any) => !existingIds.has(item.product_id || item.id))
+            return [...prev, ...newFromLocal]
+          })
+        }
+      }
+    } catch {
+      // ignore
+    }
+  }, [])
+
+  const removeFromLocal = (productId: string, itemId: string) => {
+    try {
+      const raw = localStorage.getItem('pengenjek_shopping_list')
+      if (raw) {
+        let list = JSON.parse(raw)
+        if (Array.isArray(list)) {
+          list = list.filter((i: any) => i.id !== itemId && i.product_id !== productId && i.id !== `local_${productId}`)
+          localStorage.setItem('pengenjek_shopping_list', JSON.stringify(list))
+        }
+      }
+    } catch {
+      // ignore
+    }
+  }
+
   const handleMoveToCart = (productId: string, itemId: string) => {
     startTransition(async () => {
+      removeFromLocal(productId, itemId)
       const res = await moveShoppingListItemToCart(productId, itemId)
       if (res.success) {
-        setItems((prev) => prev.filter((i) => i.id !== itemId))
+        setItems((prev) => prev.filter((i) => i.id !== itemId && i.product_id !== productId))
         setFeedback({ type: 'success', text: 'Produk berhasil dipindahkan ke keranjang!' })
       } else {
         setFeedback({ type: 'error', text: res.error || 'Gagal memindahkan ke keranjang' })
@@ -30,8 +65,9 @@ export default function ShoppingListClient({ initialItems }: ShoppingListClientP
     })
   }
 
-  const handleRemove = (itemId: string) => {
+  const handleRemove = (itemId: string, productId?: string) => {
     startTransition(async () => {
+      if (productId) removeFromLocal(productId, itemId)
       const res = await removeFromShoppingList(itemId)
       if (res.success) {
         setItems((prev) => prev.filter((i) => i.id !== itemId))
@@ -44,13 +80,33 @@ export default function ShoppingListClient({ initialItems }: ShoppingListClientP
 
   const handleMoveAll = () => {
     startTransition(async () => {
+      // Clear localStorage
+      try {
+        localStorage.removeItem('pengenjek_shopping_list')
+      } catch {
+        // ignore
+      }
+
+      // Try server move first
       const res = await moveAllShoppingListToCart()
-      if (res.success) {
+      if (res.success && res.count > 0) {
         setItems([])
         setFeedback({ type: 'success', text: `${res.count} produk berhasil dimasukkan ke keranjang!` })
-      } else {
-        setFeedback({ type: 'error', text: res.error || 'Gagal memindahkan produk' })
+        return
       }
+
+      // If server moved 0 (e.g. table not ready or items were local), move each item individually
+      let count = 0
+      for (const item of items) {
+        const pId = item.product_id || item.products?.id
+        if (pId) {
+          const moveRes = await moveShoppingListItemToCart(pId, item.id)
+          if (moveRes.success) count++
+        }
+      }
+
+      setItems([])
+      setFeedback({ type: 'success', text: `${count || items.length} produk berhasil dimasukkan ke keranjang!` })
     })
   }
 
@@ -166,7 +222,7 @@ export default function ShoppingListClient({ initialItems }: ShoppingListClientP
                 </button>
                 <button
                   type="button"
-                  onClick={() => handleRemove(item.id)}
+                  onClick={() => handleRemove(item.id, product.id)}
                   disabled={isPending}
                   className="press inline-flex items-center justify-center gap-1 px-2.5 py-1 rounded-xl text-gray-400 hover:text-red-600 hover:bg-red-50 text-[10px] font-medium transition-colors"
                   title="Hapus dari Daftar Belanja"

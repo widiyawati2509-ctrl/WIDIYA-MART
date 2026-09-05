@@ -1,7 +1,7 @@
 // @ts-nocheck
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { formatRupiah, parseProductVariants, formatWhatsAppUrl, type ProductVariant } from '@/lib/utils'
 import AddToCartButton from '@/components/AddToCartButton'
@@ -34,17 +34,63 @@ export default function ProductDetailInteractive({ product, storePhone = '087816
   const [isWishlisted, setIsWishlisted] = useState(false)
   const [savingWishlist, setSavingWishlist] = useState(false)
 
-  const handleToggleWishlist = async () => {
-    setSavingWishlist(true)
+  // Check localStorage on mount
+  useEffect(() => {
     try {
-      const res = await toggleShoppingListItem(product.id)
-      if (res.error) {
-        alert(res.error)
-      } else {
-        setIsWishlisted(res.inList)
+      const raw = localStorage.getItem('pengenjek_shopping_list')
+      if (raw) {
+        const list = JSON.parse(raw)
+        if (Array.isArray(list) && list.some((item) => item.product_id === product.id || item.id === product.id)) {
+          setIsWishlisted(true)
+        }
       }
     } catch {
       // ignore
+    }
+  }, [product.id])
+
+  const handleToggleWishlist = async () => {
+    setSavingWishlist(true)
+    const nextState = !isWishlisted
+    setIsWishlisted(nextState)
+
+    // Save/remove to localStorage immediately
+    try {
+      const raw = localStorage.getItem('pengenjek_shopping_list')
+      let list = raw ? JSON.parse(raw) : []
+      if (!Array.isArray(list)) list = []
+
+      if (nextState) {
+        // Add if not present
+        if (!list.some((i: any) => i.product_id === product.id || i.id === product.id)) {
+          list.push({
+            id: `local_${product.id}`,
+            product_id: product.id,
+            products: {
+              id: product.id,
+              nama: product.nama,
+              harga: activePrice,
+              stok: activeStock,
+              image_url: currentImage?.url || product.image_url || null,
+              slug: product.slug,
+            },
+            created_at: new Date().toISOString()
+          })
+        }
+      } else {
+        // Remove
+        list = list.filter((i: any) => i.product_id !== product.id && i.id !== product.id && i.id !== `local_${product.id}`)
+      }
+      localStorage.setItem('pengenjek_shopping_list', JSON.stringify(list))
+    } catch (e) {
+      console.warn('Failed to update localStorage shopping list:', e)
+    }
+
+    // Sync to Supabase in background (if logged in and table exists)
+    try {
+      await toggleShoppingListItem(product.id)
+    } catch {
+      // Fail silently without disturbing user experience
     } finally {
       setSavingWishlist(false)
     }
