@@ -39,17 +39,43 @@ export async function submitProductReview(input: SubmitReviewInput) {
 
     const reviewerName = profile?.nama || user.email?.split('@')[0] || 'Pembeli'
 
-    // Check if orderId is provided and verified
+    // Verify proof of purchase: user must have completed an order containing this product
     let verifiedOrderId: string | null = null
-    if (input.orderId) {
-      const { data: order } = await supabase
-        .from('orders')
-        .select('id, user_id, status')
-        .eq('id', input.orderId)
-        .single()
 
-      if (order && order.user_id === user.id && order.status === 'selesai') {
-        verifiedOrderId = order.id
+    if (input.orderId) {
+      const { data: orderItem } = await supabase
+        .from('order_items')
+        .select('order_id, orders!inner(id, user_id, status)')
+        .eq('order_id', input.orderId)
+        .eq('product_id', input.productId)
+        .eq('orders.user_id', user.id)
+        .eq('orders.status', 'selesai')
+        .maybeSingle()
+
+      if (orderItem) {
+        verifiedOrderId = input.orderId
+      }
+    }
+
+    // If orderId was not provided or not verified, check if user has any completed order for this product
+    if (!verifiedOrderId) {
+      const { data: matchingItem } = await supabase
+        .from('order_items')
+        .select('order_id, orders!inner(id, user_id, status)')
+        .eq('product_id', input.productId)
+        .eq('orders.user_id', user.id)
+        .eq('orders.status', 'selesai')
+        .limit(1)
+        .maybeSingle()
+
+      if (matchingItem) {
+        verifiedOrderId = matchingItem.order_id
+      }
+    }
+
+    if (!verifiedOrderId) {
+      return {
+        error: 'Ulasan hanya dapat diberikan jika Anda sudah pernah membeli produk ini dan status pesanan telah selesai.',
       }
     }
 

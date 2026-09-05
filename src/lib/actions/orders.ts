@@ -12,6 +12,33 @@ import { addToCart } from '@/lib/actions/cart'
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type SupabaseClient = any
 
+// Fixed store coordinates: PENGENJEK MART (Pengenjek, Jonggat, Lombok Tengah)
+const STORE_COORDS = {
+  lat: -8.636636,
+  lng: 116.244461,
+}
+const FREE_SHIPPING_MAX_KM = 7.0
+const FLAT_SHIPPING_FEE = 15000
+
+function calculateHaversineDistance(
+  lat1: number,
+  lon1: number,
+  lat2: number,
+  lon2: number
+): number {
+  const R = 6371 // Earth radius in km
+  const dLat = ((lat2 - lat1) * Math.PI) / 180
+  const dLon = ((lon2 - lon1) * Math.PI) / 180
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos((lat1 * Math.PI) / 180) *
+      Math.cos((lat2 * Math.PI) / 180) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2)
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+  return Math.round(R * c * 10) / 10
+}
+
 export async function createOrder(formData: FormData): Promise<{ error?: string; success?: boolean; orderId?: string }> {
   try {
     const supabase: SupabaseClient = await createClient()
@@ -81,28 +108,121 @@ export async function createOrder(formData: FormData): Promise<{ error?: string;
       }
     }
 
-    // Shipping & Delivery calculations (Radius / Haversine)
+    // Shipping & Delivery: Recalculate on server (NEVER trust client-submitted ongkir)
     const metodePengiriman = (formData.get('metode_pengiriman') as string) || 'ambil_di_toko'
     const alamatPengiriman = (formData.get('alamat_pengiriman') as string)?.trim() || null
-    const jarakKmRaw = formData.get('jarak_km') as string
-    const jarakKm = jarakKmRaw && !isNaN(parseFloat(jarakKmRaw)) ? parseFloat(jarakKmRaw) : null
-    const ongkirRaw = formData.get('ongkir') as string
-    const ongkir = metodePengiriman === 'antar_alamat' ? (parseInt(ongkirRaw, 10) || 0) : 0
+    const userLatRaw = formData.get('user_lat') as string
+    const userLngRaw = formData.get('user_lng') as string
 
-    const finalTotal = Math.max(0, subtotal - diskonPoin + ongkir)
+    let verifiedJarakKm: number | null = null
+    let serverOngkir = 0
 
-    // Create order with fallback for non-migrated schema
-    let order = null
+    if (metodePengiriman === 'antar_alamat') {
+      if (!alamatPengiriman) {
+        return { error: 'Alamat pengiriman wajib diisi untuk opsi antar ke alamat' }
+      }
 
-    // 1. Attempt with loyalty and shipping columns
-    const fullPayload = {
+      if (userLatRaw && userLngRaw) {
+        const userLat = parseFloat(userLatRaw)
+        const userLng = parseFloat(userLngRaw)
+        if (!isNaN(userLat) && !isNaN(userLng)) {
+          verifiedJarakKm = calculateHaversineDistance(
+            STORE_COORDS.lat,
+            STORE_COORDS.lng,
+            userLat,
+            userLng
+          )
+        }
+      }
+
+      // If coordinates verified distance is within free radius (<= 7 km), ongkir is 0, else flat fee Rp 15.000
+      if (verifiedJarakKm !== null && verifiedJarakKm <= FREE_SHIPPING_MAX_KM) {
+        serverOngkir = 0
+      } else {
+        serverOngkir = FLAT_SHIPPING_FEE
+      }
+    } else {
+      // 'ambil_di_toko'
+      serverOngkir = 0
+      verifiedJarakKm = 0
+    }
+
+    const finalTotal = Math.max(0, subtotal - diskonPoin + serverOngkir)
+
+    // Decrement stock atomically before creating order to prevent race conditions and overselling
+    const decrementedItems: { id: string; qty: number; nama: string }[] = []
+    let stockError: string | null = null
+
+    for (const item of items) {
+      const product = item.products as { id: string; nama: string; harga: number; stok: number } | null
+      if (!product) continue
+
+      // Attempt atomic decrement via RPC
+      const { data: success, error: rpcError } = await supabase.rpc('decrement_stock', {
+        p_product_id: product.id,
+        p_qty: item.qty,
+      })
+
+      if (rpcError) {
+        // If RPC is not available in database yet, fallback to conditional atomic query
+        const { data: curProd } = await supabase
+          .from('products')
+          .select('stok')
+          .eq('id', product.id)
+          .single()
+
+        if (!curProd || curProd.stok < item.qty) {
+          stockError = `Stok ${product.nama} tidak mencukupi (tersisa ${curProd?.stok ?? 0})`
+          break
+        }
+
+        const { error: updateErr } = await supabase
+          .from('products')
+          .update({ stok: curProd.stok - item.qty })
+          .eq('id', product.id)
+          .gte('stok', item.qty)
+
+        if (updateErr) {
+          stockError = `Gagal memperbarui stok ${product.nama}`
+          break
+        }
+        decrementedItems.push({ id: product.id, qty: item.qty, nama: product.nama })
+      } else if (!success) {
+        // Atomic decrement returned false because stock < requested qty
+        stockError = `Stok ${product.nama} baru saja habis atau tidak mencukupi saat checkout diproses`
+        break
+      } else {
+        decrementedItems.push({ id: product.id, qty: item.qty, nama: product.nama })
+      }
+    }
+
+    const rollbackStock = async () => {
+      for (const dec of decrementedItems) {
+        try {
+          await supabase.rpc('increment_stock', { p_product_id: dec.id, p_qty: dec.qty })
+        } catch {
+          const { data: cur } = await supabase.from('products').select('stok').eq('id', dec.id).single()
+          if (cur) {
+            await supabase.from('products').update({ stok: cur.stok + dec.qty }).eq('id', dec.id)
+          }
+        }
+      }
+    }
+
+    if (stockError) {
+      await rollbackStock()
+      return { error: stockError }
+    }
+
+    // Insert order with complete schema (No basic fallback to prevent silent data loss)
+    const orderPayload = {
       user_id: user.id,
       subtotal,
       total: finalTotal,
       poin_digunakan: diskonPoin > 0 ? poinToRedeem : 0,
       diskon_poin: diskonPoin,
-      jarak_km: jarakKm,
-      ongkir: ongkir,
+      jarak_km: verifiedJarakKm,
+      ongkir: serverOngkir,
       alamat_pengiriman: alamatPengiriman,
       metode_pengiriman: metodePengiriman,
       nama_pemesan: parsed.data.nama_pemesan,
@@ -110,39 +230,17 @@ export async function createOrder(formData: FormData): Promise<{ error?: string;
       catatan: parsed.data.catatan || null,
     }
 
-    const { data: orderFull, error: orderFullError } = await supabase
+    const { data: order, error: orderError } = await supabase
       .from('orders')
-      .insert(fullPayload)
+      .insert(orderPayload)
       .select('id')
       .single()
 
-    if (orderFullError) {
-      console.warn('Full order insert failed, falling back to basic schema:', orderFullError.message)
-      const basicPayload = {
-        user_id: user.id,
-        subtotal,
-        total: finalTotal,
-        nama_pemesan: parsed.data.nama_pemesan,
-        no_hp_pemesan: parsed.data.no_hp_pemesan,
-        catatan: parsed.data.catatan || null,
-      }
-
-      const { data: orderBasic, error: orderBasicError } = await supabase
-        .from('orders')
-        .insert(basicPayload)
-        .select('id')
-        .single()
-
-      if (orderBasicError || !orderBasic) {
-        console.error('Basic order insert error:', orderBasicError)
-        return { error: `Gagal membuat pesanan: ${orderBasicError?.message || 'Database error'}` }
-      }
-      order = orderBasic
-    } else {
-      order = orderFull
+    if (orderError || !order) {
+      console.error('Order creation error:', orderError)
+      await rollbackStock()
+      return { error: `Gagal membuat pesanan: ${orderError?.message || 'Database error'}` }
     }
-
-    if (!order) return { error: 'Gagal membuat pesanan (ID tidak didapatkan)' }
 
     // Record points debit transaction if redeemed
     if (diskonPoin > 0 && poinToRedeem > 0) {
@@ -175,18 +273,9 @@ export async function createOrder(formData: FormData): Promise<{ error?: string;
     const { error: itemsError } = await supabase.from('order_items').insert(orderItems)
     if (itemsError) {
       console.error('Failed to insert order items:', itemsError)
+      await supabase.from('orders').delete().eq('id', order.id)
+      await rollbackStock()
       return { error: `Gagal menyimpan rincian pesanan: ${itemsError.message}` }
-    }
-
-    // Decrement stock
-    for (const item of items) {
-      const product = item.products as { id: string; stok: number } | null
-      if (product) {
-        await supabase
-          .from('products')
-          .update({ stok: Math.max(0, product.stok - item.qty) })
-          .eq('id', product.id)
-      }
     }
 
     // Clear cart

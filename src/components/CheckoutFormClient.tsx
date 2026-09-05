@@ -96,6 +96,7 @@ export default function CheckoutFormClient({
   const [geoStatus, setGeoStatus] = useState<'idle' | 'locating' | 'success' | 'error'>('idle')
   const [geoMessage, setGeoMessage] = useState<string>('')
   const [jarakKm, setJarakKm] = useState<number | null>(null)
+  const [userCoords, setUserCoords] = useState<{ lat: number; lng: number } | null>(null)
 
   // Determine ongkir
   let ongkir = 0
@@ -137,6 +138,7 @@ export default function CheckoutFormClient({
       (pos) => {
         const userLat = pos.coords.latitude
         const userLng = pos.coords.longitude
+        setUserCoords({ lat: userLat, lng: userLng })
         const distance = calculateHaversineDistance(
           STORE_COORDS.lat,
           STORE_COORDS.lng,
@@ -267,6 +269,8 @@ export default function CheckoutFormClient({
 
         {/* Hidden inputs for form data */}
         <input type="hidden" name="metode_pengiriman" value={metodePengiriman} />
+        <input type="hidden" name="user_lat" value={userCoords?.lat !== undefined ? userCoords.lat.toString() : ''} />
+        <input type="hidden" name="user_lng" value={userCoords?.lng !== undefined ? userCoords.lng.toString() : ''} />
         <input type="hidden" name="jarak_km" value={jarakKm !== null ? jarakKm.toString() : ''} />
         <input type="hidden" name="ongkir" value={ongkir.toString()} />
       </Card>
