@@ -184,3 +184,53 @@ export async function deleteProduct(id: string): Promise<void> {
   revalidatePath('/admin/produk')
   revalidatePath('/')
 }
+
+export async function fetchMoreCatalogProducts(params: {
+  offset: number
+  limit?: number
+  kategori?: string
+  q?: string
+}): Promise<{ products: any[]; hasMore: boolean }> {
+  try {
+    const limit = params.limit ?? 12
+    const supabase: SupabaseClient = await createClient()
+
+    let query = supabase
+      .from('products')
+      .select('id, nama, slug, harga, stok, image_url, diskon_persen, badge_text, category_id, categories(nama, slug)')
+      .eq('is_active', true)
+      .gt('stok', 0)
+
+    if (params.q) {
+      query = query.ilike('nama', `%${params.q}%`)
+    }
+
+    if (params.kategori) {
+      const { data: cat } = await supabase
+        .from('categories')
+        .select('id')
+        .eq('slug', params.kategori)
+        .maybeSingle()
+
+      if (cat) {
+        query = query.eq('category_id', cat.id)
+      }
+    }
+
+    const { data: products, error } = await query
+      .order('nama')
+      .range(params.offset, params.offset + limit - 1)
+
+    if (error || !products) {
+      return { products: [], hasMore: false }
+    }
+
+    return {
+      products,
+      hasMore: products.length === limit,
+    }
+  } catch (e) {
+    console.error('fetchMoreCatalogProducts error:', e)
+    return { products: [], hasMore: false }
+  }
+}

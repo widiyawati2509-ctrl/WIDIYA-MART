@@ -1,12 +1,13 @@
 // @ts-nocheck
 import { createPublicClient } from '@/lib/supabase/server'
-import ProductCard from '@/components/ProductCard'
 import CategoryFilter from '@/components/CategoryFilter'
 import SearchBar from '@/components/SearchBar'
+import CatalogProductList from '@/components/CatalogProductList'
 import { EmptyState } from '@/components/ui'
 import { Package } from 'lucide-react'
 
 export const revalidate = 30
+const PAGE_SIZE = 12
 
 interface KategoriPageProps {
   searchParams: Promise<{ q?: string; kategori?: string }>
@@ -16,11 +17,14 @@ export default async function KategoriPage({ searchParams }: KategoriPageProps) 
   const { q, kategori } = await searchParams
   const supabase = createPublicClient()
 
-  const { data: categories } = await supabase.from('categories').select('*').order('urutan')
+  const { data: categories } = await supabase
+    .from('categories')
+    .select('id, nama, slug, urutan')
+    .order('urutan')
 
   let query = supabase
     .from('products')
-    .select('*, categories(nama, slug)')
+    .select('id, nama, slug, harga, stok, image_url, diskon_persen, badge_text, category_id, categories(nama, slug)', { count: 'exact' })
     .eq('is_active', true)
     .gt('stok', 0)
 
@@ -32,7 +36,11 @@ export default async function KategoriPage({ searchParams }: KategoriPageProps) 
     }
   }
 
-  const { data: products } = await query.order('nama')
+  const { data: products, count } = await query
+    .order('nama')
+    .range(0, PAGE_SIZE - 1)
+
+  const totalCount = count ?? products?.length ?? 0
 
   return (
     <div className="w-full pb-28">
@@ -50,13 +58,15 @@ export default async function KategoriPage({ searchParams }: KategoriPageProps) 
         {products && products.length > 0 ? (
           <>
             <p className="text-xs font-semibold text-[var(--ink-soft)] mb-3">
-              {products.length} produk ditemukan
+              {totalCount} produk ditemukan
             </p>
-            <div className="grid grid-cols-2 gap-3.5">
-              {products.map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
-            </div>
+            <CatalogProductList
+              initialProducts={products}
+              totalCount={totalCount}
+              kategori={kategori}
+              q={q}
+              pageSize={PAGE_SIZE}
+            />
           </>
         ) : (
           <EmptyState

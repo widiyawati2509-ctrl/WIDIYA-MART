@@ -2,6 +2,10 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
+    formats: ['image/avif', 'image/webp'],
+    deviceSizes: [360, 414, 480],
+    imageSizes: [48, 64, 96, 128, 256, 384],
+    minimumCacheTTL: 2678400,
     remotePatterns: [
       {
         protocol: 'https',
@@ -9,6 +13,9 @@ const nextConfig: NextConfig = {
         pathname: '/storage/v1/object/public/**',
       },
     ],
+  },
+  experimental: {
+    optimizePackageImports: ['lucide-react'],
   },
   async headers() {
     return [

@@ -46,7 +46,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
   const [relatedResult, storeResult] = await Promise.all([
     supabase
       .from('products')
-      .select('*')
+      .select('id, nama, slug, harga, stok, image_url, diskon_persen, badge_text')
       .eq('category_id', product.category_id ?? '')
       .eq('is_active', true)
       .neq('id', product.id)

@@ -20,16 +20,16 @@ export default async function HomePage() {
     await Promise.all([
       supabase
         .from('categories')
-        .select('*')
+        .select('id, nama, slug, icon_url, urutan')
         .order('urutan'),
       supabase
         .from('products')
-        .select('*, categories(nama, slug)')
+        .select('id, nama, slug, harga, stok, image_url, diskon_persen, badge_text, categories(nama, slug)')
         .eq('is_active', true)
         .gt('stok', 0)
         .order('created_at', { ascending: false })
         .limit(12),
-      supabase.from('store_info').select('*').single(),
+      supabase.from('store_info').select('nama_toko').single(),
       getPublicPromos(),
     ])
 

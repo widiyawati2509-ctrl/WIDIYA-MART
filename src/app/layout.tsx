@@ -1,8 +1,23 @@
 // @ts-nocheck
 import type { Metadata, Viewport } from 'next'
 import { Suspense } from 'react'
+import { Sora, Inter } from 'next/font/google'
 import TopProgressBar from '@/components/TopProgressBar'
 import './globals.css'
+
+const sora = Sora({
+  subsets: ['latin'],
+  weight: ['600', '700', '800'],
+  variable: '--font-sora',
+  display: 'swap',
+})
+
+const inter = Inter({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-inter',
+  display: 'swap',
+})
 
 export const viewport: Viewport = {
   themeColor: '#FF6B35',
@@ -45,7 +60,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="id">
+    <html lang="id" className={`${sora.variable} ${inter.variable}`}>
       <body className="font-sans antialiased bg-[var(--paper)] text-[var(--ink)] selection:bg-[var(--accent)]/20 min-h-screen">
         <Suspense fallback={null}>
           <TopProgressBar />
