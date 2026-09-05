@@ -6,7 +6,7 @@ import CartItemRow from '@/components/CartItemRow'
 import { formatRupiah } from '@/lib/utils'
 import { ShoppingCart, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
-import { buttonClass, EmptyState, Card } from '@/components/ui'
+import { EmptyState, Card } from '@/components/ui'
 
 export default async function KeranjangPage() {
   const supabase = await createClient()
@@ -93,10 +93,7 @@ export default async function KeranjangPage() {
               <Link
                 href="/checkout"
                 prefetch={true}
-                className={`w-full flex items-center justify-between checkout-btn py-3.5 px-5 rounded-[16px] text-base ${buttonClass({
-                  variant: 'primary',
-                  size: 'lg',
-                })}`}
+                className="w-full flex items-center justify-between checkout-btn py-3.5 px-5 text-base"
               >
                 <span className="font-sora font-bold">Checkout ({items.length} item)</span>
                 <div className="flex items-center gap-1.5 tabular-nums font-sora font-bold">

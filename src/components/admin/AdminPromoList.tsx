@@ -92,7 +92,7 @@ export default function AdminPromoList({ initialPromos, products }: AdminPromoLi
           <button
             type="button"
             onClick={handleOpenNew}
-            className="press inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-gradient-to-r from-[var(--accent)] to-[var(--accent-2)] text-white text-xs font-sora font-bold shadow-sm active:scale-95 transition-all"
+            className="add-btn px-3 py-2 text-xs gap-1.5"
           >
             <Plus size={14} />
             <span>Tambah Promo</span>
@@ -153,7 +153,7 @@ export default function AdminPromoList({ initialPromos, products }: AdminPromoLi
                 <button
                   type="button"
                   onClick={() => handleOpenEdit(p)}
-                  className="press p-2 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs"
+                  className="press p-2 rounded-xl bg-white border border-[rgba(232,214,205,0.9)] hover:bg-[var(--accent-bg)] text-[var(--ink-soft)] hover:text-[var(--accent)] text-xs transition-colors"
                   title="Edit promo"
                 >
                   <Edit2 size={13} />
@@ -162,7 +162,7 @@ export default function AdminPromoList({ initialPromos, products }: AdminPromoLi
                   type="button"
                   onClick={() => handleDelete(p.id)}
                   disabled={isPending}
-                  className="press p-2 rounded-xl bg-red-50 hover:bg-red-100 text-red-600 text-xs"
+                  className="press p-2 rounded-xl bg-red-50 hover:bg-red-100 text-[var(--danger)] text-xs transition-colors"
                   title="Hapus promo"
                 >
                   <Trash2 size={13} />
@@ -293,14 +293,14 @@ export default function AdminPromoList({ initialPromos, products }: AdminPromoLi
                 <button
                   type="button"
                   onClick={() => setShowForm(false)}
-                  className="flex-1 py-2.5 rounded-xl bg-gray-100 text-gray-700 font-bold"
+                  className="cancel-btn flex-1 py-2.5 text-xs font-sora font-bold"
                 >
                   Batal
                 </button>
                 <button
                   type="submit"
                   disabled={isPending}
-                  className="flex-1 py-2.5 rounded-xl bg-[var(--accent)] hover:bg-[var(--accent-2)] text-white font-bold flex items-center justify-center gap-1.5"
+                  className="save-btn flex-1 py-2.5 text-xs gap-1.5"
                 >
                   {isPending && <Loader2 size={13} className="animate-spin" />}
                   <span>{editingPromo ? 'Simpan Perubahan' : 'Terbitkan Promo'}</span>

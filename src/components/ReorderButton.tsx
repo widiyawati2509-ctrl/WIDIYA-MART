@@ -31,7 +31,7 @@ export default function ReorderButton({ orderId }: { orderId: string }) {
       type="button"
       onClick={handleReorder}
       disabled={loading}
-      className="press w-full py-3 rounded-[16px] bg-gradient-to-r from-[var(--accent)] to-[var(--accent-2)] text-white font-sora font-bold text-xs shadow-md flex items-center justify-center gap-2 active:scale-95 transition-all"
+      className="btn-primary w-full py-3 text-xs gap-2"
     >
       {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <RotateCcw className="w-4 h-4" />}
       <span>Beli Lagi Semua Produk Ini</span>

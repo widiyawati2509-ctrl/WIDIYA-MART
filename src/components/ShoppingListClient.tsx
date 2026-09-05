@@ -177,7 +177,7 @@ export default function ShoppingListClient({ initialItems }: ShoppingListClientP
             <Link
               href="/keranjang"
               prefetch={true}
-              className="press w-full py-3 px-5 rounded-[16px] bg-[var(--accent)] hover:bg-[var(--accent-2)] text-white text-sm font-sora font-bold shadow-3d flex items-center justify-center gap-2 active:scale-98 transition-all"
+              className="btn-primary w-full py-3 px-5 text-sm gap-2"
             >
               <ShoppingCart size={16} />
               <span>Buka Keranjang Belanja Sekarang</span>
@@ -243,7 +243,7 @@ export default function ShoppingListClient({ initialItems }: ShoppingListClientP
               <button
                 type="button"
                 onClick={() => setToastMessage(null)}
-                className="text-xs px-2 py-1 rounded-lg text-gray-400 hover:text-white"
+                className="text-xs px-2 py-1 rounded-lg text-white/70 hover:text-white"
                 aria-label="Tutup notifikasi"
               >
                 ✕
@@ -262,7 +262,7 @@ export default function ShoppingListClient({ initialItems }: ShoppingListClientP
           type="button"
           onClick={handleMoveAll}
           disabled={isPending || movingId !== null}
-          className="press inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[var(--accent)] hover:bg-[var(--accent-2)] disabled:opacity-60 text-white text-xs font-sora font-bold shadow-sm active:scale-95 transition-all"
+          className="add-btn px-3.5 py-2 text-xs gap-1.5"
         >
           {movingId === 'all' ? (
             <>
@@ -334,7 +334,7 @@ export default function ShoppingListClient({ initialItems }: ShoppingListClientP
                   type="button"
                   onClick={() => handleMoveToCart(product.id, item.id, product.nama)}
                   disabled={isPending || isOutOfStock || movingId !== null}
-                  className="press inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-[var(--accent)] hover:bg-[var(--accent-2)] disabled:opacity-60 disabled:bg-gray-200 text-white text-[11px] font-sora font-bold shadow-xs active:scale-95 transition-all"
+                  className="add-btn px-3 py-2 text-[11px] gap-1.5"
                   title="Pindahkan ke Keranjang"
                 >
                   {movingId === item.id ? (
@@ -353,7 +353,7 @@ export default function ShoppingListClient({ initialItems }: ShoppingListClientP
                   type="button"
                   onClick={() => handleRemove(item.id, product.id, product.nama)}
                   disabled={isPending || movingId !== null}
-                  className="press inline-flex items-center justify-center gap-1 px-2.5 py-1 rounded-xl text-gray-400 hover:text-red-600 hover:bg-red-50 text-[10px] font-medium transition-colors"
+                  className="press inline-flex items-center justify-center gap-1 px-2.5 py-1 rounded-xl text-[var(--ink-soft)] hover:text-[var(--danger)] hover:bg-[var(--accent-bg)] text-[10px] font-medium transition-colors"
                   title="Hapus dari Daftar Belanja"
                 >
                   <Trash2 size={11} />

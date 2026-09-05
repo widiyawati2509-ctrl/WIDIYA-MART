@@ -37,11 +37,11 @@ function CategoryItem({ cat }: { cat: Category }) {
         type="button"
         disabled={isPending}
         onClick={handleDelete}
-        className="btn-3d btn-3d-white p-2 text-gray-500 hover:text-red-600 rounded-xl transition-colors disabled:opacity-40 shadow-xs"
+        className="press p-2 rounded-xl bg-white border border-[rgba(232,214,205,0.9)] text-[var(--danger)] hover:bg-red-50 transition-colors disabled:opacity-40 shadow-xs"
         title="Hapus Kategori"
       >
         {isPending ? (
-          <Loader2 className="w-4 h-4 animate-spin text-red-500" />
+          <Loader2 className="w-4 h-4 animate-spin text-[var(--danger)]" />
         ) : (
           <Trash2 className="w-4 h-4" />
         )}

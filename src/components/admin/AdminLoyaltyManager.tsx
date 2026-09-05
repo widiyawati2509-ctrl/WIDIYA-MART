@@ -192,7 +192,7 @@ export default function AdminLoyaltyManager({ config: initialConfig, transaction
             <button
               type="submit"
               disabled={isPending}
-              className="press w-full py-3 rounded-xl bg-gradient-to-r from-[var(--accent)] to-[var(--accent-2)] text-white font-sora font-bold text-xs shadow-md flex items-center justify-center gap-1.5 active:scale-95 transition-all"
+              className="save-btn w-full py-3 text-xs gap-1.5"
             >
               {isPending ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />}
               <span>Simpan Perubahan Skema Poin</span>

@@ -27,7 +27,7 @@ export default async function AdminKategoriPage() {
       {/* Add form */}
       <details className="bg-white border rounded-2xl mb-4">
         <summary className="px-4 py-3 font-semibold cursor-pointer flex items-center gap-2 hover:bg-gray-50 rounded-2xl">
-          <Plus className="w-4 h-4 text-green-600" />
+          <Plus className="w-4 h-4 text-[var(--accent)]" />
           Tambah Kategori Baru
         </summary>
         <div className="px-4 pb-4 border-t mt-0">
@@ -37,11 +37,11 @@ export default async function AdminKategoriPage() {
               name="nama"
               required
               placeholder="Nama kategori"
-              className="flex-1 border rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="flex-1 border rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
             />
             <button
               type="submit"
-              className="btn-3d btn-3d-green px-5 py-2 rounded-xl text-sm font-medium"
+              className="save-btn px-5 py-2 text-sm"
             >
               Simpan
             </button>

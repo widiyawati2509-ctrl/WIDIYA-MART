@@ -209,10 +209,10 @@ export default function PrintReceiptButton({ order, store }: PrintReceiptButtonP
       <button
         type="button"
         onClick={handlePrint}
-        className="btn-3d btn-3d-white inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-xl text-gray-700 print:hidden cursor-pointer active:scale-95 transition-transform"
+        className="press inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-xl bg-white border border-[rgba(232,214,205,0.9)] text-[var(--ink)] hover:bg-[var(--paper)] shadow-xs print:hidden cursor-pointer active:scale-95 transition-all"
         title="Cetak struk / resi pesanan"
       >
-        <Printer className="w-3.5 h-3.5 text-gray-600" />
+        <Printer className="w-3.5 h-3.5 text-[var(--ink-soft)]" />
         <span>Cetak Struk</span>
       </button>
 

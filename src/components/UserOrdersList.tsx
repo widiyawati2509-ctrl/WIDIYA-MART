@@ -184,7 +184,7 @@ export default function UserOrdersList({ initialOrders }: UserOrdersListProps) {
             <button
               type="button"
               onClick={() => setFeedbackMsg(null)}
-              className="p-1 text-gray-500 hover:text-black"
+              className="p-1 text-[var(--ink-soft)] hover:text-[var(--ink)]"
             >
               <X className="w-3.5 h-3.5" />
             </button>
@@ -207,7 +207,7 @@ export default function UserOrdersList({ initialOrders }: UserOrdersListProps) {
               ) : someSelected ? (
                 <MinusSquare className="w-5 h-5 text-[var(--accent)]" />
               ) : (
-                <Square className="w-5 h-5 text-gray-400" />
+                <Square className="w-5 h-5 text-[var(--line)]" />
               )}
               <span>Pilih Semua ({orders.length})</span>
             </button>
@@ -225,7 +225,7 @@ export default function UserOrdersList({ initialOrders }: UserOrdersListProps) {
                     })
                   }}
                   disabled={isPending}
-                  className="press inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-sora font-bold shadow-md active:scale-95 transition-all"
+                  className="press inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[var(--danger)] hover:brightness-95 text-white text-xs font-sora font-bold shadow-md active:scale-95 transition-all"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
                   <span>Hapus ({selectedIds.size})</span>
@@ -241,7 +241,7 @@ export default function UserOrdersList({ initialOrders }: UserOrdersListProps) {
                     })
                   }}
                   disabled={isPending}
-                  className="text-xs text-red-600 hover:text-red-700 font-semibold px-2 py-1 rounded-lg"
+                  className="text-xs text-[var(--danger)] hover:brightness-90 font-semibold px-2 py-1 rounded-lg"
                 >
                   Hapus Semua
                 </button>
@@ -390,7 +390,7 @@ export default function UserOrdersList({ initialOrders }: UserOrdersListProps) {
                                 targetId: order.id,
                               })
                             }}
-                            className="press inline-flex items-center gap-1 text-[11px] text-gray-400 hover:text-red-600 font-medium px-2 py-1 rounded-lg hover:bg-red-50 transition-all active:scale-95"
+                            className="press inline-flex items-center gap-1 text-[11px] text-[var(--ink-soft)] hover:text-[var(--danger)] font-medium px-2 py-1 rounded-lg hover:bg-[var(--accent-bg)] transition-all active:scale-95"
                             title="Hapus dari riwayat"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
@@ -411,7 +411,7 @@ export default function UserOrdersList({ initialOrders }: UserOrdersListProps) {
       {confirmModal.isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
           <div className="card-3d bg-white rounded-3xl p-6 max-w-sm w-full shadow-2xl border border-[rgba(232,214,205,0.9)] space-y-4">
-            <div className="w-12 h-12 rounded-2xl bg-red-100 text-red-600 flex items-center justify-center mx-auto shadow-inner">
+            <div className="w-12 h-12 rounded-2xl bg-[var(--accent-bg)] text-[var(--danger)] flex items-center justify-center mx-auto shadow-inner">
               <AlertTriangle className="w-6 h-6" />
             </div>
 
@@ -433,7 +433,7 @@ export default function UserOrdersList({ initialOrders }: UserOrdersListProps) {
                 type="button"
                 onClick={() => setConfirmModal({ isOpen: false, mode: 'selected' })}
                 disabled={isPending}
-                className="w-full py-2.5 rounded-xl border border-[var(--line)] text-xs font-sora font-semibold text-[var(--ink-soft)] hover:bg-[var(--paper)] transition-all"
+                className="cancel-btn w-full py-2.5 text-xs font-sora font-semibold"
               >
                 Batal
               </button>
@@ -441,7 +441,7 @@ export default function UserOrdersList({ initialOrders }: UserOrdersListProps) {
                 type="button"
                 onClick={executeDelete}
                 disabled={isPending}
-                className="w-full py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-sora font-bold shadow-md inline-flex items-center justify-center gap-1.5 transition-all"
+                className="w-full py-2.5 rounded-xl bg-[var(--danger)] hover:brightness-95 text-white text-xs font-sora font-bold shadow-md inline-flex items-center justify-center gap-1.5 transition-all"
               >
                 {isPending ? (
                   <>

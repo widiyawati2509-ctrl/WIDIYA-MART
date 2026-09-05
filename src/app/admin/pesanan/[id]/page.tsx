@@ -95,10 +95,10 @@ export default async function AdminOrderDetailPage({ params }: AdminOrderDetailP
                       disabled={isCurrent}
                       className={`w-full text-left px-4 py-3 rounded-xl text-sm font-medium border transition-all ${
                         isCurrent
-                          ? 'bg-green-50 border-green-300 text-green-700 cursor-default font-bold'
+                          ? 'bg-emerald-50 border-emerald-300 text-emerald-700 cursor-default font-bold shadow-xs'
                           : value === 'dibatalkan'
-                          ? 'btn-3d btn-3d-white hover:bg-red-50 border-red-200 text-red-600'
-                          : 'btn-3d btn-3d-white text-gray-700'
+                          ? 'bg-white hover:bg-red-50 border-red-200 text-[var(--danger)] shadow-xs active:scale-[0.98]'
+                          : 'bg-white hover:bg-[var(--paper)] border-[rgba(232,214,205,0.9)] text-[var(--ink)] shadow-xs active:scale-[0.98]'
                       }`}
                     >
                       {isCurrent ? '✓ ' : ''}{label}

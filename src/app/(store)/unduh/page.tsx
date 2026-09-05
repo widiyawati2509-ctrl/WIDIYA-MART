@@ -55,13 +55,13 @@ export default function UnduhApkPage() {
           <a
             href="https://github.com/widiyawati2509-ctrl/WIDIYA-MART/raw/main/android/release/PENGENJEK-MART.apk"
             download="PENGENJEK-MART.apk"
-            className="press w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-[var(--accent)] to-[var(--accent-2)] text-white font-sora font-bold text-sm shadow-btn flex items-center justify-center gap-2 active:scale-95 transition-all"
+            className="btn-primary w-full py-3.5 px-6 text-sm gap-2"
           >
             <Download className="w-4 h-4" />
             <span>Download APK Sekarang (4.7 MB)</span>
           </a>
 
-          <p className="text-[10.5px] text-gray-400 font-medium">
+          <p className="text-[10.5px] text-[var(--ink-soft)] font-medium">
             Kompatibel untuk semua HP Android (Samsung, Xiaomi, Oppo, Vivo, Realme, dll.)
           </p>
         </div>

@@ -205,7 +205,7 @@ export default function AdminOrdersList({ initialOrders, initialStatus }: AdminO
                 })
               }}
               disabled={isPending}
-              className="self-start sm:self-auto press inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-red-200 text-red-600 hover:bg-red-50 text-xs font-sora font-semibold transition-all active:scale-95"
+              className="self-start sm:self-auto press inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-red-200 text-[var(--danger)] hover:bg-red-50 text-xs font-sora font-semibold transition-all active:scale-95"
               title="Hapus seluruh riwayat pesanan"
             >
               <Trash2 className="w-3.5 h-3.5" />
@@ -228,7 +228,7 @@ export default function AdminOrdersList({ initialOrders, initialStatus }: AdminO
           <button
             type="button"
             onClick={() => setFeedbackMsg(null)}
-            className="p-1 text-gray-500 hover:text-black"
+            className="p-1 text-[var(--ink-soft)] hover:text-[var(--ink)]"
           >
             <X className="w-3.5 h-3.5" />
           </button>
@@ -353,7 +353,7 @@ export default function AdminOrdersList({ initialOrders, initialStatus }: AdminO
             <button
               type="button"
               onClick={handleClearSelection}
-              className="text-xs text-gray-500 hover:text-gray-700 px-2 py-1 rounded-lg"
+              className="text-xs text-[var(--ink-soft)] hover:text-[var(--ink)] px-2 py-1 rounded-lg"
             >
               Batal
             </button>
@@ -367,7 +367,7 @@ export default function AdminOrdersList({ initialOrders, initialStatus }: AdminO
                 })
               }}
               disabled={isPending}
-              className="press inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-sora font-bold shadow-md active:scale-95 transition-all"
+              className="press inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[var(--danger)] hover:brightness-95 text-white text-xs font-sora font-bold shadow-md active:scale-95 transition-all"
             >
               <Trash2 className="w-3.5 h-3.5" />
               <span>Hapus Terpilih ({selectedIds.size})</span>
@@ -466,14 +466,14 @@ export default function AdminOrdersList({ initialOrders, initialStatus }: AdminO
                         targetId: order.id,
                       })
                     }}
-                    className="p-2 rounded-xl text-gray-400 hover:text-red-600 hover:bg-red-50 active:scale-95 transition-all"
+                    className="p-2 rounded-xl text-[var(--ink-soft)] hover:text-[var(--danger)] hover:bg-[var(--accent-bg)] active:scale-95 transition-all"
                     title="Hapus transaksi ini"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
                   <Link
                     href={`/admin/pesanan/${order.id}`}
-                    className="p-1 text-gray-300 hover:text-gray-600"
+                    className="p-1 text-[var(--line)] hover:text-[var(--ink)]"
                   >
                     <ChevronRight className="w-4 h-4" />
                   </Link>
@@ -488,7 +488,7 @@ export default function AdminOrdersList({ initialOrders, initialStatus }: AdminO
       {confirmModal.isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
           <div className="card-3d bg-white rounded-3xl p-6 max-w-sm w-full shadow-2xl border border-[rgba(232,214,205,0.9)] space-y-4">
-            <div className="w-12 h-12 rounded-2xl bg-red-100 text-red-600 flex items-center justify-center mx-auto shadow-inner">
+            <div className="w-12 h-12 rounded-2xl bg-[var(--accent-bg)] text-[var(--danger)] flex items-center justify-center mx-auto shadow-inner">
               <AlertTriangle className="w-6 h-6" />
             </div>
 
@@ -510,7 +510,7 @@ export default function AdminOrdersList({ initialOrders, initialStatus }: AdminO
                 type="button"
                 onClick={() => setConfirmModal({ isOpen: false, mode: 'selected' })}
                 disabled={isPending}
-                className="w-full py-2.5 rounded-xl border border-[var(--line)] text-xs font-sora font-semibold text-[var(--ink-soft)] hover:bg-[var(--paper)] transition-all"
+                className="cancel-btn w-full py-2.5 text-xs font-sora font-semibold"
               >
                 Batal
               </button>
@@ -518,7 +518,7 @@ export default function AdminOrdersList({ initialOrders, initialStatus }: AdminO
                 type="button"
                 onClick={executeDelete}
                 disabled={isPending}
-                className="w-full py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-sora font-bold shadow-md inline-flex items-center justify-center gap-1.5 transition-all"
+                className="w-full py-2.5 rounded-xl bg-[var(--danger)] hover:brightness-95 text-white text-xs font-sora font-bold shadow-md inline-flex items-center justify-center gap-1.5 transition-all"
               >
                 {isPending ? (
                   <>

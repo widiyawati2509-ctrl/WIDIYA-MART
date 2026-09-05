@@ -562,7 +562,7 @@ export default function CheckoutFormClient({
           <button
             type="button"
             onClick={() => setErrorMsg(null)}
-            className="text-red-400 hover:text-red-600 px-1 py-0.5 rounded"
+            className="text-[var(--danger)]/70 hover:text-[var(--danger)] px-1 py-0.5 rounded"
           >
             ✕
           </button>
@@ -570,11 +570,10 @@ export default function CheckoutFormClient({
       )}
 
       {/* Submit Button */}
-      <Button
+      <button
         type="submit"
-        variant="primary"
         disabled={isPending}
-        className="w-full py-3.5 rounded-[16px] text-base checkout-btn flex items-center justify-center gap-2 shadow-lg"
+        className="checkout-btn w-full py-3.5 text-base gap-2"
       >
         {isPending ? (
           <>
@@ -584,7 +583,7 @@ export default function CheckoutFormClient({
         ) : (
           <span>Buat Pesanan — {formatRupiah(finalTotal)}</span>
         )}
-      </Button>
+      </button>
     </form>
   )
 }

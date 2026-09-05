@@ -192,7 +192,7 @@ function ProductItemRow({
               <button
                 type="button"
                 onClick={handleAddVariant}
-                className="btn-3d btn-3d-coral px-3 py-1.5 text-xs font-bold rounded-xl flex items-center gap-1 shadow-sm"
+                className="add-btn px-3 py-1.5 text-xs gap-1"
               >
                 <Plus className="w-3.5 h-3.5" /> Tambah Varian
               </button>
@@ -280,7 +280,7 @@ function ProductItemRow({
                     <button
                       type="button"
                       onClick={() => handleRemoveVariant(idx)}
-                      className="w-7 h-7 flex items-center justify-center text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors"
+                      className="w-7 h-7 flex items-center justify-center text-[var(--danger)] hover:brightness-90 hover:bg-red-50 rounded-lg transition-colors"
                       title="Hapus varian ini"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
@@ -298,14 +298,14 @@ function ProductItemRow({
         <div className="flex gap-2 pt-2 border-t border-[var(--line)]">
           <button
             type="submit"
-            className="btn-3d btn-3d-coral px-4 py-2 rounded-xl text-xs font-sora font-bold flex items-center gap-1.5 shadow-sm"
+            className="save-btn px-4 py-2 text-xs gap-1.5"
           >
             <Check className="w-4 h-4" /> Simpan Perubahan
           </button>
           <button
             type="button"
             onClick={onCancelEdit}
-            className="btn-3d btn-3d-white px-4 py-2 rounded-xl text-xs font-sora font-bold text-[var(--ink-soft)] flex items-center gap-1.5"
+            className="cancel-btn px-4 py-2 text-xs font-sora font-bold gap-1.5"
           >
             <X className="w-4 h-4" /> Batal
           </button>
@@ -330,7 +330,7 @@ function ProductItemRow({
         <div className="flex items-center gap-2 flex-wrap mb-0.5">
           <p className="font-bold text-sm text-[var(--ink)] truncate">{product.nama}</p>
           {!product.is_active && (
-            <span className="text-[10px] font-bold bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full shrink-0">
+            <span className="text-[10px] font-bold bg-[var(--paper)] text-[var(--ink-soft)] px-2 py-0.5 rounded-full shrink-0">
               Nonaktif
             </span>
           )}
@@ -372,7 +372,7 @@ function ProductItemRow({
       <div className="flex gap-1.5 shrink-0">
         <button
           onClick={onStartEdit}
-          className="btn-3d btn-3d-white p-2 text-blue-600 rounded-xl"
+          className="press p-2 rounded-xl bg-white border border-[rgba(232,214,205,0.9)] text-[var(--ink-soft)] hover:text-[var(--accent)] hover:bg-[var(--accent-bg)] shadow-xs transition-colors"
           title="Edit Produk & Varian"
         >
           <Edit2 className="w-4 h-4" />
@@ -380,7 +380,7 @@ function ProductItemRow({
         <form action={deleteProduct.bind(null, product.id)}>
           <button
             type="submit"
-            className="btn-3d btn-3d-white p-2 text-red-500 hover:text-red-600 rounded-xl"
+            className="press p-2 rounded-xl bg-white border border-[rgba(232,214,205,0.9)] text-[var(--danger)] hover:bg-red-50 shadow-xs transition-colors"
             title="Nonaktifkan Produk"
             onClick={(e) => {
               if (!confirm('Nonaktifkan produk ini?')) e.preventDefault()
