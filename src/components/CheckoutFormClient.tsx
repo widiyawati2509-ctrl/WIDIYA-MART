@@ -290,7 +290,7 @@ export default function CheckoutFormClient({
             onClick={() => setMetodePengiriman('ambil_di_toko')}
             className={`p-3 rounded-2xl border text-left transition-all relative flex flex-col justify-between ${
               metodePengiriman === 'ambil_di_toko'
-                ? 'border-[var(--accent)] bg-[var(--accent-bg)] shadow-[0_4px_12px_rgba(255,107,53,0.12)] ring-1 ring-[var(--accent)]'
+                ? 'border-[var(--accent)] bg-[var(--accent-bg)] shadow-card-accent ring-1 ring-[var(--accent)]'
                 : 'border-[var(--line)] bg-white hover:border-[var(--line)]'
             }`}
           >
@@ -321,7 +321,7 @@ export default function CheckoutFormClient({
             }}
             className={`p-3 rounded-2xl border text-left transition-all relative flex flex-col justify-between ${
               metodePengiriman === 'antar_alamat'
-                ? 'border-[var(--accent)] bg-[var(--accent-bg)] shadow-[0_4px_12px_rgba(255,107,53,0.12)] ring-1 ring-[var(--accent)]'
+                ? 'border-[var(--accent)] bg-[var(--accent-bg)] shadow-card-accent ring-1 ring-[var(--accent)]'
                 : 'border-[var(--line)] bg-white hover:border-[var(--line)]'
             }`}
           >
@@ -495,7 +495,7 @@ export default function CheckoutFormClient({
               }}
               placeholder="Contoh: Jl. Raya Pengenjek RT 03, rumah pagar putih samping musholla Al-Ikhlas"
               required={metodePengiriman === 'antar_alamat'}
-              className="w-full min-w-0 rounded-[var(--radius-md)] border border-[var(--line)] bg-white px-3.5 py-2.5 text-xs text-[var(--ink)] placeholder:text-[var(--ink-soft)] shadow-[0_4px_10px_-2px_rgba(43,24,16,.04),inset_0_1px_0_#ffffff] outline-none transition-all focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20 resize-none"
+              className="w-full min-w-0 rounded-[var(--radius-md)] border border-[var(--line)] bg-white px-3.5 py-2.5 text-xs text-[var(--ink)] placeholder:text-[var(--ink-soft)] shadow-input outline-none transition-all focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20 resize-none"
             />
           </div>
         </Card>

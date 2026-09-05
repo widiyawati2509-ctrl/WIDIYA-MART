@@ -26,7 +26,7 @@ function CategoryItem({ cat }: { cat: Category }) {
 
   return (
     <div className="flex items-center gap-3 px-4 py-3">
-      <div className="w-10 h-10 rounded-xl bg-[var(--accent-bg)] shadow-[inset_0_2px_4px_rgba(232,85,33,0.08)] flex items-center justify-center p-1 shrink-0">
+      <div className="w-10 h-10 rounded-xl bg-[var(--accent-bg)] shadow-thumb-inset flex items-center justify-center p-1 shrink-0">
         <IconComponent className="w-7 h-7" />
       </div>
       <div className="flex-1 min-w-0">

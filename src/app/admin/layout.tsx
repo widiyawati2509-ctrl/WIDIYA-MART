@@ -60,7 +60,7 @@ export default async function AdminLayout({
   return (
     <div className="min-h-screen bg-[var(--paper)]">
       {/* Admin header */}
-      <header className="top-header sticky top-0 z-50 px-4 py-3 border-b border-[rgba(232,214,205,0.8)] bg-[rgba(250,240,235,0.92)] backdrop-blur-md shadow-[0_4px_20px_-2px_rgba(43,24,16,0.06)] flex items-center justify-between">
+      <header className="top-header sticky top-0 z-50 px-4 py-3 border-b border-[rgba(232,214,205,0.8)] bg-[rgba(250,240,235,0.92)] backdrop-blur-md shadow-header flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="logo-box flex items-center justify-center p-1 overflow-hidden shrink-0">
             <Image

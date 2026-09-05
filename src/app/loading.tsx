@@ -5,7 +5,7 @@ export default function Loading() {
   return (
     <div className="max-w-[480px] mx-auto pb-24 animate-page-in">
       {/* Header Skeleton */}
-      <div className="top-header sticky top-0 z-40 px-4 py-3.5 flex items-center justify-between border-b border-[rgba(232,214,205,0.8)] bg-[rgba(250,240,235,0.92)] backdrop-blur-md shadow-[0_4px_20px_-2px_rgba(43,24,16,0.06)] mb-3.5">
+      <div className="top-header sticky top-0 z-40 px-4 py-3.5 flex items-center justify-between border-b border-[rgba(232,214,205,0.8)] bg-[rgba(250,240,235,0.92)] backdrop-blur-md shadow-header mb-3.5">
         <div className="flex items-center gap-2.5">
           <div className="w-9 h-9 bg-[var(--accent-bg)] rounded-[var(--radius-sm)] animate-shimmer" />
           <div className="space-y-1.5">

@@ -237,7 +237,7 @@ export default function AdminOrderNotifier() {
       {/* Floating Order Alert Banner */}
       {notification && (
         <div className="fixed top-3 left-4 right-4 z-50 max-w-[440px] mx-auto animate-bounce-short">
-          <div className="card-3d bg-white border-2 border-[var(--accent)] rounded-[var(--radius-lg)] p-4 shadow-[0_12px_32px_rgba(255,107,53,0.28)] flex flex-col gap-2.5">
+          <div className="card-3d bg-white border-2 border-[var(--accent)] rounded-[var(--radius-lg)] p-4 shadow-popover flex flex-col gap-2.5">
             <div className="flex items-start justify-between">
               <div className="flex items-center gap-2">
                 <span className="w-8 h-8 rounded-full bg-[var(--accent-bg)] text-[var(--accent-2)] flex items-center justify-center animate-pulse">

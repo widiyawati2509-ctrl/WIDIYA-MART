@@ -272,7 +272,7 @@ export default function UserAddressManager({ initialAddresses }: UserAddressMana
                 key={addr.id}
                 className={`card-3d bg-white border rounded-[var(--radius-lg)] p-3.5 shadow-3d transition-all ${
                   addr.is_default 
-                    ? 'border-[var(--accent-2)]/60 bg-gradient-to-br from-white to-[var(--accent-bg)]/20 shadow-[0_6px_16px_-4px_rgba(255,107,53,0.12)]' 
+                    ? 'border-[var(--accent-2)]/60 bg-gradient-to-br from-white to-[var(--accent-bg)]/20 shadow-card-accent' 
                     : 'border-[rgba(232,214,205,0.9)]'
                 }`}
               >
@@ -347,7 +347,7 @@ export default function UserAddressManager({ initialAddresses }: UserAddressMana
 
                 {/* Delete Confirmation Prompt */}
                 {isDeleting && (
-                  <div className="mt-3 p-3 bg-rose-50 border border-rose-200 rounded-[var(--radius-md)] space-y-2 animate-in fade-in duration-150">
+                  <div className="mt-3 p-3 bg-rose-50 border border-rose-200 rounded-[var(--radius-md)] space-y-2 animate-in fade-in duration-200">
                     <p className="text-xs font-medium text-rose-900">
                       Hapus alamat "{addr.label}"?
                     </p>
@@ -379,7 +379,7 @@ export default function UserAddressManager({ initialAddresses }: UserAddressMana
 
       {/* Modal Add / Edit Address */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs animate-in fade-in duration-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs animate-in fade-in duration-300">
           <div className="card-3d bg-white border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-xl)] w-full max-w-md p-5 shadow-2xl relative max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between pb-3 border-b border-[var(--line)] mb-4">
               <div className="flex items-center gap-2">

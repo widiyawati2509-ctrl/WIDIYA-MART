@@ -47,7 +47,7 @@ export default function CartItemRow({ item }: CartItemRowProps) {
       } transition-opacity`}
     >
       {/* Thumbnail */}
-      <div className="relative w-14 h-14 rounded-[var(--radius-md)] bg-[var(--accent-bg)] border border-[var(--line)] shrink-0 overflow-hidden shadow-[inset_0_2px_4px_rgba(232,85,33,0.05)]">
+      <div className="relative w-14 h-14 rounded-[var(--radius-md)] bg-[var(--accent-bg)] border border-[var(--line)] shrink-0 overflow-hidden shadow-thumb-inset">
         {product.image_url ? (
           <Image src={product.image_url} alt={product.nama} fill className="object-contain p-1" sizes="56px" />
         ) : (

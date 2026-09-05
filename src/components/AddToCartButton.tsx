@@ -41,7 +41,7 @@ export default function AddToCartButton({ productId, disabled }: AddToCartButton
   return (
     <div className="flex gap-1.5 xs:gap-2 items-center w-full min-w-0">
       {/* Stepper Qty (10-12px radius, warm paper border) */}
-      <div className="flex items-center gap-0.5 xs:gap-1 border border-[var(--line)] bg-white rounded-[var(--radius-sm)] p-0.5 xs:p-1 shadow-[0_2px_6px_rgba(43,24,16,0.04)] shrink-0">
+      <div className="flex items-center gap-0.5 xs:gap-1 border border-[var(--line)] bg-white rounded-[var(--radius-sm)] p-0.5 xs:p-1 shadow-card-sm shrink-0">
         <button
           type="button"
           onClick={() => setQty((q) => Math.max(1, q - 1))}

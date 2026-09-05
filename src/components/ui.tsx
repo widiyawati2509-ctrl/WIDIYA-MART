@@ -20,15 +20,15 @@ export function buttonClass({
 
   const variants = {
     primary:
-      'bg-gradient-to-br from-[var(--accent)] to-[var(--accent-2)] text-white rounded-[var(--radius-md)] shadow-[0_8px_20px_-2px_rgba(255,107,53,.42),inset_0_1px_0_rgba(255,255,255,.4)] active:shadow-[0_3px_8px_-1px_rgba(232,85,33,.35),inset_0_2px_4px_rgba(0,0,0,.2)]',
+      'bg-gradient-to-br from-[var(--accent)] to-[var(--accent-2)] text-white rounded-[var(--radius-md)] shadow-btn active:shadow-btn-active',
     navy:
-      'bg-gradient-to-br from-[#2B1810] to-[#3D221A] text-white rounded-[var(--radius-md)] shadow-[0_8px_20px_-2px_rgba(43,24,16,.3),inset_0_1px_0_rgba(255,255,255,.2)] active:shadow-[0_3px_8px_-1px_rgba(43,24,16,.4),inset_0_2px_4px_rgba(0,0,0,.3)]',
+      'bg-gradient-to-br from-[#2B1810] to-[#3D221A] text-white rounded-[var(--radius-md)] shadow-btn-dark active:shadow-btn-active',
     secondary:
       'bg-transparent border border-[var(--line)] text-[var(--ink-soft)] font-inter font-semibold rounded-[var(--radius-md)] hover:bg-[var(--paper)] active:bg-[var(--paper)]',
     ghost:
       'text-[var(--accent-2)] font-inter font-semibold hover:bg-[var(--accent-bg)] rounded-[var(--radius-md)]',
     danger:
-      'bg-[var(--danger)] text-white rounded-[var(--radius-md)] shadow-[0_8px_20px_-2px_rgba(231,76,60,.35)] active:shadow-[0_3px_8px_-1px_rgba(231,76,60,.4)]',
+      'bg-[var(--danger)] text-white rounded-[var(--radius-md)] shadow-btn-danger active:shadow-btn-active',
   }
 
   const sizes = {
@@ -107,7 +107,7 @@ export function Section({
 
 // INPUT & SELECT (Radius 14px, Line Border, Warm Inset Shadow)
 export const inputClass =
-  'w-full min-w-0 rounded-[var(--radius-md)] border border-[var(--line)] bg-white px-3.5 py-2.5 text-sm text-[var(--ink)] placeholder:text-[var(--ink-soft)] shadow-[0_4px_10px_-2px_rgba(43,24,16,.04),inset_0_1px_0_#ffffff] outline-none transition-all focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20 disabled:bg-zinc-100 disabled:opacity-60'
+  'w-full min-w-0 rounded-[var(--radius-md)] border border-[var(--line)] bg-white px-3.5 py-2.5 text-sm text-[var(--ink)] placeholder:text-[var(--ink-soft)] shadow-input outline-none transition-all focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20 disabled:bg-zinc-100 disabled:opacity-60'
 
 export function Input({ className = '', ...props }: React.InputHTMLAttributes<HTMLInputElement>) {
   return <input className={`${inputClass} ${className}`} {...props} />
@@ -205,7 +205,7 @@ export function EmptyState({
     <div
       className={`flex flex-col items-center gap-3 rounded-[var(--radius-lg)] border border-dashed border-[var(--line)] bg-card p-8 text-center shadow-3d ${className}`}
     >
-      <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[var(--accent)] to-[var(--accent-2)] text-white flex items-center justify-center shadow-[0_6px_16px_-2px_rgba(255,107,53,.4),inset_0_1px_0_rgba(255,255,255,.3)]">
+      <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[var(--accent)] to-[var(--accent-2)] text-white flex items-center justify-center shadow-badge">
         <Icon size={24} />
       </div>
       <p className="text-xs font-medium text-[var(--ink-soft)] max-w-xs">{message}</p>
@@ -246,7 +246,7 @@ export function ConfirmDialog({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#23150F]/75 px-4 backdrop-blur-sm">
-      <div className="bg-card w-full max-w-[420px] animate-page-in rounded-[var(--radius-xl)] p-5 shadow-[0_20px_40px_-10px_rgba(0,0,0,.35),inset_0_1px_0_#ffffff] border border-[rgba(232,214,205,0.9)]">
+      <div className="bg-card w-full max-w-[420px] animate-page-in rounded-[var(--radius-xl)] p-5 shadow-pop border border-[rgba(232,214,205,0.9)]">
         <h3 className="text-base font-sora font-bold text-[var(--ink)]">{title}</h3>
         {description && <p className="mt-1.5 text-xs text-[var(--ink-soft)]">{description}</p>}
         <div className="mt-5 flex justify-end gap-2.5">
@@ -262,7 +262,7 @@ export function ConfirmDialog({
             type="button"
             onClick={onConfirm}
             disabled={isLoading}
-            className="rounded-[var(--radius-md)] bg-[var(--danger)] px-4 py-2 text-xs font-sora font-bold text-white shadow-[0_4px_12px_rgba(231,76,60,.35)] disabled:opacity-50"
+            className="rounded-[var(--radius-md)] bg-[var(--danger)] px-4 py-2 text-xs font-sora font-bold text-white shadow-btn-danger disabled:opacity-50"
           >
             {isLoading ? 'Memproses...' : confirmLabel}
           </button>

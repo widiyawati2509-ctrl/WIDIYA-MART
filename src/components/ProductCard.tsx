@@ -21,7 +21,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         }`}
       >
         {/* Thumbnail (14px radius, accent-bg) */}
-        <div className="relative aspect-square w-full rounded-[var(--radius-md)] bg-[var(--accent-bg)] shadow-[inset_0_2px_4px_rgba(232,85,33,0.05)] overflow-hidden mb-2.5">
+        <div className="relative aspect-square w-full rounded-[var(--radius-md)] bg-[var(--accent-bg)] shadow-thumb-inset overflow-hidden mb-2.5">
           {product.image_url ? (
             <Image
               src={product.image_url}

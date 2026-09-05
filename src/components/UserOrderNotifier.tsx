@@ -287,7 +287,7 @@ export default function UserOrderNotifier() {
       aria-label="Notifikasi Pembaruan Pesanan"
       className="fixed top-4 left-4 right-4 z-[9999] max-w-[440px] mx-auto animate-bounce-in"
     >
-      <div className="bg-white/95 backdrop-blur-md rounded-[var(--radius-lg)] p-4 shadow-[0_12px_36px_rgba(0,0,0,0.18)] border border-[rgba(232,214,205,0.9)] ring-1 ring-black/5">
+      <div className="bg-white/95 backdrop-blur-md rounded-[var(--radius-lg)] p-4 shadow-popover border border-[rgba(232,214,205,0.9)] ring-1 ring-black/5">
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-start gap-3">
             <div className="w-10 h-10 rounded-2xl bg-[var(--accent-bg)] flex items-center justify-center shrink-0 border border-[var(--accent)]/20 shadow-xs">

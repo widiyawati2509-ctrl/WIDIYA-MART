@@ -53,7 +53,7 @@ export default async function ProfilPage() {
       <div className="px-4 space-y-3.5">
         {/* User Identity Card */}
         <div className="card-3d bg-white border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-xl)] p-4 shadow-3d flex items-center gap-3.5">
-          <div className="w-13 h-13 rounded-[var(--radius-md)] bg-gradient-to-br from-[var(--accent)] to-[var(--accent-2)] text-white flex items-center justify-center shadow-[0_6px_14px_-2px_rgba(255,107,53,.45),inset_0_1px_0_rgba(255,255,255,.4)] shrink-0">
+          <div className="w-13 h-13 rounded-[var(--radius-md)] bg-gradient-to-br from-[var(--accent)] to-[var(--accent-2)] text-white flex items-center justify-center shadow-badge shrink-0">
             <User size={24} />
           </div>
           <div className="min-w-0 flex-1">
@@ -96,9 +96,9 @@ export default async function ProfilPage() {
                   href={`/pesanan/${ao.id}`}
                   className={`block card-3d p-4 rounded-[var(--radius-lg)] border shadow-3d transition-all press ${
                     isReady
-                      ? 'bg-emerald-500 text-white border-emerald-600 shadow-[0_10px_20px_-4px_rgba(16,185,129,0.3)]'
+                      ? 'bg-emerald-500 text-white border-emerald-600 shadow-status-success'
                       : isProcessing
-                      ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white border-amber-600 shadow-[0_10px_20px_-4px_rgba(245,158,11,0.3)]'
+                      ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white border-amber-600 shadow-status-warning'
                       : 'bg-white text-[var(--ink)] border-[rgba(232,214,205,0.9)]'
                   }`}
                 >
@@ -134,7 +134,7 @@ export default async function ProfilPage() {
 
         {/* Admin Panel Quick Access (if admin) */}
         {profile?.role === 'admin' && (
-          <div className="card-3d bg-gradient-to-br from-[#2B1810] to-[#1E0F0A] text-white rounded-[var(--radius-lg)] p-4 shadow-[0_12px_28px_-4px_rgba(43,24,16,0.4)] border border-[var(--warning)]/30">
+          <div className="card-3d bg-gradient-to-br from-[#2B1810] to-[#1E0F0A] text-white rounded-[var(--radius-lg)] p-4 shadow-card-dark border border-[var(--warning)]/30">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2.5">
                 <span className="w-8 h-8 rounded-[var(--radius-sm)] bg-[var(--warning)]/20 text-[var(--warning)] flex items-center justify-center text-base">

@@ -131,7 +131,7 @@ export default function PromoBannerCarousel({ banners: propBanners }: { banners?
                 )}
                 <Link
                   href={linkUrl}
-                  className="inline-flex items-center gap-1.5 bg-white text-[var(--accent-2)] font-sora font-bold text-xs px-3.5 py-2 rounded-[var(--radius-sm)] shadow-[0_4px_12px_rgba(43,24,16,0.18),inset_0_1px_0_#ffffff] press"
+                  className="inline-flex items-center gap-1.5 bg-white text-[var(--accent-2)] font-sora font-bold text-xs px-3.5 py-2 rounded-[var(--radius-sm)] shadow-input press"
                 >
                   <span>{ctaText}</span>
                   <ChevronRight className="w-3.5 h-3.5" />
@@ -141,7 +141,7 @@ export default function PromoBannerCarousel({ banners: propBanners }: { banners?
               {/* Product Image */}
               {imgSrc && (
                 <div className="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none transition-transform group-hover:scale-105 duration-300">
-                  <div className="w-[88px] h-[88px] sm:w-[96px] sm:h-[96px] rounded-[var(--radius-lg)] bg-white/95 backdrop-blur-md p-1.5 shadow-[0_12px_24px_-4px_rgba(0,0,0,0.28),inset_0_2px_4px_rgba(255,255,255,0.9)] border border-white/70 flex items-center justify-center relative overflow-hidden">
+                  <div className="w-[88px] h-[88px] sm:w-[96px] sm:h-[96px] rounded-[var(--radius-lg)] bg-white/95 backdrop-blur-md p-1.5 shadow-popover border border-white/70 flex items-center justify-center relative overflow-hidden">
                     <Image
                       src={imgSrc}
                       alt={titleText || 'Promo'}

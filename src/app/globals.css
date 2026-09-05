@@ -7,7 +7,7 @@
   --paper:     #FAF0EB;  /* background halaman (krem hangat) */
   --card:      #FFFFFF;  /* background kartu */
   --ink:       #23150F;  /* teks utama */
-  --ink-soft:  #70564D;  /* teks sekunder/muted (coklat pudar) */
+  --ink-soft:  #5E443B;  /* teks sekunder/muted (deep warm roasted coffee, WCAG AAA > 7.9:1) */
   --line:      #E8D6CD;  /* border tipis */
   --accent:    #FF6B35;  /* oranye-coral utama */
   --accent-2:  #E85521;  /* oranye lebih gelap (gradient stop 2, hover) */
@@ -31,13 +31,26 @@
   --text-title: 16px;
   --text-heading: 18px;
 
-  /* 3D Puffy Neumorphic Shadow */
+  /* 3D Puffy Neumorphic Shadow Scale */
   --shadow-3d: 0 10px 25px -5px rgba(232,85,33,.12), 0 4px 8px -4px rgba(43,24,16,.05), inset 0 1px 0 #ffffff;
   --shadow-btn: 0 8px 20px -2px rgba(255,107,53,.42), inset 0 1px 0 rgba(255,255,255,.4);
   --shadow-btn-active: 0 3px 8px -1px rgba(232,85,33,.35), inset 0 2px 4px rgba(0,0,0,.2);
   --shadow-chip-active: 0 6px 16px -2px rgba(255,107,53,.4), inset 0 1px 0 rgba(255,255,255,.3);
   --shadow-nav: 0 16px 35px -6px rgba(43,24,16,.5), inset 0 1px 1px rgba(255,255,255,.18);
   --shadow-pop: 0 20px 40px -10px rgba(0,0,0,.35), inset 0 1px 0 #ffffff;
+  --shadow-header: 0 4px 20px -2px rgba(43,24,16,0.06);
+  --shadow-input: 0 4px 10px -2px rgba(43,24,16,.04), inset 0 1px 0 #ffffff;
+  --shadow-badge: 0 6px 14px -2px rgba(255,107,53,.45), inset 0 1px 0 rgba(255,255,255,.4);
+  --shadow-card-sm: 0 2px 6px rgba(43,24,16,0.04);
+  --shadow-card-accent: 0 4px 12px rgba(255,107,53,0.12);
+  --shadow-card-dark: 0 12px 28px -4px rgba(43,24,16,0.4);
+  --shadow-popover: 0 12px 36px rgba(43,24,16,0.18);
+  --shadow-floating: 0 10px 25px -5px rgba(232,85,33,0.15);
+  --shadow-btn-danger: 0 8px 20px -2px rgba(231,76,60,.35);
+  --shadow-btn-dark: 0 8px 20px -2px rgba(43,24,16,.3), inset 0 1px 0 rgba(255,255,255,.2);
+  --shadow-status-success: 0 10px 20px -4px rgba(16,185,129,0.3);
+  --shadow-status-warning: 0 10px 20px -4px rgba(245,158,11,0.3);
+  --shadow-thumb-inset: inset 0 2px 4px rgba(232,85,33,0.06);
 
   --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
 }
@@ -75,7 +88,43 @@
   --text-heading: var(--text-heading);
 
   --shadow-3d: var(--shadow-3d);
+  --shadow-btn: var(--shadow-btn);
+  --shadow-btn-active: var(--shadow-btn-active);
+  --shadow-chip-active: var(--shadow-chip-active);
+  --shadow-nav: var(--shadow-nav);
+  --shadow-pop: var(--shadow-pop);
+  --shadow-header: var(--shadow-header);
+  --shadow-input: var(--shadow-input);
+  --shadow-badge: var(--shadow-badge);
+  --shadow-card-sm: var(--shadow-card-sm);
+  --shadow-card-accent: var(--shadow-card-accent);
+  --shadow-card-dark: var(--shadow-card-dark);
+  --shadow-popover: var(--shadow-popover);
+  --shadow-floating: var(--shadow-floating);
+  --shadow-btn-danger: var(--shadow-btn-danger);
+  --shadow-btn-dark: var(--shadow-btn-dark);
+  --shadow-status-success: var(--shadow-status-success);
+  --shadow-status-warning: var(--shadow-status-warning);
+  --shadow-thumb-inset: var(--shadow-thumb-inset);
 }
+
+/* Official Semantic Shadow Utility Classes */
+.shadow-header { box-shadow: var(--shadow-header); }
+.shadow-input { box-shadow: var(--shadow-input); }
+.shadow-badge { box-shadow: var(--shadow-badge); }
+.shadow-card-sm { box-shadow: var(--shadow-card-sm); }
+.shadow-card-accent { box-shadow: var(--shadow-card-accent); }
+.shadow-card-dark { box-shadow: var(--shadow-card-dark); }
+.shadow-popover { box-shadow: var(--shadow-popover); }
+.shadow-floating { box-shadow: var(--shadow-floating); }
+.shadow-btn-danger { box-shadow: var(--shadow-btn-danger); }
+.shadow-btn-dark { box-shadow: var(--shadow-btn-dark); }
+.shadow-status-success { box-shadow: var(--shadow-status-success); }
+.shadow-status-warning { box-shadow: var(--shadow-status-warning); }
+.shadow-thumb-inset { box-shadow: var(--shadow-thumb-inset); }
+.shadow-nav { box-shadow: var(--shadow-nav); }
+.shadow-chip-active { box-shadow: var(--shadow-chip-active); }
+.shadow-btn-active { box-shadow: var(--shadow-btn-active); }
 
 * {
   -webkit-tap-highlight-color: transparent;

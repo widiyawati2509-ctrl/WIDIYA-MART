@@ -175,7 +175,7 @@ export default function ProductDetailInteractive({ product, storePhone = '087816
       {/* Interactive Image Gallery / Slider */}
       <div className="mx-4 mt-3 flex flex-col gap-2.5">
         <div
-          className="relative aspect-square rounded-[var(--radius-xl)] bg-[var(--accent-bg)] border border-[rgba(232,214,205,0.9)] overflow-hidden shadow-[inset_0_2px_4px_rgba(232,85,33,0.05)] select-none"
+          className="relative aspect-square rounded-[var(--radius-xl)] bg-[var(--accent-bg)] border border-[rgba(232,214,205,0.9)] overflow-hidden shadow-thumb-inset select-none"
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
         >
@@ -426,7 +426,7 @@ export default function ProductDetailInteractive({ product, storePhone = '087816
 
       {/* Floating Action Bar: Tanya Stok WA + Add To Cart */}
       <div className="fixed bottom-20 left-1/2 -translate-x-1/2 max-w-[480px] w-full px-2.5 sm:px-4 z-40">
-        <div className="bg-[var(--paper)]/95 backdrop-blur-md p-2 sm:p-2.5 rounded-[var(--radius-lg)] border border-[rgba(232,214,205,0.9)] shadow-[0_10px_25px_-5px_rgba(232,85,33,0.15)] flex items-center gap-1.5 sm:gap-2">
+        <div className="bg-[var(--paper)]/95 backdrop-blur-md p-2 sm:p-2.5 rounded-[var(--radius-lg)] border border-[rgba(232,214,205,0.9)] shadow-floating flex items-center gap-1.5 sm:gap-2">
           {/* Tanya Stok WhatsApp Button */}
           <a
             href={whatsappUrl}

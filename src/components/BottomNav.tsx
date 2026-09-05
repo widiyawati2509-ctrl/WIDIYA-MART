@@ -23,7 +23,7 @@ export default function BottomNav({ cartCount, isLoggedIn }: BottomNavProps) {
 
   return (
     <nav
-      className="fixed left-1/2 -translate-x-1/2 bottom-4 max-w-[calc(480px-32px)] w-[calc(100%-32px)] rounded-[var(--radius-xl)] p-1.5 flex items-center justify-between z-50 border border-white/12 shadow-[0_16px_35px_-6px_rgba(43,24,16,.5),inset_0_1px_1px_rgba(255,255,255,.18)]"
+      className="fixed left-1/2 -translate-x-1/2 bottom-4 max-w-[calc(480px-32px)] w-[calc(100%-32px)] rounded-[var(--radius-xl)] p-1.5 flex items-center justify-between z-50 border border-white/12 shadow-nav"
       style={{ background: 'linear-gradient(145deg, #2B1810, #1E0F0A)' }}
     >
       {navItems.map(({ href, label, IconComponent }) => {
@@ -39,7 +39,7 @@ export default function BottomNav({ cartCount, isLoggedIn }: BottomNavProps) {
             prefetch={true}
             className={`flex-1 flex flex-col items-center justify-center py-2 px-1 rounded-[var(--radius-lg)] transition-all relative press ${
               isActive
-                ? 'text-white border border-[rgba(255,107,53,0.4)] shadow-[inset_0_1px_1px_rgba(255,255,255,0.3),0_4px_14px_rgba(255,107,53,0.35)]'
+                ? 'text-white border border-[rgba(255,107,53,0.4)] shadow-chip-active'
                 : 'text-[#A8928B] hover:text-white/80'
             }`}
             style={

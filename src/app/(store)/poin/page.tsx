@@ -39,7 +39,7 @@ export default async function PoinPage() {
 
       <div className="p-4 space-y-3.5">
         {/* Main Points Card */}
-        <div className="card-3d bg-gradient-to-br from-[#2B1810] via-[#3D2117] to-[#1E0F0A] text-white rounded-[var(--radius-xl)] p-5 shadow-[0_12px_28px_-4px_rgba(43,24,16,0.4)] border border-[var(--warning)]/30 relative overflow-hidden">
+        <div className="card-3d bg-gradient-to-br from-[#2B1810] via-[#3D2117] to-[#1E0F0A] text-white rounded-[var(--radius-xl)] p-5 shadow-card-dark border border-[var(--warning)]/30 relative overflow-hidden">
           <div className="absolute top-0 right-0 translate-x-4 -translate-y-4 w-32 h-32 bg-gradient-to-br from-[var(--warning)]/20 to-orange-500/0 rounded-full blur-2xl pointer-events-none" />
 
           <div className="flex items-center justify-between mb-3 relative z-10">

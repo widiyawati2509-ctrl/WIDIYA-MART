@@ -15,7 +15,7 @@ export default function MasukPage() {
     <div className="min-h-screen flex flex-col items-center justify-center px-4 bg-[var(--paper)] py-8">
       <div className="w-full max-w-[420px]">
         <div className="text-center mb-6">
-          <div className="w-14 h-14 rounded-[var(--radius-md)] bg-gradient-to-br from-[var(--accent)] to-[var(--accent-2)] flex items-center justify-center mx-auto mb-3 shadow-[0_6px_14px_-2px_rgba(255,107,53,.45),inset_0_1px_0_rgba(255,255,255,.4)]">
+          <div className="w-14 h-14 rounded-[var(--radius-md)] bg-gradient-to-br from-[var(--accent)] to-[var(--accent-2)] flex items-center justify-center mx-auto mb-3 shadow-badge">
             <Image
               src="/logo.png"
               alt="PENGENJEK MART Logo"

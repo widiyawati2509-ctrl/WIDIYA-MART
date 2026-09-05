@@ -32,7 +32,7 @@ export default function PageHeader({
 
   return (
     <header
-      className={`top-header ${sticky ? 'sticky top-0 z-40' : ''} px-4 py-3.5 border-b border-[rgba(232,214,205,0.8)] bg-[rgba(250,240,235,0.92)] backdrop-blur-md shadow-[0_4px_20px_-2px_rgba(43,24,16,0.06)] ${
+      className={`top-header ${sticky ? 'sticky top-0 z-40' : ''} px-4 py-3.5 border-b border-[rgba(232,214,205,0.8)] bg-[rgba(250,240,235,0.92)] backdrop-blur-md shadow-header ${
         printHidden ? 'print:hidden' : ''
       } ${className}`}
     >
