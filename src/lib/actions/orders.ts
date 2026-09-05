@@ -62,7 +62,6 @@ export async function createOrder(formData: FormData): Promise<{ error?: string;
     // Loyalty points deduction handling
     const poinToRedeem = Math.max(0, parseInt(formData.get('poin_digunakan') as string) || 0)
     let diskonPoin = 0
-    let finalTotal = subtotal
 
     if (poinToRedeem > 0) {
       try {
@@ -75,7 +74,6 @@ export async function createOrder(formData: FormData): Promise<{ error?: string;
           if (validPoints > 0) {
             const maxDiscount = Math.floor(subtotal * (config.max_redeem_percentage / 100))
             diskonPoin = Math.min(validPoints * config.redeem_rate, maxDiscount)
-            finalTotal = Math.max(0, subtotal - diskonPoin)
           }
         }
       } catch (e) {
@@ -83,16 +81,30 @@ export async function createOrder(formData: FormData): Promise<{ error?: string;
       }
     }
 
+    // Shipping & Delivery calculations (Radius / Haversine)
+    const metodePengiriman = (formData.get('metode_pengiriman') as string) || 'ambil_di_toko'
+    const alamatPengiriman = (formData.get('alamat_pengiriman') as string)?.trim() || null
+    const jarakKmRaw = formData.get('jarak_km') as string
+    const jarakKm = jarakKmRaw && !isNaN(parseFloat(jarakKmRaw)) ? parseFloat(jarakKmRaw) : null
+    const ongkirRaw = formData.get('ongkir') as string
+    const ongkir = metodePengiriman === 'antar_alamat' ? (parseInt(ongkirRaw, 10) || 0) : 0
+
+    const finalTotal = Math.max(0, subtotal - diskonPoin + ongkir)
+
     // Create order with fallback for non-migrated schema
     let order = null
 
-    // 1. Attempt with loyalty columns
+    // 1. Attempt with loyalty and shipping columns
     const fullPayload = {
       user_id: user.id,
       subtotal,
       total: finalTotal,
       poin_digunakan: diskonPoin > 0 ? poinToRedeem : 0,
       diskon_poin: diskonPoin,
+      jarak_km: jarakKm,
+      ongkir: ongkir,
+      alamat_pengiriman: alamatPengiriman,
+      metode_pengiriman: metodePengiriman,
       nama_pemesan: parsed.data.nama_pemesan,
       no_hp_pemesan: parsed.data.no_hp_pemesan,
       catatan: parsed.data.catatan || null,

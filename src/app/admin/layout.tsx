@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
@@ -38,13 +37,15 @@ export default async function AdminLayout({
 
   if (!user) redirect('/masuk')
 
-  const { data: profile } = await supabase
+  const { data: profile } = (await supabase
     .from('profiles')
     .select('role, nama')
     .eq('id', user.id)
-    .single()
+    .single()) as { data: { role: 'customer' | 'admin'; nama: string } | null }
 
-  if (profile?.role !== 'admin') redirect('/')
+  if (!profile || profile.role !== 'admin') {
+    redirect('/')
+  }
 
   const navLinks = [
     { href: '/admin', label: 'Dashboard' },

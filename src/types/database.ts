@@ -181,6 +181,13 @@ export type Database = {
           catatan: string | null
           nama_pemesan: string
           no_hp_pemesan: string
+          jarak_km?: number | null
+          ongkir?: number | null
+          alamat_pengiriman?: string | null
+          metode_pengiriman?: string | null
+          poin_digunakan?: number | null
+          diskon_poin?: number | null
+          poin_didapat?: number | null
           created_at: string
           updated_at: string
         }
@@ -193,6 +200,13 @@ export type Database = {
           catatan?: string | null
           nama_pemesan: string
           no_hp_pemesan: string
+          jarak_km?: number | null
+          ongkir?: number | null
+          alamat_pengiriman?: string | null
+          metode_pengiriman?: string | null
+          poin_digunakan?: number | null
+          diskon_poin?: number | null
+          poin_didapat?: number | null
           created_at?: string
           updated_at?: string
         }
@@ -205,6 +219,13 @@ export type Database = {
           catatan?: string | null
           nama_pemesan?: string
           no_hp_pemesan?: string
+          jarak_km?: number | null
+          ongkir?: number | null
+          alamat_pengiriman?: string | null
+          metode_pengiriman?: string | null
+          poin_digunakan?: number | null
+          diskon_poin?: number | null
+          poin_didapat?: number | null
           created_at?: string
           updated_at?: string
         }
@@ -276,6 +297,38 @@ export type Database = {
           updated_at?: string
         }
       }
+      product_reviews: {
+        Row: {
+          id: string
+          user_id: string
+          product_id: string
+          order_id: string | null
+          rating: number
+          ulasan: string | null
+          nama_reviewer: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          product_id: string
+          order_id?: string | null
+          rating: number
+          ulasan?: string | null
+          nama_reviewer: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          product_id?: string
+          order_id?: string | null
+          rating?: number
+          ulasan?: string | null
+          nama_reviewer?: string
+          created_at?: string
+        }
+      }
     }
     Enums: {
       order_status: 'menunggu_diproses' | 'diproses' | 'siap_diambil' | 'selesai' | 'dibatalkan'
@@ -306,3 +359,5 @@ export type OrderWithItems = Order & {
 export type ProductWithCategory = Product & {
   categories: Category | null
 }
+
+export type ProductReview = Database['public']['Tables']['product_reviews']['Row']

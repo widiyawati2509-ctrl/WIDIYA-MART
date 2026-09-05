@@ -1,12 +1,8 @@
 // @ts-nocheck
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import { formatRupiah } from '@/lib/utils'
-import { createOrder } from '@/lib/actions/orders'
 import { getUserLoyaltySummary } from '@/lib/actions/loyalty'
 import CheckoutFormClient from '@/components/CheckoutFormClient'
-import { MapPin, Clock, Phone, ShieldCheck } from 'lucide-react'
-import { Card, Field, Input, Badge } from '@/components/ui'
 
 export default async function CheckoutPage() {
   const supabase = await createClient()
@@ -41,7 +37,7 @@ export default async function CheckoutPage() {
 
       return { items: safeItems, total }
     })(),
-    supabase.from('store_info').select('*').single(),
+    supabase.from('store_info').select('nama_toko, alamat_toko, kota, jam_operasional, no_hp_toko').single(),
     getUserLoyaltySummary(user.id),
   ])
 
@@ -62,89 +58,10 @@ export default async function CheckoutPage() {
       <CheckoutFormClient
         items={items}
         subtotal={total}
+        store={store}
+        profile={profile}
         loyaltySummary={loyaltySummary}
-      >
-        {/* Info Pengambilan */}
-        <Card>
-          <div className="flex items-center gap-2 mb-3">
-            <span className="w-7 h-7 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center font-bold">
-              <MapPin size={15} />
-            </span>
-            <h2 className="font-sora font-bold text-sm text-[var(--ink)]">Ambil Langsung di Toko</h2>
-            <Badge variant="positive" className="ml-auto">Bebas Ongkir</Badge>
-          </div>
-          <div className="space-y-2 text-xs">
-            <p className="font-bold text-[var(--ink)]">{store?.nama_toko}</p>
-            {store?.alamat_toko && (
-              <p className="text-[var(--ink-soft)] flex gap-2 font-medium">
-                <MapPin size={15} className="shrink-0 mt-0.5 text-emerald-600" />
-                {store.alamat_toko}{store.kota ? `, ${store.kota}` : ''}
-              </p>
-            )}
-            {store?.jam_operasional && (
-              <p className="text-[var(--ink-soft)] flex gap-2 font-medium">
-                <Clock size={15} className="shrink-0 mt-0.5 text-emerald-600" />
-                {store.jam_operasional}
-              </p>
-            )}
-            {store?.no_hp_toko && (
-              <p className="text-[var(--ink-soft)] flex gap-2 font-medium">
-                <Phone size={15} className="shrink-0 mt-0.5 text-emerald-600" />
-                {store.no_hp_toko}
-              </p>
-            )}
-          </div>
-        </Card>
-
-        {/* Pembayaran */}
-        <Card>
-          <div className="flex items-center gap-2 mb-2.5">
-            <span className="w-7 h-7 rounded-xl bg-[var(--accent-bg)] text-[var(--accent-2)] flex items-center justify-center font-bold">
-              <ShieldCheck size={15} />
-            </span>
-            <h2 className="font-sora font-bold text-sm text-[var(--ink)]">Metode Pembayaran</h2>
-          </div>
-          <div className="rounded-[14px] bg-[var(--accent-bg)] border border-[var(--accent)]/30 p-3 text-xs">
-            <p className="font-bold text-[var(--accent-2)]">COD (Bayar saat Ambil di Toko)</p>
-            <p className="text-[11px] text-[var(--ink-soft)] mt-0.5 font-medium">
-              Bisa bayar tunai atau scan QRIS langsung di kasir toko
-            </p>
-          </div>
-        </Card>
-
-        {/* Data Pemesan */}
-        <Card className="space-y-3.5">
-          <h2 className="font-sora font-bold text-sm text-[var(--ink)]">Data Pemesan</h2>
-          <Field label="Nama Lengkap" htmlFor="nama_pemesan">
-            <Input
-              id="nama_pemesan"
-              name="nama_pemesan"
-              defaultValue={profile?.nama}
-              required
-              placeholder="Nama lengkap pemesan"
-            />
-          </Field>
-          <Field label="Nomor WhatsApp" htmlFor="no_hp_pemesan">
-            <Input
-              id="no_hp_pemesan"
-              type="tel"
-              name="no_hp_pemesan"
-              defaultValue={profile?.no_hp ?? ''}
-              required
-              placeholder="08xxxxxxxxxx"
-            />
-          </Field>
-          <Field label="Catatan Tambahan (opsional)" htmlFor="catatan">
-            <textarea
-              id="catatan"
-              name="catatan"
-              rows={2}
-              className="w-full min-w-0 rounded-[14px] border border-[var(--line)] bg-white px-3.5 py-2.5 text-sm text-[var(--ink)] placeholder:text-[var(--ink-soft)] shadow-[0_4px_10px_-2px_rgba(43,24,16,.04),inset_0_1px_0_#ffffff] outline-none transition-all focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20 resize-none"
-              placeholder="Contoh: tolong pisahkan belanjaan bumbu dapur"
-            />
-          </Field>
-        </Card>
-      </CheckoutFormClient>
+      />
     </div>
   )
 }

@@ -2,11 +2,12 @@
 import { createClient } from '@/lib/supabase/server'
 import { notFound, redirect } from 'next/navigation'
 import { formatRupiah, getOrderStatusLabel, formatWhatsAppUrl } from '@/lib/utils'
-import { ChevronLeft, CheckCircle, Clock, MapPin, Phone } from 'lucide-react'
+import { ChevronLeft, CheckCircle, Clock, MapPin, Phone, Truck, Star } from 'lucide-react'
 import Link from 'next/link'
 import PrintReceiptButton from '@/components/PrintReceiptButton'
 import DeleteOrderButton from '@/components/admin/DeleteOrderButton'
 import ReorderButton from '@/components/ReorderButton'
+import ProductReviewFormModal from '@/components/ProductReviewFormModal'
 
 interface OrderDetailPageProps {
   params: Promise<{ id: string }>
@@ -28,7 +29,10 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
 
   if (!order) notFound()
 
-  const { data: store } = await supabase.from('store_info').select('*').single()
+  const { data: store } = await supabase
+    .from('store_info')
+    .select('nama_toko, alamat_toko, kota, jam_operasional, whatsapp, no_hp_toko')
+    .single()
 
   const statuses = ['menunggu_diproses', 'diproses', 'siap_diambil', 'selesai']
   const currentIdx = statuses.indexOf(order.status)
@@ -82,35 +86,58 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
           )}
         </div>
 
-        {/* Lokasi Pengambilan */}
+        {/* Lokasi Pengambilan / Pengantaran */}
         <div className="card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[20px] p-4 shadow-3d">
-          <h2 className="font-sora font-bold text-sm text-[var(--ink)] mb-2 flex items-center gap-2">
-            <MapPin className="w-4 h-4 text-[var(--accent)]" />
-            Lokasi Pengambilan
-          </h2>
-          <p className="font-bold text-xs text-[var(--ink)]">{store?.nama_toko}</p>
-          {store?.alamat_toko && (
-            <p className="text-xs text-[var(--ink-soft)] mt-0.5 font-medium">
-              {store.alamat_toko}, {store.kota}
-            </p>
-          )}
-          {store?.jam_operasional && (
-            <p className="text-xs text-[var(--ink-soft)] mt-1 flex items-center gap-1 font-medium">
-              <Clock className="w-3.5 h-3.5 text-[var(--accent)]" /> {store.jam_operasional}
-            </p>
-          )}
-          {(store?.whatsapp || store?.no_hp_toko) && (
-            <a
-              href={formatWhatsAppUrl(
-                store.whatsapp || store.no_hp_toko,
-                `Halo Admin PENGENJEK MART, saya ingin menanyakan pesanan #${order.id.slice(0, 8).toUpperCase()}`
+          {order.metode_pengiriman === 'antar_alamat' ? (
+            <>
+              <h2 className="font-sora font-bold text-sm text-[var(--ink)] mb-2 flex items-center gap-2">
+                <Truck className="w-4 h-4 text-[var(--accent)]" />
+                Diantar ke Alamat (COD)
+              </h2>
+              <p className="font-bold text-xs text-[var(--ink)]">
+                {order.alamat_pengiriman || 'Alamat tidak tercantum'}
+              </p>
+              {order.jarak_km ? (
+                <p className="text-xs text-[var(--ink-soft)] mt-1 flex items-center gap-1 font-medium">
+                  <MapPin className="w-3.5 h-3.5 text-[var(--accent)]" />
+                  Jarak Pengantaran: ~{order.jarak_km} km dari toko
+                </p>
+              ) : null}
+              <p className="text-[11px] text-emerald-700 font-bold mt-1">
+                {order.ongkir === 0 ? '🎉 Gratis Ongkir (Radius ≤ 7 km)' : `Ongkir: ${formatRupiah(order.ongkir || 15000)}`}
+              </p>
+            </>
+          ) : (
+            <>
+              <h2 className="font-sora font-bold text-sm text-[var(--ink)] mb-2 flex items-center gap-2">
+                <MapPin className="w-4 h-4 text-[var(--accent)]" />
+                Lokasi Pengambilan (Ambil di Toko)
+              </h2>
+              <p className="font-bold text-xs text-[var(--ink)]">{store?.nama_toko || 'PENGENJEK MART'}</p>
+              {store?.alamat_toko && (
+                <p className="text-xs text-[var(--ink-soft)] mt-0.5 font-medium">
+                  {store.alamat_toko}, {store.kota}
+                </p>
               )}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-2.5 inline-flex items-center gap-1.5 text-xs font-sora font-bold text-[var(--accent-2)] bg-[var(--accent-bg)] px-3 py-1.5 rounded-full hover:brightness-95 transition-all active:scale-95"
-            >
-              <Phone className="w-3.5 h-3.5" /> Hubungi via WhatsApp
-            </a>
+              {store?.jam_operasional && (
+                <p className="text-xs text-[var(--ink-soft)] mt-1 flex items-center gap-1 font-medium">
+                  <Clock className="w-3.5 h-3.5 text-[var(--accent)]" /> {store.jam_operasional}
+                </p>
+              )}
+              {(store?.whatsapp || store?.no_hp_toko) && (
+                <a
+                  href={formatWhatsAppUrl(
+                    store.whatsapp || store.no_hp_toko,
+                    `Halo Admin PENGENJEK MART, saya ingin menanyakan pesanan #${order.id.slice(0, 8).toUpperCase()}`
+                  )}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-2.5 inline-flex items-center gap-1.5 text-xs font-sora font-bold text-[var(--accent-2)] bg-[var(--accent-bg)] px-3 py-1.5 rounded-full hover:brightness-95 transition-all active:scale-95"
+                >
+                  <Phone className="w-3.5 h-3.5" /> Hubungi via WhatsApp
+                </a>
+              )}
+            </>
           )}
         </div>
 
@@ -127,8 +154,16 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
               <span className="font-bold text-[var(--ink)]">{order.no_hp_pemesan}</span>
             </div>
             <div className="flex justify-between">
+              <span className="text-[var(--ink-soft)]">Pengiriman</span>
+              <span className="font-bold text-[var(--ink)]">
+                {order.metode_pengiriman === 'antar_alamat' ? 'Diantar ke Alamat' : 'Ambil di Toko'}
+              </span>
+            </div>
+            <div className="flex justify-between">
               <span className="text-[var(--ink-soft)]">Pembayaran</span>
-              <span className="font-bold text-[var(--ink)]">COD (Bayar di Toko)</span>
+              <span className="font-bold text-[var(--ink)]">
+                COD (Bayar saat {order.metode_pengiriman === 'antar_alamat' ? 'Pesanan Tiba' : 'Ambil di Toko'})
+              </span>
             </div>
             {order.catatan && (
               <div className="flex justify-between">
@@ -142,22 +177,52 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
         {/* Item Pesanan (Struk Nota Dashed) */}
         <div className="card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[20px] p-4 shadow-3d">
           <h2 className="font-sora font-bold text-sm text-[var(--ink)] mb-3">Item Pesanan</h2>
-          <div className="space-y-2.5">
+          <div className="space-y-3">
             {order.order_items.map((item) => (
-              <div key={item.id} className="flex justify-between items-start text-xs">
-                <div>
-                  <p className="font-bold text-[var(--ink)]">{item.nama_produk}</p>
-                  <p className="text-[var(--ink-soft)]">
-                    {formatRupiah(item.harga_saat_beli)} × {item.qty}
-                  </p>
+              <div key={item.id} className="text-xs">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <p className="font-bold text-[var(--ink)]">{item.nama_produk}</p>
+                    <p className="text-[var(--ink-soft)]">
+                      {formatRupiah(item.harga_saat_beli)} × {item.qty}
+                    </p>
+                  </div>
+                  <span className="font-sora font-bold text-[var(--ink)]">{formatRupiah(item.subtotal)}</span>
                 </div>
-                <span className="font-sora font-bold text-[var(--ink)]">{formatRupiah(item.subtotal)}</span>
+
+                {/* Rating & Review Button when order is finished */}
+                {order.status === 'selesai' && item.product_id && (
+                  <div className="mt-1.5 flex items-center gap-2">
+                    <ProductReviewFormModal
+                      productId={item.product_id}
+                      productName={item.nama_produk}
+                      orderId={order.id}
+                    />
+                  </div>
+                )}
               </div>
             ))}
           </div>
+
+          {/* Subtotal Produk */}
+          <div className="pt-2.5 mt-2 border-t border-[var(--line)] flex justify-between items-center text-xs text-[var(--ink-soft)] font-medium">
+            <span>Subtotal Produk</span>
+            <span className="font-sora font-semibold text-[var(--ink)]">{formatRupiah(order.subtotal)}</span>
+          </div>
+
+          {/* Ongkir Breakdown */}
+          <div className="pt-1.5 flex justify-between items-center text-xs text-[var(--ink-soft)] font-medium">
+            <span>Biaya Pengiriman ({order.metode_pengiriman === 'antar_alamat' ? 'Diantar' : 'Ambil di Toko'})</span>
+            <span className={`font-sora font-semibold ${order.ongkir === 0 ? 'text-emerald-700' : 'text-[var(--ink)]'}`}>
+              {order.metode_pengiriman === 'antar_alamat'
+                ? (order.ongkir === 0 ? 'Gratis (≤ 7 km)' : formatRupiah(order.ongkir || 15000))
+                : 'Gratis'}
+            </span>
+          </div>
+
           {/* Diskon Poin & Ringkasan */}
           {order.diskon_poin > 0 && (
-            <div className="pt-2 border-t border-[var(--line)] flex justify-between items-center text-xs text-emerald-700 font-semibold">
+            <div className="pt-1.5 flex justify-between items-center text-xs text-emerald-700 font-semibold">
               <span>Diskon Poin Digunakan ({order.poin_digunakan} poin)</span>
               <span>-{formatRupiah(order.diskon_poin)}</span>
             </div>

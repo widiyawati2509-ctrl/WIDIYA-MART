@@ -171,11 +171,11 @@ export default function PrintReceiptButton({ order, store }: PrintReceiptButtonP
       <div className="text-[11px] space-y-1">
         <div className="flex justify-between">
           <span>Subtotal</span>
-          <span>{formatRp(order?.total || 0)}</span>
+          <span>{formatRp(order?.subtotal || order?.total || 0)}</span>
         </div>
         <div className="flex justify-between">
-          <span>Biaya Layanan</span>
-          <span>Rp 0</span>
+          <span>Ongkir ({order?.metode_pengiriman === 'antar_alamat' ? 'Diantar' : 'Ambil di Toko'})</span>
+          <span>{formatRp(order?.ongkir || 0)}</span>
         </div>
         <div className="flex justify-between font-bold text-xs pt-1 border-t border-black">
           <span>TOTAL BAYAR</span>

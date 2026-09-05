@@ -3,6 +3,7 @@ import { createPublicClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
 import ProductDetailInteractive from '@/components/ProductDetailInteractive'
 import ProductCard from '@/components/ProductCard'
+import ProductReviewsSection from '@/components/ProductReviewsSection'
 import { ChevronLeft } from 'lucide-react'
 import Link from 'next/link'
 import type { Metadata } from 'next'
@@ -43,7 +44,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
   if (!product) notFound()
 
   const supabase = createPublicClient()
-  const [relatedResult, storeResult] = await Promise.all([
+  const [relatedResult, storeResult, reviewsResult] = await Promise.all([
     supabase
       .from('products')
       .select('id, nama, slug, harga, stok, image_url')
@@ -55,9 +56,15 @@ export default async function ProductPage({ params }: ProductPageProps) {
       .from('store_info')
       .select('whatsapp, no_hp_toko')
       .single(),
+    supabase
+      .from('product_reviews')
+      .select('id, rating, ulasan, nama_reviewer, created_at, order_id')
+      .eq('product_id', product.id)
+      .order('created_at', { ascending: false }),
   ])
 
   const related = relatedResult.data
+  const reviews = reviewsResult.data || []
   const storePhone = storeResult.data?.whatsapp || storeResult.data?.no_hp_toko || '087816182036'
 
   return (
@@ -72,6 +79,9 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
       {/* Interactive Image Gallery, Variants, Description, WhatsApp & Floating Cart */}
       <ProductDetailInteractive product={product} storePhone={storePhone} />
+
+      {/* Customer Reviews Section */}
+      <ProductReviewsSection reviews={reviews} />
 
       {/* Related Products */}
       {related && related.length > 0 && (

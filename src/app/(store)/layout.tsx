@@ -1,6 +1,7 @@
 // @ts-nocheck
 import { createClient, getAuthUser } from '@/lib/supabase/server'
 import BottomNav from '@/components/BottomNav'
+import UserOrderNotifier from '@/components/UserOrderNotifier'
 import Link from 'next/link'
 
 export default async function StoreLayout({
@@ -57,6 +58,7 @@ export default async function StoreLayout({
           </Link>
         </div>
       )}
+      <UserOrderNotifier />
       <main className="animate-page-in">{children}</main>
       <BottomNav cartCount={cartCount} isLoggedIn={!!user} />
     </div>

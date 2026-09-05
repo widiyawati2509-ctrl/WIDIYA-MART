@@ -16,7 +16,7 @@ export default async function ProfilPage() {
   if (!user) redirect('/masuk')
 
   const [profileResult, orderCountResult, loyaltySummary, shoppingListResult, activeOrdersResult] = await Promise.all([
-    supabase.from('profiles').select('*').eq('id', user.id).single(),
+    supabase.from('profiles').select('nama, role, no_hp').eq('id', user.id).single(),
     supabase.from('orders').select('*', { count: 'exact', head: true }).eq('user_id', user.id),
     getUserLoyaltySummary(user.id),
     getShoppingList(),

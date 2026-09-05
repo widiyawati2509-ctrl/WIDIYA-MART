@@ -44,6 +44,7 @@ interface Order {
 
 interface AdminOrdersListProps {
   initialOrders: Order[]
+  initialStatus?: string
 }
 
 const statusFilters = [
@@ -55,12 +56,12 @@ const statusFilters = [
   { value: 'dibatalkan', label: 'Dibatalkan' },
 ]
 
-export default function AdminOrdersList({ initialOrders }: AdminOrdersListProps) {
+export default function AdminOrdersList({ initialOrders, initialStatus }: AdminOrdersListProps) {
   const router = useRouter()
   const [orders, setOrders] = useState<Order[]>(initialOrders)
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
   const [searchQuery, setSearchQuery] = useState('')
-  const [statusFilter, setStatusFilter] = useState('all')
+  const [statusFilter, setStatusFilter] = useState(initialStatus || 'all')
   const [isPending, startTransition] = useTransition()
 
   // Modal confirm state
@@ -240,6 +241,40 @@ export default function AdminOrdersList({ initialOrders }: AdminOrdersListProps)
 
       {/* Filter and Search Bar */}
       <div className="card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[20px] p-3 shadow-3d space-y-3">
+        {/* Kasir Quick Access: Pesanan Siap Diambil */}
+        <button
+          type="button"
+          onClick={() => setStatusFilter(statusFilter === 'siap_diambil' ? 'all' : 'siap_diambil')}
+          className={`w-full p-2.5 rounded-xl border text-left transition-all flex items-center justify-between ${
+            statusFilter === 'siap_diambil'
+              ? 'bg-emerald-600 text-white border-emerald-700 shadow-sm ring-2 ring-emerald-400'
+              : 'bg-emerald-50/80 text-emerald-950 border-emerald-200/80 hover:bg-emerald-100/70'
+          }`}
+        >
+          <div className="flex items-center gap-2">
+            <span className={`w-7 h-7 rounded-lg flex items-center justify-center font-bold text-xs ${
+              statusFilter === 'siap_diambil' ? 'bg-white/20 text-white' : 'bg-emerald-200 text-emerald-800'
+            }`}>
+              ⚡
+            </span>
+            <div>
+              <p className="font-sora font-bold text-xs leading-tight">
+                Pesanan Siap Diambil (Kasir)
+              </p>
+              <p className={`text-[10px] font-medium ${statusFilter === 'siap_diambil' ? 'text-emerald-100' : 'text-emerald-700'}`}>
+                Filter cepat untuk pembeli yang tiba di toko
+              </p>
+            </div>
+          </div>
+          <span className={`font-sora font-extrabold text-xs px-2 py-0.5 rounded-full ${
+            statusFilter === 'siap_diambil'
+              ? 'bg-white text-emerald-800'
+              : 'bg-emerald-600 text-white'
+          }`}>
+            {orders.filter((o) => o.status === 'siap_diambil').length}
+          </span>
+        </button>
+
         <div className="relative">
           <Search className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
           <input
@@ -262,20 +297,30 @@ export default function AdminOrdersList({ initialOrders }: AdminOrdersListProps)
 
         {/* Status Filter Chips */}
         <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide pb-1">
-          {statusFilters.map((f) => (
-            <button
-              key={f.value}
-              type="button"
-              onClick={() => setStatusFilter(f.value)}
-              className={`press whitespace-nowrap px-3 py-1 rounded-full text-xs font-semibold transition-all ${
-                statusFilter === f.value
-                  ? 'bg-gradient-to-r from-[var(--accent)] to-[var(--accent-2)] text-white shadow-xs'
-                  : 'bg-[var(--paper)] text-[var(--ink-soft)] hover:bg-[var(--line)]/50'
-              }`}
-            >
-              {f.label}
-            </button>
-          ))}
+          {statusFilters.map((f) => {
+            const count = f.value === 'all' ? orders.length : orders.filter((o) => o.status === f.value).length
+            return (
+              <button
+                key={f.value}
+                type="button"
+                onClick={() => setStatusFilter(f.value)}
+                className={`press whitespace-nowrap px-3 py-1 rounded-full text-xs font-semibold transition-all flex items-center gap-1.5 ${
+                  statusFilter === f.value
+                    ? 'bg-gradient-to-r from-[var(--accent)] to-[var(--accent-2)] text-white shadow-xs'
+                    : 'bg-[var(--paper)] text-[var(--ink-soft)] hover:bg-[var(--line)]/50'
+                }`}
+              >
+                <span>{f.label}</span>
+                {count > 0 && (
+                  <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
+                    statusFilter === f.value ? 'bg-white/25 text-white' : 'bg-gray-200 text-gray-700'
+                  }`}>
+                    {count}
+                  </span>
+                )}
+              </button>
+            )
+          })}
         </div>
       </div>
 
