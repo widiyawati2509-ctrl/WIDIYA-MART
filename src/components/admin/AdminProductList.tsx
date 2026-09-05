@@ -5,7 +5,7 @@ import { useState } from 'react'
 import Image from 'next/image'
 import { formatRupiah, parseProductVariants, type ProductVariant } from '@/lib/utils'
 import { updateProduct, deleteProduct } from '@/lib/actions/products'
-import { Package, Edit2, Trash2, X, Check, Plus, Layers } from 'lucide-react'
+import { Package, Edit2, Trash2, X, Check, Plus, Layers, Camera, ImagePlus } from 'lucide-react'
 import type { Product, Category } from '@/types/database'
 
 interface AdminProductListProps {
@@ -27,7 +27,7 @@ function ProductItemRow({
   onCancelEdit: () => void
 }) {
   const { cleanDeskripsi, variants: initialVariants } = parseProductVariants(product.deskripsi)
-  const [variants, setVariants] = useState<ProductVariant[]>(initialVariants)
+  const [variants, setVariants] = useState<(ProductVariant & { previewUrl?: string })[]>(initialVariants)
 
   const handleAddVariant = () => {
     setVariants((prev) => [...prev, { nama: '', harga: undefined, stok: undefined }])
@@ -35,6 +35,26 @@ function ProductItemRow({
 
   const handleRemoveVariant = (idx: number) => {
     setVariants((prev) => prev.filter((_, i) => i !== idx))
+  }
+
+  const handleVariantFileChange = (idx: number, e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      const preview = URL.createObjectURL(file)
+      setVariants((prev) => {
+        const updated = [...prev]
+        updated[idx] = { ...updated[idx], previewUrl: preview }
+        return updated
+      })
+    }
+  }
+
+  const handleRemoveVariantImage = (idx: number) => {
+    setVariants((prev) => {
+      const updated = [...prev]
+      updated[idx] = { ...updated[idx], image_url: undefined, previewUrl: undefined }
+      return updated
+    })
   }
 
   const handleUpdateVariant = (
@@ -185,6 +205,7 @@ function ProductItemRow({
             ) : (
               <div className="space-y-2">
                 <div className="flex items-center gap-2 px-1 text-[10px] font-bold text-[var(--ink-soft)] uppercase tracking-wider">
+                  <span className="w-24">Foto Varian</span>
                   <span className="flex-1">Nama Varian *</span>
                   <span className="w-28">Harga (Opsional)</span>
                   <span className="w-20">Stok</span>
@@ -192,9 +213,45 @@ function ProductItemRow({
                 </div>
                 {variants.map((v, idx) => (
                   <div key={idx} className="flex items-center gap-2 bg-white p-2 rounded-xl border border-[var(--line)] shadow-xs">
+                    {/* Foto Varian Upload & Preview */}
+                    <div className="flex items-center gap-1.5 shrink-0 w-24">
+                      <div className="relative w-8 h-8 rounded-lg bg-[var(--paper)] border border-[var(--line)] overflow-hidden flex items-center justify-center shrink-0">
+                        {v.previewUrl || v.image_url ? (
+                          <img
+                            src={v.previewUrl || v.image_url}
+                            alt={v.nama || `Varian ${idx + 1}`}
+                            className="w-full h-full object-contain p-0.5"
+                          />
+                        ) : (
+                          <ImagePlus className="w-3.5 h-3.5 text-gray-400" />
+                        )}
+                        {(v.previewUrl || v.image_url) && (
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveVariantImage(idx)}
+                            className="absolute top-0 right-0 bg-black/60 hover:bg-red-600 text-white p-0.5 rounded-full"
+                            title="Hapus foto varian"
+                          >
+                            <X className="w-2 h-2" />
+                          </button>
+                        )}
+                      </div>
+                      <label className="cursor-pointer text-[9.5px] font-bold text-[var(--accent-2)] bg-[var(--accent-bg)] px-1.5 py-1 rounded-md border border-[rgba(232,85,33,0.15)] hover:bg-[var(--accent-bg)]/80 flex items-center gap-0.5 shrink-0">
+                        <Camera className="w-2.5 h-2.5" />
+                        <span>{v.image_url || v.previewUrl ? 'Ubah' : '+Foto'}</span>
+                        <input
+                          type="file"
+                          name={`variant_image_${idx}`}
+                          accept="image/*"
+                          onChange={(e) => handleVariantFileChange(idx, e)}
+                          className="hidden"
+                        />
+                      </label>
+                    </div>
+
                     <input
                       type="text"
-                      placeholder="Misal: Refill 650g / Rasa Cokelat"
+                      placeholder="Misal: Merah / Pink / Hitam"
                       value={v.nama}
                       onChange={(e) => handleUpdateVariant(idx, 'nama', e.target.value)}
                       required
@@ -289,9 +346,22 @@ function ProductItemRow({
         </p>
 
         {initialVariants.length > 0 && (
-          <p className="text-[11px] text-[var(--ink-soft)] truncate font-medium mt-0.5">
-            Opsi: {initialVariants.map((v) => v.nama).join(' • ')}
-          </p>
+          <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
+            <p className="text-[11px] text-[var(--ink-soft)] truncate font-medium">
+              Opsi: {initialVariants.map((v) => v.nama).join(' • ')}
+            </p>
+            <div className="flex items-center gap-1">
+              {initialVariants.map((v, i) => v.image_url ? (
+                <img
+                  key={i}
+                  src={v.image_url}
+                  alt={v.nama}
+                  title={`${v.nama} (dengan foto)`}
+                  className="w-4 h-4 rounded-sm object-contain border border-[var(--line)] bg-[var(--paper)]"
+                />
+              ) : null)}
+            </div>
+          </div>
         )}
 
         <p className="text-[var(--accent-2)] font-sora font-bold text-sm mt-0.5 tabular-nums">

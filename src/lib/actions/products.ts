@@ -54,6 +54,23 @@ export async function createProduct(formData: FormData): Promise<void> {
     try {
       const parsedVariants = JSON.parse(variantsJson)
       if (Array.isArray(parsedVariants)) {
+        for (let i = 0; i < parsedVariants.length; i++) {
+          const vFile = formData.get(`variant_image_${i}`) as File | null
+          if (vFile && vFile.size > 0 && vFile.size <= MAX_FILE_SIZE && ALLOWED_MIME.includes(vFile.type)) {
+            const vExt = vFile.name.split('.').pop()?.toLowerCase() || 'jpg'
+            const vPath = `variants/${slug}-var-${i}-${Date.now()}.${vExt}`
+            const { error: vUploadError } = await supabase.storage
+              .from('products')
+              .upload(vPath, vFile, { upsert: true })
+
+            if (!vUploadError) {
+              const { data: vUrlData } = supabase.storage
+                .from('products')
+                .getPublicUrl(vPath)
+              parsedVariants[i].image_url = vUrlData.publicUrl
+            }
+          }
+        }
         finalDeskripsi = serializeProductVariants(finalDeskripsi, parsedVariants)
       }
     } catch {
@@ -108,12 +125,32 @@ export async function updateProduct(id: string, formData: FormData): Promise<voi
     }
   }
 
+  const ALLOWED_MIME = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg']
+  const MAX_FILE_SIZE = 5 * 1024 * 1024 // 5MB
+
   const variantsJson = formData.get('variants') as string | null
   let finalDeskripsi = parsed.data.deskripsi ?? ''
   if (variantsJson) {
     try {
       const parsedVariants = JSON.parse(variantsJson)
       if (Array.isArray(parsedVariants)) {
+        for (let i = 0; i < parsedVariants.length; i++) {
+          const vFile = formData.get(`variant_image_${i}`) as File | null
+          if (vFile && vFile.size > 0 && vFile.size <= MAX_FILE_SIZE && ALLOWED_MIME.includes(vFile.type)) {
+            const vExt = vFile.name.split('.').pop()?.toLowerCase() || 'jpg'
+            const vPath = `variants/${id}-var-${i}-${Date.now()}.${vExt}`
+            const { error: vUploadError } = await supabase.storage
+              .from('products')
+              .upload(vPath, vFile, { upsert: true })
+
+            if (!vUploadError) {
+              const { data: vUrlData } = supabase.storage
+                .from('products')
+                .getPublicUrl(vPath)
+              parsedVariants[i].image_url = vUrlData.publicUrl
+            }
+          }
+        }
         finalDeskripsi = serializeProductVariants(finalDeskripsi, parsedVariants)
       }
     } catch {

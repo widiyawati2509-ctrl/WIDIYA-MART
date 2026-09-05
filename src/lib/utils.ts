@@ -64,6 +64,7 @@ export interface ProductVariant {
   nama: string
   harga?: number
   stok?: number
+  image_url?: string
 }
 
 const VARIANTS_DELIMITER = '\n\n<!--__VARIANTS__\n'
