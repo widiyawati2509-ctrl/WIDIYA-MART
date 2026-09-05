@@ -44,15 +44,15 @@ export default async function HomePage() {
               alt="PENGENJEK MART Logo"
               width={34}
               height={34}
-              className="rounded-[10px] object-cover"
+              className="rounded-[var(--radius-sm)] object-cover"
               priority
             />
           </div>
           <div>
-            <h1 className="font-sora font-bold text-[15px] leading-tight text-[var(--ink)]">
+            <h1 className="font-sora font-bold text-[var(--text-subtitle)] leading-tight text-[var(--ink)]">
               {storeInfo?.nama_toko ?? 'PENGENJEK MART'}
             </h1>
-            <p className="text-[11px] text-[var(--ink-soft)] leading-tight font-medium">
+            <p className="text-[var(--text-caption)] text-[var(--ink-soft)] leading-tight font-medium">
               Pesan online, ambil di toko (COD)
             </p>
           </div>
@@ -112,7 +112,7 @@ export default async function HomePage() {
               ))}
             </div>
           ) : (
-            <div className="card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[20px] p-8 text-center text-[var(--ink-soft)] shadow-3d">
+            <div className="card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-lg)] p-8 text-center text-[var(--ink-soft)] shadow-3d">
               <p className="text-xs font-medium">Belum ada produk tersedia</p>
             </div>
           )}

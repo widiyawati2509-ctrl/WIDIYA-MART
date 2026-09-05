@@ -19,7 +19,7 @@ export default function KebijakanPrivasiPage() {
       />
 
       <div className="p-4 space-y-4 text-xs text-[var(--ink)] leading-relaxed">
-        <div className="card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[20px] p-4 shadow-3d space-y-3">
+        <div className="card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-lg)] p-4 shadow-3d space-y-3">
           <div className="flex items-center gap-2 text-[var(--accent-2)] font-sora font-bold text-sm">
             <ShieldCheck className="w-5 h-5" />
             <span>Kebijakan Privasi PENGENJEK MART</span>
@@ -32,7 +32,7 @@ export default function KebijakanPrivasiPage() {
           </p>
         </div>
 
-        <div className="card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[20px] p-4 shadow-3d space-y-2">
+        <div className="card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-lg)] p-4 shadow-3d space-y-2">
           <h2 className="font-sora font-bold text-xs text-[var(--ink)]">1. Informasi yang Kami Kumpulkan</h2>
           <p className="text-[var(--ink-soft)]">
             Untuk memproses pesanan dan mempermudah layanan belanja ambil di toko, kami mengumpulkan data berikut saat Anda mendaftar atau melakukan pemesanan:
@@ -45,7 +45,7 @@ export default function KebijakanPrivasiPage() {
           </ul>
         </div>
 
-        <div className="card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[20px] p-4 shadow-3d space-y-2">
+        <div className="card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-lg)] p-4 shadow-3d space-y-2">
           <h2 className="font-sora font-bold text-xs text-[var(--ink)]">2. Penggunaan Informasi</h2>
           <p className="text-[var(--ink-soft)]">
             Informasi yang kami kumpulkan hanya digunakan semata-mata untuk:
@@ -58,21 +58,21 @@ export default function KebijakanPrivasiPage() {
           </ul>
         </div>
 
-        <div className="card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[20px] p-4 shadow-3d space-y-2">
+        <div className="card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-lg)] p-4 shadow-3d space-y-2">
           <h2 className="font-sora font-bold text-xs text-[var(--ink)]">3. Perlindungan & Keamanan Data</h2>
           <p className="text-[var(--ink-soft)]">
             Kami menerapkan standar keamanan enkripsi berbasis cloud (Supabase) untuk menjaga kerahasiaan data Anda. Kami <strong>tidak pernah menjual, menyewakan, atau membagikan</strong> informasi pribadi Anda kepada pihak ketiga mana pun untuk tujuan pemasaran.
           </p>
         </div>
 
-        <div className="card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[20px] p-4 shadow-3d space-y-2">
+        <div className="card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-lg)] p-4 shadow-3d space-y-2">
           <h2 className="font-sora font-bold text-xs text-[var(--ink)]">4. Hak Pengguna & Penghapusan Data</h2>
           <p className="text-[var(--ink-soft)]">
             Anda memiliki hak penuh untuk mengakses, memperbarui profil, atau menghapus riwayat transaksi belanja Anda kapan saja langsung dari menu aplikasi. Jika Anda ingin menghapus seluruh akun dan data pribadi, Anda dapat menghubungi tim kami.
           </p>
         </div>
 
-        <div className="card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[20px] p-4 shadow-3d space-y-2">
+        <div className="card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-lg)] p-4 shadow-3d space-y-2">
           <h2 className="font-sora font-bold text-xs text-[var(--ink)]">5. Kontak Layanan Pelanggan</h2>
           <p className="text-[var(--ink-soft)]">
             Jika Anda memiliki pertanyaan seputar Kebijakan Privasi ini, Anda dapat menghubungi PENGENJEK MART melalui kontak kasir toko atau WhatsApp yang tertera di aplikasi.

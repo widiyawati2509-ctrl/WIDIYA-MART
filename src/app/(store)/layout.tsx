@@ -52,7 +52,7 @@ export default async function StoreLayout({
           <Link
             href="/admin"
             prefetch={true}
-            className="px-2.5 py-1 rounded-full bg-white text-orange-600 font-extrabold text-[11px] shadow-xs active:scale-95 transition-all"
+            className="px-2.5 py-1 rounded-full bg-white text-orange-600 font-extrabold text-[var(--text-caption)] shadow-xs active:scale-95 transition-all"
           >
             Buka Panel Admin &rarr;
           </Link>

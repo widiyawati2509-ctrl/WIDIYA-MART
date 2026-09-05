@@ -6,6 +6,7 @@ import { useActionState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Card, Field, Input, Button } from '@/components/ui'
+import AlertBanner from '@/components/AlertBanner'
 
 export default function DaftarPage() {
   const [state, formAction, isPending] = useActionState(register, null)
@@ -14,13 +15,13 @@ export default function DaftarPage() {
     <div className="min-h-screen flex flex-col items-center justify-center px-4 bg-[var(--paper)] py-8">
       <div className="w-full max-w-[420px]">
         <div className="text-center mb-6">
-          <div className="w-14 h-14 rounded-[16px] bg-gradient-to-br from-[var(--accent)] to-[var(--accent-2)] flex items-center justify-center mx-auto mb-3 shadow-[0_6px_14px_-2px_rgba(255,107,53,.45),inset_0_1px_0_rgba(255,255,255,.4)]">
+          <div className="w-14 h-14 rounded-[var(--radius-md)] bg-gradient-to-br from-[var(--accent)] to-[var(--accent-2)] flex items-center justify-center mx-auto mb-3 shadow-[0_6px_14px_-2px_rgba(255,107,53,.45),inset_0_1px_0_rgba(255,255,255,.4)]">
             <Image
               src="/logo.png"
               alt="PENGENJEK MART Logo"
               width={46}
               height={46}
-              className="rounded-[12px] object-cover"
+              className="rounded-[var(--radius-sm)] object-cover"
               priority
             />
           </div>
@@ -31,9 +32,7 @@ export default function DaftarPage() {
         <Card className="p-5 border border-[rgba(232,214,205,0.9)]">
           <form action={formAction} className="space-y-3.5">
             {state?.error && (
-              <div className="rounded-[12px] bg-red-50 border border-red-200 text-[var(--danger)] text-xs font-semibold px-3.5 py-2.5">
-                {state.error}
-              </div>
+              <AlertBanner type="error" message={state.error} className="mb-4" />
             )}
 
             <Field label="Nama Lengkap" htmlFor="nama">

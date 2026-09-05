@@ -21,12 +21,12 @@ export default function CategoryGrid({ categories }: CategoryGridProps) {
             prefetch={true}
             className="press flex flex-col items-center shrink-0 group focus:outline-none"
           >
-            <div className="w-13 h-13 rounded-[18px] bg-card border border-[rgba(232,214,205,0.9)] shadow-3d flex items-center justify-center p-1.5 group-hover:border-[var(--accent)] group-hover:scale-105 transition-all">
-              <div className="w-full h-full rounded-[14px] bg-[var(--accent-bg)] shadow-[inset_0_2px_4px_rgba(232,85,33,0.06)] flex items-center justify-center p-1">
+            <div className="w-13 h-13 rounded-[var(--radius-lg)] bg-card border border-[rgba(232,214,205,0.9)] shadow-3d flex items-center justify-center p-1.5 group-hover:border-[var(--accent)] group-hover:scale-105 transition-all">
+              <div className="w-full h-full rounded-[var(--radius-md)] bg-[var(--accent-bg)] shadow-[inset_0_2px_4px_rgba(232,85,33,0.06)] flex items-center justify-center p-1">
                 <IconComponent className="w-8 h-8" />
               </div>
             </div>
-            <span className="text-[11px] font-sora font-bold text-[var(--ink)] leading-tight text-center truncate max-w-[62px] mt-1.5 group-hover:text-[var(--accent-2)] transition-colors">
+            <span className="text-[var(--text-caption)] font-sora font-bold text-[var(--ink)] leading-tight text-center truncate max-w-[62px] mt-1.5 group-hover:text-[var(--accent-2)] transition-colors">
               {cat.nama}
             </span>
           </Link>

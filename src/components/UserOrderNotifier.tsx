@@ -287,7 +287,7 @@ export default function UserOrderNotifier() {
       aria-label="Notifikasi Pembaruan Pesanan"
       className="fixed top-4 left-4 right-4 z-[9999] max-w-[440px] mx-auto animate-bounce-in"
     >
-      <div className="bg-white/95 backdrop-blur-md rounded-[20px] p-4 shadow-[0_12px_36px_rgba(0,0,0,0.18)] border border-[rgba(232,214,205,0.9)] ring-1 ring-black/5">
+      <div className="bg-white/95 backdrop-blur-md rounded-[var(--radius-lg)] p-4 shadow-[0_12px_36px_rgba(0,0,0,0.18)] border border-[rgba(232,214,205,0.9)] ring-1 ring-black/5">
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-start gap-3">
             <div className="w-10 h-10 rounded-2xl bg-[var(--accent-bg)] flex items-center justify-center shrink-0 border border-[var(--accent)]/20 shadow-xs">
@@ -295,14 +295,14 @@ export default function UserOrderNotifier() {
             </div>
             <div>
               <div className="flex items-center gap-1.5 mb-0.5">
-                <span className={`text-[10px] font-sora font-extrabold px-2 py-0.5 rounded-full border ${getStatusBadgeBg(notification.status)}`}>
+                <span className={`text-[var(--text-caption)] font-sora font-extrabold px-2 py-0.5 rounded-full border ${getStatusBadgeBg(notification.status)}`}>
                   UPDATE PESANAN
                 </span>
               </div>
               <h4 className="font-sora font-bold text-xs text-[var(--ink)]">
                 {notification.title}
               </h4>
-              <p className="text-[11px] text-[var(--ink-soft)] mt-0.5 leading-tight font-medium">
+              <p className="text-[var(--text-caption)] text-[var(--ink-soft)] mt-0.5 leading-tight font-medium">
                 {notification.message}
               </p>
             </div>
@@ -319,7 +319,7 @@ export default function UserOrderNotifier() {
         </div>
 
         <div className="mt-3 pt-2.5 border-t border-[var(--line)] flex items-center justify-between">
-          <span className="text-[10px] text-[var(--ink-soft)] font-medium">
+          <span className="text-[var(--text-caption)] text-[var(--ink-soft)] font-medium">
             Baru saja diperbarui
           </span>
           <Link

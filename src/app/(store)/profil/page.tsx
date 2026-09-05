@@ -48,8 +48,8 @@ export default async function ProfilPage() {
 
       <div className="px-4 space-y-3.5">
         {/* User Identity Card */}
-        <div className="card-3d bg-white border border-[rgba(232,214,205,0.9)] rounded-[24px] p-4 shadow-3d flex items-center gap-3.5">
-          <div className="w-13 h-13 rounded-[16px] bg-gradient-to-br from-[var(--accent)] to-[var(--accent-2)] text-white flex items-center justify-center shadow-[0_6px_14px_-2px_rgba(255,107,53,.45),inset_0_1px_0_rgba(255,255,255,.4)] shrink-0">
+        <div className="card-3d bg-white border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-xl)] p-4 shadow-3d flex items-center gap-3.5">
+          <div className="w-13 h-13 rounded-[var(--radius-md)] bg-gradient-to-br from-[var(--accent)] to-[var(--accent-2)] text-white flex items-center justify-center shadow-[0_6px_14px_-2px_rgba(255,107,53,.45),inset_0_1px_0_rgba(255,255,255,.4)] shrink-0">
             <User size={24} />
           </div>
           <div className="min-w-0 flex-1">
@@ -58,7 +58,7 @@ export default async function ProfilPage() {
                 {profile?.nama || 'Pelanggan'}
               </h2>
               {profile?.role === 'admin' && (
-                <span className="text-[10px] font-sora font-extrabold px-2 py-0.5 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-xs">
+                <span className="text-[var(--text-caption)] font-sora font-extrabold px-2 py-0.5 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-xs">
                   ADMIN
                 </span>
               )}
@@ -77,7 +77,7 @@ export default async function ProfilPage() {
                 <Bell size={13} className="text-[var(--accent)] animate-pulse" />
                 Status Pesanan Berjalan ({activeOrders.length})
               </h2>
-              <Link href="/pesanan" className="text-[11px] font-bold text-[var(--accent-2)] hover:underline">
+              <Link href="/pesanan" className="text-[var(--text-caption)] font-bold text-[var(--accent-2)] hover:underline">
                 Lihat Semua
               </Link>
             </div>
@@ -90,7 +90,7 @@ export default async function ProfilPage() {
                 <Link
                   key={ao.id}
                   href={`/pesanan/${ao.id}`}
-                  className={`block card-3d p-4 rounded-[20px] border shadow-3d transition-all press ${
+                  className={`block card-3d p-4 rounded-[var(--radius-lg)] border shadow-3d transition-all press ${
                     isReady
                       ? 'bg-emerald-500 text-white border-emerald-600 shadow-[0_10px_20px_-4px_rgba(16,185,129,0.3)]'
                       : isProcessing
@@ -99,13 +99,13 @@ export default async function ProfilPage() {
                   }`}
                 >
                   <div className="flex items-center justify-between mb-2">
-                    <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-sora font-extrabold uppercase ${
+                    <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[var(--text-caption)] font-sora font-extrabold uppercase ${
                       isReady || isProcessing ? 'bg-white/20 text-white' : 'bg-orange-50 text-[var(--accent-2)]'
                     }`}>
                       {isReady ? <PackageCheck size={12} /> : <Clock size={12} />}
                       {getOrderStatusLabel(ao.status)}
                     </span>
-                    <span className={`text-[10.5px] font-medium ${isReady || isProcessing ? 'text-white/80' : 'text-[var(--ink-soft)]'}`}>
+                    <span className={`text-[var(--text-caption)] font-medium ${isReady || isProcessing ? 'text-white/80' : 'text-[var(--ink-soft)]'}`}>
                       #{ao.id.slice(0, 8).toUpperCase()}
                     </span>
                   </div>
@@ -130,15 +130,15 @@ export default async function ProfilPage() {
 
         {/* Admin Panel Quick Access (if admin) */}
         {profile?.role === 'admin' && (
-          <div className="card-3d bg-gradient-to-br from-[#2B1810] to-[#1E0F0A] text-white rounded-[20px] p-4 shadow-[0_12px_28px_-4px_rgba(43,24,16,0.4)] border border-amber-500/30">
+          <div className="card-3d bg-gradient-to-br from-[#2B1810] to-[#1E0F0A] text-white rounded-[var(--radius-lg)] p-4 shadow-[0_12px_28px_-4px_rgba(43,24,16,0.4)] border border-amber-500/30">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2.5">
-                <span className="w-8 h-8 rounded-[12px] bg-amber-500/20 text-amber-400 flex items-center justify-center text-base">
+                <span className="w-8 h-8 rounded-[var(--radius-sm)] bg-amber-500/20 text-amber-400 flex items-center justify-center text-base">
                   👑
                 </span>
                 <div>
                   <h2 className="font-sora font-bold text-sm text-white leading-tight">Panel Pemilik Toko</h2>
-                  <p className="text-[11px] text-amber-200/80 font-medium">Akses penuh pengelolaan toko</p>
+                  <p className="text-[var(--text-caption)] text-amber-200/80 font-medium">Akses penuh pengelolaan toko</p>
                 </div>
               </div>
               <Link
@@ -154,28 +154,28 @@ export default async function ProfilPage() {
               <Link
                 href="/admin/pesanan"
                 prefetch={true}
-                className="py-1.5 px-1 rounded-xl bg-white/5 hover:bg-white/10 text-[10.5px] font-medium text-white/90 transition-colors"
+                className="py-1.5 px-1 rounded-xl bg-white/5 hover:bg-white/10 text-[var(--text-caption)] font-medium text-white/90 transition-colors"
               >
                 📦 Pesanan
               </Link>
               <Link
                 href="/admin/produk"
                 prefetch={true}
-                className="py-1.5 px-1 rounded-xl bg-white/5 hover:bg-white/10 text-[10.5px] font-medium text-white/90 transition-colors"
+                className="py-1.5 px-1 rounded-xl bg-white/5 hover:bg-white/10 text-[var(--text-caption)] font-medium text-white/90 transition-colors"
               >
                 🏷️ Produk
               </Link>
               <Link
                 href="/admin/promo"
                 prefetch={true}
-                className="py-1.5 px-1 rounded-xl bg-white/5 hover:bg-white/10 text-[10.5px] font-medium text-white/90 transition-colors"
+                className="py-1.5 px-1 rounded-xl bg-white/5 hover:bg-white/10 text-[var(--text-caption)] font-medium text-white/90 transition-colors"
               >
                 🎉 Promo
               </Link>
               <Link
                 href="/admin/poin"
                 prefetch={true}
-                className="py-1.5 px-1 rounded-xl bg-white/5 hover:bg-white/10 text-[10.5px] font-medium text-white/90 transition-colors"
+                className="py-1.5 px-1 rounded-xl bg-white/5 hover:bg-white/10 text-[var(--text-caption)] font-medium text-white/90 transition-colors"
               >
                 🪙 Poin
               </Link>
@@ -186,15 +186,15 @@ export default async function ProfilPage() {
         {/* Loyalty Points Banner Card */}
         <Link
           href="/poin"
-          className="block card-3d bg-gradient-to-r from-amber-500/15 via-orange-500/10 to-amber-500/15 border border-amber-300/60 rounded-[20px] p-4 shadow-3d press transition-all"
+          className="block card-3d bg-gradient-to-r from-amber-500/15 via-orange-500/10 to-amber-500/15 border border-amber-300/60 rounded-[var(--radius-lg)] p-4 shadow-3d press transition-all"
         >
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <span className="w-10 h-10 rounded-[14px] bg-amber-500 text-white flex items-center justify-center shadow-md">
+              <span className="w-10 h-10 rounded-[var(--radius-md)] bg-amber-500 text-white flex items-center justify-center shadow-md">
                 <Coins size={20} />
               </span>
               <div>
-                <p className="text-[11px] font-medium text-[var(--ink-soft)]">Poin Belanja Saya</p>
+                <p className="text-[var(--text-caption)] font-medium text-[var(--ink-soft)]">Poin Belanja Saya</p>
                 <p className="font-sora font-extrabold text-base text-[var(--ink)] tabular-nums">
                   {userPoints.toLocaleString('id-ID')} <span className="text-xs font-semibold text-amber-600">Poin</span>
                 </p>
@@ -214,12 +214,12 @@ export default async function ProfilPage() {
             prefetch={true}
             className="item press"
           >
-            <span className="w-7 h-7 rounded-[8px] bg-rose-50 text-rose-500 flex items-center justify-center">
+            <span className="w-7 h-7 rounded-[var(--radius-sm)] bg-rose-50 text-rose-500 flex items-center justify-center">
               <Heart size={15} className="fill-rose-500/30" />
             </span>
             <span className="flex-1 font-semibold text-xs text-[var(--ink)]">Daftar Favorit (Disukai)</span>
             {shoppingListCount > 0 && (
-              <span className="text-[10px] font-bold bg-rose-100 text-rose-700 px-2 py-0.5 rounded-full mr-1">
+              <span className="text-[var(--text-caption)] font-bold bg-rose-100 text-rose-700 px-2 py-0.5 rounded-full mr-1">
                 {shoppingListCount}
               </span>
             )}
@@ -231,12 +231,12 @@ export default async function ProfilPage() {
             prefetch={true}
             className="item press"
           >
-            <span className="w-7 h-7 rounded-[8px] bg-[var(--paper)] text-[var(--ink-soft)] flex items-center justify-center">
+            <span className="w-7 h-7 rounded-[var(--radius-sm)] bg-[var(--paper)] text-[var(--ink-soft)] flex items-center justify-center">
               <ShoppingBag size={15} />
             </span>
             <span className="flex-1 font-semibold text-xs text-[var(--ink)]">Pesanan Saya</span>
             {orderCount > 0 && (
-              <span className="text-[10px] font-bold bg-[var(--accent-bg)] text-[var(--accent-2)] px-2 py-0.5 rounded-full mr-1">
+              <span className="text-[var(--text-caption)] font-bold bg-[var(--accent-bg)] text-[var(--accent-2)] px-2 py-0.5 rounded-full mr-1">
                 {orderCount}
               </span>
             )}
@@ -248,7 +248,7 @@ export default async function ProfilPage() {
             prefetch={true}
             className="item press"
           >
-            <span className="w-7 h-7 rounded-[8px] bg-[var(--paper)] text-[var(--ink-soft)] flex items-center justify-center">
+            <span className="w-7 h-7 rounded-[var(--radius-sm)] bg-[var(--paper)] text-[var(--ink-soft)] flex items-center justify-center">
               <Coins size={15} />
             </span>
             <span className="flex-1 font-semibold text-xs text-[var(--ink)]">Histori & Skema Poin</span>
@@ -260,7 +260,7 @@ export default async function ProfilPage() {
             prefetch={true}
             className="item press"
           >
-            <span className="w-7 h-7 rounded-[8px] bg-[var(--paper)] text-[var(--ink-soft)] flex items-center justify-center">
+            <span className="w-7 h-7 rounded-[var(--radius-sm)] bg-[var(--paper)] text-[var(--ink-soft)] flex items-center justify-center">
               <ShieldCheck size={15} />
             </span>
             <span className="flex-1 font-semibold text-xs text-[var(--ink)]">Kebijakan Privasi</span>

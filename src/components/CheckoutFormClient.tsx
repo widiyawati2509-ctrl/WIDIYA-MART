@@ -4,6 +4,7 @@
 import { useState, useTransition, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { formatRupiah } from '@/lib/utils'
+import AlertBanner from './AlertBanner'
 import { createOrder } from '@/lib/actions/orders'
 import { 
   Coins, 
@@ -200,7 +201,7 @@ export default function CheckoutFormClient({
             <Truck size={17} className="text-[var(--accent)]" />
             Metode Pengiriman
           </h2>
-          <span className="text-[11px] font-semibold text-[var(--accent-2)] bg-[var(--accent-bg)] px-2.5 py-0.5 rounded-full">
+          <span className="text-[var(--text-caption)] font-semibold text-[var(--accent-2)] bg-[var(--accent-bg)] px-2.5 py-0.5 rounded-full">
             {metodePengiriman === 'ambil_di_toko' ? 'Bebas Ongkir' : (ongkir === 0 ? 'Gratis Ongkir' : 'Ongkir Rp 15rb')}
           </span>
         </div>
@@ -228,7 +229,7 @@ export default function CheckoutFormClient({
             </div>
             <div>
               <p className="font-sora font-bold text-xs text-[var(--ink)]">Ambil di Toko</p>
-              <p className="text-[10px] text-emerald-700 font-extrabold mt-0.5">Gratis (Rp 0)</p>
+              <p className="text-[var(--text-caption)] text-emerald-700 font-extrabold mt-0.5">Gratis (Rp 0)</p>
             </div>
           </button>
 
@@ -259,7 +260,7 @@ export default function CheckoutFormClient({
             </div>
             <div>
               <p className="font-sora font-bold text-xs text-[var(--ink)]">Diantar ke Alamat</p>
-              <p className="text-[10px] text-[var(--ink-soft)] font-medium mt-0.5">Radius s.d. 7 km Gratis</p>
+              <p className="text-[var(--text-caption)] text-[var(--ink-soft)] font-medium mt-0.5">Radius s.d. 7 km Gratis</p>
             </div>
           </button>
         </div>
@@ -310,7 +311,7 @@ export default function CheckoutFormClient({
               Radius & Alamat Pengantaran
             </h2>
             {jarakKm !== null && (
-              <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${
+              <span className={`text-[var(--text-caption)] font-bold px-2 py-0.5 rounded-full ${
                 ongkir === 0 ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-amber-50 text-amber-700 border border-amber-200'
               }`}>
                 {jarakKm} km dari Toko
@@ -327,7 +328,7 @@ export default function CheckoutFormClient({
                 </div>
                 <div>
                   <p className="font-sora font-bold text-xs text-[var(--ink)]">Cek Jarak Lokasi Saya</p>
-                  <p className="text-[10.5px] text-[var(--ink-soft)] font-medium">
+                  <p className="text-[var(--text-caption)] text-[var(--ink-soft)] font-medium">
                     Hitung otomatis radius toko ke HP Anda
                   </p>
                 </div>
@@ -353,12 +354,12 @@ export default function CheckoutFormClient({
                 <div className="flex-1">
                   <span>{geoMessage}</span>
                   {geoStatus === 'success' && ongkir === 0 && (
-                    <p className="text-[10.5px] font-bold text-emerald-800 mt-0.5">
+                    <p className="text-[var(--text-caption)] font-bold text-emerald-800 mt-0.5">
                       🎉 Biaya Ongkir: GRATIS (Rp 0)
                     </p>
                   )}
                   {geoStatus === 'success' && ongkir > 0 && (
-                    <p className="text-[10.5px] font-bold text-orange-900 mt-0.5">
+                    <p className="text-[var(--text-caption)] font-bold text-orange-900 mt-0.5">
                       🛵 Biaya Ongkir: Rp 15.000
                     </p>
                   )}
@@ -371,7 +372,7 @@ export default function CheckoutFormClient({
           <div className="space-y-1.5">
             <label htmlFor="alamat_pengiriman" className="text-xs font-sora font-bold text-[var(--ink)] flex items-center justify-between">
               <span>Alamat Lengkap Pengiriman <span className="text-red-500">*</span></span>
-              <span className="text-[10.5px] text-[var(--ink-soft)] font-normal">Patokan rumah / RT / RW</span>
+              <span className="text-[var(--text-caption)] text-[var(--ink-soft)] font-normal">Patokan rumah / RT / RW</span>
             </label>
             <textarea
               id="alamat_pengiriman"
@@ -381,7 +382,7 @@ export default function CheckoutFormClient({
               onChange={(e) => setAlamatPengiriman(e.target.value)}
               placeholder="Contoh: Jl. Raya Pengenjek RT 03, rumah pagar putih samping musholla Al-Ikhlas"
               required={metodePengiriman === 'antar_alamat'}
-              className="w-full min-w-0 rounded-[14px] border border-[var(--line)] bg-white px-3.5 py-2.5 text-xs text-[var(--ink)] placeholder:text-[var(--ink-soft)] shadow-[0_4px_10px_-2px_rgba(43,24,16,.04),inset_0_1px_0_#ffffff] outline-none transition-all focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20 resize-none"
+              className="w-full min-w-0 rounded-[var(--radius-md)] border border-[var(--line)] bg-white px-3.5 py-2.5 text-xs text-[var(--ink)] placeholder:text-[var(--ink-soft)] shadow-[0_4px_10px_-2px_rgba(43,24,16,.04),inset_0_1px_0_#ffffff] outline-none transition-all focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20 resize-none"
             />
           </div>
         </Card>
@@ -395,11 +396,11 @@ export default function CheckoutFormClient({
           </span>
           <h2 className="font-sora font-bold text-sm text-[var(--ink)]">Metode Pembayaran</h2>
         </div>
-        <div className="rounded-[14px] bg-[var(--accent-bg)] border border-[var(--accent)]/30 p-3 text-xs">
+        <div className="rounded-[var(--radius-md)] bg-[var(--accent-bg)] border border-[var(--accent)]/30 p-3 text-xs">
           <p className="font-bold text-[var(--accent-2)]">
             COD (Bayar Tunai / Scan QRIS saat {metodePengiriman === 'ambil_di_toko' ? 'Ambil di Toko' : 'Pesanan Tiba'})
           </p>
-          <p className="text-[11px] text-[var(--ink-soft)] mt-0.5 font-medium">
+          <p className="text-[var(--text-caption)] text-[var(--ink-soft)] mt-0.5 font-medium">
             Pembayaran dilakukan di tempat saat barang diterima dengan aman
           </p>
         </div>
@@ -418,7 +419,7 @@ export default function CheckoutFormClient({
             defaultValue={profile?.nama}
             required
             placeholder="Nama lengkap pemesan"
-            className="w-full min-w-0 rounded-[14px] border border-[var(--line)] bg-white px-3.5 py-2 text-xs text-[var(--ink)] placeholder:text-[var(--ink-soft)] shadow-xs outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
+            className="w-full min-w-0 rounded-[var(--radius-md)] border border-[var(--line)] bg-white px-3.5 py-2 text-xs text-[var(--ink)] placeholder:text-[var(--ink-soft)] shadow-xs outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
           />
         </div>
         <div className="space-y-1">
@@ -432,7 +433,7 @@ export default function CheckoutFormClient({
             defaultValue={profile?.no_hp ?? ''}
             required
             placeholder="08xxxxxxxxxx"
-            className="w-full min-w-0 rounded-[14px] border border-[var(--line)] bg-white px-3.5 py-2 text-xs text-[var(--ink)] placeholder:text-[var(--ink-soft)] shadow-xs outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
+            className="w-full min-w-0 rounded-[var(--radius-md)] border border-[var(--line)] bg-white px-3.5 py-2 text-xs text-[var(--ink)] placeholder:text-[var(--ink-soft)] shadow-xs outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
           />
         </div>
         <div className="space-y-1">
@@ -443,7 +444,7 @@ export default function CheckoutFormClient({
             id="catatan"
             name="catatan"
             rows={2}
-            className="w-full min-w-0 rounded-[14px] border border-[var(--line)] bg-white px-3.5 py-2 text-xs text-[var(--ink)] placeholder:text-[var(--ink-soft)] shadow-xs outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20 resize-none"
+            className="w-full min-w-0 rounded-[var(--radius-md)] border border-[var(--line)] bg-white px-3.5 py-2 text-xs text-[var(--ink)] placeholder:text-[var(--ink-soft)] shadow-xs outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20 resize-none"
             placeholder="Contoh: tolong pisahkan kantong bumbu dapur"
           />
         </div>
@@ -460,11 +461,11 @@ export default function CheckoutFormClient({
               <div>
                 <h3 className="font-sora font-bold text-xs text-[var(--ink)] flex items-center gap-1">
                   <span>Tukar Poin Toko</span>
-                  <span className="text-[10px] text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">
+                  <span className="text-[var(--text-caption)] text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">
                     {availablePoints} Poin
                   </span>
                 </h3>
-                <p className="text-[10.5px] text-[var(--ink-soft)] font-medium">
+                <p className="text-[var(--text-caption)] text-[var(--ink-soft)] font-medium">
                   {usePoints
                     ? `Hemat ${formatRupiah(discountAmount)} (${pointsToUse} poin)`
                     : `Tukarkan poin jadi diskon hingga ${formatRupiah(maxRedeemablePoints * redeemRate)}`}
@@ -519,7 +520,7 @@ export default function CheckoutFormClient({
             <Truck size={12} className="text-[var(--accent)]" />
             Biaya Pengiriman
             {metodePengiriman === 'antar_alamat' && jarakKm !== null && (
-              <span className="text-[10px] text-gray-500">({jarakKm} km)</span>
+              <span className="text-[var(--text-caption)] text-gray-500">({jarakKm} km)</span>
             )}
           </span>
           <span className={`tabular-nums font-bold font-sora ${ongkir === 0 ? 'text-emerald-700' : 'text-[var(--ink)]'}`}>
@@ -554,19 +555,7 @@ export default function CheckoutFormClient({
 
       {/* Error Message */}
       {errorMsg && (
-        <div className="p-3.5 rounded-2xl bg-red-50 border border-red-200 text-red-700 text-xs font-semibold flex items-center justify-between shadow-sm animate-fade-in">
-          <div className="flex items-center gap-2">
-            <AlertCircle size={16} className="text-red-500 shrink-0" />
-            <span>{errorMsg}</span>
-          </div>
-          <button
-            type="button"
-            onClick={() => setErrorMsg(null)}
-            className="text-[var(--danger)]/70 hover:text-[var(--danger)] px-1 py-0.5 rounded"
-          >
-            ✕
-          </button>
-        </div>
+        <AlertBanner type="error" message={errorMsg} className="animate-fade-in" />
       )}
 
       {/* Submit Button */}

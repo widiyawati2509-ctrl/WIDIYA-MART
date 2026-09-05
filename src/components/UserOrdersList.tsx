@@ -268,7 +268,7 @@ export default function UserOrdersList({ initialOrders }: UserOrdersListProps) {
               return (
                 <div
                   key={order.id}
-                  className={`card-3d bg-card border rounded-[20px] transition-all overflow-hidden relative shadow-3d ${
+                  className={`card-3d bg-card border rounded-[var(--radius-lg)] transition-all overflow-hidden relative shadow-3d ${
                     isSelected
                       ? 'border-[var(--accent)] bg-orange-50/40'
                       : 'border-[rgba(232,214,205,0.9)] hover:border-[var(--accent)]'
@@ -312,7 +312,7 @@ export default function UserOrdersList({ initialOrders }: UserOrdersListProps) {
                             })}
                           </span>
                           <div className="flex items-center gap-1.5">
-                            <span className="text-[10.5px] font-bold bg-[var(--accent-bg)] text-[var(--accent-2)] px-2.5 py-0.5 rounded-full">
+                            <span className="text-[var(--text-caption)] font-bold bg-[var(--accent-bg)] text-[var(--accent-2)] px-2.5 py-0.5 rounded-full">
                               {getOrderStatusLabel(order.status)}
                             </span>
                             {!isSelectMode && (
@@ -390,7 +390,7 @@ export default function UserOrdersList({ initialOrders }: UserOrdersListProps) {
                                 targetId: order.id,
                               })
                             }}
-                            className="press inline-flex items-center gap-1 text-[11px] text-[var(--ink-soft)] hover:text-[var(--danger)] font-medium px-2 py-1 rounded-lg hover:bg-[var(--accent-bg)] transition-all active:scale-95"
+                            className="press inline-flex items-center gap-1 text-[var(--text-caption)] text-[var(--ink-soft)] hover:text-[var(--danger)] font-medium px-2 py-1 rounded-lg hover:bg-[var(--accent-bg)] transition-all active:scale-95"
                             title="Hapus dari riwayat"
                           >
                             <Trash2 className="w-3.5 h-3.5" />

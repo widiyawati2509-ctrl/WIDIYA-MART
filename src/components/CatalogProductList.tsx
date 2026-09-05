@@ -85,7 +85,7 @@ export default function CatalogProductList({
             type="button"
             onClick={handleLoadMore}
             disabled={isPending}
-            className="press inline-flex items-center justify-center gap-2 px-5 py-3 rounded-[16px] bg-white hover:bg-[var(--accent-bg)] text-[var(--ink)] border border-[rgba(232,214,205,0.9)] shadow-3d text-xs font-sora font-bold active:scale-95 transition-all w-full disabled:opacity-60"
+            className="press inline-flex items-center justify-center gap-2 px-5 py-3 rounded-[var(--radius-md)] bg-white hover:bg-[var(--accent-bg)] text-[var(--ink)] border border-[rgba(232,214,205,0.9)] shadow-3d text-xs font-sora font-bold active:scale-95 transition-all w-full disabled:opacity-60"
           >
             {isPending ? (
               <>
@@ -100,7 +100,7 @@ export default function CatalogProductList({
             )}
           </button>
         ) : products.length > 6 ? (
-          <div className="inline-flex items-center gap-1.5 text-[11px] text-[var(--ink-soft)] font-medium">
+          <div className="inline-flex items-center gap-1.5 text-[var(--text-caption)] text-[var(--ink-soft)] font-medium">
             <Check size={14} className="text-emerald-600" />
             <span>Semua {products.length} produk telah ditampilkan</span>
           </div>

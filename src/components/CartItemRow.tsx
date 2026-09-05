@@ -42,12 +42,12 @@ export default function CartItemRow({ item }: CartItemRowProps) {
 
   return (
     <div
-      className={`card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[20px] p-3.5 shadow-3d flex gap-3 items-center ${
+      className={`card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-lg)] p-3.5 shadow-3d flex gap-3 items-center ${
         isPending ? 'opacity-50' : ''
       } transition-opacity`}
     >
       {/* Thumbnail */}
-      <div className="relative w-14 h-14 rounded-[14px] bg-[var(--accent-bg)] border border-[var(--line)] shrink-0 overflow-hidden shadow-[inset_0_2px_4px_rgba(232,85,33,0.05)]">
+      <div className="relative w-14 h-14 rounded-[var(--radius-md)] bg-[var(--accent-bg)] border border-[var(--line)] shrink-0 overflow-hidden shadow-[inset_0_2px_4px_rgba(232,85,33,0.05)]">
         {product.image_url ? (
           <Image src={product.image_url} alt={product.nama} fill className="object-contain p-1" sizes="56px" />
         ) : (
@@ -59,14 +59,14 @@ export default function CartItemRow({ item }: CartItemRowProps) {
 
       {/* Detail */}
       <div className="flex-1 min-w-0">
-        <p className="text-[13.5px] font-bold text-[var(--ink)] line-clamp-1">{product.nama}</p>
+        <p className="text-[var(--text-body)] font-bold text-[var(--ink)] line-clamp-1">{product.nama}</p>
         <p className="font-sora font-bold text-[var(--accent-2)] text-xs mt-0.5 tabular-nums">
           {formatRupiah(product.harga)}
         </p>
 
         <div className="flex items-center justify-between mt-2.5">
           {/* Stepper Qty */}
-          <div className="flex items-center gap-1 border border-[var(--line)] bg-[var(--paper)] rounded-[10px] px-1.5 py-0.5">
+          <div className="flex items-center gap-1 border border-[var(--line)] bg-[var(--paper)] rounded-[var(--radius-sm)] px-1.5 py-0.5">
             <button
               type="button"
               onClick={() => updateQty(item.qty - 1)}

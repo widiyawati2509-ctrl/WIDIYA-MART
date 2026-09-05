@@ -236,7 +236,7 @@ export default function AdminOrdersList({ initialOrders, initialStatus }: AdminO
       )}
 
       {/* Filter and Search Bar */}
-      <div className="card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[20px] p-3 shadow-3d space-y-3">
+      <div className="card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-lg)] p-3 shadow-3d space-y-3">
         {/* Kasir Quick Access: Pesanan Siap Diambil */}
         <button
           type="button"
@@ -257,7 +257,7 @@ export default function AdminOrdersList({ initialOrders, initialStatus }: AdminO
               <p className="font-sora font-bold text-xs leading-tight">
                 Pesanan Siap Diambil (Kasir)
               </p>
-              <p className={`text-[10px] font-medium ${statusFilter === 'siap_diambil' ? 'text-emerald-100' : 'text-emerald-700'}`}>
+              <p className={`text-[var(--text-caption)] font-medium ${statusFilter === 'siap_diambil' ? 'text-emerald-100' : 'text-emerald-700'}`}>
                 Filter cepat untuk pembeli yang tiba di toko
               </p>
             </div>
@@ -308,7 +308,7 @@ export default function AdminOrdersList({ initialOrders, initialStatus }: AdminO
               >
                 <span>{f.label}</span>
                 {count > 0 && (
-                  <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
+                  <span className={`text-[var(--text-caption)] px-1.5 py-0.2 rounded-full font-bold ${
                     statusFilter === f.value ? 'bg-white/25 text-white' : 'bg-gray-200 text-gray-700'
                   }`}>
                     {count}
@@ -341,7 +341,7 @@ export default function AdminOrdersList({ initialOrders, initialStatus }: AdminO
           </button>
 
           {selectedIds.size > 0 && (
-            <span className="text-[11px] font-bold bg-[var(--accent-bg)] text-[var(--accent-2)] px-2 py-0.5 rounded-full">
+            <span className="text-[var(--text-caption)] font-bold bg-[var(--accent-bg)] text-[var(--accent-2)] px-2 py-0.5 rounded-full">
               {selectedIds.size} dipilih
             </span>
           )}
@@ -425,7 +425,7 @@ export default function AdminOrdersList({ initialOrders, initialStatus }: AdminO
                         {order.nama_pemesan}
                       </p>
                       <span
-                        className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider ${getOrderStatusColor(
+                        className={`text-[var(--text-caption)] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider ${getOrderStatusColor(
                           order.status
                         )}`}
                       >
@@ -442,7 +442,7 @@ export default function AdminOrdersList({ initialOrders, initialStatus }: AdminO
                         minute: '2-digit',
                       })}
                     </p>
-                    <p className="text-[11px] text-gray-400 font-mono mt-0.5">
+                    <p className="text-[var(--text-caption)] text-gray-400 font-mono mt-0.5">
                       WA: {order.no_hp_pemesan}
                     </p>
                   </div>

@@ -68,7 +68,7 @@ export default async function AdminLayout({
               alt="PENGENJEK MART Logo"
               width={28}
               height={28}
-              className="rounded-[8px] object-cover"
+              className="rounded-[var(--radius-sm)] object-cover"
             />
           </div>
           <div>
@@ -81,7 +81,7 @@ export default async function AdminLayout({
           <Link
             href="/"
             prefetch={true}
-            className="press inline-flex items-center gap-1.5 rounded-[12px] bg-white border border-[rgba(232,214,205,0.9)] px-2.5 py-1.5 text-xs font-sora font-bold text-[var(--ink)] shadow-xs hover:bg-[var(--accent-bg)] active:scale-95 transition-all"
+            className="press inline-flex items-center gap-1.5 rounded-[var(--radius-sm)] bg-white border border-[rgba(232,214,205,0.9)] px-2.5 py-1.5 text-xs font-sora font-bold text-[var(--ink)] shadow-xs hover:bg-[var(--accent-bg)] active:scale-95 transition-all"
             title="Lihat Tampilan Toko"
           >
             <ShoppingBag size={13} className="text-[var(--accent)]" />
@@ -90,7 +90,7 @@ export default async function AdminLayout({
           <form action={logout}>
             <button
               type="submit"
-              className="press inline-flex items-center gap-1.5 rounded-[12px] bg-[var(--danger)] px-2.5 py-1.5 text-xs font-sora font-bold text-white shadow-xs"
+              className="press inline-flex items-center gap-1.5 rounded-[var(--radius-sm)] bg-[var(--danger)] px-2.5 py-1.5 text-xs font-sora font-bold text-white shadow-xs"
               title="Keluar"
             >
               <LogOut size={13} />

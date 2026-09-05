@@ -123,7 +123,7 @@ export default function WishlistHeartButton({
         } ${isAnimating ? 'scale-125' : 'scale-100'}`}
       />
       {showLabel && (
-        <span className={`text-[11px] font-sora font-bold leading-none ${isWishlisted ? 'text-rose-600' : 'text-[var(--ink)]'}`}>
+        <span className={`text-[var(--text-caption)] font-sora font-bold leading-none ${isWishlisted ? 'text-rose-600' : 'text-[var(--ink)]'}`}>
           {isWishlisted ? 'Disukai' : 'Suka'}
         </span>
       )}

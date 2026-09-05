@@ -83,12 +83,12 @@ function ProductItemRow({
           <span className="text-xs font-sora font-bold text-[var(--ink)] flex items-center gap-1.5">
             <Edit2 className="w-3.5 h-3.5 text-[var(--accent)]" /> Edit Informasi Produk
           </span>
-          <span className="text-[11px] text-[var(--ink-soft)]">ID: {product.id.slice(0, 8)}...</span>
+          <span className="text-[var(--text-caption)] text-[var(--ink-soft)]">ID: {product.id.slice(0, 8)}...</span>
         </div>
 
         <div className="grid grid-cols-2 gap-3">
           <div className="col-span-2">
-            <label className="text-[11px] font-bold text-[var(--ink)] block mb-1">Nama Produk *</label>
+            <label className="text-[var(--text-caption)] font-bold text-[var(--ink)] block mb-1">Nama Produk *</label>
             <input
               type="text"
               name="nama"
@@ -99,7 +99,7 @@ function ProductItemRow({
           </div>
 
           <div>
-            <label className="text-[11px] font-bold text-[var(--ink)] block mb-1">Harga Dasar (Rp) *</label>
+            <label className="text-[var(--text-caption)] font-bold text-[var(--ink)] block mb-1">Harga Dasar (Rp) *</label>
             <input
               type="number"
               name="harga"
@@ -112,7 +112,7 @@ function ProductItemRow({
           </div>
 
           <div>
-            <label className="text-[11px] font-bold text-[var(--ink)] block mb-1">Total Stok *</label>
+            <label className="text-[var(--text-caption)] font-bold text-[var(--ink)] block mb-1">Total Stok *</label>
             <input
               type="number"
               name="stok"
@@ -125,7 +125,7 @@ function ProductItemRow({
           </div>
 
           <div>
-            <label className="text-[11px] font-bold text-[var(--ink)] block mb-1">Kategori</label>
+            <label className="text-[var(--text-caption)] font-bold text-[var(--ink)] block mb-1">Kategori</label>
             <select
               name="category_id"
               defaultValue={product.category_id ?? ''}
@@ -141,7 +141,7 @@ function ProductItemRow({
           </div>
 
           <div>
-            <label className="text-[11px] font-bold text-[var(--ink)] block mb-1">Status Penjualan</label>
+            <label className="text-[var(--text-caption)] font-bold text-[var(--ink)] block mb-1">Status Penjualan</label>
             <select
               name="is_active"
               defaultValue={product.is_active ? 'true' : 'false'}
@@ -153,7 +153,7 @@ function ProductItemRow({
           </div>
 
           <div className="col-span-2">
-            <label className="text-[11px] font-bold text-[var(--ink)] block mb-1">Ganti Foto Produk (Opsional)</label>
+            <label className="text-[var(--text-caption)] font-bold text-[var(--ink)] block mb-1">Ganti Foto Produk (Opsional)</label>
             <input
               type="file"
               name="image"
@@ -163,7 +163,7 @@ function ProductItemRow({
           </div>
 
           <div className="col-span-2">
-            <label className="text-[11px] font-bold text-[var(--ink)] block mb-1">Deskripsi Produk</label>
+            <label className="text-[var(--text-caption)] font-bold text-[var(--ink)] block mb-1">Deskripsi Produk</label>
             <textarea
               name="deskripsi"
               defaultValue={cleanDeskripsi}
@@ -174,7 +174,7 @@ function ProductItemRow({
           </div>
 
           {/* Opsi Tambah Varian Produk */}
-          <div className="col-span-2 bg-[var(--paper)] border border-[rgba(232,214,205,0.9)] rounded-[18px] p-3.5 space-y-3 shadow-xs">
+          <div className="col-span-2 bg-[var(--paper)] border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-lg)] p-3.5 space-y-3 shadow-xs">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <div className="w-7 h-7 rounded-xl bg-[var(--accent-bg)] text-[var(--accent-2)] flex items-center justify-center shadow-xs">
@@ -184,7 +184,7 @@ function ProductItemRow({
                   <h4 className="text-xs font-sora font-bold text-[var(--ink)]">
                     Varian Produk (Opsi Pilihan)
                   </h4>
-                  <p className="text-[10.5px] text-[var(--ink-soft)] font-medium">
+                  <p className="text-[var(--text-caption)] text-[var(--ink-soft)] font-medium">
                     Tambahkan opsi seperti rasa, ukuran, atau kemasan
                   </p>
                 </div>
@@ -204,7 +204,7 @@ function ProductItemRow({
               </div>
             ) : (
               <div className="space-y-2">
-                <div className="flex items-center gap-2 px-1 text-[10px] font-bold text-[var(--ink-soft)] uppercase tracking-wider">
+                <div className="flex items-center gap-2 px-1 text-[var(--text-caption)] font-bold text-[var(--ink-soft)] uppercase tracking-wider">
                   <span className="w-24">Foto Varian</span>
                   <span className="flex-1">Nama Varian *</span>
                   <span className="w-28">Harga (Opsional)</span>
@@ -236,7 +236,7 @@ function ProductItemRow({
                           </button>
                         )}
                       </div>
-                      <label className="cursor-pointer text-[9.5px] font-bold text-[var(--accent-2)] bg-[var(--accent-bg)] px-1.5 py-1 rounded-md border border-[rgba(232,85,33,0.15)] hover:bg-[var(--accent-bg)]/80 flex items-center gap-0.5 shrink-0">
+                      <label className="cursor-pointer text-[var(--text-caption)] font-bold text-[var(--accent-2)] bg-[var(--accent-bg)] px-1.5 py-1 rounded-md border border-[rgba(232,85,33,0.15)] hover:bg-[var(--accent-bg)]/80 flex items-center gap-0.5 shrink-0">
                         <Camera className="w-2.5 h-2.5" />
                         <span>{v.image_url || v.previewUrl ? 'Ubah' : '+Foto'}</span>
                         <input
@@ -330,12 +330,12 @@ function ProductItemRow({
         <div className="flex items-center gap-2 flex-wrap mb-0.5">
           <p className="font-bold text-sm text-[var(--ink)] truncate">{product.nama}</p>
           {!product.is_active && (
-            <span className="text-[10px] font-bold bg-[var(--paper)] text-[var(--ink-soft)] px-2 py-0.5 rounded-full shrink-0">
+            <span className="text-[var(--text-caption)] font-bold bg-[var(--paper)] text-[var(--ink-soft)] px-2 py-0.5 rounded-full shrink-0">
               Nonaktif
             </span>
           )}
           {initialVariants.length > 0 && (
-            <span className="text-[10px] font-bold bg-[var(--accent-bg)] text-[var(--accent-2)] px-2 py-0.5 rounded-full border border-[rgba(232,85,33,0.15)] flex items-center gap-1 shrink-0">
+            <span className="text-[var(--text-caption)] font-bold bg-[var(--accent-bg)] text-[var(--accent-2)] px-2 py-0.5 rounded-full border border-[rgba(232,85,33,0.15)] flex items-center gap-1 shrink-0">
               <Layers className="w-3 h-3" /> {initialVariants.length} Varian
             </span>
           )}
@@ -347,7 +347,7 @@ function ProductItemRow({
 
         {initialVariants.length > 0 && (
           <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
-            <p className="text-[11px] text-[var(--ink-soft)] truncate font-medium">
+            <p className="text-[var(--text-caption)] text-[var(--ink-soft)] truncate font-medium">
               Opsi: {initialVariants.map((v) => v.nama).join(' • ')}
             </p>
             <div className="flex items-center gap-1">

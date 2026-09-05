@@ -83,7 +83,7 @@ export default async function KeranjangPage() {
                   {formatRupiah(total)}
                 </span>
               </div>
-              <p className="text-[11px] text-[var(--ink-soft)] mt-2 font-medium">
+              <p className="text-[var(--text-caption)] text-[var(--ink-soft)] mt-2 font-medium">
                 *Pembayaran tunai / QRIS (COD) saat ambil langsung di toko
               </p>
             </Card>

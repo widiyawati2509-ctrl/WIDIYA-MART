@@ -156,13 +156,13 @@ export default function ShoppingListClient({ initialItems }: ShoppingListClientP
     // If user just moved items to cart, show the reassuring success screen
     if (lastMoved) {
       return (
-        <div className="card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[24px] p-6 text-center shadow-3d space-y-4">
+        <div className="card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-xl)] p-6 text-center shadow-3d space-y-4">
           <div className="w-16 h-16 mx-auto rounded-full bg-emerald-50 border-2 border-emerald-200 flex items-center justify-center text-emerald-600 shadow-sm animate-bounce-short">
             <CheckCircle2 size={36} className="stroke-[2.2]" />
           </div>
 
           <div>
-            <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-emerald-100/80 text-emerald-800 text-[11px] font-sora font-bold mb-2">
+            <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-emerald-100/80 text-emerald-800 text-[var(--text-caption)] font-sora font-bold mb-2">
               <Check size={12} /> Sudah di Keranjang
             </span>
             <h2 className="font-sora font-bold text-lg text-[var(--ink)]">
@@ -187,7 +187,7 @@ export default function ShoppingListClient({ initialItems }: ShoppingListClientP
             <Link
               href="/kategori"
               prefetch={true}
-              className="press w-full py-2.5 px-4 rounded-[16px] bg-white hover:bg-[var(--accent-bg)] text-[var(--ink)] border border-[rgba(232,214,205,0.9)] text-xs font-sora font-semibold flex items-center justify-center gap-1.5 transition-all"
+              className="press w-full py-2.5 px-4 rounded-[var(--radius-md)] bg-white hover:bg-[var(--accent-bg)] text-[var(--ink)] border border-[rgba(232,214,205,0.9)] text-xs font-sora font-semibold flex items-center justify-center gap-1.5 transition-all"
             >
               <ShoppingBag size={14} className="text-[var(--accent)]" />
               <span>Cari Produk Lainnya</span>
@@ -213,7 +213,7 @@ export default function ShoppingListClient({ initialItems }: ShoppingListClientP
       {toastMessage && (
         <div className="fixed bottom-24 left-1/2 -translate-x-1/2 max-w-[calc(480px-32px)] w-[calc(100%-32px)] z-50 animate-bounce-short">
           <div
-            className={`p-3 rounded-[20px] text-xs font-semibold flex items-center justify-between shadow-2xl border ${
+            className={`p-3 rounded-[var(--radius-lg)] text-xs font-semibold flex items-center justify-between shadow-2xl border ${
               toastMessage.type === 'success'
                 ? 'bg-[#2B1810] text-white border-emerald-500/50'
                 : 'bg-red-950 text-white border-red-500/50'
@@ -224,8 +224,8 @@ export default function ShoppingListClient({ initialItems }: ShoppingListClientP
                 <ShoppingCart size={15} />
               </div>
               <div className="truncate">
-                <p className="font-sora font-bold text-[12px] text-white truncate">{toastMessage.text}</p>
-                <p className="text-[10px] text-emerald-300 font-medium">Tersimpan di keranjang belanja</p>
+                <p className="font-sora font-bold text-[var(--text-small)] text-white truncate">{toastMessage.text}</p>
+                <p className="text-[var(--text-caption)] text-emerald-300 font-medium">Tersimpan di keranjang belanja</p>
               </div>
             </div>
 
@@ -234,7 +234,7 @@ export default function ShoppingListClient({ initialItems }: ShoppingListClientP
                 <Link
                   href={toastMessage.actionHref}
                   prefetch={true}
-                  className="px-3 py-1.5 rounded-xl bg-[var(--accent)] hover:bg-[var(--accent-2)] text-white text-[11px] font-sora font-bold shadow-md flex items-center gap-1 active:scale-95 transition-all"
+                  className="px-3 py-1.5 rounded-xl bg-[var(--accent)] hover:bg-[var(--accent-2)] text-white text-[var(--text-caption)] font-sora font-bold shadow-md flex items-center gap-1 active:scale-95 transition-all"
                 >
                   <span>{toastMessage.actionLabel || 'Keranjang'}</span>
                   <ArrowRight size={12} />
@@ -254,7 +254,7 @@ export default function ShoppingListClient({ initialItems }: ShoppingListClientP
       )}
 
       {/* Top action: Move All to Cart */}
-      <div className="card-3d bg-white border border-[rgba(232,214,205,0.9)] rounded-[20px] p-3 shadow-3d flex items-center justify-between">
+      <div className="card-3d bg-white border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-lg)] p-3 shadow-3d flex items-center justify-between">
         <span className="text-xs font-semibold text-[var(--ink)]">
           {items.length} produk tersimpan
         </span>
@@ -288,12 +288,12 @@ export default function ShoppingListClient({ initialItems }: ShoppingListClientP
           return (
             <div
               key={item.id}
-              className="card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[20px] p-3.5 shadow-3d flex items-center gap-3"
+              className="card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-lg)] p-3.5 shadow-3d flex items-center gap-3"
             >
               {/* Image */}
               <Link
                 href={`/produk/${product.slug}`}
-                className="relative w-16 h-16 rounded-[14px] bg-[var(--accent-bg)] border border-[var(--line)] overflow-hidden shrink-0 flex items-center justify-center"
+                className="relative w-16 h-16 rounded-[var(--radius-md)] bg-[var(--accent-bg)] border border-[var(--line)] overflow-hidden shrink-0 flex items-center justify-center"
               >
                 {product.image_url ? (
                   <Image
@@ -308,7 +308,7 @@ export default function ShoppingListClient({ initialItems }: ShoppingListClientP
                 )}
                 {isOutOfStock && (
                   <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                    <span className="text-[8px] bg-white text-red-600 font-bold px-1 rounded">Habis</span>
+                    <span className="text-[var(--text-caption)] bg-white text-red-600 font-bold px-1 rounded">Habis</span>
                   </div>
                 )}
               </Link>
@@ -323,7 +323,7 @@ export default function ShoppingListClient({ initialItems }: ShoppingListClientP
                 <p className="font-sora font-bold text-sm text-[var(--accent-2)] mt-0.5 tabular-nums">
                   {formatRupiah(product.harga)}
                 </p>
-                <p className="text-[10px] text-[var(--ink-soft)] font-medium">
+                <p className="text-[var(--text-caption)] text-[var(--ink-soft)] font-medium">
                   {isOutOfStock ? 'Stok habis' : `Tersedia (${product.stok} pcs)`}
                 </p>
               </div>
@@ -334,7 +334,7 @@ export default function ShoppingListClient({ initialItems }: ShoppingListClientP
                   type="button"
                   onClick={() => handleMoveToCart(product.id, item.id, product.nama)}
                   disabled={isPending || isOutOfStock || movingId !== null}
-                  className="add-btn px-3 py-2 text-[11px] gap-1.5"
+                  className="add-btn px-3 py-2 text-[var(--text-caption)] gap-1.5"
                   title="Pindahkan ke Keranjang"
                 >
                   {movingId === item.id ? (
@@ -353,7 +353,7 @@ export default function ShoppingListClient({ initialItems }: ShoppingListClientP
                   type="button"
                   onClick={() => handleRemove(item.id, product.id, product.nama)}
                   disabled={isPending || movingId !== null}
-                  className="press inline-flex items-center justify-center gap-1 px-2.5 py-1 rounded-xl text-[var(--ink-soft)] hover:text-[var(--danger)] hover:bg-[var(--accent-bg)] text-[10px] font-medium transition-colors"
+                  className="press inline-flex items-center justify-center gap-1 px-2.5 py-1 rounded-xl text-[var(--ink-soft)] hover:text-[var(--danger)] hover:bg-[var(--accent-bg)] text-[var(--text-caption)] font-medium transition-colors"
                   title="Hapus dari Daftar Belanja"
                 >
                   <Trash2 size={11} />

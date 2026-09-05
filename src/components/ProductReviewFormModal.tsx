@@ -52,7 +52,7 @@ export default function ProductReviewFormModal({
       <button
         type="button"
         onClick={() => setIsOpen(true)}
-        className="inline-flex items-center gap-1 text-[11px] font-sora font-bold text-amber-800 bg-amber-50 hover:bg-amber-100 border border-amber-200/80 px-2.5 py-1 rounded-full active:scale-95 transition-all"
+        className="inline-flex items-center gap-1 text-[var(--text-caption)] font-sora font-bold text-amber-800 bg-amber-50 hover:bg-amber-100 border border-amber-200/80 px-2.5 py-1 rounded-full active:scale-95 transition-all"
       >
         <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
         <span>{hasSubmitted ? 'Ulas Lagi' : 'Beri Ulasan'}</span>
@@ -60,7 +60,7 @@ export default function ProductReviewFormModal({
 
       {isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-fade-in">
-          <div className="bg-white border border-[var(--line)] rounded-[24px] max-w-sm w-full p-5 shadow-2xl space-y-4">
+          <div className="bg-white border border-[var(--line)] rounded-[var(--radius-xl)] max-w-sm w-full p-5 shadow-2xl space-y-4">
             <div className="flex items-start justify-between">
               <div>
                 <h3 className="font-sora font-bold text-base text-[var(--ink)]">Beri Ulasan Produk</h3>
@@ -124,7 +124,7 @@ export default function ProductReviewFormModal({
                   value={ulasan}
                   onChange={(e) => setUlasan(e.target.value)}
                   placeholder="Ceritakan pengalaman Anda memakai produk ini..."
-                  className="w-full min-w-0 rounded-[14px] border border-[var(--line)] bg-white px-3.5 py-2.5 text-xs text-[var(--ink)] placeholder:text-[var(--ink-soft)] shadow-xs outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20 resize-none"
+                  className="w-full min-w-0 rounded-[var(--radius-md)] border border-[var(--line)] bg-white px-3.5 py-2.5 text-xs text-[var(--ink)] placeholder:text-[var(--ink-soft)] shadow-xs outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20 resize-none"
                 />
               </div>
 

@@ -16,12 +16,12 @@ export default function ProductCard({ product }: ProductCardProps) {
   return (
     <Link href={`/produk/${product.slug}`} prefetch={true} className="block group">
       <div
-        className={`product card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[20px] p-3 shadow-3d transition-all duration-200 ${
+        className={`product card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-lg)] p-3 shadow-3d transition-all duration-200 ${
           outOfStock ? 'opacity-60' : ''
         }`}
       >
         {/* Thumbnail (14px radius, accent-bg) */}
-        <div className="relative aspect-square w-full rounded-[14px] bg-[var(--accent-bg)] shadow-[inset_0_2px_4px_rgba(232,85,33,0.05)] overflow-hidden mb-2.5">
+        <div className="relative aspect-square w-full rounded-[var(--radius-md)] bg-[var(--accent-bg)] shadow-[inset_0_2px_4px_rgba(232,85,33,0.05)] overflow-hidden mb-2.5">
           {product.image_url ? (
             <Image
               src={product.image_url}
@@ -39,13 +39,13 @@ export default function ProductCard({ product }: ProductCardProps) {
           {/* Promo / Discount Badge */}
           {product.diskon_persen ? (
             <div className="absolute top-1.5 left-1.5 z-10">
-              <span className="text-[9px] font-sora font-extrabold bg-gradient-to-r from-red-600 to-orange-500 text-white px-2 py-0.5 rounded-[6px] shadow-sm tracking-wide">
+              <span className="text-[var(--text-caption)] font-sora font-extrabold bg-gradient-to-r from-red-600 to-orange-500 text-white px-2 py-0.5 rounded-[var(--radius-sm)] shadow-sm tracking-wide">
                 -{product.diskon_persen}%
               </span>
             </div>
           ) : product.badge_text ? (
             <div className="absolute top-1.5 left-1.5 z-10">
-              <span className="text-[9px] font-sora font-extrabold bg-gradient-to-r from-red-600 to-orange-500 text-white px-1.5 py-0.5 rounded-[6px] shadow-sm tracking-wide">
+              <span className="text-[var(--text-caption)] font-sora font-extrabold bg-gradient-to-r from-red-600 to-orange-500 text-white px-1.5 py-0.5 rounded-[var(--radius-sm)] shadow-sm tracking-wide">
                 {product.badge_text}
               </span>
             </div>
@@ -53,7 +53,7 @@ export default function ProductCard({ product }: ProductCardProps) {
 
           {outOfStock && (
             <div className="absolute inset-0 flex items-center justify-center bg-white/70 backdrop-blur-[2px]">
-              <span className="text-[10px] font-bold bg-[var(--paper)] text-[var(--ink-soft)] px-2 py-0.5 rounded-full border border-[var(--line)]">
+              <span className="text-[var(--text-caption)] font-bold bg-[var(--paper)] text-[var(--ink-soft)] px-2 py-0.5 rounded-full border border-[var(--line)]">
                 Habis
               </span>
             </div>
@@ -61,7 +61,7 @@ export default function ProductCard({ product }: ProductCardProps) {
 
           {product.stok > 0 && product.stok <= 5 && (
             <div className="absolute top-1.5 right-1.5">
-              <span className="var-badge text-[9.5px] font-bold bg-[var(--accent-bg)] text-[var(--accent-2)] px-1.5 py-0.5 rounded-[6px] shadow-xs">
+              <span className="var-badge text-[var(--text-caption)] font-bold bg-[var(--accent-bg)] text-[var(--accent-2)] px-1.5 py-0.5 rounded-[var(--radius-sm)] shadow-xs">
                 Sisa {product.stok}
               </span>
             </div>
@@ -69,18 +69,18 @@ export default function ProductCard({ product }: ProductCardProps) {
         </div>
 
         {/* Info Produk */}
-        <h3 className="text-[13.5px] font-bold text-[var(--ink)] line-clamp-2 leading-tight mb-1 group-hover:text-[var(--accent)] transition-colors">
+        <h3 className="text-[var(--text-body)] font-bold text-[var(--ink)] line-clamp-2 leading-tight mb-1 group-hover:text-[var(--accent)] transition-colors">
           {product.nama}
         </h3>
 
         {/* Harga (Sora bold, accent-2) */}
-        <p className="font-sora font-bold text-[var(--accent-2)] text-[14px] leading-tight mb-1 tabular-nums">
+        <p className="font-sora font-bold text-[var(--accent-2)] text-[var(--text-body)] leading-tight mb-1 tabular-nums">
           {formatRupiah(product.harga)}
         </p>
 
         {/* Stok & Tombol Love (Favorit) */}
         <div className="mt-2 pt-2 border-t border-[rgba(232,214,205,0.7)] flex items-center justify-between">
-          <p className="text-[11px] text-[var(--ink-soft)] font-medium">
+          <p className="text-[var(--text-caption)] text-[var(--ink-soft)] font-medium">
             {outOfStock ? 'Stok kosong' : `Stok: ${product.stok}`}
           </p>
           <WishlistHeartButton product={product} />

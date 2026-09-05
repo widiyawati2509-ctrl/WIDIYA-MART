@@ -76,7 +76,7 @@ export default function PromoBannerCarousel({ banners: propBanners }: { banners?
 
   return (
     <div
-      className="relative overflow-hidden rounded-[20px] shadow-3d group"
+      className="relative overflow-hidden rounded-[var(--radius-lg)] shadow-3d group"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
       onTouchStart={() => setIsPaused(true)}
@@ -99,7 +99,7 @@ export default function PromoBannerCarousel({ banners: propBanners }: { banners?
           return (
             <div
               key={b.id}
-              className="w-full shrink-0 text-white p-5 rounded-[20px] flex flex-col justify-between relative min-h-[154px]"
+              className="w-full shrink-0 text-white p-5 rounded-[var(--radius-lg)] flex flex-col justify-between relative min-h-[154px]"
               style={{
                 background: bgStyle,
                 boxShadow: b.boxShadow || '0 10px 25px -5px rgba(232,85,33,0.3), inset 0 1px 0 rgba(255,255,255,0.4)',
@@ -107,16 +107,16 @@ export default function PromoBannerCarousel({ banners: propBanners }: { banners?
             >
               <div className="relative z-10 pr-28">
                 <div className="flex items-center gap-2 mb-2">
-                  <span className="bg-white/20 backdrop-blur-md text-white text-[10px] font-sora font-bold tracking-wider px-2.5 py-0.5 rounded-full uppercase border border-white/30">
+                  <span className="bg-white/20 backdrop-blur-md text-white text-[var(--text-caption)] font-sora font-bold tracking-wider px-2.5 py-0.5 rounded-full uppercase border border-white/30">
                     {badgeText}
                   </span>
                   {b.tag && (
-                    <span className="text-[11px] text-white/90 font-semibold">
+                    <span className="text-[var(--text-caption)] text-white/90 font-semibold">
                       {b.tag}
                     </span>
                   )}
                   {b.diskon_persen && (
-                    <span className="bg-amber-400 text-[#2B1810] text-[10px] font-sora font-extrabold px-2 py-0.5 rounded-full shadow-xs">
+                    <span className="bg-amber-400 text-[#2B1810] text-[var(--text-caption)] font-sora font-extrabold px-2 py-0.5 rounded-full shadow-xs">
                       HEMAT {b.diskon_persen}%
                     </span>
                   )}
@@ -131,7 +131,7 @@ export default function PromoBannerCarousel({ banners: propBanners }: { banners?
                 )}
                 <Link
                   href={linkUrl}
-                  className="inline-flex items-center gap-1.5 bg-white text-[var(--accent-2)] font-sora font-bold text-xs px-3.5 py-2 rounded-[12px] shadow-[0_4px_12px_rgba(43,24,16,0.18),inset_0_1px_0_#ffffff] press"
+                  className="inline-flex items-center gap-1.5 bg-white text-[var(--accent-2)] font-sora font-bold text-xs px-3.5 py-2 rounded-[var(--radius-sm)] shadow-[0_4px_12px_rgba(43,24,16,0.18),inset_0_1px_0_#ffffff] press"
                 >
                   <span>{ctaText}</span>
                   <ChevronRight className="w-3.5 h-3.5" />
@@ -141,7 +141,7 @@ export default function PromoBannerCarousel({ banners: propBanners }: { banners?
               {/* Product Image */}
               {imgSrc && (
                 <div className="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none transition-transform group-hover:scale-105 duration-300">
-                  <div className="w-[88px] h-[88px] sm:w-[96px] sm:h-[96px] rounded-[20px] bg-white/95 backdrop-blur-md p-1.5 shadow-[0_12px_24px_-4px_rgba(0,0,0,0.28),inset_0_2px_4px_rgba(255,255,255,0.9)] border border-white/70 flex items-center justify-center relative overflow-hidden">
+                  <div className="w-[88px] h-[88px] sm:w-[96px] sm:h-[96px] rounded-[var(--radius-lg)] bg-white/95 backdrop-blur-md p-1.5 shadow-[0_12px_24px_-4px_rgba(0,0,0,0.28),inset_0_2px_4px_rgba(255,255,255,0.9)] border border-white/70 flex items-center justify-center relative overflow-hidden">
                     <Image
                       src={imgSrc}
                       alt={titleText || 'Promo'}

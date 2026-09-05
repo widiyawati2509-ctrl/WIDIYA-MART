@@ -61,9 +61,9 @@ export default async function AdminDashboardPage() {
       <div className="grid grid-cols-2 gap-3">
         {stats.map(({ label, value, icon: Icon, color, href }) => {
           const content = (
-            <div className="card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[20px] p-3.5 shadow-3d press h-full flex flex-col justify-between">
+            <div className="card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-lg)] p-3.5 shadow-3d press h-full flex flex-col justify-between">
               <div className="flex items-center gap-2 mb-2">
-                <span className="w-8 h-8 rounded-[12px] bg-[var(--accent-bg)] text-[var(--accent-2)] flex items-center justify-center">
+                <span className="w-8 h-8 rounded-[var(--radius-sm)] bg-[var(--accent-bg)] text-[var(--accent-2)] flex items-center justify-center">
                   <Icon size={16} />
                 </span>
                 <p className="text-xs font-semibold text-[var(--ink-soft)] leading-tight">{label}</p>
@@ -85,11 +85,11 @@ export default async function AdminDashboardPage() {
       {/* Low Stock Warning */}
       {lowStockProducts.data && lowStockProducts.data.length > 0 && (
         <Section title="Peringatan Stok Menipis" description="Segera restock sebelum habis">
-          <div className="card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[20px] p-2 divide-y divide-[var(--line)] shadow-3d">
+          <div className="card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-lg)] p-2 divide-y divide-[var(--line)] shadow-3d">
             {lowStockProducts.data.map((p: { id: string; nama: string; stok: number }) => (
               <div key={p.id} className="flex justify-between items-center py-2 px-2 text-xs">
                 <span className="font-semibold text-[var(--ink)]">{p.nama}</span>
-                <span className="var-badge text-[10px] font-bold bg-red-50 text-[var(--danger)] px-2 py-0.5 rounded-full">
+                <span className="var-badge text-[var(--text-caption)] font-bold bg-red-50 text-[var(--danger)] px-2 py-0.5 rounded-full">
                   {p.stok === 0 ? 'Habis' : `Sisa ${p.stok}`}
                 </span>
               </div>
@@ -115,10 +115,10 @@ export default async function AdminDashboardPage() {
               href={`/admin/pesanan/${order.id}`}
               className="block press"
             >
-              <div className="card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[20px] p-3 shadow-3d hover:border-[var(--accent)] transition-all flex items-center justify-between">
+              <div className="card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-lg)] p-3 shadow-3d hover:border-[var(--accent)] transition-all flex items-center justify-between">
                 <div>
                   <p className="text-xs font-bold text-[var(--ink)]">{order.nama_pemesan}</p>
-                  <p className="text-[11px] text-[var(--ink-soft)] mt-0.5 font-medium">
+                  <p className="text-[var(--text-caption)] text-[var(--ink-soft)] mt-0.5 font-medium">
                     {new Date(order.created_at).toLocaleDateString('id-ID', {
                       day: 'numeric',
                       month: 'short',
@@ -130,7 +130,7 @@ export default async function AdminDashboardPage() {
                 <div className="flex items-center gap-2">
                   <div className="text-right">
                     <p className="text-xs font-sora font-bold text-[var(--accent-2)] tabular-nums">{formatRupiah(order.total)}</p>
-                    <span className="text-[9.5px] font-bold bg-[var(--accent-bg)] text-[var(--accent-2)] px-2 py-0.5 rounded-full inline-block mt-0.5">
+                    <span className="text-[var(--text-caption)] font-bold bg-[var(--accent-bg)] text-[var(--accent-2)] px-2 py-0.5 rounded-full inline-block mt-0.5">
                       {getOrderStatusLabel(order.status)}
                     </span>
                   </div>

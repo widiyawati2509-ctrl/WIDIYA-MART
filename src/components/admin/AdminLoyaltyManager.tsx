@@ -59,24 +59,24 @@ export default function AdminLoyaltyManager({ config: initialConfig, transaction
 
       {/* Quick Stats Grid */}
       <div className="grid grid-cols-2 gap-3">
-        <div className="card-3d bg-white border border-[rgba(232,214,205,0.9)] rounded-[20px] p-4 shadow-3d">
+        <div className="card-3d bg-white border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-lg)] p-4 shadow-3d">
           <div className="flex items-center gap-2 mb-1">
             <span className="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
               <TrendingUp size={14} />
             </span>
-            <span className="text-[11px] font-semibold text-[var(--ink-soft)]">Total Poin Diberikan</span>
+            <span className="text-[var(--text-caption)] font-semibold text-[var(--ink-soft)]">Total Poin Diberikan</span>
           </div>
           <p className="font-sora font-bold text-lg text-[var(--ink)]">
             {totalEarnedPoints.toLocaleString('id-ID')} <span className="text-xs text-[var(--ink-soft)] font-normal">Poin</span>
           </p>
         </div>
 
-        <div className="card-3d bg-white border border-[rgba(232,214,205,0.9)] rounded-[20px] p-4 shadow-3d">
+        <div className="card-3d bg-white border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-lg)] p-4 shadow-3d">
           <div className="flex items-center gap-2 mb-1">
             <span className="w-7 h-7 rounded-lg bg-orange-50 text-orange-600 flex items-center justify-center">
               <Coins size={14} />
             </span>
-            <span className="text-[11px] font-semibold text-[var(--ink-soft)]">Total Poin Ditukar</span>
+            <span className="text-[var(--text-caption)] font-semibold text-[var(--ink-soft)]">Total Poin Ditukar</span>
           </div>
           <p className="font-sora font-bold text-lg text-[var(--accent-2)]">
             {totalRedeemedPoints.toLocaleString('id-ID')} <span className="text-xs text-[var(--ink-soft)] font-normal">Poin</span>
@@ -85,7 +85,7 @@ export default function AdminLoyaltyManager({ config: initialConfig, transaction
       </div>
 
       {/* Configuration Form */}
-      <div className="card-3d bg-white border border-[rgba(232,214,205,0.9)] rounded-[20px] p-5 shadow-3d">
+      <div className="card-3d bg-white border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-lg)] p-5 shadow-3d">
         <h3 className="font-sora font-bold text-xs text-[var(--ink)] mb-3 flex items-center gap-1.5">
           <ShieldCheck size={14} className="text-[var(--accent)]" />
           Konfigurasi Aturan Loyalitas Toko
@@ -95,7 +95,7 @@ export default function AdminLoyaltyManager({ config: initialConfig, transaction
           <div className="flex items-center justify-between p-3 rounded-xl bg-[var(--paper)] border border-[var(--line)]">
             <div>
               <p className="font-bold text-[var(--ink)]">Status Program Loyalitas</p>
-              <p className="text-[10.5px] text-[var(--ink-soft)]">Aktifkan atau nonaktifkan perolehan poin belanja</p>
+              <p className="text-[var(--text-caption)] text-[var(--ink-soft)]">Aktifkan atau nonaktifkan perolehan poin belanja</p>
             </div>
             <label className="relative inline-flex items-center cursor-pointer">
               <input
@@ -105,7 +105,7 @@ export default function AdminLoyaltyManager({ config: initialConfig, transaction
                 defaultChecked={config.is_active}
                 className="sr-only peer"
               />
-              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500"></div>
+              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[var(--accent)]"></div>
             </label>
           </div>
 
@@ -123,7 +123,7 @@ export default function AdminLoyaltyManager({ config: initialConfig, transaction
                 required
                 className="w-full px-3 py-2 rounded-xl border border-[var(--line)] outline-none focus:border-[var(--accent)]"
               />
-              <span className="text-[10px] text-[var(--ink-soft)]">Contoh: Rp 10.000</span>
+              <span className="text-[var(--text-caption)] text-[var(--ink-soft)]">Contoh: Rp 10.000</span>
             </div>
 
             <div>
@@ -138,7 +138,7 @@ export default function AdminLoyaltyManager({ config: initialConfig, transaction
                 required
                 className="w-full px-3 py-2 rounded-xl border border-[var(--line)] outline-none focus:border-[var(--accent)]"
               />
-              <span className="text-[10px] text-[var(--ink-soft)]">Contoh: 1 poin</span>
+              <span className="text-[var(--text-caption)] text-[var(--ink-soft)]">Contoh: 1 poin</span>
             </div>
 
             <div>
@@ -153,7 +153,7 @@ export default function AdminLoyaltyManager({ config: initialConfig, transaction
                 required
                 className="w-full px-3 py-2 rounded-xl border border-[var(--line)] outline-none focus:border-[var(--accent)]"
               />
-              <span className="text-[10px] text-[var(--ink-soft)]">Contoh: Rp 100 per 1 poin</span>
+              <span className="text-[var(--text-caption)] text-[var(--ink-soft)]">Contoh: Rp 100 per 1 poin</span>
             </div>
 
             <div>
@@ -169,7 +169,7 @@ export default function AdminLoyaltyManager({ config: initialConfig, transaction
                 required
                 className="w-full px-3 py-2 rounded-xl border border-[var(--line)] outline-none focus:border-[var(--accent)]"
               />
-              <span className="text-[10px] text-[var(--ink-soft)]">Batas diskon per transaksi (contoh: 50%)</span>
+              <span className="text-[var(--text-caption)] text-[var(--ink-soft)]">Batas diskon per transaksi (contoh: 50%)</span>
             </div>
           </div>
 
@@ -202,7 +202,7 @@ export default function AdminLoyaltyManager({ config: initialConfig, transaction
       </div>
 
       {/* Latest Point Transactions Table */}
-      <div className="card-3d bg-white border border-[rgba(232,214,205,0.9)] rounded-[20px] p-5 shadow-3d">
+      <div className="card-3d bg-white border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-lg)] p-5 shadow-3d">
         <h3 className="font-sora font-bold text-xs text-[var(--ink)] mb-3 flex items-center gap-1.5">
           <History size={14} className="text-[var(--accent)]" />
           Riwayat Transaksi Poin Pelanggan Terkini
@@ -218,7 +218,7 @@ export default function AdminLoyaltyManager({ config: initialConfig, transaction
               <div key={t.id} className="py-2.5 flex items-center justify-between gap-2">
                 <div>
                   <p className="font-bold text-[var(--ink)]">{t.description}</p>
-                  <p className="text-[10px] text-[var(--ink-soft)] font-medium">
+                  <p className="text-[var(--text-caption)] text-[var(--ink-soft)] font-medium">
                     {new Date(t.created_at).toLocaleDateString('id-ID', {
                       day: 'numeric',
                       month: 'short',

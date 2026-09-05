@@ -96,13 +96,13 @@ export default function PrintReceiptButton({ order, store }: PrintReceiptButtonP
           {store?.nama_toko || 'PENGENJEK MART'}
         </h1>
         {store?.alamat_toko && (
-          <p className="text-[11px] leading-tight text-gray-800 mt-0.5">
+          <p className="text-[var(--text-caption)] leading-tight text-gray-800 mt-0.5">
             {store.alamat_toko}
             {store.kota ? `, ${store.kota}` : ''}
           </p>
         )}
         {(store?.whatsapp || store?.no_hp_toko) && (
-          <p className="text-[11px] text-gray-800">
+          <p className="text-[var(--text-caption)] text-gray-800">
             Telp/WA: {store.whatsapp || store.no_hp_toko}
           </p>
         )}
@@ -111,7 +111,7 @@ export default function PrintReceiptButton({ order, store }: PrintReceiptButtonP
       <div className="border-b border-dashed border-black my-2" />
 
       {/* Info Transaksi Resi */}
-      <div className="text-[11px] space-y-0.5 leading-tight">
+      <div className="text-[var(--text-caption)] space-y-0.5 leading-tight">
         <div className="flex justify-between">
           <span>No. Resi</span>
           <span className="font-bold">
@@ -139,20 +139,20 @@ export default function PrintReceiptButton({ order, store }: PrintReceiptButtonP
       <div className="border-b border-dashed border-black my-2" />
 
       {/* Kolom Judul Item */}
-      <div className="text-[11px] font-bold flex justify-between pb-1 border-b border-black">
+      <div className="text-[var(--text-caption)] font-bold flex justify-between pb-1 border-b border-black">
         <span>PRODUK</span>
         <span>SUBTOTAL</span>
       </div>
 
       {/* Daftar Item Pesanan */}
-      <div className="text-[11px] py-1.5 space-y-2">
+      <div className="text-[var(--text-caption)] py-1.5 space-y-2">
         {order?.order_items && order.order_items.length > 0 ? (
           order.order_items.map((item, idx) => (
             <div key={item.id || idx} className="space-y-0.5">
               <div className="font-semibold text-black leading-tight">
                 {item.nama_produk}
               </div>
-              <div className="flex justify-between text-gray-900 text-[10.5px]">
+              <div className="flex justify-between text-gray-900 text-[var(--text-caption)]">
                 <span>
                   {item.qty} × {formatRp(item.harga_saat_beli)}
                 </span>
@@ -168,7 +168,7 @@ export default function PrintReceiptButton({ order, store }: PrintReceiptButtonP
       <div className="border-b border-dashed border-black my-2" />
 
       {/* Rincian Total */}
-      <div className="text-[11px] space-y-1">
+      <div className="text-[var(--text-caption)] space-y-1">
         <div className="flex justify-between">
           <span>Subtotal</span>
           <span>{formatRp(order?.subtotal || order?.total || 0)}</span>
@@ -181,12 +181,12 @@ export default function PrintReceiptButton({ order, store }: PrintReceiptButtonP
           <span>TOTAL BAYAR</span>
           <span>{formatRp(order?.total || 0)}</span>
         </div>
-        <div className="flex justify-between pt-0.5 text-[10.5px] text-gray-800">
+        <div className="flex justify-between pt-0.5 text-[var(--text-caption)] text-gray-800">
           <span>Metode Bayar</span>
           <span>Tunai / COD di Toko</span>
         </div>
         {order?.catatan && (
-          <div className="text-[10px] text-gray-800 pt-1 italic">
+          <div className="text-[var(--text-caption)] text-gray-800 pt-1 italic">
             Catatan: {order.catatan}
           </div>
         )}
@@ -195,7 +195,7 @@ export default function PrintReceiptButton({ order, store }: PrintReceiptButtonP
       <div className="border-b border-dashed border-black my-2.5" />
 
       {/* Footer Struk */}
-      <div className="text-center text-[10.5px] leading-tight space-y-1">
+      <div className="text-center text-[var(--text-caption)] leading-tight space-y-1">
         <div className="font-bold">TERIMA KASIH ATAS KUNJUNGAN ANDA</div>
         <div className="text-gray-800">
           Harap simpan struk ini saat mengambil pesanan di kasir toko.

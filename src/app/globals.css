@@ -13,7 +13,23 @@
   --accent-2:  #E85521;  /* oranye lebih gelap (gradient stop 2, hover) */
   --accent-bg: #FFEBE3;  /* background pucat aksen (badge, thumb kosong) */
   --danger:    #E74C3C;  /* merah untuk aksi hapus */
+  --success:   #10B981;  /* hijau untuk sukses */
+  --warning:   #F59E0B;  /* kuning/oranye untuk peringatan */
   --app-max:   480px;
+
+  /* Radius Scale */
+  --radius-sm: 12px;
+  --radius-md: 16px;
+  --radius-lg: 20px;
+  --radius-xl: 24px;
+
+  /* Typography Scale */
+  --text-caption: 11px;
+  --text-small: 12px;
+  --text-body: 14px;
+  --text-subtitle: 15px;
+  --text-title: 16px;
+  --text-heading: 18px;
 
   /* 3D Puffy Neumorphic Shadow */
   --shadow-3d: 0 10px 25px -5px rgba(232,85,33,.12), 0 4px 8px -4px rgba(43,24,16,.05), inset 0 1px 0 #ffffff;
@@ -41,6 +57,20 @@
   --color-accent-2: var(--accent-2);
   --color-accent-bg: var(--accent-bg);
   --color-danger: var(--danger);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-xl);
+
+  --text-caption: var(--text-caption);
+  --text-small: var(--text-small);
+  --text-body: var(--text-body);
+  --text-subtitle: var(--text-subtitle);
+  --text-title: var(--text-title);
+  --text-heading: var(--text-heading);
 
   --shadow-3d: var(--shadow-3d);
 }

@@ -103,18 +103,18 @@ export default function AdminPromoList({ initialPromos, products }: AdminPromoLi
       {/* Promos List */}
       <div className="space-y-3">
         {promos.length === 0 ? (
-          <div className="card-3d bg-white border border-[rgba(232,214,205,0.9)] rounded-[20px] p-8 text-center text-xs text-[var(--ink-soft)]">
+          <div className="card-3d bg-white border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-lg)] p-8 text-center text-xs text-[var(--ink-soft)]">
             Belum ada promo aktif di database. Sistem saat ini menampilkan banner bawaan toko. Tambahkan promo pertama Anda!
           </div>
         ) : (
           promos.map((p) => (
             <div
               key={p.id}
-              className="card-3d bg-white border border-[rgba(232,214,205,0.9)] rounded-[20px] p-4 shadow-3d flex items-center gap-3.5"
+              className="card-3d bg-white border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-lg)] p-4 shadow-3d flex items-center gap-3.5"
             >
               {/* Preview image */}
               <div
-                className="relative w-16 h-16 rounded-[14px] overflow-hidden shrink-0 flex items-center justify-center text-white"
+                className="relative w-16 h-16 rounded-[var(--radius-md)] overflow-hidden shrink-0 flex items-center justify-center text-white"
                 style={{ background: p.banner_bg || 'linear-gradient(135deg, #FF6B35 0%, #E85521 100%)' }}
               >
                 {p.image_url ? (
@@ -127,22 +127,22 @@ export default function AdminPromoList({ initialPromos, products }: AdminPromoLi
               {/* Info */}
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
-                  <span className="text-[9.5px] font-sora font-extrabold uppercase px-2 py-0.5 rounded-full bg-orange-100 text-orange-800">
+                  <span className="text-[var(--text-caption)] font-sora font-extrabold uppercase px-2 py-0.5 rounded-full bg-orange-100 text-orange-800">
                     {p.badge_text || 'PROMO'}
                   </span>
                   {p.diskon_persen && (
-                    <span className="text-[9.5px] font-sora font-bold bg-amber-400 text-black px-1.5 py-0.5 rounded-md">
+                    <span className="text-[var(--text-caption)] font-sora font-bold bg-amber-400 text-black px-1.5 py-0.5 rounded-md">
                       -{p.diskon_persen}%
                     </span>
                   )}
-                  <span className={`text-[10px] font-bold ${p.is_active ? 'text-emerald-600' : 'text-gray-400'}`}>
+                  <span className={`text-[var(--text-caption)] font-bold ${p.is_active ? 'text-emerald-600' : 'text-gray-400'}`}>
                     {p.is_active ? '● Aktif' : '○ Nonaktif'}
                   </span>
                 </div>
                 <h3 className="text-xs font-bold text-[var(--ink)] line-clamp-1 mt-1">{p.judul}</h3>
-                {p.subjudul && <p className="text-[11px] text-[var(--ink-soft)] line-clamp-1">{p.subjudul}</p>}
+                {p.subjudul && <p className="text-[var(--text-caption)] text-[var(--ink-soft)] line-clamp-1">{p.subjudul}</p>}
                 {p.products && (
-                  <p className="text-[10.5px] text-[var(--accent-2)] font-semibold mt-0.5 line-clamp-1">
+                  <p className="text-[var(--text-caption)] text-[var(--accent-2)] font-semibold mt-0.5 line-clamp-1">
                     🔗 Terhubung: {p.products.nama}
                   </p>
                 )}
@@ -176,7 +176,7 @@ export default function AdminPromoList({ initialPromos, products }: AdminPromoLi
       {/* Modal Form Tambah / Edit Promo */}
       {showForm && (
         <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 animate-fade-in">
-          <div className="card-3d bg-white rounded-[24px] p-5 w-full max-w-[460px] shadow-2xl border border-[var(--line)] max-h-[90vh] overflow-y-auto">
+          <div className="card-3d bg-white rounded-[var(--radius-xl)] p-5 w-full max-w-[460px] shadow-2xl border border-[var(--line)] max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between pb-3 border-b border-[var(--line)] mb-4">
               <h3 className="font-sora font-bold text-sm text-[var(--ink)]">
                 {editingPromo ? 'Edit Promo' : 'Tambah Promo Baru'}

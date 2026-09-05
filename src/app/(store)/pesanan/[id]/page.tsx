@@ -52,10 +52,10 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
 
       <div className="p-4 space-y-3.5">
         {/* Status Stepper Card */}
-        <div className="card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[20px] p-4 shadow-3d">
+        <div className="card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-lg)] p-4 shadow-3d">
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-sora font-bold text-sm text-[var(--ink)]">Status Pesanan</h2>
-            <span className="text-[10.5px] font-bold bg-[var(--accent-bg)] text-[var(--accent-2)] px-2.5 py-0.5 rounded-full">
+            <span className="text-[var(--text-caption)] font-bold bg-[var(--accent-bg)] text-[var(--accent-2)] px-2.5 py-0.5 rounded-full">
               {getOrderStatusLabel(order.status)}
             </span>
           </div>
@@ -87,7 +87,7 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
         </div>
 
         {/* Lokasi Pengambilan / Pengantaran */}
-        <div className="card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[20px] p-4 shadow-3d">
+        <div className="card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-lg)] p-4 shadow-3d">
           {order.metode_pengiriman === 'antar_alamat' ? (
             <>
               <h2 className="font-sora font-bold text-sm text-[var(--ink)] mb-2 flex items-center gap-2">
@@ -103,7 +103,7 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
                   Jarak Pengantaran: ~{order.jarak_km} km dari toko
                 </p>
               ) : null}
-              <p className="text-[11px] text-emerald-700 font-bold mt-1">
+              <p className="text-[var(--text-caption)] text-emerald-700 font-bold mt-1">
                 {order.ongkir === 0 ? '🎉 Gratis Ongkir (Radius ≤ 7 km)' : `Ongkir: ${formatRupiah(order.ongkir || 15000)}`}
               </p>
             </>
@@ -142,7 +142,7 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
         </div>
 
         {/* Info Pemesan */}
-        <div className="card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[20px] p-4 shadow-3d">
+        <div className="card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-lg)] p-4 shadow-3d">
           <h2 className="font-sora font-bold text-sm text-[var(--ink)] mb-3">Info Pemesan</h2>
           <div className="space-y-1.5 text-xs font-medium">
             <div className="flex justify-between">
@@ -175,7 +175,7 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
         </div>
 
         {/* Item Pesanan (Struk Nota Dashed) */}
-        <div className="card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[20px] p-4 shadow-3d">
+        <div className="card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-lg)] p-4 shadow-3d">
           <h2 className="font-sora font-bold text-sm text-[var(--ink)] mb-3">Item Pesanan</h2>
           <div className="space-y-3">
             {order.order_items.map((item) => (
@@ -255,7 +255,7 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
           />
         </div>
 
-        <p className="text-[11px] text-[var(--ink-soft)] text-center font-medium">
+        <p className="text-[var(--text-caption)] text-[var(--ink-soft)] text-center font-medium">
           ID Pesanan: {order.id.slice(0, 8).toUpperCase()}
         </p>
       </div>

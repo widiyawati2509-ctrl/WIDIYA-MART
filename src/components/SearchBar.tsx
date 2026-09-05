@@ -39,7 +39,7 @@ export default function SearchBar({ defaultValue }: SearchBarProps) {
         name="q"
         defaultValue={defaultValue}
         placeholder="Cari produk kebutuhan..."
-        className="w-full min-w-0 rounded-[16px] border border-[var(--line)] bg-white pl-10 pr-4 py-2.5 text-sm text-[var(--ink)] placeholder:text-[var(--ink-soft)] shadow-[0_4px_10px_-2px_rgba(43,24,16,.04),inset_0_1px_0_#ffffff] outline-none transition-all focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
+        className="w-full min-w-0 rounded-[var(--radius-md)] border border-[var(--line)] bg-white pl-10 pr-4 py-2.5 text-sm text-[var(--ink)] placeholder:text-[var(--ink-soft)] shadow-[0_4px_10px_-2px_rgba(43,24,16,.04),inset_0_1px_0_#ffffff] outline-none transition-all focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
       />
     </form>
   )
