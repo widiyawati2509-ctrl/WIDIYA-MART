@@ -52,7 +52,7 @@ export default function UnduhApkPage() {
 
           {/* Download Button */}
           <a
-            href="/TOKO-MIRING.apk"
+            href="https://github.com/widiyawati2509-ctrl/WIDIYA-MART/raw/main/android/release/TOKO-MIRING.apk"
             download="TOKO-MIRING.apk"
             className="press w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-[var(--accent)] to-[var(--accent-2)] text-white font-sora font-bold text-sm shadow-btn flex items-center justify-center gap-2 active:scale-95 transition-all"
           >
