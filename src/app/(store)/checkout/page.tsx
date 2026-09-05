@@ -3,8 +3,10 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { formatRupiah } from '@/lib/utils'
 import { createOrder } from '@/lib/actions/orders'
+import { getUserLoyaltySummary } from '@/lib/actions/loyalty'
+import CheckoutFormClient from '@/components/CheckoutFormClient'
 import { MapPin, Clock, Phone, ShieldCheck } from 'lucide-react'
-import { Card, Field, Input, Button, Badge } from '@/components/ui'
+import { Card, Field, Input, Badge } from '@/components/ui'
 
 export default async function CheckoutPage() {
   const supabase = await createClient()
@@ -12,7 +14,7 @@ export default async function CheckoutPage() {
 
   if (!user) redirect('/masuk')
 
-  const [profileResult, cartResult, storeResult] = await Promise.all([
+  const [profileResult, cartResult, storeResult, loyaltySummary] = await Promise.all([
     supabase.from('profiles').select('nama, no_hp').eq('id', user.id).single(),
     (async () => {
       const { data: cart } = await supabase
@@ -40,6 +42,7 @@ export default async function CheckoutPage() {
       return { items: safeItems, total }
     })(),
     supabase.from('store_info').select('*').single(),
+    getUserLoyaltySummary(user.id),
   ])
 
   const profile = profileResult.data
@@ -56,7 +59,11 @@ export default async function CheckoutPage() {
         <p className="text-xs text-[var(--ink-soft)] font-medium">Periksa kembali data belanjaan kamu</p>
       </div>
 
-      <form action={createOrder} className="space-y-3.5 px-4">
+      <CheckoutFormClient
+        items={items}
+        subtotal={total}
+        loyaltySummary={loyaltySummary}
+      >
         {/* Info Pengambilan */}
         <Card>
           <div className="flex items-center gap-2 mb-3">
@@ -137,38 +144,7 @@ export default async function CheckoutPage() {
             />
           </Field>
         </Card>
-
-        {/* Ringkasan Pesanan (Struk Nota dengan Garis Putus-putus) */}
-        <Card>
-          <h2 className="font-sora font-bold text-sm text-[var(--ink)] mb-3">Ringkasan Belanja</h2>
-          <div className="space-y-2 text-xs mb-3">
-            {items.map((item) => (
-              <div key={item.id} className="flex justify-between py-1">
-                <span className="text-[var(--ink-soft)] line-clamp-1 pr-2 font-medium">
-                  {item.products?.nama} × {item.qty}
-                </span>
-                <span className="font-bold text-[var(--ink)] tabular-nums shrink-0 font-sora">
-                  {formatRupiah((item.products?.harga ?? 0) * item.qty)}
-                </span>
-              </div>
-            ))}
-          </div>
-          <div className="receipt-dashed pt-3 flex justify-between items-center text-sm font-bold text-[var(--ink)]">
-            <span className="font-sora">Total Tagihan</span>
-            <span className="font-sora font-bold text-[var(--accent-2)] text-xl tabular-nums">
-              {formatRupiah(total)}
-            </span>
-          </div>
-        </Card>
-
-        <Button
-          type="submit"
-          variant="primary"
-          className="w-full py-3.5 rounded-[16px] text-base checkout-btn"
-        >
-          Buat Pesanan — {formatRupiah(total)}
-        </Button>
-      </form>
+      </CheckoutFormClient>
     </div>
   )
 }

@@ -51,6 +51,8 @@ export default async function AdminLayout({
     { href: '/admin/produk', label: 'Produk' },
     { href: '/admin/kategori', label: 'Kategori' },
     { href: '/admin/pesanan', label: 'Pesanan' },
+    { href: '/admin/promo', label: 'Promo' },
+    { href: '/admin/poin', label: 'Poin' },
     { href: '/admin/pengaturan', label: 'Pengaturan' },
   ]
 

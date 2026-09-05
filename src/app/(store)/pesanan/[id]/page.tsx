@@ -6,6 +6,7 @@ import { ChevronLeft, CheckCircle, Clock, MapPin, Phone } from 'lucide-react'
 import Link from 'next/link'
 import PrintReceiptButton from '@/components/PrintReceiptButton'
 import DeleteOrderButton from '@/components/admin/DeleteOrderButton'
+import ReorderButton from '@/components/ReorderButton'
 
 interface OrderDetailPageProps {
   params: Promise<{ id: string }>
@@ -154,15 +155,34 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
               </div>
             ))}
           </div>
+          {/* Diskon Poin & Ringkasan */}
+          {order.diskon_poin > 0 && (
+            <div className="pt-2 border-t border-[var(--line)] flex justify-between items-center text-xs text-emerald-700 font-semibold">
+              <span>Diskon Poin Digunakan ({order.poin_digunakan} poin)</span>
+              <span>-{formatRupiah(order.diskon_poin)}</span>
+            </div>
+          )}
+          {order.poin_didapat > 0 && (
+            <div className="pt-1.5 flex justify-between items-center text-xs text-amber-700 font-semibold">
+              <span>Poin Didapat dari Pesanan</span>
+              <span>+{order.poin_didapat} Poin</span>
+            </div>
+          )}
+
           <div className="receipt-dashed mt-3 pt-3 flex justify-between items-center text-sm font-bold">
-            <span className="font-sora text-[var(--ink)]">Total Tagihan</span>
+            <span className="font-sora text-[var(--ink)]">Total Tagihan (COD)</span>
             <span className="font-sora font-bold text-[var(--accent-2)] text-lg tabular-nums">
               {formatRupiah(order.total)}
             </span>
           </div>
         </div>
 
-        <div className="pt-2">
+        {/* Beli Lagi Quick Action */}
+        <div className="pt-1">
+          <ReorderButton orderId={order.id} />
+        </div>
+
+        <div className="pt-1">
           <DeleteOrderButton
             orderId={order.id}
             orderNumber={order.id.slice(0, 8).toUpperCase()}

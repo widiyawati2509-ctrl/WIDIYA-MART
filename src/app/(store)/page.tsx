@@ -8,12 +8,14 @@ import { Section } from '@/components/ui'
 import Image from 'next/image'
 import Link from 'next/link'
 
+import { getPublicPromos } from '@/lib/actions/promos'
+
 export const revalidate = 60
 
 export default async function HomePage() {
   const supabase = createPublicClient()
 
-  const [{ data: categories }, { data: products }, { data: storeInfo }] =
+  const [{ data: categories }, { data: products }, { data: storeInfo }, promos] =
     await Promise.all([
       supabase
         .from('categories')
@@ -27,6 +29,7 @@ export default async function HomePage() {
         .order('created_at', { ascending: false })
         .limit(12),
       supabase.from('store_info').select('*').single(),
+      getPublicPromos(),
     ])
 
   return (
@@ -62,7 +65,7 @@ export default async function HomePage() {
 
       {/* Promo Banner Carousel */}
       <div className="px-4 mb-5">
-        <PromoBannerCarousel />
+        <PromoBannerCarousel banners={promos} />
       </div>
 
       {/* Categories (Minimalist Space-Saving Strip) */}

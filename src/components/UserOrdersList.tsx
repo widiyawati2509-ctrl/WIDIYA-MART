@@ -5,7 +5,7 @@ import { useState, useTransition } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { formatRupiah, getOrderStatusLabel } from '@/lib/utils'
-import { deleteOrders, deleteAllOrders, deleteSingleOrder } from '@/lib/actions/orders'
+import { deleteOrders, deleteAllOrders, deleteSingleOrder, reorderItems } from '@/lib/actions/orders'
 import { 
   Package, 
   ChevronRight, 
@@ -16,7 +16,8 @@ import {
   AlertTriangle, 
   Loader2, 
   X,
-  SlidersHorizontal
+  SlidersHorizontal,
+  RotateCcw
 } from 'lucide-react'
 import { EmptyState } from '@/components/ui'
 
@@ -45,6 +46,7 @@ export default function UserOrdersList({ initialOrders }: UserOrdersListProps) {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
   const [isSelectMode, setIsSelectMode] = useState(false)
   const [isPending, startTransition] = useTransition()
+  const [reorderingId, setReorderingId] = useState<string | null>(null)
 
   const [confirmModal, setConfirmModal] = useState<{
     isOpen: boolean
@@ -340,9 +342,47 @@ export default function UserOrdersList({ initialOrders }: UserOrdersListProps) {
                         </div>
                       </Link>
 
-                      {/* Tombol Hapus Satuan Cepat (Saat bukan mode centang massal) */}
+                      {/* Tombol Aksi: Beli Lagi + Hapus Satuan Cepat */}
                       {!isSelectMode && (
-                        <div className="mt-2.5 pt-2 border-t border-gray-100 flex justify-end">
+                        <div className="mt-2.5 pt-2 border-t border-gray-100 flex items-center justify-between">
+                          <button
+                            type="button"
+                            onClick={async (e) => {
+                              e.preventDefault()
+                              e.stopPropagation()
+                              setReorderingId(order.id)
+                              try {
+                                const res = await reorderItems(order.id)
+                                if (res.success) {
+                                  setFeedbackMsg({
+                                    type: 'success',
+                                    text: `${res.count} produk berhasil ditambahkan ke keranjang!`,
+                                  })
+                                  router.push('/keranjang')
+                                } else {
+                                  setFeedbackMsg({
+                                    type: 'error',
+                                    text: res.error || 'Gagal menambahkan produk ke keranjang',
+                                  })
+                                }
+                              } catch {
+                                setFeedbackMsg({ type: 'error', text: 'Terjadi kesalahan sistem' })
+                              } finally {
+                                setReorderingId(null)
+                              }
+                            }}
+                            disabled={reorderingId === order.id}
+                            className="press inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[var(--accent-bg)] text-[var(--accent-2)] hover:bg-[var(--accent)] hover:text-white font-sora font-bold text-xs shadow-xs active:scale-95 transition-all"
+                            title="Beli produk dalam pesanan ini lagi"
+                          >
+                            {reorderingId === order.id ? (
+                              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                            ) : (
+                              <RotateCcw className="w-3.5 h-3.5" />
+                            )}
+                            <span>Beli Lagi</span>
+                          </button>
+
                           <button
                             type="button"
                             onClick={(e) => {

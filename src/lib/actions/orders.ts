@@ -6,6 +6,9 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { checkoutSchema } from '@/lib/validations'
 
+import { getLoyaltyConfig, getUserLoyaltySummary } from '@/lib/actions/loyalty'
+import { addToCart } from '@/lib/actions/cart'
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type SupabaseClient = any
 
@@ -53,13 +56,39 @@ export async function createOrder(formData: FormData): Promise<{ error?: string 
     return sum + (product?.harga ?? 0) * item.qty
   }, 0)
 
+  // Loyalty points deduction handling
+  const poinToRedeem = Math.max(0, parseInt(formData.get('poin_digunakan') as string) || 0)
+  let diskonPoin = 0
+  let finalTotal = subtotal
+
+  if (poinToRedeem > 0) {
+    try {
+      const config = await getLoyaltyConfig()
+      if (config.is_active) {
+        const summary = await getUserLoyaltySummary(user.id)
+        const userMaxPoints = summary?.totalPoints ?? 0
+        const validPoints = Math.min(poinToRedeem, userMaxPoints)
+
+        if (validPoints > 0) {
+          const maxDiscount = Math.floor(subtotal * (config.max_redeem_percentage / 100))
+          diskonPoin = Math.min(validPoints * config.redeem_rate, maxDiscount)
+          finalTotal = Math.max(0, subtotal - diskonPoin)
+        }
+      }
+    } catch (e) {
+      console.warn('Loyalty points calculation error:', e)
+    }
+  }
+
   // Create order
   const { data: order, error: orderError } = await supabase
     .from('orders')
     .insert({
       user_id: user.id,
       subtotal,
-      total: subtotal,
+      total: finalTotal,
+      poin_digunakan: diskonPoin > 0 ? poinToRedeem : 0,
+      diskon_poin: diskonPoin,
       nama_pemesan: parsed.data.nama_pemesan,
       no_hp_pemesan: parsed.data.no_hp_pemesan,
       catatan: parsed.data.catatan,
@@ -68,6 +97,21 @@ export async function createOrder(formData: FormData): Promise<{ error?: string 
     .single()
 
   if (orderError || !order) return { error: 'Gagal membuat pesanan' }
+
+  // Record points debit transaction if redeemed
+  if (diskonPoin > 0 && poinToRedeem > 0) {
+    try {
+      await supabase.from('loyalty_transactions').insert({
+        user_id: user.id,
+        order_id: order.id,
+        points: -poinToRedeem,
+        type: 'redeemed',
+        description: `Diskon Rp ${diskonPoin.toLocaleString('id-ID')} pada pesanan #${order.id.slice(0, 8)}`,
+      })
+    } catch (e) {
+      console.warn('Failed to insert loyalty redemption record:', e)
+    }
+  }
 
   // Create order items
   const orderItems = items.map((item: { qty: number; products: unknown }) => {
@@ -122,9 +166,86 @@ export async function updateOrderStatus(orderId: string, status: string): Promis
 
   if (error) return { error: 'Gagal update status' }
 
+  // Credit loyalty points if status changed to 'selesai'
+  if (status === 'selesai') {
+    try {
+      const { data: existingAward } = await supabase
+        .from('loyalty_transactions')
+        .select('id')
+        .eq('order_id', orderId)
+        .eq('type', 'earned')
+        .maybeSingle()
+
+      if (!existingAward) {
+        const { data: orderData } = await supabase
+          .from('orders')
+          .select('user_id, total')
+          .eq('id', orderId)
+          .single()
+
+        if (orderData && orderData.user_id) {
+          const config = await getLoyaltyConfig()
+          if (config.is_active && orderData.total >= config.min_order_amount) {
+            const earned = Math.floor(orderData.total / config.threshold_amount) * config.points_per_threshold
+            if (earned > 0) {
+              await supabase.from('loyalty_transactions').insert({
+                user_id: orderData.user_id,
+                order_id: orderId,
+                points: earned,
+                type: 'earned',
+                description: `Poin belanja pesanan COD #${orderId.slice(0, 8)}`,
+              })
+              await supabase.from('orders').update({ poin_didapat: earned }).eq('id', orderId)
+            }
+          }
+        }
+      }
+    } catch (e) {
+      console.warn('Loyalty points earning credit skipped/failed:', e)
+    }
+  }
+
   revalidatePath('/admin/pesanan')
   revalidatePath(`/admin/pesanan/${orderId}`)
+  revalidatePath('/pesanan')
+  revalidatePath(`/pesanan/${orderId}`)
+  revalidatePath('/poin')
   return { success: true }
+}
+
+export async function reorderItems(orderId: string): Promise<{ success: boolean; count: number; error?: string }> {
+  try {
+    const supabase: SupabaseClient = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return { success: false, count: 0, error: 'Silakan login terlebih dahulu' }
+
+    const { data: orderItems, error: itemsErr } = await supabase
+      .from('order_items')
+      .select('product_id, qty, products(id, stok, is_active)')
+      .eq('order_id', orderId)
+
+    if (itemsErr || !orderItems || orderItems.length === 0) {
+      return { success: false, count: 0, error: 'Item pesanan tidak ditemukan' }
+    }
+
+    let added = 0
+    for (const item of orderItems) {
+      if (item.product_id && item.products && item.products.is_active && item.products.stok > 0) {
+        const qtyToAdd = Math.min(item.qty, item.products.stok)
+        await addToCart(item.product_id, qtyToAdd)
+        added++
+      }
+    }
+
+    if (added === 0) {
+      return { success: false, count: 0, error: 'Stok produk pesanan sebelumnya sedang habis' }
+    }
+
+    revalidatePath('/keranjang')
+    return { success: true, count: added }
+  } catch (err: any) {
+    return { success: false, count: 0, error: err.message }
+  }
 }
 
 export async function deleteOrders(orderIds: string[]): Promise<{ error?: string; success?: boolean; count?: number }> {

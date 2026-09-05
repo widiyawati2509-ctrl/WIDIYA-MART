@@ -35,6 +35,21 @@ export default function ProductCard({ product }: ProductCardProps) {
             </div>
           )}
 
+          {/* Promo / Discount Badge */}
+          {product.diskon_persen ? (
+            <div className="absolute top-1.5 left-1.5 z-10">
+              <span className="text-[9px] font-sora font-extrabold bg-gradient-to-r from-red-600 to-orange-500 text-white px-2 py-0.5 rounded-[6px] shadow-sm tracking-wide">
+                -{product.diskon_persen}%
+              </span>
+            </div>
+          ) : product.badge_text ? (
+            <div className="absolute top-1.5 left-1.5 z-10">
+              <span className="text-[9px] font-sora font-extrabold bg-gradient-to-r from-red-600 to-orange-500 text-white px-1.5 py-0.5 rounded-[6px] shadow-sm tracking-wide">
+                {product.badge_text}
+              </span>
+            </div>
+          ) : null}
+
           {outOfStock && (
             <div className="absolute inset-0 flex items-center justify-center bg-white/70 backdrop-blur-[2px]">
               <span className="text-[10px] font-bold bg-[var(--paper)] text-[var(--ink-soft)] px-2 py-0.5 rounded-full border border-[var(--line)]">

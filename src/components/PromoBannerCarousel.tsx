@@ -58,20 +58,21 @@ const banners = [
   },
 ]
 
-export default function PromoBannerCarousel() {
+export default function PromoBannerCarousel({ banners: propBanners }: { banners?: any[] }) {
+  const activeBanners = propBanners && propBanners.length > 0 ? propBanners : banners
   const [current, setCurrent] = useState(0)
   const [isPaused, setIsPaused] = useState(false)
 
   useEffect(() => {
-    if (isPaused) return
+    if (isPaused || activeBanners.length <= 1) return
     const timer = setInterval(() => {
-      setCurrent((prev) => (prev + 1) % banners.length)
+      setCurrent((prev) => (prev + 1) % activeBanners.length)
     }, 4000)
     return () => clearInterval(timer)
-  }, [isPaused])
+  }, [isPaused, activeBanners.length])
 
-  const nextSlide = () => setCurrent((prev) => (prev + 1) % banners.length)
-  const prevSlide = () => setCurrent((prev) => (prev - 1 + banners.length) % banners.length)
+  const nextSlide = () => setCurrent((prev) => (prev + 1) % activeBanners.length)
+  const prevSlide = () => setCurrent((prev) => (prev - 1 + activeBanners.length) % activeBanners.length)
 
   return (
     <div
@@ -86,87 +87,112 @@ export default function PromoBannerCarousel() {
         className="flex transition-transform duration-500 ease-out"
         style={{ transform: `translateX(-${current * 100}%)` }}
       >
-        {banners.map((b) => (
-          <div
-            key={b.id}
-            className="w-full shrink-0 text-white p-5 rounded-[20px] flex flex-col justify-between relative min-h-[154px]"
-            style={{
-              background: b.backgroundStyle,
-              boxShadow: b.boxShadow,
-            }}
-          >
-            <div className="relative z-10 pr-28">
-              <div className="flex items-center gap-2 mb-2">
-                <span className="bg-white/20 backdrop-blur-md text-white text-[10px] font-sora font-bold tracking-wider px-2.5 py-0.5 rounded-full uppercase border border-white/30">
-                  {b.badge}
-                </span>
-                <span className="text-[11px] text-white/90 font-semibold">
-                  {b.tag}
-                </span>
-              </div>
-              <h3 className="text-lg font-sora font-bold leading-tight mb-1">
-                {b.title}
-              </h3>
-              <p className="text-xs text-white/90 line-clamp-1 mb-3 font-medium">
-                {b.subtitle}
-              </p>
-              <Link
-                href={b.link}
-                className="inline-flex items-center gap-1.5 bg-white text-[var(--accent-2)] font-sora font-bold text-xs px-3.5 py-2 rounded-[12px] shadow-[0_4px_12px_rgba(43,24,16,0.18),inset_0_1px_0_#ffffff] press"
-              >
-                <span>{b.cta}</span>
-                <ChevronRight className="w-3.5 h-3.5" />
-              </Link>
-            </div>
+        {activeBanners.map((b) => {
+          const badgeText = b.badge_text || b.badge || 'PROMO'
+          const titleText = b.judul || b.title
+          const subtitleText = b.subjudul || b.subtitle
+          const linkUrl = b.link_url || b.link || '#'
+          const imgSrc = b.image_url || b.productImage
+          const bgStyle = b.banner_bg || b.backgroundStyle || 'linear-gradient(135deg, #FF6B35 0%, #E85521 100%)'
+          const ctaText = b.cta || (b.diskon_persen ? `Diskon ${b.diskon_persen}%` : 'Beli Sekarang')
 
-            {/* Real Product Image with 3D Puffy Pedestal Frame */}
-            <div className="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none transition-transform group-hover:scale-105 duration-300">
-              <div className="w-[88px] h-[88px] sm:w-[96px] sm:h-[96px] rounded-[20px] bg-white/95 backdrop-blur-md p-1.5 shadow-[0_12px_24px_-4px_rgba(0,0,0,0.28),inset_0_2px_4px_rgba(255,255,255,0.9)] border border-white/70 flex items-center justify-center relative overflow-hidden">
-                <Image
-                  src={b.productImage}
-                  alt={b.title}
-                  fill
-                  className="object-contain p-1.5"
-                  sizes="96px"
-                />
+          return (
+            <div
+              key={b.id}
+              className="w-full shrink-0 text-white p-5 rounded-[20px] flex flex-col justify-between relative min-h-[154px]"
+              style={{
+                background: bgStyle,
+                boxShadow: b.boxShadow || '0 10px 25px -5px rgba(232,85,33,0.3), inset 0 1px 0 rgba(255,255,255,0.4)',
+              }}
+            >
+              <div className="relative z-10 pr-28">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="bg-white/20 backdrop-blur-md text-white text-[10px] font-sora font-bold tracking-wider px-2.5 py-0.5 rounded-full uppercase border border-white/30">
+                    {badgeText}
+                  </span>
+                  {b.tag && (
+                    <span className="text-[11px] text-white/90 font-semibold">
+                      {b.tag}
+                    </span>
+                  )}
+                  {b.diskon_persen && (
+                    <span className="bg-amber-400 text-[#2B1810] text-[10px] font-sora font-extrabold px-2 py-0.5 rounded-full shadow-xs">
+                      HEMAT {b.diskon_persen}%
+                    </span>
+                  )}
+                </div>
+                <h3 className="text-lg font-sora font-bold leading-tight mb-1 line-clamp-1">
+                  {titleText}
+                </h3>
+                {subtitleText && (
+                  <p className="text-xs text-white/90 line-clamp-1 mb-3 font-medium">
+                    {subtitleText}
+                  </p>
+                )}
+                <Link
+                  href={linkUrl}
+                  className="inline-flex items-center gap-1.5 bg-white text-[var(--accent-2)] font-sora font-bold text-xs px-3.5 py-2 rounded-[12px] shadow-[0_4px_12px_rgba(43,24,16,0.18),inset_0_1px_0_#ffffff] press"
+                >
+                  <span>{ctaText}</span>
+                  <ChevronRight className="w-3.5 h-3.5" />
+                </Link>
               </div>
+
+              {/* Product Image */}
+              {imgSrc && (
+                <div className="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none transition-transform group-hover:scale-105 duration-300">
+                  <div className="w-[88px] h-[88px] sm:w-[96px] sm:h-[96px] rounded-[20px] bg-white/95 backdrop-blur-md p-1.5 shadow-[0_12px_24px_-4px_rgba(0,0,0,0.28),inset_0_2px_4px_rgba(255,255,255,0.9)] border border-white/70 flex items-center justify-center relative overflow-hidden">
+                    <Image
+                      src={imgSrc}
+                      alt={titleText || 'Promo'}
+                      fill
+                      className="object-contain p-1.5"
+                      sizes="96px"
+                    />
+                  </div>
+                </div>
+              )}
             </div>
-          </div>
-        ))}
+          )
+        })}
       </div>
 
       {/* Manual Navigation Controls */}
-      <button
-        type="button"
-        onClick={prevSlide}
-        aria-label="Previous Slide"
-        className="absolute left-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-black/25 hover:bg-black/40 text-white flex items-center justify-center backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity"
-      >
-        <ChevronLeft className="w-4 h-4" />
-      </button>
-      <button
-        type="button"
-        onClick={nextSlide}
-        aria-label="Next Slide"
-        className="absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-black/25 hover:bg-black/40 text-white flex items-center justify-center backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity"
-      >
-        <ChevronRight className="w-4 h-4" />
-      </button>
-
-      {/* Dots Indicator */}
-      <div className="absolute bottom-2.5 right-4 flex items-center gap-1.5 z-10">
-        {banners.map((_, i) => (
+      {activeBanners.length > 1 && (
+        <>
           <button
-            key={i}
             type="button"
-            onClick={() => setCurrent(i)}
-            aria-label={`Slide ${i + 1}`}
-            className={`transition-all duration-300 rounded-full h-1.5 ${
-              i === current ? 'w-5 bg-white shadow-xs' : 'w-1.5 bg-white/50 hover:bg-white/75'
-            }`}
-          />
-        ))}
-      </div>
+            onClick={prevSlide}
+            aria-label="Previous Slide"
+            className="absolute left-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-black/25 hover:bg-black/40 text-white flex items-center justify-center backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity"
+          >
+            <ChevronLeft className="w-4 h-4" />
+          </button>
+          <button
+            type="button"
+            onClick={nextSlide}
+            aria-label="Next Slide"
+            className="absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-black/25 hover:bg-black/40 text-white flex items-center justify-center backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity"
+          >
+            <ChevronRight className="w-4 h-4" />
+          </button>
+
+          {/* Dots Indicator */}
+          <div className="absolute bottom-2.5 right-4 flex items-center gap-1.5 z-10">
+            {activeBanners.map((_, i) => (
+              <button
+                key={i}
+                type="button"
+                onClick={() => setCurrent(i)}
+                aria-label={`Slide ${i + 1}`}
+                className={`transition-all duration-300 rounded-full h-1.5 ${
+                  i === current ? 'w-5 bg-white shadow-xs' : 'w-1.5 bg-white/50 hover:bg-white/75'
+                }`}
+              />
+            ))}
+          </div>
+        </>
+      )}
     </div>
   )
 }

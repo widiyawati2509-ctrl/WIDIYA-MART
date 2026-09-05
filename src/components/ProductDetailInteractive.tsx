@@ -5,8 +5,9 @@ import { useState } from 'react'
 import Image from 'next/image'
 import { formatRupiah, parseProductVariants, formatWhatsAppUrl, type ProductVariant } from '@/lib/utils'
 import AddToCartButton from '@/components/AddToCartButton'
-import { Layers, Check, MessageCircle, Package, X, ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Layers, Check, MessageCircle, Package, X, ArrowRight, ChevronLeft, ChevronRight, Bookmark, BookmarkCheck } from 'lucide-react'
 import Link from 'next/link'
+import { toggleShoppingListItem } from '@/lib/actions/shopping-list'
 
 interface ProductDetailInteractiveProps {
   product: {
@@ -30,6 +31,24 @@ export default function ProductDetailInteractive({ product, storePhone = '087816
   const [showStockModal, setShowStockModal] = useState(false)
   const [activeImageIndex, setActiveImageIndex] = useState(0)
   const [touchStartX, setTouchStartX] = useState<number | null>(null)
+  const [isWishlisted, setIsWishlisted] = useState(false)
+  const [savingWishlist, setSavingWishlist] = useState(false)
+
+  const handleToggleWishlist = async () => {
+    setSavingWishlist(true)
+    try {
+      const res = await toggleShoppingListItem(product.id)
+      if (res.error) {
+        alert(res.error)
+      } else {
+        setIsWishlisted(res.inList)
+      }
+    } catch {
+      // ignore
+    } finally {
+      setSavingWishlist(false)
+    }
+  }
 
   // Aggregate all unique images: main product image + variant images
   const allImages: { url: string; variantName: string | null }[] = []
@@ -364,12 +383,34 @@ export default function ProductDetailInteractive({ product, storePhone = '087816
             href={whatsappUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="press flex flex-col items-center justify-center px-3.5 py-2.5 rounded-[16px] bg-emerald-500 hover:bg-emerald-600 text-white shadow-sm shrink-0 active:scale-95 transition-all"
+            className="press flex flex-col items-center justify-center px-3 py-2.5 rounded-[16px] bg-emerald-500 hover:bg-emerald-600 text-white shadow-sm shrink-0 active:scale-95 transition-all"
             title="Tanya stok via WhatsApp"
           >
-            <MessageCircle size={18} />
-            <span className="text-[10px] font-sora font-bold mt-0.5 leading-tight">Tanya Stok</span>
+            <MessageCircle size={17} />
+            <span className="text-[9.5px] font-sora font-bold mt-0.5 leading-tight">Tanya Stok</span>
           </a>
+
+          {/* Simpan ke Daftar Belanja (Wishlist / Shopping List) */}
+          <button
+            type="button"
+            onClick={handleToggleWishlist}
+            disabled={savingWishlist}
+            className={`press flex flex-col items-center justify-center px-3 py-2.5 rounded-[16px] border transition-all shrink-0 active:scale-95 shadow-sm ${
+              isWishlisted
+                ? 'bg-amber-500 text-white border-amber-600'
+                : 'bg-white hover:bg-amber-50 text-[var(--ink)] border-[rgba(232,214,205,0.9)]'
+            }`}
+            title={isWishlisted ? 'Tersimpan di Daftar Belanja' : 'Simpan ke Daftar Belanja'}
+          >
+            {isWishlisted ? (
+              <BookmarkCheck size={17} className="text-white" />
+            ) : (
+              <Bookmark size={17} className="text-amber-600" />
+            )}
+            <span className="text-[9.5px] font-sora font-bold mt-0.5 leading-tight">
+              {isWishlisted ? 'Tersimpan' : 'Catat'}
+            </span>
+          </button>
 
           {/* Add To Cart */}
           <div className="flex-1">
