@@ -425,18 +425,21 @@ export default function ProductDetailInteractive({ product, storePhone = '087816
       )}
 
       {/* Floating Action Bar: Tanya Stok WA + Add To Cart */}
-      <div className="fixed bottom-20 left-1/2 -translate-x-1/2 max-w-[480px] w-full px-4 z-40">
-        <div className="bg-[var(--paper)]/95 backdrop-blur-md p-2.5 rounded-[var(--radius-lg)] border border-[rgba(232,214,205,0.9)] shadow-[0_10px_25px_-5px_rgba(232,85,33,0.15)] flex items-center gap-2">
+      <div className="fixed bottom-20 left-1/2 -translate-x-1/2 max-w-[480px] w-full px-2.5 sm:px-4 z-40">
+        <div className="bg-[var(--paper)]/95 backdrop-blur-md p-2 sm:p-2.5 rounded-[var(--radius-lg)] border border-[rgba(232,214,205,0.9)] shadow-[0_10px_25px_-5px_rgba(232,85,33,0.15)] flex items-center gap-1.5 sm:gap-2">
           {/* Tanya Stok WhatsApp Button */}
           <a
             href={whatsappUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="press flex flex-col items-center justify-center px-3 py-2.5 rounded-[var(--radius-md)] bg-emerald-500 hover:bg-emerald-600 text-white shadow-sm shrink-0 active:scale-95 transition-all"
+            className="press flex flex-col items-center justify-center min-w-[40px] min-h-[40px] h-10 px-2 sm:px-2.5 py-1 rounded-[var(--radius-md)] bg-emerald-500 hover:bg-emerald-600 text-white shadow-sm shrink-0 active:scale-95 transition-all"
             title="Tanya stok via WhatsApp"
+            aria-label="Tanya stok via WhatsApp"
           >
-            <MessageCircle size={17} />
-            <span className="text-[var(--text-caption)] font-sora font-bold mt-0.5 leading-tight">Tanya Stok</span>
+            <MessageCircle size={18} className="shrink-0" />
+            <span className="hidden min-[380px]:inline text-[var(--text-caption)] font-sora font-bold mt-0.5 leading-tight whitespace-nowrap">
+              Tanya Stok
+            </span>
           </a>
 
           {/* Tombol Love / Favorit */}
@@ -444,22 +447,23 @@ export default function ProductDetailInteractive({ product, storePhone = '087816
             type="button"
             onClick={handleToggleWishlist}
             disabled={savingWishlist}
-            className={`press flex flex-col items-center justify-center px-3.5 py-2.5 rounded-[var(--radius-md)] border transition-all shrink-0 active:scale-95 shadow-sm ${
+            className={`press flex flex-col items-center justify-center min-w-[40px] min-h-[40px] h-10 px-2 sm:px-2.5 py-1 rounded-[var(--radius-md)] border transition-all shrink-0 active:scale-95 shadow-sm ${
               isWishlisted
                 ? 'bg-rose-50 text-rose-600 border-rose-200'
                 : 'bg-white hover:bg-rose-50 text-[var(--ink)] border-[rgba(232,214,205,0.9)]'
             }`}
             title={isWishlisted ? 'Tersimpan di Favorit' : 'Suka / Simpan Produk'}
+            aria-label={isWishlisted ? 'Hapus dari Favorit' : 'Suka / Simpan Produk'}
           >
             <Heart
               size={18}
-              className={`transition-transform duration-200 ${
+              className={`shrink-0 transition-transform duration-200 ${
                 isWishlisted
                   ? 'fill-rose-500 text-rose-500 stroke-[2] scale-110'
                   : 'text-gray-400 stroke-[1.8]'
               }`}
             />
-            <span className={`text-[var(--text-caption)] font-sora font-bold mt-0.5 leading-tight ${
+            <span className={`hidden min-[380px]:inline text-[var(--text-caption)] font-sora font-bold mt-0.5 leading-tight whitespace-nowrap ${
               isWishlisted ? 'text-rose-600' : 'text-[var(--ink)]'
             }`}>
               {isWishlisted ? 'Disukai' : 'Suka'}
@@ -467,7 +471,7 @@ export default function ProductDetailInteractive({ product, storePhone = '087816
           </button>
 
           {/* Add To Cart */}
-          <div className="flex-1">
+          <div className="flex-1 min-w-0">
             <AddToCartButton
               productId={product.id}
               disabled={isOutOfStock}

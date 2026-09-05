@@ -31,7 +31,7 @@ export default function AddToCartButton({ productId, disabled }: AddToCartButton
     return (
       <button
         disabled
-        className="w-full rounded-[var(--radius-md)] bg-[var(--line)]/60 py-3.5 text-sm font-semibold text-[var(--ink-soft)] cursor-not-allowed"
+        className="w-full rounded-[var(--radius-md)] bg-[var(--line)]/60 h-10 xs:h-11 px-3 text-xs xs:text-sm font-semibold text-[var(--ink-soft)] cursor-not-allowed whitespace-nowrap"
       >
         Stok Habis
       </button>
@@ -39,27 +39,27 @@ export default function AddToCartButton({ productId, disabled }: AddToCartButton
   }
 
   return (
-    <div className="flex gap-2.5 items-center">
+    <div className="flex gap-1.5 xs:gap-2 items-center w-full min-w-0">
       {/* Stepper Qty (10-12px radius, warm paper border) */}
-      <div className="flex items-center gap-1 border border-[var(--line)] bg-white rounded-[var(--radius-sm)] p-1 shadow-[0_2px_6px_rgba(43,24,16,0.04)]">
+      <div className="flex items-center gap-0.5 xs:gap-1 border border-[var(--line)] bg-white rounded-[var(--radius-sm)] p-0.5 xs:p-1 shadow-[0_2px_6px_rgba(43,24,16,0.04)] shrink-0">
         <button
           type="button"
           onClick={() => setQty((q) => Math.max(1, q - 1))}
-          className="press w-8 h-8 flex items-center justify-center rounded-[var(--radius-sm)] hover:bg-[var(--paper)] text-[var(--ink)]"
+          className="press w-7 h-7 xs:w-8 xs:h-8 flex items-center justify-center rounded-[var(--radius-sm)] hover:bg-[var(--paper)] text-[var(--ink)] shrink-0"
           aria-label="Kurangi jumlah"
         >
-          <Minus size={16} />
+          <Minus size={15} />
         </button>
-        <span className="w-6 text-center font-sora font-bold text-sm text-[var(--ink)] tabular-nums">
+        <span className="w-5 xs:w-6 text-center font-sora font-bold text-xs xs:text-sm text-[var(--ink)] tabular-nums shrink-0">
           {qty}
         </span>
         <button
           type="button"
           onClick={() => setQty((q) => q + 1)}
-          className="press w-8 h-8 flex items-center justify-center rounded-[var(--radius-sm)] hover:bg-[var(--paper)] text-[var(--ink)]"
+          className="press w-7 h-7 xs:w-8 xs:h-8 flex items-center justify-center rounded-[var(--radius-sm)] hover:bg-[var(--paper)] text-[var(--ink)] shrink-0"
           aria-label="Tambah jumlah"
         >
-          <Plus size={16} />
+          <Plus size={15} />
         </button>
       </div>
 
@@ -68,19 +68,19 @@ export default function AddToCartButton({ productId, disabled }: AddToCartButton
         variant={added ? 'secondary' : 'primary'}
         onClick={handleAdd}
         disabled={loading || added}
-        className="flex-1 py-3 text-sm font-sora font-bold"
+        className="flex-1 min-w-[102px] h-10 xs:h-11 px-2.5 xs:px-4 py-2 text-xs xs:text-sm font-sora font-bold whitespace-nowrap shrink-0 sm:shrink"
       >
         {added ? (
           <>
-            <Check size={18} className="text-emerald-600" />
+            <Check size={16} className="text-emerald-600 shrink-0" />
             <span className="text-emerald-600">Ditambahkan!</span>
           </>
         ) : loading ? (
-          'Menambahkan...'
+          <span>Menambahkan...</span>
         ) : (
           <>
-            <ShoppingCart size={18} />
-            + Keranjang
+            <ShoppingCart size={16} className="shrink-0" />
+            <span>+ Keranjang</span>
           </>
         )}
       </Button>
