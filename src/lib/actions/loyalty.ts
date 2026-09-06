@@ -129,7 +129,7 @@ export async function getUserLoyaltySummary(targetUserId?: string) {
       .eq('user_id', userId)
       .order('created_at', { ascending: false })
 
-    let transactions = Array.isArray(txs) ? [...txs] : []
+    const transactions = Array.isArray(txs) ? [...txs] : []
     const creditedOrderIds = new Set(
       transactions
         .filter((t) => t.type === 'earned' && t.order_id)
@@ -254,7 +254,7 @@ export async function getLoyaltySummaryAdmin() {
       .order('created_at', { ascending: false })
       .limit(100)
 
-    let transactions = Array.isArray(txs) ? [...txs] : []
+    const transactions = Array.isArray(txs) ? [...txs] : []
     const creditedOrderIds = new Set(
       transactions
         .filter((t) => t.type === 'earned' && t.order_id)
