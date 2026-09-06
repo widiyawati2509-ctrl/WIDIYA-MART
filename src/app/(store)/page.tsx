@@ -155,7 +155,7 @@ export default async function HomePage() {
                 </Link>
               }
             >
-              <div className="flex gap-3 overflow-x-auto scrollbar-hide snap-x snap-mandatory py-2 -mx-4 px-4">
+              <div className="flex gap-3 overflow-x-auto scrollbar-hide snap-x snap-mandatory py-2 -mx-4 px-4 touch-pan-x">
                 {newestProducts.map((product) => (
                   <div key={product.id} className="w-40 shrink-0 snap-start">
                     <ProductCard product={product} />
@@ -180,7 +180,7 @@ export default async function HomePage() {
                   </Link>
                 }
               >
-                <div className="flex gap-3 overflow-x-auto scrollbar-hide snap-x snap-mandatory py-2 -mx-4 px-4">
+                <div className="flex gap-3 overflow-x-auto scrollbar-hide snap-x snap-mandatory py-2 -mx-4 px-4 touch-pan-x">
                   {popularProducts.map((product) => (
                     <div key={`popular-${product.id}`} className="w-40 shrink-0 snap-start">
                       <ProductCard product={product} />
@@ -206,7 +206,7 @@ export default async function HomePage() {
                   </Link>
                 }
               >
-                <div className="flex gap-3 overflow-x-auto scrollbar-hide snap-x snap-mandatory py-2 -mx-4 px-4">
+                <div className="flex gap-3 overflow-x-auto scrollbar-hide snap-x snap-mandatory py-2 -mx-4 px-4 touch-pan-x">
                   {cat.products.map((product) => (
                     <div key={`${cat.slug}-${product.id}`} className="w-40 shrink-0 snap-start">
                       <ProductCard product={product} />
