@@ -88,7 +88,15 @@ export async function updateLoyaltyConfig(formData: FormData): Promise<{ success
         updated_at: new Date().toISOString(),
       })
 
-    if (error) return { success: false, error: error.message }
+    if (error) {
+      if (error.code === 'PGRST205' || error.message?.includes('schema cache')) {
+        return {
+          success: false,
+          error: 'Tabel loyalitas belum dibuat di database Supabase. Jalankan file MASTER_MIGRATION_RUN_ONCE.sql di Supabase SQL Editor.',
+        }
+      }
+      return { success: false, error: error.message }
+    }
 
     revalidatePath('/admin/poin')
     revalidatePath('/poin')

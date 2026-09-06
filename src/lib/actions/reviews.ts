@@ -96,6 +96,9 @@ export async function submitProductReview(input: SubmitReviewInput) {
 
     if (insertError) {
       console.error('Error submitting product review:', insertError)
+      if (insertError.code === 'PGRST205' || insertError.message?.includes('schema cache')) {
+        return { error: 'Tabel ulasan belum dibuat di database Supabase. Jalankan file MASTER_MIGRATION_RUN_ONCE.sql di Supabase SQL Editor.' }
+      }
       return { error: `Gagal menyimpan ulasan: ${insertError.message}` }
     }
 

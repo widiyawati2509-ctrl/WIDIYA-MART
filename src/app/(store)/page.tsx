@@ -31,7 +31,7 @@ export default async function HomePage() {
         .order('created_at', { ascending: false }),
       supabase
         .from('store_info')
-        .select('nama_toko, jam_operasional, jam_buka, jam_tutup, whatsapp, no_hp_toko')
+        .select('*')
         .single(),
       getPublicPromos(),
     ])

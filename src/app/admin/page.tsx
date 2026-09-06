@@ -33,7 +33,7 @@ export default async function AdminDashboardPage() {
       .order('stok'),
     supabase
       .from('orders')
-      .select('id, status, total, nama_pemesan, created_at, metode_pengiriman')
+      .select('*')
       .order('created_at', { ascending: false })
       .limit(5),
     supabase

@@ -32,6 +32,19 @@ export async function getUserAddresses(): Promise<{ data: UserAddress[]; error?:
       .order('created_at', { ascending: false })
 
     if (error) {
+      if (error.code === 'PGRST205' || error.message?.includes('schema cache') || error.message?.includes('does not exist')) {
+        // Fallback otomatis ke tabel addresses yang sudah ada
+        const { data: fbData, error: fbError } = await supabase
+          .from('addresses')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('is_default', { ascending: false })
+          .order('created_at', { ascending: false })
+
+        if (!fbError) {
+          return { data: fbData || [] }
+        }
+      }
       console.error('Error fetching user addresses:', error)
       return { data: [], error: error.message }
     }
@@ -66,10 +79,21 @@ export async function addAddress(input: AddressInput): Promise<{ success?: boole
     }
 
     // Check if user currently has any addresses; if none, make this default
-    const { count } = await supabase
+    let count = 0
+    const { count: uCount, error: countErr } = await supabase
       .from('user_addresses')
       .select('id', { count: 'exact', head: true })
       .eq('user_id', user.id)
+
+    if (countErr) {
+      const { count: aCount } = await supabase
+        .from('addresses')
+        .select('id', { count: 'exact', head: true })
+        .eq('user_id', user.id)
+      count = aCount || 0
+    } else {
+      count = uCount || 0
+    }
 
     const shouldBeDefault = Boolean(input.is_default || count === 0)
 
@@ -77,6 +101,11 @@ export async function addAddress(input: AddressInput): Promise<{ success?: boole
       // Unset previous defaults
       await supabase
         .from('user_addresses')
+        .update({ is_default: false })
+        .eq('user_id', user.id)
+
+      await supabase
+        .from('addresses')
         .update({ is_default: false })
         .eq('user_id', user.id)
     }
@@ -90,11 +119,34 @@ export async function addAddress(input: AddressInput): Promise<{ success?: boole
       is_default: shouldBeDefault,
     }
 
-    const { data, error } = await supabase
+    let { data, error } = await supabase
       .from('user_addresses')
       .insert(payload)
       .select('*')
       .single()
+
+    if (error && (error.code === 'PGRST205' || error.message?.includes('schema cache') || error.message?.includes('does not exist'))) {
+      // Fallback ke tabel addresses
+      const compatPayload = {
+        user_id: user.id,
+        label,
+        alamat_lengkap,
+        kota: 'Lombok Tengah',
+        is_default: shouldBeDefault,
+      }
+      const { data: aData, error: aError } = await supabase
+        .from('addresses')
+        .insert(compatPayload)
+        .select('*')
+        .single()
+
+      if (!aError && aData) {
+        data = aData
+        error = null
+      } else {
+        error = aError
+      }
+    }
 
     if (error) {
       console.error('Error inserting user address:', error)
@@ -153,13 +205,35 @@ export async function updateAddress(
       updated_at: new Date().toISOString(),
     }
 
-    const { data, error } = await supabase
+    let { data, error } = await supabase
       .from('user_addresses')
       .update(payload)
       .eq('id', id)
       .eq('user_id', user.id)
       .select('*')
       .single()
+
+    if (error && (error.code === 'PGRST205' || error.message?.includes('schema cache') || error.message?.includes('does not exist'))) {
+      const compatPayload = {
+        label,
+        alamat_lengkap,
+        is_default: Boolean(input.is_default),
+      }
+      const { data: aData, error: aError } = await supabase
+        .from('addresses')
+        .update(compatPayload)
+        .eq('id', id)
+        .eq('user_id', user.id)
+        .select('*')
+        .single()
+
+      if (!aError && aData) {
+        data = aData
+        error = null
+      } else {
+        error = aError
+      }
+    }
 
     if (error) {
       console.error('Error updating user address:', error)
@@ -187,41 +261,24 @@ export async function deleteAddress(id: string): Promise<{ success?: boolean; er
       return { error: 'Silakan login terlebih dahulu' }
     }
 
-    // Check if the deleted address was default
-    const { data: current } = await supabase
-      .from('user_addresses')
-      .select('is_default')
-      .eq('id', id)
-      .eq('user_id', user.id)
-      .single()
-
-    const { error } = await supabase
+    let { error } = await supabase
       .from('user_addresses')
       .delete()
       .eq('id', id)
       .eq('user_id', user.id)
 
+    if (error && (error.code === 'PGRST205' || error.message?.includes('schema cache') || error.message?.includes('does not exist'))) {
+      const { error: aError } = await supabase
+        .from('addresses')
+        .delete()
+        .eq('id', id)
+        .eq('user_id', user.id)
+      error = aError
+    }
+
     if (error) {
       console.error('Error deleting user address:', error)
       return { error: `Gagal menghapus alamat: ${error.message}` }
-    }
-
-    // If it was default, assign the latest address as default
-    if (current?.is_default) {
-      const { data: nextDefault } = await supabase
-        .from('user_addresses')
-        .select('id')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .maybeSingle()
-
-      if (nextDefault) {
-        await supabase
-          .from('user_addresses')
-          .update({ is_default: true })
-          .eq('id', nextDefault.id)
-      }
     }
 
     revalidatePath('/profil')
@@ -251,12 +308,26 @@ export async function setDefaultAddress(id: string): Promise<{ success?: boolean
       .update({ is_default: false })
       .eq('user_id', user.id)
 
+    await supabase
+      .from('addresses')
+      .update({ is_default: false })
+      .eq('user_id', user.id)
+
     // Set selected
-    const { error } = await supabase
+    let { error } = await supabase
       .from('user_addresses')
       .update({ is_default: true })
       .eq('id', id)
       .eq('user_id', user.id)
+
+    if (error && (error.code === 'PGRST205' || error.message?.includes('schema cache') || error.message?.includes('does not exist'))) {
+      const { error: aError } = await supabase
+        .from('addresses')
+        .update({ is_default: true })
+        .eq('id', id)
+        .eq('user_id', user.id)
+      error = aError
+    }
 
     if (error) {
       console.error('Error setting default address:', error)
