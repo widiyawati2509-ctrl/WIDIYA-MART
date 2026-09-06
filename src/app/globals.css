@@ -451,12 +451,15 @@ header.top-header {
     left: 0 !important;
     top: 0 !important;
     width: 100% !important;
-    max-width: 78mm !important; /* Standar kertas kasir/thermal roll 80mm/58mm */
+    max-width: 48mm !important; /* Area cetak aman printer thermal 58mm (lebar efektif ~48mm) */
     margin: 0 auto !important;
-    padding: 8mm 6mm !important;
+    padding: 3mm 2.5mm !important; /* Padding tepi ringkas 2.5mm */
     display: block !important;
     background: #ffffff !important;
     color: #000000 !important;
+    font-size: 10px !important;
+    line-height: 1.25 !important;
+    word-break: break-word !important;
     box-shadow: none !important;
     border: none !important;
     z-index: 999999 !important;
