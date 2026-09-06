@@ -203,84 +203,128 @@ function ProductItemRow({
                 Belum ada varian (produk tunggal). Klik <strong className="text-[var(--accent-2)]">&ldquo;+ Tambah Varian&rdquo;</strong> jika produk memiliki pilihan berbeda.
               </div>
             ) : (
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 px-1 text-[var(--text-caption)] font-bold text-[var(--ink-soft)] uppercase tracking-wider">
+              <div className="space-y-2.5 sm:space-y-2 overflow-x-auto">
+                {/* Desktop Table Header */}
+                <div className="hidden sm:flex items-center gap-2 px-1 text-[var(--text-caption)] font-bold text-[var(--ink-soft)] uppercase tracking-wider">
                   <span className="w-24">Foto Varian</span>
                   <span className="flex-1">Nama Varian *</span>
                   <span className="w-28">Harga (Opsional)</span>
                   <span className="w-20">Stok</span>
                   <span className="w-7 text-center">Aksi</span>
                 </div>
+
+                {/* Variant List: Card on Mobile, Row on Desktop */}
                 {variants.map((v, idx) => (
-                  <div key={idx} className="flex items-center gap-2 bg-white p-2 rounded-xl border border-[var(--line)] shadow-xs">
-                    {/* Foto Varian Upload & Preview */}
-                    <div className="flex items-center gap-1.5 shrink-0 w-24">
-                      <div className="relative w-8 h-8 rounded-lg bg-[var(--paper)] border border-[var(--line)] overflow-hidden flex items-center justify-center shrink-0">
-                        {v.previewUrl || v.image_url ? (
-                          <img
-                            src={v.previewUrl || v.image_url}
-                            alt={v.nama || `Varian ${idx + 1}`}
-                            className="w-full h-full object-contain p-0.5"
+                  <div
+                    key={idx}
+                    className="flex flex-col sm:flex-row sm:items-center gap-2.5 sm:gap-2 bg-white p-3 sm:p-2 rounded-xl border border-[var(--line)] shadow-xs"
+                  >
+                    {/* Top Row on Mobile: Foto & Tombol Hapus */}
+                    <div className="flex items-center justify-between sm:justify-start gap-2 shrink-0 sm:w-24">
+                      <div className="flex items-center gap-2 sm:gap-1.5">
+                        <span className="sm:hidden text-[var(--text-caption)] font-sora font-extrabold px-2 py-0.5 rounded-md bg-[var(--accent-bg)] text-[var(--accent-2)]">
+                          #{idx + 1}
+                        </span>
+                        <div className="relative w-9 h-9 sm:w-8 sm:h-8 rounded-lg bg-[var(--paper)] border border-[var(--line)] overflow-hidden flex items-center justify-center shrink-0">
+                          {v.previewUrl || v.image_url ? (
+                            <img
+                              src={v.previewUrl || v.image_url}
+                              alt={v.nama || `Varian ${idx + 1}`}
+                              className="w-full h-full object-contain p-0.5"
+                            />
+                          ) : (
+                            <ImagePlus className="w-3.5 h-3.5 text-gray-400" />
+                          )}
+                          {(v.previewUrl || v.image_url) && (
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveVariantImage(idx)}
+                              className="absolute top-0 right-0 bg-black/60 hover:bg-red-600 text-white p-0.5 rounded-full"
+                              title="Hapus foto varian"
+                            >
+                              <X className="w-2 h-2" />
+                            </button>
+                          )}
+                        </div>
+                        <label className="cursor-pointer text-[var(--text-caption)] font-bold text-[var(--accent-2)] bg-[var(--accent-bg)] px-2 py-1 sm:px-1.5 sm:py-1 rounded-md border border-[rgba(232,85,33,0.15)] hover:bg-[var(--accent-bg)]/80 flex items-center gap-0.5 shrink-0">
+                          <Camera className="w-3 h-3 sm:w-2.5 sm:h-2.5" />
+                          <span>{v.image_url || v.previewUrl ? 'Ubah' : '+Foto'}</span>
+                          <input
+                            type="file"
+                            name={`variant_image_${idx}`}
+                            accept="image/*"
+                            onChange={(e) => handleVariantFileChange(idx, e)}
+                            className="hidden"
                           />
-                        ) : (
-                          <ImagePlus className="w-3.5 h-3.5 text-gray-400" />
-                        )}
-                        {(v.previewUrl || v.image_url) && (
-                          <button
-                            type="button"
-                            onClick={() => handleRemoveVariantImage(idx)}
-                            className="absolute top-0 right-0 bg-black/60 hover:bg-red-600 text-white p-0.5 rounded-full"
-                            title="Hapus foto varian"
-                          >
-                            <X className="w-2 h-2" />
-                          </button>
-                        )}
+                        </label>
                       </div>
-                      <label className="cursor-pointer text-[var(--text-caption)] font-bold text-[var(--accent-2)] bg-[var(--accent-bg)] px-1.5 py-1 rounded-md border border-[rgba(232,85,33,0.15)] hover:bg-[var(--accent-bg)]/80 flex items-center gap-0.5 shrink-0">
-                        <Camera className="w-2.5 h-2.5" />
-                        <span>{v.image_url || v.previewUrl ? 'Ubah' : '+Foto'}</span>
-                        <input
-                          type="file"
-                          name={`variant_image_${idx}`}
-                          accept="image/*"
-                          onChange={(e) => handleVariantFileChange(idx, e)}
-                          className="hidden"
-                        />
-                      </label>
+
+                      {/* Tombol Hapus (Khusus Mobile) */}
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveVariant(idx)}
+                        className="sm:hidden flex items-center gap-1 text-[var(--danger)] hover:bg-red-50 px-2 py-1 rounded-lg text-xs font-semibold"
+                        title="Hapus varian ini"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                        <span className="text-[var(--text-caption)]">Hapus</span>
+                      </button>
                     </div>
 
-                    <input
-                      type="text"
-                      placeholder="Misal: Merah / Pink / Hitam"
-                      value={v.nama}
-                      onChange={(e) => handleUpdateVariant(idx, 'nama', e.target.value)}
-                      required
-                      className="flex-1 border rounded-lg px-2.5 py-1.5 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
-                    />
-                    <input
-                      type="number"
-                      placeholder="Harga (Rp)"
-                      value={v.harga ?? ''}
-                      onChange={(e) =>
-                        handleUpdateVariant(idx, 'harga', e.target.value ? Number(e.target.value) : undefined)
-                      }
-                      className="w-28 border rounded-lg px-2.5 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-[var(--accent)] font-sora font-medium"
-                      title="Kosongkan jika harga sama dengan produk utama"
-                    />
-                    <input
-                      type="number"
-                      placeholder="Stok"
-                      value={v.stok ?? ''}
-                      onChange={(e) =>
-                        handleUpdateVariant(idx, 'stok', e.target.value ? Number(e.target.value) : undefined)
-                      }
-                      className="w-20 border rounded-lg px-2.5 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-[var(--accent)] font-medium"
-                      title="Stok varian ini"
-                    />
+                    {/* Nama Varian */}
+                    <div className="w-full sm:flex-1">
+                      <label className="sm:hidden text-[var(--text-caption)] font-bold text-[var(--ink)] block mb-1">
+                        Nama Varian *
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="Misal: Merah / Pink / Hitam"
+                        value={v.nama}
+                        onChange={(e) => handleUpdateVariant(idx, 'nama', e.target.value)}
+                        required
+                        className="w-full border rounded-lg px-2.5 py-1.5 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
+                      />
+                    </div>
+
+                    {/* Harga & Stok (Grid di Mobile, Sejajar di Desktop) */}
+                    <div className="grid grid-cols-2 sm:flex sm:items-center gap-2 w-full sm:w-auto">
+                      <div className="w-full sm:w-28">
+                        <label className="sm:hidden text-[var(--text-caption)] font-medium text-[var(--ink-soft)] block mb-1">
+                          Harga (Opsional)
+                        </label>
+                        <input
+                          type="number"
+                          placeholder="Harga (Rp)"
+                          value={v.harga ?? ''}
+                          onChange={(e) =>
+                            handleUpdateVariant(idx, 'harga', e.target.value ? Number(e.target.value) : undefined)
+                          }
+                          className="w-full border rounded-lg px-2.5 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-[var(--accent)] font-sora font-medium"
+                          title="Kosongkan jika harga sama dengan produk utama"
+                        />
+                      </div>
+                      <div className="w-full sm:w-20">
+                        <label className="sm:hidden text-[var(--text-caption)] font-medium text-[var(--ink-soft)] block mb-1">
+                          Stok
+                        </label>
+                        <input
+                          type="number"
+                          placeholder="Stok"
+                          value={v.stok ?? ''}
+                          onChange={(e) =>
+                            handleUpdateVariant(idx, 'stok', e.target.value ? Number(e.target.value) : undefined)
+                          }
+                          className="w-full border rounded-lg px-2.5 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-[var(--accent)] font-medium"
+                          title="Stok varian ini"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Tombol Hapus (Khusus Desktop) */}
                     <button
                       type="button"
                       onClick={() => handleRemoveVariant(idx)}
-                      className="w-7 h-7 flex items-center justify-center text-[var(--danger)] hover:brightness-90 hover:bg-red-50 rounded-lg transition-colors"
+                      className="hidden sm:flex w-7 h-7 items-center justify-center text-[var(--danger)] hover:brightness-90 hover:bg-red-50 rounded-lg transition-colors shrink-0"
                       title="Hapus varian ini"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
