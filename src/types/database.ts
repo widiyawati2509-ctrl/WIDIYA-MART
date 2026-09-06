@@ -175,7 +175,7 @@ export type Database = {
         Row: {
           id: string
           user_id: string
-          status: 'menunggu_diproses' | 'diproses' | 'siap_diambil' | 'selesai' | 'dibatalkan'
+          status: 'menunggu_diproses' | 'diproses' | 'siap_diambil' | 'selesai' | 'dibatalkan' | 'tidak_diambil'
           subtotal: number
           total: number
           catatan: string | null
@@ -188,13 +188,14 @@ export type Database = {
           poin_digunakan?: number | null
           diskon_poin?: number | null
           poin_didapat?: number | null
+          batas_waktu_ambil?: string | null
           created_at: string
           updated_at: string
         }
         Insert: {
           id?: string
           user_id: string
-          status?: 'menunggu_diproses' | 'diproses' | 'siap_diambil' | 'selesai' | 'dibatalkan'
+          status?: 'menunggu_diproses' | 'diproses' | 'siap_diambil' | 'selesai' | 'dibatalkan' | 'tidak_diambil'
           subtotal: number
           total: number
           catatan?: string | null
@@ -207,13 +208,14 @@ export type Database = {
           poin_digunakan?: number | null
           diskon_poin?: number | null
           poin_didapat?: number | null
+          batas_waktu_ambil?: string | null
           created_at?: string
           updated_at?: string
         }
         Update: {
           id?: string
           user_id?: string
-          status?: 'menunggu_diproses' | 'diproses' | 'siap_diambil' | 'selesai' | 'dibatalkan'
+          status?: 'menunggu_diproses' | 'diproses' | 'siap_diambil' | 'selesai' | 'dibatalkan' | 'tidak_diambil'
           subtotal?: number
           total?: number
           catatan?: string | null
@@ -226,6 +228,7 @@ export type Database = {
           poin_digunakan?: number | null
           diskon_poin?: number | null
           poin_didapat?: number | null
+          batas_waktu_ambil?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -266,6 +269,8 @@ export type Database = {
           alamat_toko: string
           kota: string
           jam_operasional: string
+          jam_buka?: string | null
+          jam_tutup?: string | null
           no_hp_toko: string | null
           whatsapp: string | null
           maps_url: string | null
@@ -278,6 +283,8 @@ export type Database = {
           alamat_toko?: string
           kota?: string
           jam_operasional?: string
+          jam_buka?: string | null
+          jam_tutup?: string | null
           no_hp_toko?: string | null
           whatsapp?: string | null
           maps_url?: string | null
@@ -290,6 +297,8 @@ export type Database = {
           alamat_toko?: string
           kota?: string
           jam_operasional?: string
+          jam_buka?: string | null
+          jam_tutup?: string | null
           no_hp_toko?: string | null
           whatsapp?: string | null
           maps_url?: string | null
@@ -366,7 +375,7 @@ export type Database = {
       }
     }
     Enums: {
-      order_status: 'menunggu_diproses' | 'diproses' | 'siap_diambil' | 'selesai' | 'dibatalkan'
+      order_status: 'menunggu_diproses' | 'diproses' | 'siap_diambil' | 'selesai' | 'dibatalkan' | 'tidak_diambil'
     }
   }
 }

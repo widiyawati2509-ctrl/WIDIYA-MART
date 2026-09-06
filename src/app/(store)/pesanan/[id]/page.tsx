@@ -1,8 +1,8 @@
 // @ts-nocheck
 import { createClient } from '@/lib/supabase/server'
 import { notFound, redirect } from 'next/navigation'
-import { formatRupiah, getOrderStatusLabel, formatWhatsAppUrl } from '@/lib/utils'
-import { ChevronLeft, CheckCircle, Clock, MapPin, Phone, Truck, Star } from 'lucide-react'
+import { formatRupiah, getOrderStatusLabel, getOrderStatusColor, formatWhatsAppUrl, formatBatasWaktu, getPickupCountdown } from '@/lib/utils'
+import { ChevronLeft, CheckCircle, Clock, MapPin, Phone, Truck, Star, AlertTriangle } from 'lucide-react'
 import Link from 'next/link'
 import PrintReceiptButton from '@/components/PrintReceiptButton'
 import PageHeader from '@/components/PageHeader'
@@ -55,12 +55,12 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
         <div className="card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-lg)] p-4 shadow-3d">
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-sora font-bold text-sm text-[var(--ink)]">Status Pesanan</h2>
-            <span className="text-[var(--text-caption)] font-bold bg-[var(--accent-bg)] text-[var(--accent-2)] px-2.5 py-0.5 rounded-full">
+            <span className={`text-[var(--text-caption)] font-bold px-2.5 py-0.5 rounded-full ${getOrderStatusColor(order.status)}`}>
               {getOrderStatusLabel(order.status)}
             </span>
           </div>
 
-          {order.status !== 'dibatalkan' && (
+          {order.status !== 'dibatalkan' && order.status !== 'tidak_diambil' && (
             <div className="flex items-center gap-0">
               {statuses.map((s, i) => (
                 <div key={s} className="flex items-center flex-1">
@@ -82,6 +82,37 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
                   )}
                 </div>
               ))}
+            </div>
+          )}
+
+          {/* Sisa Waktu Pengambilan COD (siap_diambil) */}
+          {order.status === 'siap_diambil' && order.batas_waktu_ambil && (
+            <div className="mt-4 p-3.5 rounded-2xl bg-emerald-50 border border-emerald-300 text-xs text-emerald-950 space-y-1.5 shadow-xs">
+              <div className="flex items-center justify-between font-bold text-emerald-900">
+                <span className="flex items-center gap-1.5">
+                  <Clock size={15} className="text-emerald-700" />
+                  <span>Sisa Waktu Pengambilan:</span>
+                </span>
+                <span className="bg-emerald-200/90 text-emerald-900 px-2.5 py-0.5 rounded-full text-[11px] font-extrabold">
+                  {getPickupCountdown(order.batas_waktu_ambil).text}
+                </span>
+              </div>
+              <p className="text-[11px] text-emerald-800 leading-relaxed font-medium">
+                Mohon ambil pesanan di toko sebelum <strong>{formatBatasWaktu(order.batas_waktu_ambil)}</strong>. Pesanan yang tidak diambil hingga batas waktu ini akan dibatalkan otomatis dan stok dikembalikan.
+              </p>
+            </div>
+          )}
+
+          {/* Alert Tidak Diambil */}
+          {order.status === 'tidak_diambil' && (
+            <div className="mt-2 p-3.5 rounded-2xl bg-rose-50 border border-rose-300 text-xs text-rose-950 space-y-1.5 shadow-xs">
+              <p className="font-bold flex items-center gap-1.5 text-rose-800">
+                <AlertTriangle size={15} className="text-rose-600 shrink-0" />
+                <span>Pesanan Dibatalkan (Tidak Diambil)</span>
+              </p>
+              <p className="text-[11px] text-rose-800 leading-relaxed font-medium">
+                Pesanan ini telah dibatalkan otomatis karena melewati batas waktu pengambilan maksimal (2x24 jam) pada {formatBatasWaktu(order.batas_waktu_ambil)}. Stok barang telah dikembalikan ke toko.
+              </p>
             </div>
           )}
         </div>

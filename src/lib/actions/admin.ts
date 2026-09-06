@@ -53,6 +53,8 @@ export async function updateStoreInfo(formData: FormData): Promise<void> {
       alamat_toko: formData.get('alamat_toko') as string,
       kota: formData.get('kota') as string,
       jam_operasional: formData.get('jam_operasional') as string,
+      jam_buka: (formData.get('jam_buka') as string) || '07:00',
+      jam_tutup: (formData.get('jam_tutup') as string) || '21:00',
       no_hp_toko: (formData.get('no_hp_toko') as string) || null,
       whatsapp: (formData.get('whatsapp') as string) || null,
       maps_url: (formData.get('maps_url') as string) || null,
@@ -61,4 +63,6 @@ export async function updateStoreInfo(formData: FormData): Promise<void> {
 
   revalidatePath('/')
   revalidatePath('/checkout')
+  revalidatePath('/tentang')
+  revalidatePath('/admin/pengaturan')
 }

@@ -18,11 +18,13 @@ export default async function AdminDashboardPage() {
       .from('orders')
       .select('total', { count: 'exact' })
       .gte('created_at', today.toISOString())
-      .neq('status', 'dibatalkan'),
+      .neq('status', 'dibatalkan')
+      .neq('status', 'tidak_diambil'),
     supabase
       .from('orders')
       .select('total')
-      .neq('status', 'dibatalkan'),
+      .neq('status', 'dibatalkan')
+      .neq('status', 'tidak_diambil'),
     supabase
       .from('products')
       .select('id, nama, stok')

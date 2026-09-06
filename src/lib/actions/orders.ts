@@ -19,6 +19,8 @@ const STORE_COORDS = {
 }
 const FREE_SHIPPING_MAX_KM = 7.0
 const FLAT_SHIPPING_FEE = 15000
+// Batas waktu pengambilan COD (default 2x24 jam = 48 jam)
+const ORDER_PICKUP_EXPIRATION_HOURS = 48
 
 function calculateHaversineDistance(
   lat1: number,
@@ -343,6 +345,46 @@ export async function createOrder(formData: FormData): Promise<{ error?: string;
   }
 }
 
+/**
+ * Kembalikan stok item pesanan secara atomik via RPC increment_stock.
+ */
+export async function restoreOrderStock(supabase: SupabaseClient, orderId: string): Promise<void> {
+  try {
+    const { data: items, error } = await supabase
+      .from('order_items')
+      .select('product_id, qty')
+      .eq('order_id', orderId)
+
+    if (error || !items) return
+
+    for (const item of items) {
+      if (item.product_id && item.qty > 0) {
+        const { error: rpcErr } = await supabase.rpc('increment_stock', {
+          p_product_id: item.product_id,
+          p_qty: item.qty,
+        })
+
+        if (rpcErr) {
+          const { data: curProd } = await supabase
+            .from('products')
+            .select('stok')
+            .eq('id', item.product_id)
+            .single()
+
+          if (curProd) {
+            await supabase
+              .from('products')
+              .update({ stok: curProd.stok + item.qty })
+              .eq('id', item.product_id)
+          }
+        }
+      }
+    }
+  } catch (err) {
+    console.error(`Gagal mengembalikan stok untuk pesanan ${orderId}:`, err)
+  }
+}
+
 export async function updateOrderStatus(orderId: string, status: string): Promise<{ error?: string; success?: boolean }> {
   const supabase: SupabaseClient = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -356,12 +398,42 @@ export async function updateOrderStatus(orderId: string, status: string): Promis
 
   if (profile?.role !== 'admin') return { error: 'Unauthorized' }
 
+  // Ambil data pesanan saat ini untuk mendeteksi status sebelumnya
+  const { data: currentOrder } = await supabase
+    .from('orders')
+    .select('status, batas_waktu_ambil')
+    .eq('id', orderId)
+    .single()
+
+  const prevStatus = currentOrder?.status
+
+  const updatePayload: Record<string, any> = { status }
+
+  // Jika status berubah ke 'siap_diambil', hitung batas_waktu_ambil jika belum ada
+  if (status === 'siap_diambil') {
+    if (!currentOrder?.batas_waktu_ambil) {
+      updatePayload.batas_waktu_ambil = new Date(
+        Date.now() + ORDER_PICKUP_EXPIRATION_HOURS * 60 * 60 * 1000
+      ).toISOString()
+    }
+  }
+
   const { error } = await supabase
     .from('orders')
-    .update({ status })
+    .update(updatePayload)
     .eq('id', orderId)
 
-  if (error) return { error: 'Gagal update status' }
+  if (error) return { error: 'Gagal update status: ' + error.message }
+
+  // Jika status diubah ke 'tidak_diambil' atau 'dibatalkan', kembalikan stok
+  // Pastikan status sebelumnya bukan 'tidak_diambil' atau 'dibatalkan' agar tidak double-restore
+  if (
+    (status === 'tidak_diambil' || status === 'dibatalkan') &&
+    prevStatus !== 'tidak_diambil' &&
+    prevStatus !== 'dibatalkan'
+  ) {
+    await restoreOrderStock(supabase, orderId)
+  }
 
   // Credit loyalty points if status changed to 'selesai'
   if (status === 'selesai') {
@@ -418,6 +490,61 @@ export async function updateOrderStatus(orderId: string, status: string): Promis
   revalidatePath('/poin')
   revalidatePath('/profil')
   return { success: true }
+}
+
+/**
+ * Cek dan tandai pesanan siap_diambil yang sudah lewat batas_waktu_ambil menjadi tidak_diambil.
+ * Mengembalikan stok produk yang sebelumnya dikurangi secara atomik.
+ */
+export async function checkAndExpirePickupOrders(): Promise<{
+  success: boolean
+  expiredCount: number
+  error?: string
+}> {
+  try {
+    const supabase: SupabaseClient = await createClient()
+
+    const nowIso = new Date().toISOString()
+    const { data: expiredOrders, error } = await supabase
+      .from('orders')
+      .select('id, status, batas_waktu_ambil')
+      .eq('status', 'siap_diambil')
+      .not('batas_waktu_ambil', 'is', null)
+      .lt('batas_waktu_ambil', nowIso)
+
+    if (error) {
+      // Jika kolom batas_waktu_ambil belum dimigrasi di DB, jangan lempar fatal error
+      console.warn('checkAndExpirePickupOrders query error:', error.message)
+      return { success: false, expiredCount: 0, error: error.message }
+    }
+
+    if (!expiredOrders || expiredOrders.length === 0) {
+      return { success: true, expiredCount: 0 }
+    }
+
+    let expiredCount = 0
+    for (const order of expiredOrders) {
+      const { error: updateErr } = await supabase
+        .from('orders')
+        .update({ status: 'tidak_diambil' })
+        .eq('id', order.id)
+
+      if (!updateErr) {
+        await restoreOrderStock(supabase, order.id)
+        expiredCount++
+      }
+    }
+
+    if (expiredCount > 0) {
+      revalidatePath('/admin/pesanan')
+      revalidatePath('/pesanan')
+    }
+
+    return { success: true, expiredCount }
+  } catch (err: any) {
+    console.error('checkAndExpirePickupOrders error:', err)
+    return { success: false, expiredCount: 0, error: err?.message || 'Gagal memeriksa batas ambil' }
+  }
 }
 
 export async function reorderItems(orderId: string): Promise<{ success: boolean; count: number; error?: string }> {

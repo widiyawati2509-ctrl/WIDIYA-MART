@@ -51,15 +51,51 @@ export default async function AdminPengaturanPage() {
             </div>
 
             <div>
-              <label className="text-sm font-medium text-gray-700 block mb-1">Jam Operasional *</label>
+              <label className="text-sm font-medium text-gray-700 block mb-1">Keterangan Hari/Jam *</label>
               <input
                 type="text"
                 name="jam_operasional"
                 defaultValue={store?.jam_operasional}
                 required
-                placeholder="mis. Senin–Minggu, 07.00–21.00"
+                placeholder="mis. Setiap Hari, 07:00–21:00"
                 className="w-full border rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
               />
+            </div>
+          </div>
+
+          <div className="bg-amber-50/70 border border-amber-200/80 rounded-2xl p-3.5 space-y-2">
+            <div className="flex items-center justify-between">
+              <label className="text-xs font-sora font-bold text-amber-900 block">
+                Jam Operasional Harian (Otomatis Badge Buka / Tutup)
+              </label>
+              <span className="text-[10px] bg-amber-200/80 text-amber-900 px-2 py-0.5 rounded-full font-semibold">
+                Status Toko Real-time
+              </span>
+            </div>
+            <p className="text-[11px] text-amber-800 leading-relaxed">
+              Tentukan jam buka dan jam tutup toko untuk mengatur status badge <strong>&ldquo;Toko Buka&rdquo;</strong> atau <strong>&ldquo;Toko Tutup&rdquo;</strong> di beranda dan halaman informasi secara otomatis.
+            </p>
+            <div className="grid grid-cols-2 gap-3 pt-1">
+              <div>
+                <label className="text-xs font-semibold text-gray-700 block mb-1">Jam Buka *</label>
+                <input
+                  type="time"
+                  name="jam_buka"
+                  defaultValue={store?.jam_buka || '07:00'}
+                  required
+                  className="w-full border bg-white rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                />
+              </div>
+              <div>
+                <label className="text-xs font-semibold text-gray-700 block mb-1">Jam Tutup *</label>
+                <input
+                  type="time"
+                  name="jam_tutup"
+                  defaultValue={store?.jam_tutup || '21:00'}
+                  required
+                  className="w-full border bg-white rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                />
+              </div>
             </div>
           </div>
 

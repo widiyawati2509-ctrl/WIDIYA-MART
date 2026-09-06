@@ -6,7 +6,7 @@ import { getUserLoyaltySummary } from '@/lib/actions/loyalty'
 import { getShoppingList } from '@/lib/actions/shopping-list'
 import { getUserAddresses } from '@/lib/actions/addresses'
 import { getOrderStatusLabel, formatRupiah } from '@/lib/utils'
-import { User, ShoppingBag, ChevronRight, LogOut, ShieldCheck, Coins, Bookmark, Heart, Bell, Clock, PackageCheck, AlertCircle } from 'lucide-react'
+import { User, ShoppingBag, ChevronRight, LogOut, ShieldCheck, Coins, Bookmark, Heart, Bell, Clock, PackageCheck, AlertCircle, Store } from 'lucide-react'
 import Link from 'next/link'
 import PageHeader from '@/components/PageHeader'
 import UserAddressManager from '@/components/UserAddressManager'
@@ -259,6 +259,18 @@ export default async function ProfilPage() {
               <Coins size={15} />
             </span>
             <span className="flex-1 font-semibold text-xs text-[var(--ink)]">Histori & Skema Poin</span>
+            <ChevronRight size={15} className="text-[var(--ink-soft)]" />
+          </Link>
+
+          <Link
+            href="/tentang"
+            prefetch={true}
+            className="item press"
+          >
+            <span className="w-7 h-7 rounded-[var(--radius-sm)] bg-[var(--paper)] text-[var(--ink-soft)] flex items-center justify-center">
+              <Store size={15} />
+            </span>
+            <span className="flex-1 font-semibold text-xs text-[var(--ink)]">Tentang Toko & Kontak</span>
             <ChevronRight size={15} className="text-[var(--ink-soft)]" />
           </Link>
 

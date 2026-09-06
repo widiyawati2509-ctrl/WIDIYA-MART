@@ -23,6 +23,7 @@ export function getOrderStatusLabel(status: string): string {
     siap_diambil: 'Siap Diambil',
     selesai: 'Selesai',
     dibatalkan: 'Dibatalkan',
+    tidak_diambil: 'Tidak Diambil',
   }
   return labels[status] ?? status
 }
@@ -34,8 +35,121 @@ export function getOrderStatusColor(status: string): string {
     siap_diambil: 'bg-green-100 text-green-800',
     selesai: 'bg-gray-100 text-gray-800',
     dibatalkan: 'bg-red-100 text-red-800',
+    tidak_diambil: 'bg-rose-100 text-rose-800 border-rose-200',
   }
   return colors[status] ?? 'bg-gray-100 text-gray-800'
+}
+
+// Batas waktu pengambilan COD (default 2x24 jam = 48 jam)
+export const ORDER_PICKUP_EXPIRATION_HOURS = 48
+
+export function formatBatasWaktu(dateStr?: string | null): string {
+  if (!dateStr) return '-'
+  try {
+    const d = new Date(dateStr)
+    return d.toLocaleString('id-ID', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    })
+  } catch {
+    return dateStr
+  }
+}
+
+export function getPickupCountdown(dateStr?: string | null): {
+  isExpired: boolean
+  remainingMs: number
+  text: string
+  formattedDate: string
+} {
+  if (!dateStr) {
+    return { isExpired: false, remainingMs: 0, text: '-', formattedDate: '-' }
+  }
+  const deadline = new Date(dateStr).getTime()
+  const now = Date.now()
+  const diff = deadline - now
+  const formattedDate = formatBatasWaktu(dateStr)
+
+  if (diff <= 0) {
+    return {
+      isExpired: true,
+      remainingMs: diff,
+      text: 'Batas waktu telah lewat',
+      formattedDate,
+    }
+  }
+
+  const hours = Math.floor(diff / (1000 * 60 * 60))
+  const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
+
+  if (hours >= 24) {
+    const days = Math.floor(hours / 24)
+    const remHours = hours % 24
+    return {
+      isExpired: false,
+      remainingMs: diff,
+      text: `Sisa ${days} hari ${remHours} jam`,
+      formattedDate,
+    }
+  }
+
+  if (hours > 0) {
+    return {
+      isExpired: false,
+      remainingMs: diff,
+      text: `Sisa ${hours} jam ${minutes} menit`,
+      formattedDate,
+    }
+  }
+
+  return {
+    isExpired: false,
+    remainingMs: diff,
+    text: `Sisa ${minutes} menit`,
+    formattedDate,
+  }
+}
+
+export function isStoreOpen(
+  jamBuka?: string | null,
+  jamTutup?: string | null
+): { isOpen: boolean; statusText: string; timeRange: string } {
+  const buka = (jamBuka || '07:00').trim()
+  const tutup = (jamTutup || '21:00').trim()
+  const timeRange = `${buka} - ${tutup}`
+
+  try {
+    const now = new Date()
+    const currentMinutes = now.getHours() * 60 + now.getMinutes()
+
+    const [bukaH, bukaM] = buka.split(':').map((v) => parseInt(v, 10))
+    const [tutupH, tutupM] = tutup.split(':').map((v) => parseInt(v, 10))
+
+    if (isNaN(bukaH) || isNaN(tutupH)) {
+      return { isOpen: true, statusText: 'Toko Buka', timeRange }
+    }
+
+    const startMinutes = bukaH * 60 + (bukaM || 0)
+    const endMinutes = tutupH * 60 + (tutupM || 0)
+
+    let isOpen = false
+    if (endMinutes >= startMinutes) {
+      isOpen = currentMinutes >= startMinutes && currentMinutes < endMinutes
+    } else {
+      isOpen = currentMinutes >= startMinutes || currentMinutes < endMinutes
+    }
+
+    return {
+      isOpen,
+      statusText: isOpen ? 'Toko Buka' : 'Toko Tutup',
+      timeRange,
+    }
+  } catch {
+    return { isOpen: true, statusText: 'Toko Buka', timeRange }
+  }
 }
 
 export function getSupabaseImageUrl(

@@ -7,7 +7,8 @@ import PromoBannerCarousel from '@/components/PromoBannerCarousel'
 import { Section } from '@/components/ui'
 import Image from 'next/image'
 import Link from 'next/link'
-import { Heart } from 'lucide-react'
+import { Heart, Clock, Store } from 'lucide-react'
+import { isStoreOpen } from '@/lib/utils'
 
 import { getPublicPromos } from '@/lib/actions/promos'
 
@@ -29,14 +30,19 @@ export default async function HomePage() {
         .gt('stok', 0)
         .order('created_at', { ascending: false })
         .limit(12),
-      supabase.from('store_info').select('nama_toko').single(),
+      supabase
+        .from('store_info')
+        .select('nama_toko, jam_operasional, jam_buka, jam_tutup, whatsapp, no_hp_toko')
+        .single(),
       getPublicPromos(),
     ])
+
+  const storeStatus = isStoreOpen(storeInfo?.jam_buka, storeInfo?.jam_tutup)
 
   return (
     <div className="w-full pb-20">
       {/* Toko Kita Frosted Top Header */}
-      <header className="top-header sticky top-0 z-40 px-4 py-3.5 flex items-center justify-between border-b border-[rgba(232,214,205,0.8)] shadow-header bg-[rgba(250,240,235,0.92)] backdrop-blur-md mb-3.5">
+      <header className="top-header sticky top-0 z-40 px-4 py-3.5 flex items-center justify-between border-b border-[rgba(232,214,205,0.8)] shadow-header bg-[rgba(250,240,235,0.92)] backdrop-blur-md mb-3">
         <div className="flex items-center gap-2.5">
           <div className="logo-box flex items-center justify-center p-1 overflow-hidden shrink-0 shadow-badge">
             <Image
@@ -69,6 +75,30 @@ export default async function HomePage() {
           <span>Favorit</span>
         </Link>
       </header>
+
+      {/* Store Hours & Quick Info Banner */}
+      <div className="px-4 mb-3.5">
+        <Link
+          href="/tentang"
+          className="flex items-center justify-between p-2.5 rounded-2xl bg-white border border-[rgba(232,214,205,0.9)] shadow-xs hover:bg-[var(--paper)] transition-all press"
+        >
+          <div className="flex items-center gap-2 min-w-0">
+            <span className={`w-2 h-2 rounded-full shrink-0 ${storeStatus.isOpen ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500'}`} />
+            <div className="flex items-center gap-1.5 text-xs truncate">
+              <span className={`font-sora font-bold ${storeStatus.isOpen ? 'text-emerald-700' : 'text-rose-700'}`}>
+                {storeStatus.statusText}
+              </span>
+              <span className="text-[var(--ink-soft)] font-medium">·</span>
+              <span className="text-[var(--ink-soft)] font-medium truncate">
+                {storeInfo?.jam_operasional || `${storeStatus.timeRange} WITA`}
+              </span>
+            </div>
+          </div>
+          <span className="text-[11px] font-sora font-bold text-[var(--accent-2)] shrink-0 flex items-center gap-0.5 ml-2">
+            Info Toko &rarr;
+          </span>
+        </Link>
+      </div>
 
       {/* Search Bar */}
       <div className="px-4 mb-4">

@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
-import { formatRupiah, getOrderStatusLabel, getOrderStatusColor } from '@/lib/utils'
+import { formatRupiah, getOrderStatusLabel, getOrderStatusColor, formatBatasWaktu, getPickupCountdown } from '@/lib/utils'
 import { updateOrderStatus } from '@/lib/actions/orders'
 import PrintReceiptButton from '@/components/PrintReceiptButton'
 import DeleteOrderButton from '@/components/admin/DeleteOrderButton'
@@ -16,7 +16,8 @@ const statuses = [
   { value: 'diproses', label: 'Sedang Diproses' },
   { value: 'siap_diambil', label: 'Siap Diambil' },
   { value: 'selesai', label: 'Selesai' },
-  { value: 'dibatalkan', label: 'Batalkan Pesanan' },
+  { value: 'tidak_diambil', label: 'Tidak Diambil (Kembalikan Stok)' },
+  { value: 'dibatalkan', label: 'Batalkan Pesanan (Kembalikan Stok)' },
 ]
 
 export default async function AdminOrderDetailPage({ params }: AdminOrderDetailProps) {
@@ -47,8 +48,8 @@ export default async function AdminOrderDetailPage({ params }: AdminOrderDetailP
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Left */}
         <div className="space-y-4">
-          <div className="bg-white border rounded-2xl p-4">
-            <h2 className="font-semibold mb-3">Info Pesanan</h2>
+          <div className="bg-white border rounded-2xl p-4 space-y-3">
+            <h2 className="font-semibold mb-1">Info Pesanan</h2>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
                 <span className="text-gray-500">ID</span>
@@ -79,6 +80,38 @@ export default async function AdminOrderDetailPage({ params }: AdminOrderDetailP
                 </span>
               </div>
             </div>
+
+            {/* Informasi Batas Ambil / Status Tidak Diambil */}
+            {order.status === 'siap_diambil' && order.batas_waktu_ambil && (
+              <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200/80 text-xs text-emerald-900 space-y-1">
+                <div className="flex items-center justify-between font-bold">
+                  <span>⏰ Batas Waktu Pengambilan COD</span>
+                  <span className="text-[11px] bg-emerald-200 text-emerald-900 px-2 py-0.5 rounded-full font-semibold">
+                    {getPickupCountdown(order.batas_waktu_ambil).text}
+                  </span>
+                </div>
+                <p className="text-[11px] text-emerald-700 leading-relaxed">
+                  Batas akhir: <strong>{formatBatasWaktu(order.batas_waktu_ambil)}</strong>. Jika lewat, pesanan otomatis berstatus &ldquo;Tidak Diambil&rdquo; dan stok barang dikembalikan.
+                </p>
+              </div>
+            )}
+
+            {order.status === 'tidak_diambil' && (
+              <div className="p-3 rounded-xl bg-rose-50 border border-rose-200/80 text-xs text-rose-900 space-y-1">
+                <p className="font-bold flex items-center gap-1.5 text-rose-800">
+                  <span>⚠️</span>
+                  <span>Pesanan Tidak Diambil Tepat Waktu</span>
+                </p>
+                <p className="text-[11px] text-rose-700 leading-relaxed">
+                  Pesanan telah melewati batas waktu pengambilan (2x24 jam). Seluruh kuantitas produk dalam pesanan ini telah otomatis dikembalikan ke stok toko.
+                </p>
+                {order.batas_waktu_ambil && (
+                  <p className="text-[10px] text-rose-600 font-medium">
+                    Batas waktu lewat pada: {formatBatasWaktu(order.batas_waktu_ambil)}
+                  </p>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Update status */}
@@ -96,8 +129,8 @@ export default async function AdminOrderDetailPage({ params }: AdminOrderDetailP
                       className={`w-full text-left px-4 py-3 rounded-xl text-sm font-medium border transition-all ${
                         isCurrent
                           ? 'bg-emerald-50 border-emerald-300 text-emerald-700 cursor-default font-bold shadow-xs'
-                          : value === 'dibatalkan'
-                          ? 'bg-white hover:bg-red-50 border-red-200 text-[var(--danger)] shadow-xs active:scale-[0.98]'
+                          : value === 'dibatalkan' || value === 'tidak_diambil'
+                          ? 'bg-white hover:bg-rose-50 border-rose-200 text-rose-700 shadow-xs active:scale-[0.98]'
                           : 'bg-white hover:bg-[var(--paper)] border-[rgba(232,214,205,0.9)] text-[var(--ink)] shadow-xs active:scale-[0.98]'
                       }`}
                     >

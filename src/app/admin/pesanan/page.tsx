@@ -1,6 +1,7 @@
 // @ts-nocheck
 import { createClient } from '@/lib/supabase/server'
 import AdminOrdersList from '@/components/admin/AdminOrdersList'
+import { checkAndExpirePickupOrders } from '@/lib/actions/orders'
 
 export default async function AdminPesananPage({
   searchParams,
@@ -8,6 +9,14 @@ export default async function AdminPesananPage({
   searchParams?: Promise<{ status?: string }>
 }) {
   const params = await searchParams
+
+  // Cek dan kedaluwarsakan pesanan siap_diambil yang telah melewati batas waktu (2x24 jam)
+  try {
+    await checkAndExpirePickupOrders()
+  } catch (e) {
+    console.warn('Auto check pickup deadline error:', e)
+  }
+
   const supabase = await createClient()
 
   const { data: orders } = await supabase

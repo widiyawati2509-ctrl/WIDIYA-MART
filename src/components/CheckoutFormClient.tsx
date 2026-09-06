@@ -3,7 +3,7 @@
 
 import { useState, useTransition, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import { formatRupiah } from '@/lib/utils'
+import { formatRupiah, formatWhatsAppUrl, isStoreOpen } from '@/lib/utils'
 import AlertBanner from './AlertBanner'
 import { createOrder } from '@/lib/actions/orders'
 import { 
@@ -20,7 +20,8 @@ import {
   CheckCircle2, 
   Navigation,
   Info,
-  Bookmark
+  Bookmark,
+  MessageCircle
 } from 'lucide-react'
 import { UserAddress } from '@/types/database'
 import { Card, Button, Badge } from '@/components/ui'
@@ -56,7 +57,10 @@ interface StoreInfoData {
   alamat_toko?: string
   kota?: string
   jam_operasional?: string
+  jam_buka?: string
+  jam_tutup?: string
   no_hp_toko?: string
+  whatsapp?: string
 }
 
 interface ProfileData {
@@ -360,26 +364,74 @@ export default function CheckoutFormClient({
             <h2 className="font-sora font-bold text-sm text-[var(--ink)]">Lokasi Pengambilan</h2>
             <Badge variant="positive" className="ml-auto">Bebas Ongkir</Badge>
           </div>
-          <div className="space-y-2 text-xs">
-            <p className="font-bold text-[var(--ink)]">{store?.nama_toko || 'PENGENJEK MART'}</p>
+          <div className="space-y-2.5 text-xs">
+            <div className="flex items-center justify-between">
+              <p className="font-bold text-[var(--ink)]">{store?.nama_toko || 'PENGENJEK MART'}</p>
+              {(() => {
+                const status = isStoreOpen(store?.jam_buka, store?.jam_tutup)
+                return (
+                  <span className={`inline-flex items-center gap-1 text-[10px] font-sora font-bold px-2 py-0.5 rounded-full border ${
+                    status.isOpen
+                      ? 'bg-emerald-50 text-emerald-800 border-emerald-300'
+                      : 'bg-rose-50 text-rose-800 border-rose-300'
+                  }`}>
+                    <span className={`w-1.5 h-1.5 rounded-full ${status.isOpen ? 'bg-emerald-500' : 'bg-rose-500'}`} />
+                    {status.statusText}
+                  </span>
+                )
+              })()}
+            </div>
+
             {store?.alamat_toko && (
               <p className="text-[var(--ink-soft)] flex gap-2 font-medium">
                 <MapPin size={15} className="shrink-0 mt-0.5 text-emerald-600" />
-                {store.alamat_toko}{store.kota ? `, ${store.kota}` : ''}
+                <span>{store.alamat_toko}{store.kota ? `, ${store.kota}` : ''}</span>
               </p>
             )}
+
             {store?.jam_operasional && (
               <p className="text-[var(--ink-soft)] flex gap-2 font-medium">
                 <Clock size={15} className="shrink-0 mt-0.5 text-emerald-600" />
-                {store.jam_operasional}
+                <span>{store.jam_operasional}</span>
               </p>
             )}
-            {store?.no_hp_toko && (
-              <p className="text-[var(--ink-soft)] flex gap-2 font-medium">
-                <Phone size={15} className="shrink-0 mt-0.5 text-emerald-600" />
-                {store.no_hp_toko}
-              </p>
+
+            {(store?.whatsapp || store?.no_hp_toko) && (
+              <div className="flex items-center gap-2 pt-0.5">
+                <a
+                  href={formatWhatsAppUrl(
+                    store.whatsapp || store.no_hp_toko,
+                    `Halo Admin ${store?.nama_toko || 'PENGENJEK MART'}, saya ingin bertanya mengenai pesanan saya...`
+                  )}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200/80 px-2.5 py-1 rounded-xl transition-colors"
+                >
+                  <MessageCircle size={13} className="text-emerald-600" />
+                  <span>Hubungi Toko via WA</span>
+                </a>
+                {store?.no_hp_toko && store?.no_hp_toko !== store?.whatsapp && (
+                  <a
+                    href={`tel:${store.no_hp_toko}`}
+                    className="inline-flex items-center gap-1 text-xs text-[var(--ink-soft)] hover:underline"
+                  >
+                    <Phone size={13} />
+                    <span>{store.no_hp_toko}</span>
+                  </a>
+                )}
+              </div>
             )}
+
+            {/* Catatan Batas Pengambilan COD */}
+            <div className="mt-2 p-2.5 rounded-xl bg-amber-50/80 border border-amber-200/80 text-[11px] text-amber-900 leading-relaxed space-y-1">
+              <p className="font-bold flex items-center gap-1 text-amber-800">
+                <Clock size={12} className="shrink-0" />
+                <span>Aturan Pengambilan Pesanan COD</span>
+              </p>
+              <p>
+                Pesanan wajib diambil di toko maksimal <strong>2x24 jam (48 jam)</strong> setelah status siap diambil. Pesanan yang tidak diambil otomatis dibatalkan & stok dikembalikan ke etalase.
+              </p>
+            </div>
           </div>
         </Card>
       ) : (

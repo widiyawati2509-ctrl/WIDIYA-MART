@@ -7,26 +7,30 @@ import { useRouter } from 'next/navigation'
 import { 
   formatRupiah, 
   getOrderStatusLabel, 
-  getOrderStatusColor 
+  getOrderStatusColor,
+  formatBatasWaktu,
+  getPickupCountdown
 } from '@/lib/utils'
 import { 
   deleteOrders, 
   deleteAllOrders, 
-  deleteSingleOrder 
+  deleteSingleOrder,
+  checkAndExpirePickupOrders
 } from '@/lib/actions/orders'
 import { 
   Search, 
   Trash2, 
   CheckSquare, 
   Square, 
-  MinusSquare,
+  MinusSquare, 
   AlertTriangle, 
   ChevronRight, 
   Loader2, 
   X,
   PackageOpen,
   Filter,
-  FileSpreadsheet
+  FileSpreadsheet,
+  Clock
 } from 'lucide-react'
 import AdminPageTitle from './AdminPageTitle'
 import AdminOrderExportCsvModal from './AdminOrderExportCsvModal'
@@ -51,6 +55,7 @@ interface Order {
   created_at: string
   metode_pengiriman?: string
   alamat_pengiriman?: string
+  batas_waktu_ambil?: string | null
   order_items?: OrderItem[]
 }
 
@@ -65,6 +70,7 @@ const statusFilters = [
   { value: 'diproses', label: 'Diproses' },
   { value: 'siap_diambil', label: 'Siap Diambil' },
   { value: 'selesai', label: 'Selesai' },
+  { value: 'tidak_diambil', label: 'Tidak Diambil' },
   { value: 'dibatalkan', label: 'Dibatalkan' },
 ]
 
@@ -76,6 +82,41 @@ export default function AdminOrdersList({ initialOrders, initialStatus }: AdminO
   const [statusFilter, setStatusFilter] = useState(initialStatus || 'all')
   const [isCsvModalOpen, setIsCsvModalOpen] = useState(false)
   const [isPending, startTransition] = useTransition()
+  const [isCheckingExpiry, setIsCheckingExpiry] = useState(false)
+
+  const handleCheckExpired = async () => {
+    setIsCheckingExpiry(true)
+    try {
+      const res = await checkAndExpirePickupOrders()
+      if (res.success) {
+        if (res.expiredCount > 0) {
+          setFeedbackMsg({
+            type: 'success',
+            text: `Berhasil! ${res.expiredCount} pesanan lewat batas ambil ditandai "Tidak Diambil" & stok dikembalikan.`,
+          })
+        } else {
+          setFeedbackMsg({
+            type: 'success',
+            text: 'Pemeriksaan selesai: Tidak ada pesanan siap diambil yang melewati batas waktu.',
+          })
+        }
+        router.refresh()
+      } else {
+        setFeedbackMsg({
+          type: 'error',
+          text: res.error || 'Gagal mengecek batas waktu ambil',
+        })
+      }
+    } catch (err: any) {
+      setFeedbackMsg({
+        type: 'error',
+        text: err?.message || 'Terjadi kesalahan sistem saat memeriksa pesanan',
+      })
+    } finally {
+      setIsCheckingExpiry(false)
+      setTimeout(() => setFeedbackMsg(null), 5000)
+    }
+  }
 
   // Modal confirm state
   const [confirmModal, setConfirmModal] = useState<{
@@ -207,6 +248,17 @@ export default function AdminOrdersList({ initialOrders, initialStatus }: AdminO
         className="mb-0"
         rightSlot={
           <div className="flex flex-wrap items-center gap-2">
+            <button
+              type="button"
+              onClick={handleCheckExpired}
+              disabled={isCheckingExpiry || isPending}
+              className="press inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-amber-300 text-amber-900 bg-amber-50 hover:bg-amber-100 text-xs font-sora font-bold transition-all active:scale-95 shadow-xs disabled:opacity-50"
+              title="Cek pesanan COD yang melewati batas waktu ambil (48 jam) dan kembalikan stok"
+            >
+              <Clock className={`w-3.5 h-3.5 text-amber-700 ${isCheckingExpiry ? 'animate-spin' : ''}`} />
+              <span>{isCheckingExpiry ? 'Mengecek...' : 'Cek Batas Ambil'}</span>
+            </button>
+
             <button
               type="button"
               onClick={() => setIsCsvModalOpen(true)}
@@ -469,6 +521,18 @@ export default function AdminOrdersList({ initialOrders, initialStatus }: AdminO
                     <p className="text-[var(--text-caption)] text-gray-400 font-mono mt-0.5">
                       WA: {order.no_hp_pemesan}
                     </p>
+                    {order.status === 'siap_diambil' && order.batas_waktu_ambil && (
+                      <div className="mt-1 flex items-center gap-1 text-[11px] font-semibold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200/60 w-fit">
+                        <Clock className="w-3 h-3 text-emerald-600 shrink-0" />
+                        <span>Ambil s/d {formatBatasWaktu(order.batas_waktu_ambil)} ({getPickupCountdown(order.batas_waktu_ambil).text})</span>
+                      </div>
+                    )}
+                    {order.status === 'tidak_diambil' && (
+                      <div className="mt-1 flex items-center gap-1 text-[11px] font-semibold text-rose-800 bg-rose-50 px-2 py-0.5 rounded-md border border-rose-200/60 w-fit">
+                        <AlertTriangle className="w-3 h-3 text-rose-600 shrink-0" />
+                        <span>Batas waktu lewat · Stok dikembalikan</span>
+                      </div>
+                    )}
                   </div>
 
                   <div className="text-right shrink-0">

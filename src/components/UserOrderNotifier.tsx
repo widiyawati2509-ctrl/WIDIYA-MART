@@ -8,7 +8,7 @@ import Link from 'next/link'
 
 interface StatusChangeNotification {
   id: string
-  status: 'diproses' | 'siap_diambil' | 'selesai' | 'dibatalkan'
+  status: 'diproses' | 'siap_diambil' | 'selesai' | 'dibatalkan' | 'tidak_diambil'
   title: string
   message: string
 }
@@ -112,6 +112,10 @@ export default function UserOrderNotifier() {
           title = `Pesanan #${shortId} Dibatalkan`
           message = 'Pesanan Anda telah dibatalkan.'
           break
+        case 'tidak_diambil':
+          title = `Pesanan #${shortId} Melewati Batas Waktu`
+          message = 'Pesanan Anda dibatalkan otomatis karena melewati batas waktu pengambilan (48 jam).'
+          break
         default:
           return
       }
@@ -207,7 +211,7 @@ export default function UserOrderNotifier() {
               .from('orders')
               .select('id, status')
               .eq('user_id', user.id)
-              .in('status', ['menunggu_diproses', 'diproses', 'siap_diambil', 'selesai', 'dibatalkan'])
+              .in('status', ['menunggu_diproses', 'diproses', 'siap_diambil', 'selesai', 'dibatalkan', 'tidak_diambil'])
               .order('created_at', { ascending: false })
               .limit(10)
 
@@ -261,6 +265,7 @@ export default function UserOrderNotifier() {
       case 'selesai':
         return <CheckCircle2 className="w-5 h-5 text-blue-600" />
       case 'dibatalkan':
+      case 'tidak_diambil':
         return <AlertOctagon className="w-5 h-5 text-[var(--danger)]" />
       default:
         return <Bell className="w-5 h-5 text-[var(--accent)]" />
@@ -276,6 +281,7 @@ export default function UserOrderNotifier() {
       case 'selesai':
         return 'bg-blue-100 text-blue-800 border-blue-200'
       case 'dibatalkan':
+      case 'tidak_diambil':
         return 'bg-[var(--danger)]/10 text-[var(--danger)] border-[var(--danger)]/20'
       default:
         return 'bg-[var(--warning)]/10 text-[var(--warning)] border-[var(--warning)]/20'

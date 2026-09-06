@@ -5,7 +5,7 @@ import { useState, useTransition } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import PageHeader from '@/components/PageHeader'
-import { formatRupiah, getOrderStatusLabel } from '@/lib/utils'
+import { formatRupiah, getOrderStatusLabel, getOrderStatusColor, formatBatasWaktu, getPickupCountdown } from '@/lib/utils'
 import { deleteOrders, deleteAllOrders, deleteSingleOrder, reorderItems } from '@/lib/actions/orders'
 import { 
   Package, 
@@ -13,12 +13,13 @@ import {
   Trash2, 
   CheckSquare, 
   Square, 
-  MinusSquare,
+  MinusSquare, 
   AlertTriangle, 
   Loader2, 
   X,
   SlidersHorizontal,
-  RotateCcw
+  RotateCcw,
+  Clock
 } from 'lucide-react'
 import { EmptyState } from '@/components/ui'
 
@@ -34,6 +35,7 @@ interface Order {
   created_at: string
   status: string
   total: number
+  batas_waktu_ambil?: string | null
   order_items: OrderItem[]
 }
 
@@ -312,7 +314,7 @@ export default function UserOrdersList({ initialOrders }: UserOrdersListProps) {
                             })}
                           </span>
                           <div className="flex items-center gap-1.5">
-                            <span className="text-[var(--text-caption)] font-bold bg-[var(--accent-bg)] text-[var(--accent-2)] px-2.5 py-0.5 rounded-full">
+                            <span className={`text-[var(--text-caption)] font-bold px-2.5 py-0.5 rounded-full ${getOrderStatusColor(order.status)}`}>
                               {getOrderStatusLabel(order.status)}
                             </span>
                             {!isSelectMode && (
@@ -320,6 +322,27 @@ export default function UserOrdersList({ initialOrders }: UserOrdersListProps) {
                             )}
                           </div>
                         </div>
+
+                        {/* Pickup Deadline Countdown (siap_diambil) */}
+                        {order.status === 'siap_diambil' && order.batas_waktu_ambil && (
+                          <div className="mb-2 p-2 rounded-xl bg-emerald-50 border border-emerald-200/80 text-[11px] text-emerald-900 flex items-center justify-between">
+                            <div className="flex items-center gap-1.5 font-semibold">
+                              <Clock size={13} className="text-emerald-700 shrink-0" />
+                              <span>Ambil s/d {formatBatasWaktu(order.batas_waktu_ambil)}</span>
+                            </div>
+                            <span className="font-bold text-emerald-800 bg-emerald-200/80 px-2 py-0.5 rounded-md text-[10px]">
+                              {getPickupCountdown(order.batas_waktu_ambil).text}
+                            </span>
+                          </div>
+                        )}
+
+                        {/* Unclaimed Notice (tidak_diambil) */}
+                        {order.status === 'tidak_diambil' && (
+                          <div className="mb-2 p-2 rounded-xl bg-rose-50 border border-rose-200/80 text-[11px] text-rose-800 flex items-center gap-1.5 font-medium">
+                            <AlertTriangle size={13} className="text-rose-600 shrink-0" />
+                            <span>Pesanan tidak diambil hingga batas waktu & otomatis dibatalkan.</span>
+                          </div>
+                        )}
 
                         {/* Items summary */}
                         <p className="text-xs text-[var(--ink-soft)] leading-relaxed line-clamp-2 mb-2 font-medium">

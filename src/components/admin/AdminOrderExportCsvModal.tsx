@@ -254,6 +254,7 @@ export default function AdminOrderExportCsvModal({
               <option value="siap_diambil">Hanya Siap Diambil</option>
               <option value="diproses">Hanya Diproses</option>
               <option value="menunggu_diproses">Hanya Menunggu Diproses</option>
+              <option value="tidak_diambil">Hanya Tidak Diambil</option>
               <option value="dibatalkan">Hanya Dibatalkan</option>
             </select>
           </div>
