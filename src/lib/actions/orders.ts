@@ -365,6 +365,8 @@ export async function createOrder(formData: FormData): Promise<{ error?: string;
     // Clear cart
     await supabase.from('cart_items').delete().eq('cart_id', cart.id)
 
+    revalidatePath('/admin')
+    revalidatePath('/admin/pesanan')
     revalidatePath('/pesanan')
     revalidatePath('/keranjang')
 
@@ -549,6 +551,7 @@ export async function updateOrderStatus(orderId: string, status: string): Promis
     }
   }
 
+  revalidatePath('/admin')
   revalidatePath('/admin/pesanan')
   revalidatePath(`/admin/pesanan/${orderId}`)
   revalidatePath('/pesanan')

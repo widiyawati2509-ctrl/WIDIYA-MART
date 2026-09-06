@@ -1,76 +1,139 @@
 // @ts-nocheck
 import { createClient } from '@/lib/supabase/server'
-import { formatRupiah, getOrderStatusLabel } from '@/lib/utils'
-import { ShoppingBag, TrendingUp, AlertTriangle, Package, ChevronRight } from 'lucide-react'
+import { formatRupiah, getOrderStatusLabel, getWitaStartOfDay } from '@/lib/utils'
+import { ShoppingBag, TrendingUp, AlertTriangle, Package, ChevronRight, CheckCircle2 } from 'lucide-react'
 import Link from 'next/link'
 import AdminPageTitle from '@/components/admin/AdminPageTitle'
-import { Card, Section, Badge, buttonClass } from '@/components/ui'
+import AdminDashboardLive from '@/components/admin/AdminDashboardLive'
+import { Section } from '@/components/ui'
+
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
 export default async function AdminDashboardPage() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const supabase: any = await createClient()
 
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
+  // Menggunakan awal hari zona waktu WITA (00:00:00 WITA) yang akurat
+  const startOfDayWita = getWitaStartOfDay()
 
-  const [ordersToday, ordersTotal, lowStockProducts, recentOrders, totalProducts] = await Promise.all([
+  const [ordersToday, completedOrders, lowStockProducts, recentOrders, totalProducts] = await Promise.all([
+    // 1. Pesanan masuk hari ini (tidak dibatalkan / tidak diambil)
     supabase
       .from('orders')
-      .select('total', { count: 'exact' })
-      .gte('created_at', today.toISOString())
+      .select('id, total, status, created_at, updated_at', { count: 'exact' })
+      .gte('created_at', startOfDayWita.toISOString())
       .neq('status', 'dibatalkan')
       .neq('status', 'tidak_diambil'),
+
+    // 2. Seluruh transaksi yang sudah SELESAI (uang sah masuk menjadi omzet toko)
     supabase
       .from('orders')
-      .select('total')
-      .neq('status', 'dibatalkan')
-      .neq('status', 'tidak_diambil'),
+      .select('id, total, created_at, updated_at, status')
+      .eq('status', 'selesai'),
+
+    // 3. Peringatan stok menipis
     supabase
       .from('products')
       .select('id, nama, stok')
       .eq('is_active', true)
       .lt('stok', 5)
       .order('stok'),
+
+    // 4. 5 transaksi terakhir untuk pemantauan cepat
     supabase
       .from('orders')
       .select('*')
       .order('created_at', { ascending: false })
       .limit(5),
+
+    // 5. Total produk aktif
     supabase
       .from('products')
       .select('id', { count: 'exact' })
       .eq('is_active', true),
   ])
 
-  const todayRevenue = (ordersToday.data ?? []).reduce((sum: number, o: { total: number }) => sum + o.total, 0)
-  const totalRevenue = (ordersTotal.data ?? []).reduce((sum: number, o: { total: number }) => sum + o.total, 0)
+  // Omzet Hari Ini: Pesanan berstatus 'selesai' yang diselesaikan atau dibuat pada hari ini (WITA)
+  const completedTodayList = (completedOrders.data ?? []).filter((o: any) => {
+    const createdDate = new Date(o.created_at)
+    const updatedDate = o.updated_at ? new Date(o.updated_at) : createdDate
+    return createdDate >= startOfDayWita || updatedDate >= startOfDayWita
+  })
+
+  const todayRevenue = completedTodayList.reduce(
+    (sum: number, o: { total: number }) => sum + Number(o.total || 0),
+    0
+  )
+
+  // Total Omzet Toko: Akumulasi seluruh pesanan yang berstatus 'selesai'
+  const totalRevenue = (completedOrders.data ?? []).reduce(
+    (sum: number, o: { total: number }) => sum + Number(o.total || 0),
+    0
+  )
 
   const stats = [
-    { label: 'Pesanan Hari Ini', value: ordersToday.count ?? 0, icon: ShoppingBag, color: 'text-[var(--accent-2)]', href: '/admin/pesanan' },
-    { label: 'Total Produk Aktif', value: `${totalProducts.count ?? 0} produk`, icon: Package, color: 'text-[var(--ink)]', href: '/admin/produk' },
-    { label: 'Omzet Hari Ini', value: formatRupiah(todayRevenue), icon: TrendingUp, color: 'text-[var(--accent-2)]' },
-    { label: 'Total Omzet Toko', value: formatRupiah(totalRevenue), icon: Package, color: 'text-[var(--ink)]' },
+    {
+      label: 'Pesanan Hari Ini',
+      value: ordersToday.count ?? 0,
+      sublabel: `${completedTodayList.length} pesanan selesai`,
+      icon: ShoppingBag,
+      color: 'text-[var(--accent-2)]',
+      href: '/admin/pesanan',
+    },
+    {
+      label: 'Total Produk Aktif',
+      value: `${totalProducts.count ?? 0} produk`,
+      sublabel: 'siap dibeli pembeli',
+      icon: Package,
+      color: 'text-[var(--ink)]',
+      href: '/admin/produk',
+    },
+    {
+      label: 'Omzet Hari Ini',
+      value: formatRupiah(todayRevenue),
+      sublabel: `${completedTodayList.length} pesanan selesai hari ini`,
+      icon: TrendingUp,
+      color: 'text-emerald-600',
+      href: '/admin/pesanan?status=selesai',
+    },
+    {
+      label: 'Total Omzet Toko',
+      value: formatRupiah(totalRevenue),
+      sublabel: `${(completedOrders.data ?? []).length} total pesanan selesai`,
+      icon: CheckCircle2,
+      color: 'text-[var(--accent-2)]',
+      href: '/admin/pesanan?status=selesai',
+    },
   ]
 
   return (
     <div className="space-y-4">
       <AdminPageTitle
         title="Ringkasan Toko"
-        subtitle="Pantau kinerja penjualan dan operasional PENGENJEK MART"
+        subtitle="Pantau kinerja penjualan dan omzet real-time PENGENJEK MART"
+        rightSlot={<AdminDashboardLive />}
       />
 
       {/* Summary Cards */}
       <div className="grid grid-cols-2 gap-3">
-        {stats.map(({ label, value, icon: Icon, color, href }) => {
+        {stats.map(({ label, value, sublabel, icon: Icon, color, href }) => {
           const content = (
             <div className="card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-lg)] p-3.5 shadow-3d press h-full flex flex-col justify-between">
-              <div className="flex items-center gap-2 mb-2">
-                <span className="w-8 h-8 rounded-[var(--radius-sm)] bg-[var(--accent-bg)] text-[var(--accent-2)] flex items-center justify-center">
-                  <Icon size={16} />
-                </span>
-                <p className="text-xs font-semibold text-[var(--ink-soft)] leading-tight">{label}</p>
+              <div>
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="w-8 h-8 rounded-[var(--radius-sm)] bg-[var(--accent-bg)] text-[var(--accent-2)] flex items-center justify-center shrink-0">
+                    <Icon size={16} />
+                  </span>
+                  <p className="text-xs font-semibold text-[var(--ink-soft)] leading-tight">{label}</p>
+                </div>
+                <p className={`text-base font-sora font-bold tabular-nums ${color}`}>{value}</p>
               </div>
-              <p className={`text-base font-sora font-bold tabular-nums ${color}`}>{value}</p>
+              {sublabel && (
+                <p className="text-[10.5px] font-medium text-[var(--ink-soft)] mt-2 pt-1.5 border-t border-[var(--line)] line-clamp-1">
+                  {sublabel}
+                </p>
+              )}
             </div>
           )
 

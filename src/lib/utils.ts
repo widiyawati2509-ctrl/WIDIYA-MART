@@ -159,6 +159,27 @@ export function getWitaTime(date: Date = new Date()): {
 }
 
 /**
+ * Mendapatkan objek Date awal hari (00:00:00 WITA) yang konsisten
+ * baik dijalankan di server berzona waktu UTC maupun di browser lokal.
+ */
+export function getWitaStartOfDay(date: Date = new Date()): Date {
+  try {
+    const formatter = new Intl.DateTimeFormat('en-CA', {
+      timeZone: 'Asia/Makassar',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    })
+    const ymd = formatter.format(date)
+    return new Date(`${ymd}T00:00:00+08:00`)
+  } catch {
+    const d = new Date(date)
+    d.setHours(0, 0, 0, 0)
+    return d
+  }
+}
+
+/**
  * Parsing jam dari string (mendukung format '07:00', '07.00', '7:00', dll).
  */
 export function parseTimeString(

@@ -21,6 +21,7 @@ export default function AdminOrderNotifier() {
   const [soundEnabled, setSoundEnabled] = useState(true)
   const audioCtxRef = useRef<AudioContext | null>(null)
   const lastOrderIdRef = useRef<string | null>(null)
+  const lastOrderSignatureRef = useRef<string | null>(null)
   const initialLoadDoneRef = useRef(false)
 
   // Initialize or resume AudioContext on first tap
@@ -156,49 +157,59 @@ export default function AdminOrderNotifier() {
     }
     initBaseline()
 
-    // 2. Supabase Realtime channel
+    // 2. Supabase Realtime channel (listen to INSERT, UPDATE, DELETE on orders)
     const channel = supabase
       .channel('admin-realtime-orders')
       .on(
         'postgres_changes',
         {
-          event: 'INSERT',
+          event: '*',
           schema: 'public',
           table: 'orders',
         },
         (payload) => {
-          const newOrder = payload.new as NewOrderNotification
-          if (newOrder && newOrder.id !== lastOrderIdRef.current) {
-            lastOrderIdRef.current = newOrder.id
-            fireNotification(newOrder)
+          if (payload.eventType === 'INSERT') {
+            const newOrder = payload.new as NewOrderNotification
+            if (newOrder && newOrder.id !== lastOrderIdRef.current) {
+              lastOrderIdRef.current = newOrder.id
+              fireNotification(newOrder)
+            }
+          } else {
+            // Pada event UPDATE (misal status pesanan diubah ke 'selesai') atau DELETE:
+            // Segera refresh router agar ringkasan toko, omset, dan daftar pesanan terupdate otomatis
+            router.refresh()
           }
         }
       )
       .subscribe()
 
-    // 3. Fallback Poller every 10s (ensures notifications fire even if WebSocket is sleeping/throttled)
+    // 3. Fallback Poller every 8s (memastikan data tetap update otomatis meskipun WebSocket sleeping)
     const poller = setInterval(async () => {
       if (!initialLoadDoneRef.current) return
       try {
         const { data } = await supabase
           .from('orders')
-          .select('id, nama_pemesan, total, created_at')
-          .order('created_at', { ascending: false })
+          .select('id, nama_pemesan, total, created_at, status, updated_at')
+          .order('updated_at', { ascending: false })
           .limit(1)
 
         if (data && data.length > 0) {
-          const latest = data[0] as NewOrderNotification
-          if (lastOrderIdRef.current && latest.id !== lastOrderIdRef.current) {
+          const latest = data[0]
+          const signature = `${latest.id}-${latest.status}-${latest.updated_at}`
+          if (lastOrderIdRef.current && latest.id !== lastOrderIdRef.current && latest.created_at === latest.updated_at) {
             lastOrderIdRef.current = latest.id
-            fireNotification(latest)
-          } else if (!lastOrderIdRef.current) {
-            lastOrderIdRef.current = latest.id
+            fireNotification(latest as NewOrderNotification)
+          } else if (lastOrderSignatureRef.current && lastOrderSignatureRef.current !== signature) {
+            lastOrderSignatureRef.current = signature
+            router.refresh()
+          } else if (!lastOrderSignatureRef.current) {
+            lastOrderSignatureRef.current = signature
           }
         }
       } catch {
         // network silent retry
       }
-    }, 10000)
+    }, 8000)
 
     return () => {
       supabase.removeChannel(channel)
