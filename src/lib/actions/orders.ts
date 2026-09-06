@@ -429,18 +429,23 @@ export async function updateOrderStatus(orderId: string, status: string): Promis
   if (profile?.role !== 'admin') return { error: 'Unauthorized' }
 
   // Ambil data pesanan saat ini untuk mendeteksi status sebelumnya
-  const { data: currentOrder } = await supabase
+  let currentOrder: { status?: string; batas_waktu_ambil?: string | null; metode_pengiriman?: string | null } | null = null
+  const { data: orderData } = await supabase
     .from('orders')
-    .select('status, batas_waktu_ambil')
+    .select('*')
     .eq('id', orderId)
     .single()
+
+  if (orderData) {
+    currentOrder = orderData
+  }
 
   const prevStatus = currentOrder?.status
 
   const updatePayload: Record<string, any> = { status }
 
-  // Jika status berubah ke 'siap_diambil', hitung batas_waktu_ambil jika belum ada
-  if (status === 'siap_diambil') {
+  // Jika status berubah ke 'siap_diambil' dan metode pesanan adalah 'ambil_di_toko', hitung batas_waktu_ambil jika belum ada
+  if (status === 'siap_diambil' && currentOrder?.metode_pengiriman !== 'antar_alamat') {
     if (!currentOrder?.batas_waktu_ambil) {
       updatePayload.batas_waktu_ambil = new Date(
         Date.now() + ORDER_PICKUP_EXPIRATION_HOURS * 60 * 60 * 1000
@@ -448,12 +453,43 @@ export async function updateOrderStatus(orderId: string, status: string): Promis
     }
   }
 
-  const { error } = await supabase
+  let { error } = await supabase
     .from('orders')
     .update(updatePayload)
     .eq('id', orderId)
 
-  if (error) return { error: 'Gagal update status: ' + error.message }
+  // Fallback: Jika kolom batas_waktu_ambil belum ada di database atau schema cache belum sinkron, update status saja
+  if (error && updatePayload.batas_waktu_ambil) {
+    const isColumnError =
+      error.message?.includes('batas_waktu_ambil') ||
+      error.message?.includes('column') ||
+      error.message?.includes('schema cache') ||
+      error.code === 'PGRST204'
+
+    if (isColumnError) {
+      console.warn('orders.batas_waktu_ambil column missing in database, updating status only:', error.message)
+      const { error: retryError } = await supabase
+        .from('orders')
+        .update({ status })
+        .eq('id', orderId)
+      error = retryError
+    }
+  }
+
+  // Fallback: Jika enum Postgres belum ditambahkan status 'tidak_diambil'
+  if (error && error.message?.includes('enum') && status === 'tidak_diambil') {
+    console.warn('Enum order_status missing tidak_diambil, falling back to dibatalkan:', error.message)
+    const { error: retryCancelErr } = await supabase
+      .from('orders')
+      .update({ status: 'dibatalkan' })
+      .eq('id', orderId)
+    error = retryCancelErr
+  }
+
+  if (error) {
+    console.error('Gagal update status:', error)
+    return { error: 'Gagal update status: ' + error.message }
+  }
 
   // Jika status diubah ke 'tidak_diambil' atau 'dibatalkan', kembalikan stok
   // Pastikan status sebelumnya bukan 'tidak_diambil' atau 'dibatalkan' agar tidak double-restore

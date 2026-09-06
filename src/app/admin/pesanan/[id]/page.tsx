@@ -9,10 +9,10 @@ import {
   getPickupCountdown,
   parseOrderShippingInfo 
 } from '@/lib/utils'
-import { updateOrderStatus } from '@/lib/actions/orders'
 import PrintReceiptButton from '@/components/PrintReceiptButton'
 import DeleteOrderButton from '@/components/admin/DeleteOrderButton'
 import AdminPageTitle from '@/components/admin/AdminPageTitle'
+import AdminOrderStatusButtons from '@/components/admin/AdminOrderStatusButtons'
 import { 
   Truck, 
   Store, 
@@ -306,29 +306,11 @@ export default async function AdminOrderDetailPage({ params }: AdminOrderDetailP
           {/* 3. UPDATE STATUS */}
           <div className="bg-white border rounded-2xl p-4 shadow-xs">
             <h2 className="font-semibold mb-3 text-sm text-gray-900">Update Status Pesanan</h2>
-            <div className="space-y-2">
-              {statuses.map(({ value, label }) => {
-                const isCurrent = order.status === value
-                const updateAction = updateOrderStatus.bind(null, order.id, value)
-                return (
-                  <form key={value} action={updateAction}>
-                    <button
-                      type="submit"
-                      disabled={isCurrent}
-                      className={`w-full text-left px-4 py-3 rounded-xl text-sm font-medium border transition-all ${
-                        isCurrent
-                          ? 'bg-emerald-50 border-emerald-300 text-emerald-700 cursor-default font-bold shadow-xs'
-                          : value === 'dibatalkan' || value === 'tidak_diambil'
-                          ? 'bg-white hover:bg-rose-50 border-rose-200 text-rose-700 shadow-xs active:scale-[0.98]'
-                          : 'bg-white hover:bg-gray-50 border-gray-200 text-gray-800 shadow-xs active:scale-[0.98]'
-                      }`}
-                    >
-                      {isCurrent ? '✓ ' : ''}{label}
-                    </button>
-                  </form>
-                )
-              })}
-            </div>
+            <AdminOrderStatusButtons
+              orderId={order.id}
+              currentStatus={order.status}
+              statuses={statuses}
+            />
             <div className="mt-4 pt-3 border-t">
               <DeleteOrderButton orderId={order.id} orderNumber={order.id.slice(0, 8).toUpperCase()} />
             </div>
