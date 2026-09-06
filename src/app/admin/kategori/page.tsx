@@ -5,6 +5,9 @@ import { Plus } from 'lucide-react'
 import AdminCategoryList from '@/components/admin/AdminCategoryList'
 import AdminPageTitle from '@/components/admin/AdminPageTitle'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export default async function AdminKategoriPage() {
   const supabase = await createClient()
   const { data: categories } = await supabase

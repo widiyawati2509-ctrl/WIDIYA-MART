@@ -99,7 +99,9 @@ export async function updateLoyaltyConfig(formData: FormData): Promise<{ success
     }
 
     revalidatePath('/admin/poin')
+    revalidatePath('/admin')
     revalidatePath('/poin')
+    revalidatePath('/profil')
     revalidatePath('/checkout')
     return { success: true }
   } catch (err: any) {
@@ -133,6 +135,11 @@ export async function getUserLoyaltySummary(targetUserId?: string) {
         .filter((t) => t.type === 'earned' && t.order_id)
         .map((t) => t.order_id)
     )
+    const debitedOrderIds = new Set(
+      transactions
+        .filter((t) => t.type === 'redeemed' && t.order_id)
+        .map((t) => t.order_id)
+    )
 
     // 2. Fetch completed orders to ensure all completed orders are awarded points
     const { data: completedOrders } = await supabase
@@ -150,7 +157,7 @@ export async function getUserLoyaltySummary(targetUserId?: string) {
             const earned = Math.floor(ordTotal / config.threshold_amount) * config.points_per_threshold
             if (earned > 0) {
               const syntheticTx = {
-                id: `order_${ord.id}`,
+                id: `order_earned_${ord.id}`,
                 user_id: userId,
                 order_id: ord.id,
                 points: earned,
@@ -181,6 +188,42 @@ export async function getUserLoyaltySummary(targetUserId?: string) {
       }
     }
 
+    // 3. Fetch user orders where points were redeemed to ensure spent points are subtracted
+    const { data: userOrders } = await supabase
+      .from('orders')
+      .select('id, total, catatan, poin_digunakan, status, created_at')
+      .eq('user_id', userId)
+      .neq('status', 'dibatalkan')
+      .neq('status', 'tidak_diambil')
+      .order('created_at', { ascending: false })
+
+    if (userOrders && userOrders.length > 0) {
+      for (const ord of userOrders) {
+        if (!debitedOrderIds.has(ord.id)) {
+          let redeemed = Number(ord.poin_digunakan) || 0
+          if (redeemed <= 0 && ord.catatan) {
+            const match = ord.catatan.match(/\[Poin Digunakan:\s*(\d+)/i)
+            if (match && match[1]) {
+              redeemed = parseInt(match[1], 10) || 0
+            }
+          }
+          if (redeemed > 0) {
+            const syntheticRedeemTx = {
+              id: `order_redeemed_${ord.id}`,
+              user_id: userId,
+              order_id: ord.id,
+              points: -redeemed,
+              type: 'redeemed',
+              description: `Tukar poin diskon pesanan #${ord.id.slice(0, 8).toUpperCase()}`,
+              created_at: ord.created_at,
+            }
+            transactions.push(syntheticRedeemTx)
+            debitedOrderIds.add(ord.id)
+          }
+        }
+      }
+    }
+
     // Sort transactions by date desc
     transactions.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
 
@@ -198,3 +241,98 @@ export async function getUserLoyaltySummary(targetUserId?: string) {
     return null
   }
 }
+
+export async function getLoyaltySummaryAdmin() {
+  try {
+    const supabase: SupabaseClient = await createClient()
+    const config = await getLoyaltyConfig()
+
+    // 1. Fetch transactions from loyalty_transactions table if available
+    const { data: txs } = await supabase
+      .from('loyalty_transactions')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(100)
+
+    let transactions = Array.isArray(txs) ? [...txs] : []
+    const creditedOrderIds = new Set(
+      transactions
+        .filter((t) => t.type === 'earned' && t.order_id)
+        .map((t) => t.order_id)
+    )
+    const debitedOrderIds = new Set(
+      transactions
+        .filter((t) => t.type === 'redeemed' && t.order_id)
+        .map((t) => t.order_id)
+    )
+
+    // 2. Fetch all orders to backfill any missing earned or redeemed transactions
+    const { data: orders } = await supabase
+      .from('orders')
+      .select('id, user_id, total, status, catatan, poin_digunakan, created_at, profiles(nama)')
+      .order('created_at', { ascending: false })
+      .limit(100)
+
+    if (orders && orders.length > 0) {
+      for (const ord of orders) {
+        // Earned points from completed orders
+        if (ord.status === 'selesai' && !creditedOrderIds.has(ord.id)) {
+          const ordTotal = Number(ord.total) || 0
+          if (ordTotal >= config.min_order_amount) {
+            const earned = Math.floor(ordTotal / config.threshold_amount) * config.points_per_threshold
+            if (earned > 0) {
+              transactions.push({
+                id: `order_earned_${ord.id}`,
+                user_id: ord.user_id,
+                order_id: ord.id,
+                points: earned,
+                type: 'earned',
+                description: `Poin belanja pesanan #${ord.id.slice(0, 8).toUpperCase()}${ord.profiles?.nama ? ` (${ord.profiles.nama})` : ''}`,
+                created_at: ord.created_at,
+              })
+              creditedOrderIds.add(ord.id)
+            }
+          }
+        }
+
+        // Redeemed points from active/valid orders
+        if (ord.status !== 'dibatalkan' && ord.status !== 'tidak_diambil' && !debitedOrderIds.has(ord.id)) {
+          let redeemed = Number(ord.poin_digunakan) || 0
+          if (redeemed <= 0 && ord.catatan) {
+            const match = ord.catatan.match(/\[Poin Digunakan:\s*(\d+)/i)
+            if (match && match[1]) {
+              redeemed = parseInt(match[1], 10) || 0
+            }
+          }
+          if (redeemed > 0) {
+            transactions.push({
+              id: `order_redeemed_${ord.id}`,
+              user_id: ord.user_id,
+              order_id: ord.id,
+              points: -redeemed,
+              type: 'redeemed',
+              description: `Tukar poin belanja pesanan #${ord.id.slice(0, 8).toUpperCase()}${ord.profiles?.nama ? ` (${ord.profiles.nama})` : ''}`,
+              created_at: ord.created_at,
+            })
+            debitedOrderIds.add(ord.id)
+          }
+        }
+      }
+    }
+
+    transactions.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+
+    return {
+      config,
+      transactions,
+    }
+  } catch (err) {
+    console.error('getLoyaltySummaryAdmin error:', err)
+    const config = await getLoyaltyConfig()
+    return {
+      config,
+      transactions: [],
+    }
+  }
+}
+

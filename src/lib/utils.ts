@@ -180,6 +180,25 @@ export function getWitaStartOfDay(date: Date = new Date()): Date {
 }
 
 /**
+ * Mendapatkan string tanggal format 'YYYY-MM-DD' dalam zona waktu WITA (Asia/Makassar).
+ */
+export function getWitaDateString(date: Date = new Date()): string {
+  try {
+    return new Intl.DateTimeFormat('en-CA', {
+      timeZone: 'Asia/Makassar',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    }).format(date)
+  } catch {
+    const utcMs = date.getTime() + date.getTimezoneOffset() * 60 * 1000
+    const witaDate = new Date(utcMs + 8 * 60 * 60 * 1000)
+    return witaDate.toISOString().split('T')[0]
+  }
+}
+
+
+/**
  * Parsing jam dari string (mendukung format '07:00', '07.00', '7:00', dll).
  */
 export function parseTimeString(

@@ -5,6 +5,7 @@ import { useEffect, useState, useRef, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { Bell, X, ArrowRight, PackageCheck, CookingPot, CheckCircle2, AlertOctagon } from 'lucide-react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
 interface StatusChangeNotification {
   id: string
@@ -14,6 +15,7 @@ interface StatusChangeNotification {
 }
 
 export default function UserOrderNotifier() {
+  const router = useRouter()
   const [notification, setNotification] = useState<StatusChangeNotification | null>(null)
   const audioCtxRef = useRef<AudioContext | null>(null)
   const knownStatusRef = useRef<Record<string, string>>({})
@@ -141,8 +143,11 @@ export default function UserOrderNotifier() {
           // ignore
         }
       }
+
+      // Refresh current page data so points, order status badges, etc. are instantly updated
+      router.refresh()
     },
-    [playChime]
+    [playChime, router]
   )
 
   useEffect(() => {

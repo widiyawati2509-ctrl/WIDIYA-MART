@@ -10,6 +10,9 @@ import DeleteOrderButton from '@/components/admin/DeleteOrderButton'
 import ReorderButton from '@/components/ReorderButton'
 import ProductReviewFormModal from '@/components/ProductReviewFormModal'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 interface OrderDetailPageProps {
   params: Promise<{ id: string }>
   searchParams?: Promise<{ created?: string }>

@@ -367,7 +367,11 @@ export async function createOrder(formData: FormData): Promise<{ error?: string;
 
     revalidatePath('/admin')
     revalidatePath('/admin/pesanan')
+    revalidatePath('/admin/poin')
     revalidatePath('/pesanan')
+    revalidatePath('/poin')
+    revalidatePath('/profil')
+    revalidatePath('/checkout')
     revalidatePath('/keranjang')
 
     return { success: true, orderId: order.id }
@@ -554,10 +558,12 @@ export async function updateOrderStatus(orderId: string, status: string): Promis
   revalidatePath('/admin')
   revalidatePath('/admin/pesanan')
   revalidatePath(`/admin/pesanan/${orderId}`)
+  revalidatePath('/admin/poin')
   revalidatePath('/pesanan')
   revalidatePath(`/pesanan/${orderId}`)
   revalidatePath('/poin')
   revalidatePath('/profil')
+  revalidatePath('/checkout')
   return { success: true }
 }
 

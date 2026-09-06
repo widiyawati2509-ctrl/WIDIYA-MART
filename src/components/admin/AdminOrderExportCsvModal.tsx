@@ -11,7 +11,7 @@ import {
   CheckCircle2, 
   AlertCircle 
 } from 'lucide-react'
-import { getOrderStatusLabel } from '@/lib/utils'
+import { getOrderStatusLabel, getWitaDateString } from '@/lib/utils'
 
 interface OrderItem {
   id?: string
@@ -55,12 +55,13 @@ export default function AdminOrderExportCsvModal({
   onClose,
   orders,
 }: AdminOrderExportCsvModalProps) {
-  const todayStr = new Date().toISOString().split('T')[0]
+  const todayStr = getWitaDateString()
   
-  // Default to first day of current month
+  // Default to first day of current month in WITA
   const firstDayStr = (() => {
     const d = new Date()
-    return new Date(d.getFullYear(), d.getMonth(), 1).toISOString().split('T')[0]
+    const firstDay = new Date(d.getFullYear(), d.getMonth(), 1)
+    return getWitaDateString(firstDay)
   })()
 
   const [startDate, setStartDate] = useState(firstDayStr)
@@ -73,7 +74,7 @@ export default function AdminOrderExportCsvModal({
 
   // Calculate preview count
   const matchingOrders = orders.filter((order) => {
-    const orderDateStr = order.created_at ? order.created_at.split('T')[0] : ''
+    const orderDateStr = order.created_at ? getWitaDateString(new Date(order.created_at)) : ''
     const matchDate = (!startDate || orderDateStr >= startDate) && (!endDate || orderDateStr <= endDate)
     const matchStatus = selectedStatus === 'all' || order.status === selectedStatus
     return matchDate && matchStatus

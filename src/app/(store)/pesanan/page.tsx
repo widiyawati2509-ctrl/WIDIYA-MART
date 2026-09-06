@@ -3,6 +3,9 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import UserOrdersList from '@/components/UserOrdersList'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export default async function PesananPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()

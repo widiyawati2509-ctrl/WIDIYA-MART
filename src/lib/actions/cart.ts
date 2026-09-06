@@ -56,6 +56,8 @@ export async function addToCart(productId: string, qty: number = 1): Promise<{ e
   }
 
   revalidatePath('/')
+  revalidatePath('/keranjang')
+  revalidatePath('/checkout')
   return { success: true }
 }
 

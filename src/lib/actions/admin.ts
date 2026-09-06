@@ -22,6 +22,9 @@ export async function createCategory(formData: FormData): Promise<void> {
   const slug = slugify(parsed.data.nama)
   await supabase.from('categories').insert({ nama: parsed.data.nama, slug })
   revalidatePath('/admin/kategori')
+  revalidatePath('/admin')
+  revalidatePath('/')
+  revalidatePath('/kategori')
 }
 
 export async function updateCategory(id: string, formData: FormData): Promise<void> {
@@ -36,12 +39,18 @@ export async function updateCategory(id: string, formData: FormData): Promise<vo
     .eq('id', id)
 
   revalidatePath('/admin/kategori')
+  revalidatePath('/admin')
+  revalidatePath('/')
+  revalidatePath('/kategori')
 }
 
 export async function deleteCategory(id: string): Promise<void> {
   const supabase: SupabaseClient = await createClient()
   await supabase.from('categories').delete().eq('id', id)
   revalidatePath('/admin/kategori')
+  revalidatePath('/admin')
+  revalidatePath('/')
+  revalidatePath('/kategori')
 }
 
 export async function updateStoreInfo(formData: FormData): Promise<{ success: boolean; error?: string }> {
@@ -149,6 +158,7 @@ export async function updateStoreInfo(formData: FormData): Promise<{ success: bo
     revalidatePath('/')
     revalidatePath('/checkout')
     revalidatePath('/tentang')
+    revalidatePath('/admin')
     revalidatePath('/admin/pengaturan')
 
     return { success: true }

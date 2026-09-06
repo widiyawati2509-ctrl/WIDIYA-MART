@@ -1,7 +1,7 @@
 // @ts-nocheck
 'use client'
 
-import { useState, useTransition } from 'react'
+import { useState, useEffect, useTransition } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import PageHeader from '@/components/PageHeader'
@@ -63,10 +63,10 @@ export default function UserOrdersList({ initialOrders }: UserOrdersListProps) {
   })
   const [feedbackMsg, setFeedbackMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
 
-  // Sync if initialOrders changes
-  if (initialOrders !== orders && initialOrders.length !== orders.length) {
+  // Sync state when initialOrders prop changes (e.g. after status update or Realtime refresh)
+  useEffect(() => {
     setOrders(initialOrders)
-  }
+  }, [initialOrders])
 
   const allSelected = orders.length > 0 && orders.every((o) => selectedIds.has(o.id))
   const someSelected = orders.some((o) => selectedIds.has(o.id)) && !allSelected

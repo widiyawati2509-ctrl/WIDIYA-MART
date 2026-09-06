@@ -6,6 +6,9 @@ import AdminProductList from '@/components/admin/AdminProductList'
 import AdminPageTitle from '@/components/admin/AdminPageTitle'
 import { Plus } from 'lucide-react'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export default async function AdminProdukPage() {
   const supabase = await createClient()
 

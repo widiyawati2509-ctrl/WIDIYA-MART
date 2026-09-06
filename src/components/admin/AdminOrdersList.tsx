@@ -1,7 +1,7 @@
 // @ts-nocheck
 'use client'
 
-import { useState, useTransition } from 'react'
+import { useState, useEffect, useTransition } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { 
@@ -131,10 +131,10 @@ export default function AdminOrdersList({ initialOrders, initialStatus }: AdminO
   })
   const [feedbackMsg, setFeedbackMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
 
-  // Sync state if initialOrders prop changes
-  if (initialOrders !== orders && initialOrders.length !== orders.length) {
+  // Sync state when initialOrders prop changes (e.g. after status update or Realtime refresh)
+  useEffect(() => {
     setOrders(initialOrders)
-  }
+  }, [initialOrders])
 
   // Filter orders based on search & status
   const filteredOrders = orders.filter((order) => {

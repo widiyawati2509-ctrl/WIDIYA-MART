@@ -90,7 +90,9 @@ export async function createProduct(formData: FormData): Promise<void> {
   })
 
   revalidatePath('/admin/produk')
+  revalidatePath('/admin')
   revalidatePath('/')
+  revalidatePath('/kategori')
 }
 
 export async function updateProduct(id: string, formData: FormData): Promise<void> {
@@ -171,7 +173,9 @@ export async function updateProduct(id: string, formData: FormData): Promise<voi
   await supabase.from('products').update(updateData).eq('id', id)
 
   revalidatePath('/admin/produk')
+  revalidatePath('/admin')
   revalidatePath('/')
+  revalidatePath('/kategori')
 }
 
 export async function deleteProduct(id: string): Promise<void> {
@@ -182,7 +186,9 @@ export async function deleteProduct(id: string): Promise<void> {
     .eq('id', id)
 
   revalidatePath('/admin/produk')
+  revalidatePath('/admin')
   revalidatePath('/')
+  revalidatePath('/kategori')
 }
 
 export async function fetchMoreCatalogProducts(params: {

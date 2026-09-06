@@ -3,6 +3,9 @@ import { createClient } from '@/lib/supabase/server'
 import AdminOrdersList from '@/components/admin/AdminOrdersList'
 import { checkAndExpirePickupOrders } from '@/lib/actions/orders'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export default async function AdminPesananPage({
   searchParams,
 }: {

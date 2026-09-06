@@ -12,6 +12,9 @@ import PageHeader from '@/components/PageHeader'
 import UserAddressManager from '@/components/UserAddressManager'
 import { Card, Button } from '@/components/ui'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export default async function ProfilPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()

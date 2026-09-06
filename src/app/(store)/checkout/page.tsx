@@ -6,6 +6,9 @@ import { getUserAddresses } from '@/lib/actions/addresses'
 import CheckoutFormClient from '@/components/CheckoutFormClient'
 import PageHeader from '@/components/PageHeader'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export default async function CheckoutPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
