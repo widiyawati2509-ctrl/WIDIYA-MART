@@ -44,7 +44,7 @@ export default async function KategoriPage({ searchParams }: KategoriPageProps) 
   const totalCount = count ?? products?.length ?? 0
 
   return (
-    <div className="w-full pb-28">
+    <div className="w-full pb-32">
       {/* Top Header */}
       <PageHeader
         title="Katalog Produk"
