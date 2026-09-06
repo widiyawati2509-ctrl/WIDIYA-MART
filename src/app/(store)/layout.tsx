@@ -42,9 +42,12 @@ export default async function StoreLayout({
   }
 
   return (
-    <div className="max-w-[480px] mx-auto min-h-screen pb-24 relative bg-[var(--paper)]">
+    <div
+      className="max-w-[480px] mx-auto min-h-screen pb-24 relative bg-[var(--paper)]"
+      style={{ '--admin-bar-offset': isAdmin ? '34px' : '0px' } as React.CSSProperties}
+    >
       {isAdmin && (
-        <div className="sticky top-0 z-50 bg-gradient-to-r from-amber-600 via-orange-600 to-amber-600 text-white px-3.5 py-1.5 text-xs font-sora font-semibold flex items-center justify-between shadow-header">
+        <div className="sticky top-0 z-50 h-[34px] bg-gradient-to-r from-amber-600 via-orange-600 to-amber-600 text-white px-3.5 py-1 text-xs font-sora font-semibold flex items-center justify-between shadow-header">
           <div className="flex items-center gap-1.5">
             <span className="text-xs">👑</span>
             <span>Mode Admin</span>

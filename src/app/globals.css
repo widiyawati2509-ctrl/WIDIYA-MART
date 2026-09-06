@@ -280,6 +280,9 @@ input.field:focus, textarea.field:focus, select.field:focus {
 }
 
 /* Header */
+.top-header {
+  top: var(--admin-bar-offset, 0px);
+}
 header.top-header {
   background: rgba(250, 240, 235, 0.92);
   backdrop-filter: blur(12px);

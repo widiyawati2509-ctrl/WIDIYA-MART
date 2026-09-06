@@ -40,7 +40,7 @@ export default async function HomePage() {
   return (
     <div className="w-full pb-32">
       {/* Toko Kita Frosted Top Header */}
-      <header className="top-header sticky top-0 z-40 px-4 py-3.5 flex items-center justify-between border-b border-[rgba(232,214,205,0.8)] shadow-header bg-[rgba(250,240,235,0.92)] backdrop-blur-md mb-3">
+      <header className="top-header sticky top-[var(--admin-bar-offset,0px)] z-40 px-4 py-3.5 flex items-center justify-between border-b border-[rgba(232,214,205,0.8)] shadow-header bg-[rgba(250,240,235,0.92)] backdrop-blur-md mb-3">
         <div className="flex items-center gap-2.5">
           <div className="logo-box flex items-center justify-center p-1 overflow-hidden shrink-0 shadow-badge">
             <Image
