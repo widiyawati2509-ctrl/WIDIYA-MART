@@ -118,7 +118,7 @@ export default function AdminPromoList({ initialPromos, products }: AdminPromoLi
                 style={{ background: p.banner_bg || 'linear-gradient(135deg, #FF6B35 0%, #E85521 100%)' }}
               >
                 {p.image_url ? (
-                  <Image src={p.image_url} alt={p.judul} fill className="object-contain p-1" sizes="64px" />
+                  <Image src={p.image_url} alt={p.judul} fill className="object-contain p-1" sizes="64px" unoptimized />
                 ) : (
                   <Sparkles size={20} />
                 )}

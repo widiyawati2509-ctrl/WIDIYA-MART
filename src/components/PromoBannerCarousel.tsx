@@ -148,6 +148,7 @@ export default function PromoBannerCarousel({ banners: propBanners }: { banners?
                       fill
                       className="object-contain p-1.5"
                       sizes="96px"
+                      unoptimized
                     />
                   </div>
                 </div>
