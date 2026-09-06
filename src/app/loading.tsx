@@ -28,27 +28,35 @@ export default function Loading() {
       {/* Categories Skeleton */}
       <div className="px-4 mb-5">
         <div className="h-4 bg-[var(--line)] rounded-[var(--radius-sm)] w-24 mb-3 animate-pulse" />
-        <div className="grid grid-cols-3 gap-2.5">
+        <div className="flex gap-3 overflow-x-auto scrollbar-hide py-1.5 -mx-4 px-4">
           {[1, 2, 3, 4, 5, 6].map((i) => (
-            <div key={i} className="card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-lg)] p-3 flex flex-col items-center gap-2 animate-pulse shadow-3d">
-              <div className="w-12 h-12 bg-[var(--accent-bg)] rounded-[var(--radius-md)] animate-shimmer" />
-              <div className="h-3 bg-[var(--line)] rounded-[var(--radius-sm)] w-12" />
+            <div key={i} className="flex flex-col items-center shrink-0">
+              <div className="w-13 h-13 rounded-[var(--radius-lg)] bg-[var(--accent-bg)] border border-[rgba(232,214,205,0.9)] animate-pulse mb-1.5" />
+              <div className="h-2.5 bg-[var(--line)] rounded-[var(--radius-sm)] w-12 animate-pulse" />
             </div>
           ))}
         </div>
       </div>
 
-      {/* Products Horizontal Row Skeleton */}
-      <div className="px-4 mb-6">
-        <div className="h-4 bg-[var(--line)] rounded-[var(--radius-sm)] w-32 mb-3 animate-pulse" />
-        <div className="flex gap-3 overflow-x-auto scrollbar-hide py-2 -mx-4 px-4">
-          {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="w-40 shrink-0">
-              <ProductCardSkeleton />
+      {/* Products Horizontal Row Skeletons */}
+      {[1, 2].map((sectionIdx) => (
+        <div key={sectionIdx} className="px-4 mb-6">
+          <div className="flex items-center justify-between mb-3">
+            <div className="space-y-1">
+              <div className="h-4 bg-[var(--line)] rounded-[var(--radius-sm)] w-32 animate-pulse" />
+              <div className="h-3 bg-[var(--line)]/60 rounded-[var(--radius-sm)] w-48 animate-pulse" />
             </div>
-          ))}
+            <div className="h-3 bg-[var(--line)]/60 rounded-[var(--radius-sm)] w-16 animate-pulse" />
+          </div>
+          <div className="flex gap-3 overflow-x-auto scrollbar-hide py-2 -mx-4 px-4">
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="w-40 shrink-0">
+                <ProductCardSkeleton />
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
+      ))}
     </div>
   )
 }
