@@ -189,6 +189,7 @@ export type Database = {
           diskon_poin?: number | null
           poin_didapat?: number | null
           batas_waktu_ambil?: string | null
+          estimasi_menit?: number | null
           created_at: string
           updated_at: string
         }
@@ -209,6 +210,7 @@ export type Database = {
           diskon_poin?: number | null
           poin_didapat?: number | null
           batas_waktu_ambil?: string | null
+          estimasi_menit?: number | null
           created_at?: string
           updated_at?: string
         }
@@ -229,6 +231,7 @@ export type Database = {
           diskon_poin?: number | null
           poin_didapat?: number | null
           batas_waktu_ambil?: string | null
+          estimasi_menit?: number | null
           created_at?: string
           updated_at?: string
         }
@@ -271,6 +274,8 @@ export type Database = {
           jam_operasional: string
           jam_buka?: string | null
           jam_tutup?: string | null
+          estimasi_menit_per_km?: number | null
+          estimasi_menit_tambahan?: number | null
           no_hp_toko: string | null
           whatsapp: string | null
           maps_url: string | null
@@ -285,6 +290,8 @@ export type Database = {
           jam_operasional?: string
           jam_buka?: string | null
           jam_tutup?: string | null
+          estimasi_menit_per_km?: number | null
+          estimasi_menit_tambahan?: number | null
           no_hp_toko?: string | null
           whatsapp?: string | null
           maps_url?: string | null
@@ -299,6 +306,8 @@ export type Database = {
           jam_operasional?: string
           jam_buka?: string | null
           jam_tutup?: string | null
+          estimasi_menit_per_km?: number | null
+          estimasi_menit_tambahan?: number | null
           no_hp_toko?: string | null
           whatsapp?: string | null
           maps_url?: string | null

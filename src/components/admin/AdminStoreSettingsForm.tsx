@@ -17,7 +17,8 @@ import {
   AlertCircle, 
   Loader2, 
   Sparkles,
-  Zap
+  Zap,
+  Truck
 } from 'lucide-react'
 
 interface AdminStoreSettingsFormProps {
@@ -40,6 +41,8 @@ export default function AdminStoreSettingsForm({ store }: AdminStoreSettingsForm
   const [noHpToko, setNoHpToko] = useState(store?.no_hp_toko || '')
   const [whatsapp, setWhatsapp] = useState(store?.whatsapp || '')
   const [mapsUrl, setMapsUrl] = useState(store?.maps_url || '')
+  const [estimasiMenitPerKm, setEstimasiMenitPerKm] = useState<number>(store?.estimasi_menit_per_km ?? 5)
+  const [estimasiMenitTambahan, setEstimasiMenitTambahan] = useState<number>(store?.estimasi_menit_tambahan ?? 15)
 
   // Live real-time clock state (WITA)
   const [currentWita, setCurrentWita] = useState<{ hours: number; minutes: number; timeString: string }>({
@@ -84,6 +87,8 @@ export default function AdminStoreSettingsForm({ store }: AdminStoreSettingsForm
     formData.append('no_hp_toko', noHpToko)
     formData.append('whatsapp', whatsapp)
     formData.append('maps_url', mapsUrl)
+    formData.append('estimasi_menit_per_km', estimasiMenitPerKm.toString())
+    formData.append('estimasi_menit_tambahan', estimasiMenitTambahan.toString())
 
     startTransition(async () => {
       try {
@@ -314,6 +319,93 @@ export default function AdminStoreSettingsForm({ store }: AdminStoreSettingsForm
                 placeholder="mis. Setiap Hari, 07:00 – 21:00 WITA"
                 className="w-full border bg-white rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500"
               />
+            </div>
+          </div>
+
+          {/* Estimasi Waktu Pengantaran (Antar Alamat) */}
+          <div className="p-4 rounded-2xl bg-blue-50/70 border border-blue-200/80 space-y-3.5">
+            <div className="flex items-center gap-2.5 text-blue-950">
+              <div className="w-8 h-8 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center shrink-0">
+                <Truck className="w-4 h-4" />
+              </div>
+              <div>
+                <h3 className="text-xs font-sora font-extrabold text-blue-950">
+                  Estimasi Waktu Pengantaran (Metode Antar Alamat)
+                </h3>
+                <p className="text-[11px] text-blue-800/80 font-medium">
+                  Atur waktu persiapan toko & durasi perjalanan kurir per kilometer.
+                </p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+              <div>
+                <label className="text-xs font-semibold text-gray-700 block mb-1">
+                  Waktu tempuh per km (menit) *
+                </label>
+                <div className="relative">
+                  <input
+                    type="number"
+                    min={1}
+                    max={60}
+                    value={estimasiMenitPerKm}
+                    onChange={(e) => setEstimasiMenitPerKm(Math.max(1, parseInt(e.target.value, 10) || 1))}
+                    required
+                    className="w-full border bg-white rounded-xl px-3 py-2 text-sm font-sora font-semibold text-[var(--ink)] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                  <span className="absolute right-3 top-2.5 text-xs text-gray-400 pointer-events-none">mnt/km</span>
+                </div>
+                <p className="text-[10px] text-gray-400 mt-1">Kecepatan motor kurir per kilometer (standar: 5 menit)</p>
+              </div>
+
+              <div>
+                <label className="text-xs font-semibold text-gray-700 block mb-1">
+                  Waktu persiapan pesanan (menit) *
+                </label>
+                <div className="relative">
+                  <input
+                    type="number"
+                    min={0}
+                    max={120}
+                    value={estimasiMenitTambahan}
+                    onChange={(e) => setEstimasiMenitTambahan(Math.max(0, parseInt(e.target.value, 10) || 0))}
+                    required
+                    className="w-full border bg-white rounded-xl px-3 py-2 text-sm font-sora font-semibold text-[var(--ink)] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                  <span className="absolute right-3 top-2.5 text-xs text-gray-400 pointer-events-none">menit</span>
+                </div>
+                <p className="text-[10px] text-gray-400 mt-1">Waktu packing barang & koordinasi kurir (standar: 15 menit)</p>
+              </div>
+            </div>
+
+            {/* Live Simulation Box */}
+            <div className="p-3 rounded-xl bg-white border border-blue-200/90 text-xs text-blue-900 space-y-2 shadow-2xs">
+              <div className="flex items-center justify-between">
+                <p className="font-sora font-bold text-[11px] text-blue-950 flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-blue-600" />
+                  <span>Simulasi Perhitungan Waktu Tiba:</span>
+                </p>
+                <span className="text-[10px] text-blue-600 font-semibold bg-blue-50 px-2 py-0.5 rounded-full border border-blue-100">
+                  Otomatis dihitung saat checkout
+                </span>
+              </div>
+              <div className="grid grid-cols-3 gap-2 text-center text-[11px]">
+                <div className="p-2 rounded-lg bg-blue-50/70 border border-blue-100/90">
+                  <span className="text-gray-500 block text-[10px]">Jarak 1 km</span>
+                  <span className="font-sora font-extrabold text-blue-700">±{estimasiMenitTambahan + (1 * estimasiMenitPerKm)} mnt</span>
+                </div>
+                <div className="p-2 rounded-lg bg-blue-50/70 border border-blue-100/90">
+                  <span className="text-gray-500 block text-[10px]">Jarak 3 km</span>
+                  <span className="font-sora font-extrabold text-blue-700">±{estimasiMenitTambahan + (3 * estimasiMenitPerKm)} mnt</span>
+                </div>
+                <div className="p-2 rounded-lg bg-blue-50/70 border border-blue-100/90">
+                  <span className="text-gray-500 block text-[10px]">Jarak 5 km</span>
+                  <span className="font-sora font-extrabold text-blue-700">±{estimasiMenitTambahan + (5 * estimasiMenitPerKm)} mnt</span>
+                </div>
+              </div>
+              <p className="text-[10px] text-gray-400 text-center font-medium">
+                Rumus: {estimasiMenitTambahan} menit (persiapan) + (jarak km × {estimasiMenitPerKm} menit)
+              </p>
             </div>
           </div>
 

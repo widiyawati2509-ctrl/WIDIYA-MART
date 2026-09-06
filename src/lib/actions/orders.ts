@@ -118,6 +118,7 @@ export async function createOrder(formData: FormData): Promise<{ error?: string;
 
     let verifiedJarakKm: number | null = null
     let serverOngkir = 0
+    let serverEstimasiMenit: number | null = null
 
     if (metodePengiriman === 'antar_alamat') {
       if (!alamatPengiriman) {
@@ -143,10 +144,23 @@ export async function createOrder(formData: FormData): Promise<{ error?: string;
       } else {
         serverOngkir = FLAT_SHIPPING_FEE
       }
+
+      // Query store parameters for delivery estimation
+      const { data: storeInfo } = await supabase
+        .from('store_info')
+        .select('estimasi_menit_per_km, estimasi_menit_tambahan')
+        .single()
+
+      const menitPerKm = Number(storeInfo?.estimasi_menit_per_km ?? 5)
+      const menitTambahan = Number(storeInfo?.estimasi_menit_tambahan ?? 15)
+      const clientJarak = formData.get('jarak_km') ? parseFloat(formData.get('jarak_km') as string) : null
+      const effectiveDistance = verifiedJarakKm ?? (clientJarak && !isNaN(clientJarak) ? clientJarak : 3)
+      serverEstimasiMenit = Math.round(menitTambahan + (effectiveDistance * menitPerKm))
     } else {
-      // 'ambil_di_toko'
+      // 'ambil_di_toko' - per aturan: tidak perlu estimasi waktu antar
       serverOngkir = 0
       verifiedJarakKm = 0
+      serverEstimasiMenit = null
     }
 
     const finalTotal = Math.max(0, subtotal - diskonPoin + serverOngkir)
@@ -227,6 +241,7 @@ export async function createOrder(formData: FormData): Promise<{ error?: string;
       ongkir: serverOngkir,
       alamat_pengiriman: alamatPengiriman,
       metode_pengiriman: metodePengiriman,
+      estimasi_menit: serverEstimasiMenit,
       nama_pemesan: parsed.data.nama_pemesan,
       no_hp_pemesan: parsed.data.no_hp_pemesan,
       catatan: parsed.data.catatan || null,
@@ -240,52 +255,67 @@ export async function createOrder(formData: FormData): Promise<{ error?: string;
       .single()
 
     if (orderFullError) {
-      const isColumnMissing =
-        orderFullError.message?.includes('column') ||
-        orderFullError.message?.includes('schema cache') ||
-        orderFullError.message?.includes('alamat_pengiriman') ||
-        orderFullError.code === 'PGRST204'
-
-      if (isColumnMissing) {
-        console.warn('Orders table missing columns, saving shipping info in catatan:', orderFullError.message)
-
-        // Construct detailed catatan so no address or shipping data is lost
-        const shippingNotes = [
-          parsed.data.catatan ? `Catatan: ${parsed.data.catatan}` : '',
-          metodePengiriman === 'antar_alamat'
-            ? `[Pengantaran ke: ${alamatPengiriman || '-'} | Ongkir: Rp ${serverOngkir.toLocaleString('id-ID')} | Jarak: ${verifiedJarakKm ?? '-'} km]`
-            : '[Metode: Ambil di Toko]',
-          diskonPoin > 0 ? `[Poin Digunakan: ${poinToRedeem} (Diskon Rp ${diskonPoin.toLocaleString('id-ID')})]` : '',
-        ]
-          .filter(Boolean)
-          .join('\n')
-
-        const compatiblePayload = {
-          user_id: user.id,
-          subtotal,
-          total: finalTotal,
-          nama_pemesan: parsed.data.nama_pemesan,
-          no_hp_pemesan: parsed.data.no_hp_pemesan,
-          catatan: shippingNotes || null,
-        }
-
-        const { data: compatOrder, error: compatError } = await supabase
+      const isEstimasiMissing = orderFullError.message?.includes('estimasi_menit')
+      if (isEstimasiMissing) {
+        const { estimasi_menit, ...payloadWithoutEstimasi } = orderPayload
+        const { data: retryOrder, error: retryError } = await supabase
           .from('orders')
-          .insert(compatiblePayload)
+          .insert(payloadWithoutEstimasi)
           .select('id')
           .single()
-
-        if (compatError || !compatOrder) {
-          console.error('Order creation error on compatible payload:', compatError)
-          await rollbackStock()
-          return { error: `Gagal membuat pesanan: ${compatError?.message || 'Database error'}` }
+        if (!retryError && retryOrder) {
+          order = retryOrder
         }
+      }
 
-        order = compatOrder
-      } else {
-        console.error('Order creation error:', orderFullError)
-        await rollbackStock()
-        return { error: `Gagal membuat pesanan: ${orderFullError.message || 'Database error'}` }
+      if (!order) {
+        const isColumnMissing =
+          orderFullError.message?.includes('column') ||
+          orderFullError.message?.includes('schema cache') ||
+          orderFullError.message?.includes('alamat_pengiriman') ||
+          orderFullError.code === 'PGRST204'
+
+        if (isColumnMissing) {
+          console.warn('Orders table missing columns, saving shipping info in catatan:', orderFullError.message)
+
+          // Construct detailed catatan so no address or shipping data is lost
+          const shippingNotes = [
+            parsed.data.catatan ? `Catatan: ${parsed.data.catatan}` : '',
+            metodePengiriman === 'antar_alamat'
+              ? `[Pengantaran ke: ${alamatPengiriman || '-'} | Ongkir: Rp ${serverOngkir.toLocaleString('id-ID')} | Jarak: ${verifiedJarakKm ?? '-'} km | Estimasi: ±${serverEstimasiMenit ?? '-'} mnt]`
+              : '[Metode: Ambil di Toko]',
+            diskonPoin > 0 ? `[Poin Digunakan: ${poinToRedeem} (Diskon Rp ${diskonPoin.toLocaleString('id-ID')})]` : '',
+          ]
+            .filter(Boolean)
+            .join('\n')
+
+          const compatiblePayload = {
+            user_id: user.id,
+            subtotal,
+            total: finalTotal,
+            nama_pemesan: parsed.data.nama_pemesan,
+            no_hp_pemesan: parsed.data.no_hp_pemesan,
+            catatan: shippingNotes || null,
+          }
+
+          const { data: compatOrder, error: compatError } = await supabase
+            .from('orders')
+            .insert(compatiblePayload)
+            .select('id')
+            .single()
+
+          if (compatError || !compatOrder) {
+            console.error('Order creation error on compatible payload:', compatError)
+            await rollbackStock()
+            return { error: `Gagal membuat pesanan: ${compatError?.message || 'Database error'}` }
+          }
+
+          order = compatOrder
+        } else {
+          console.error('Order creation error:', orderFullError)
+          await rollbackStock()
+          return { error: `Gagal membuat pesanan: ${orderFullError.message || 'Database error'}` }
+        }
       }
     } else {
       order = orderFull

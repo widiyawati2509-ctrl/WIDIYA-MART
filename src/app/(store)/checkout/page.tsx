@@ -39,7 +39,7 @@ export default async function CheckoutPage() {
 
       return { items: safeItems, total }
     })(),
-    supabase.from('store_info').select('nama_toko, alamat_toko, kota, jam_operasional, no_hp_toko, whatsapp, jam_buka, jam_tutup').single(),
+    supabase.from('store_info').select('*').single(),
     getUserLoyaltySummary(user.id),
     getUserAddresses(),
   ])

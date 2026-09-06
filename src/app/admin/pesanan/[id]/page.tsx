@@ -67,6 +67,34 @@ export default async function AdminOrderDetailPage({ params }: AdminOrderDetailP
                 <span className="text-gray-500">No. HP</span>
                 <span>{order.no_hp_pemesan}</span>
               </div>
+              <div className="flex justify-between">
+                <span className="text-gray-500">Pengiriman</span>
+                <span className="font-medium text-right">
+                  {order.metode_pengiriman === 'antar_alamat' ? 'Diantar ke Alamat' : 'Ambil di Toko (COD)'}
+                </span>
+              </div>
+              {order.metode_pengiriman === 'antar_alamat' && (
+                <>
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">Alamat Kirim</span>
+                    <span className="font-medium text-right max-w-[65%] text-xs text-gray-800">
+                      {order.alamat_pengiriman || '-'}
+                    </span>
+                  </div>
+                  {order.jarak_km ? (
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">Jarak</span>
+                      <span className="font-medium">~{order.jarak_km} km</span>
+                    </div>
+                  ) : null}
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">Ongkir</span>
+                    <span className="font-bold text-emerald-700">
+                      {order.ongkir === 0 ? 'Gratis (Radius ≤ 7 km)' : formatRupiah(order.ongkir || 0)}
+                    </span>
+                  </div>
+                </>
+              )}
               {order.catatan && (
                 <div className="flex justify-between">
                   <span className="text-gray-500">Catatan</span>
@@ -80,6 +108,24 @@ export default async function AdminOrderDetailPage({ params }: AdminOrderDetailP
                 </span>
               </div>
             </div>
+
+            {/* Target Waktu Pengantaran Admin */}
+            {order.metode_pengiriman === 'antar_alamat' && order.estimasi_menit && (
+              <div className="p-3 rounded-xl bg-blue-50 border border-blue-200 text-xs text-blue-950 space-y-1.5">
+                <div className="flex items-center justify-between font-bold">
+                  <span className="flex items-center gap-1.5 text-blue-900">
+                    <span>🛵</span>
+                    <span>Target Waktu Antar Kurir:</span>
+                  </span>
+                  <span className="bg-blue-600 text-white px-2.5 py-0.5 rounded-full text-[11px] font-extrabold">
+                    ±{order.estimasi_menit} Menit
+                  </span>
+                </div>
+                <p className="text-[11px] text-blue-800 leading-relaxed font-medium">
+                  Rincian: Persiapan toko ({store?.estimasi_menit_tambahan ?? 15} mnt) + Perjalanan (~{order.jarak_km || 3} km × {store?.estimasi_menit_per_km ?? 5} mnt).
+                </p>
+              </div>
+            )}
 
             {/* Informasi Batas Ambil / Status Tidak Diambil */}
             {order.status === 'siap_diambil' && order.batas_waktu_ambil && (

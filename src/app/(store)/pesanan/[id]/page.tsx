@@ -98,7 +98,25 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
                 </span>
               </div>
               <p className="text-[11px] text-emerald-800 leading-relaxed font-medium">
-                Mohon ambil pesanan di toko sebelum <strong>{formatBatasWaktu(order.batas_waktu_ambil)}</strong>. Pesanan yang tidak diambil hingga batas waktu ini akan dibatalkan otomatis dan stok dikembalikan.
+                Pesanan sudah siap di toko! Silakan ambil sebelum batas waktu berakhir ({formatBatasWaktu(order.batas_waktu_ambil)}). Pesanan yang tidak diambil hingga batas waktu akan otomatis dibatalkan dan stok dikembalikan.
+              </p>
+            </div>
+          )}
+
+          {/* Estimasi Waktu Tiba Pengantaran (Antar Alamat) */}
+          {order.metode_pengiriman === 'antar_alamat' && order.estimasi_menit && (order.status === 'menunggu_diproses' || order.status === 'diproses') && (
+            <div className="mt-4 p-3.5 rounded-2xl bg-blue-50 border border-blue-200 text-xs text-blue-950 space-y-1.5 shadow-xs">
+              <div className="flex items-center justify-between font-bold text-blue-900">
+                <span className="flex items-center gap-1.5">
+                  <Clock size={15} className="text-blue-700" />
+                  <span>Estimasi Pesanan Tiba:</span>
+                </span>
+                <span className="bg-blue-600 text-white px-2.5 py-0.5 rounded-full text-[11px] font-extrabold">
+                  ±{order.estimasi_menit} Menit
+                </span>
+              </div>
+              <p className="text-[11px] text-blue-800 leading-relaxed font-medium">
+                Pesanan sedang disiapkan untuk diantar ke alamat Anda. Mohon siapkan uang pas COD saat kurir tiba.
               </p>
             </div>
           )}
@@ -137,6 +155,19 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
               <p className="text-[var(--text-caption)] text-emerald-700 font-bold mt-1">
                 {order.ongkir === 0 ? '🎉 Gratis Ongkir (Radius ≤ 7 km)' : `Ongkir: ${formatRupiah(order.ongkir || 15000)}`}
               </p>
+
+              {/* Delivery estimate detail badge */}
+              {order.estimasi_menit ? (
+                <div className="mt-2.5 p-2.5 rounded-xl bg-blue-50/80 border border-blue-200/90 flex items-center justify-between text-xs">
+                  <span className="text-blue-900 font-semibold flex items-center gap-1.5">
+                    <Clock className="w-3.5 h-3.5 text-blue-600" />
+                    Target Waktu Pengantaran:
+                  </span>
+                  <span className="font-sora font-extrabold text-blue-700 bg-blue-100/90 px-2 py-0.5 rounded-md text-[11px]">
+                    ±{order.estimasi_menit} Menit
+                  </span>
+                </div>
+              ) : null}
             </>
           ) : (
             <>

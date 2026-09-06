@@ -21,6 +21,8 @@ interface OrderData {
   total: number
   status: string
   created_at: string
+  metode_pengiriman?: string | null
+  estimasi_menit?: number | null
   order_items?: OrderItem[]
 }
 
@@ -134,6 +136,16 @@ export default function PrintReceiptButton({ order, store }: PrintReceiptButtonP
           <span>Status</span>
           <span className="font-bold">{getStatusLabel(order?.status || '')}</span>
         </div>
+        <div className="flex justify-between">
+          <span>Pengiriman</span>
+          <span>{order?.metode_pengiriman === 'antar_alamat' ? 'Diantar ke Alamat' : 'Ambil di Toko'}</span>
+        </div>
+        {order?.metode_pengiriman === 'antar_alamat' && order?.estimasi_menit ? (
+          <div className="flex justify-between font-bold">
+            <span>Estimasi Tiba</span>
+            <span>±{order.estimasi_menit} Menit</span>
+          </div>
+        ) : null}
       </div>
 
       <div className="border-b border-dashed border-black my-2" />

@@ -77,6 +77,11 @@ export async function updateStoreInfo(formData: FormData): Promise<{ success: bo
     const whatsapp = (formData.get('whatsapp') as string)?.trim() || null
     const maps_url = (formData.get('maps_url') as string)?.trim() || null
 
+    const estimasi_menit_per_km_raw = formData.get('estimasi_menit_per_km') as string
+    const estimasi_menit_tambahan_raw = formData.get('estimasi_menit_tambahan') as string
+    const estimasi_menit_per_km = estimasi_menit_per_km_raw ? Math.max(1, parseInt(estimasi_menit_per_km_raw, 10) || 5) : 5
+    const estimasi_menit_tambahan = estimasi_menit_tambahan_raw ? Math.max(0, parseInt(estimasi_menit_tambahan_raw, 10) || 15) : 15
+
     const fullPayload = {
       nama_toko,
       alamat_toko,
@@ -84,13 +89,15 @@ export async function updateStoreInfo(formData: FormData): Promise<{ success: bo
       jam_operasional,
       jam_buka,
       jam_tutup,
+      estimasi_menit_per_km,
+      estimasi_menit_tambahan,
       no_hp_toko,
       whatsapp,
       maps_url,
       updated_at: new Date().toISOString(),
     }
 
-    // Coba update penuh dengan jam_buka & jam_tutup
+    // Coba update penuh dengan estimasi waktu dan jam buka/tutup
     const { error: fullError } = await supabase
       .from('store_info')
       .update(fullPayload)
@@ -98,24 +105,44 @@ export async function updateStoreInfo(formData: FormData): Promise<{ success: bo
 
     if (fullError) {
       console.warn('Full store_info update fallback:', fullError.message)
-      // Fallback kompatibel jika kolom jam_buka/jam_tutup belum dibuat di DB Supabase
-      const compatPayload = {
+      // Coba tanpa kolom estimasi baru jika kolom belum ada di schema cache
+      const subPayload = {
         nama_toko,
         alamat_toko,
         kota,
         jam_operasional,
+        jam_buka,
+        jam_tutup,
         no_hp_toko,
         whatsapp,
         maps_url,
         updated_at: new Date().toISOString(),
       }
-      const { error: compatError } = await supabase
+      const { error: subError } = await supabase
         .from('store_info')
-        .update(compatPayload)
+        .update(subPayload)
         .eq('id', 1)
 
-      if (compatError) {
-        return { success: false, error: 'Gagal update database: ' + compatError.message }
+      if (subError) {
+        // Fallback kompatibel jika kolom jam_buka/jam_tutup juga belum dibuat di DB Supabase
+        const compatPayload = {
+          nama_toko,
+          alamat_toko,
+          kota,
+          jam_operasional,
+          no_hp_toko,
+          whatsapp,
+          maps_url,
+          updated_at: new Date().toISOString(),
+        }
+        const { error: compatError } = await supabase
+          .from('store_info')
+          .update(compatPayload)
+          .eq('id', 1)
+
+        if (compatError) {
+          return { success: false, error: 'Gagal update database: ' + compatError.message }
+        }
       }
     }
 

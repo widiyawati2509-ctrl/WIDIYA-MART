@@ -206,3 +206,11 @@ create trigger trg_order_pickup_deadline
   for each row
   execute function public.set_order_pickup_deadline();
 
+-- 11. ESTIMASI WAKTU PENGANTARAN (ANTAR ALAMAT)
+alter table public.store_info 
+  add column if not exists estimasi_menit_per_km integer default 5,
+  add column if not exists estimasi_menit_tambahan integer default 15;
+
+alter table public.orders 
+  add column if not exists estimasi_menit integer;
+

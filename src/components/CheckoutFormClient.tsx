@@ -189,6 +189,17 @@ export default function CheckoutFormClient({
     }
   }
 
+  // Delivery time estimation parameters from store_info
+  const estimasiMenitPerKm = Number(store?.estimasi_menit_per_km ?? 5)
+  const estimasiMenitTambahan = Number(store?.estimasi_menit_tambahan ?? 15)
+
+  // Calculate delivery time estimation for antar_alamat
+  let estimasiMenit: number | null = null
+  if (metodePengiriman === 'antar_alamat') {
+    const effectiveDistance = jarakKm !== null ? jarakKm : 3
+    estimasiMenit = Math.round(estimasiMenitTambahan + (effectiveDistance * estimasiMenitPerKm))
+  }
+
   // Calculate max points allowed for this subtotal
   const maxDiscountAllowed = Math.floor(subtotal * ((config?.max_redeem_percentage ?? 50) / 100))
   const redeemRate = config?.redeem_rate ?? 100
@@ -342,7 +353,9 @@ export default function CheckoutFormClient({
             </div>
             <div>
               <p className="font-sora font-bold text-xs text-[var(--ink)]">Diantar ke Alamat</p>
-              <p className="text-[var(--text-caption)] text-[var(--ink-soft)] font-medium mt-0.5">Radius s.d. 7 km Gratis</p>
+              <p className="text-[var(--text-caption)] text-[var(--ink-soft)] font-medium mt-0.5">
+                {estimasiMenit ? `Estimasi tiba ±${estimasiMenit} mnt` : 'Radius s.d. 7 km Gratis'}
+              </p>
             </div>
           </button>
         </div>
@@ -353,6 +366,7 @@ export default function CheckoutFormClient({
         <input type="hidden" name="user_lng" value={userCoords?.lng !== undefined ? userCoords.lng.toString() : ''} />
         <input type="hidden" name="jarak_km" value={jarakKm !== null ? jarakKm.toString() : ''} />
         <input type="hidden" name="ongkir" value={ongkir.toString()} />
+        <input type="hidden" name="estimasi_menit" value={estimasiMenit !== null ? estimasiMenit.toString() : ''} />
       </Card>
 
       {/* 2. DETAIL METODE: AMBIL DI TOKO ATAU ANTAR ALAMAT */}
@@ -544,6 +558,30 @@ export default function CheckoutFormClient({
               className="w-full min-w-0 rounded-[var(--radius-md)] border border-[var(--line)] bg-white px-3.5 py-2.5 text-xs text-[var(--ink)] placeholder:text-[var(--ink-soft)] shadow-input outline-none transition-all focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20 resize-none"
             />
           </div>
+
+          {/* Estimasi Waktu Pengantaran Box */}
+          {estimasiMenit !== null && (
+            <div className="p-3 rounded-2xl bg-blue-50/90 border border-blue-200/90 flex items-center justify-between text-xs text-blue-950 shadow-2xs">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center shrink-0">
+                  <Clock size={16} />
+                </div>
+                <div>
+                  <p className="font-sora font-bold text-xs text-blue-950">
+                    Estimasi Tiba dalam ±{estimasiMenit} Menit
+                  </p>
+                  <p className="text-[10px] text-blue-800/80 font-medium">
+                    {jarakKm !== null 
+                      ? `Jarak ~${jarakKm} km · Waktu persiapan & perjalanan kurir`
+                      : `Waktu persiapan pesanan (${estimasiMenitTambahan} mnt) + pengantaran`}
+                  </p>
+                </div>
+              </div>
+              <span className="px-2.5 py-1 rounded-full bg-blue-600 text-white font-sora font-extrabold text-[11px] shadow-xs shrink-0">
+                ±{estimasiMenit} mnt
+              </span>
+            </div>
+          )}
         </Card>
       )}
 
@@ -692,6 +730,19 @@ export default function CheckoutFormClient({
             )}
           </span>
         </div>
+
+        {/* Estimasi Waktu Pengantaran (Antar Alamat) */}
+        {metodePengiriman === 'antar_alamat' && estimasiMenit !== null && (
+          <div className="pt-1.5 flex justify-between items-center text-xs text-blue-900">
+            <span className="flex items-center gap-1 font-medium">
+              <Clock size={12} className="text-blue-600" />
+              Estimasi Pengantaran
+            </span>
+            <span className="font-sora font-extrabold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-md border border-blue-100">
+              &plusmn;{estimasiMenit} Menit
+            </span>
+          </div>
+        )}
 
         {/* Loyalty Points Discount */}
         {discountAmount > 0 && (
