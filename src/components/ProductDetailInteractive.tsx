@@ -258,18 +258,6 @@ export default function ProductDetailInteractive({ product, storePhone = '087816
             </>
           )}
 
-          {/* Floating Pill on image bottom right */}
-          <div className="absolute bottom-3 right-3 z-10">
-            <button
-              type="button"
-              onClick={() => setShowStockModal(true)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-600/90 text-white text-[var(--text-caption)] font-sora font-bold shadow-md backdrop-blur-xs hover:bg-emerald-700 active:scale-95 transition-all"
-            >
-              <MessageCircle size={14} />
-              <span>Tanya Stok via WA</span>
-            </button>
-          </div>
-
           {/* Dot Indicators */}
           {allImages.length > 1 && (
             <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-10 flex items-center gap-1.5 bg-black/30 backdrop-blur-xs px-2 py-1 rounded-full">
