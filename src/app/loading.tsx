@@ -38,12 +38,14 @@ export default function Loading() {
         </div>
       </div>
 
-      {/* Products Grid Skeleton */}
+      {/* Products Horizontal Row Skeleton */}
       <div className="px-4 mb-6">
         <div className="h-4 bg-[var(--line)] rounded-[var(--radius-sm)] w-32 mb-3 animate-pulse" />
-        <div className="grid grid-cols-2 gap-3.5">
+        <div className="flex gap-3 overflow-x-auto scrollbar-hide py-2 -mx-4 px-4">
           {[1, 2, 3, 4].map((i) => (
-            <ProductCardSkeleton key={i} />
+            <div key={i} className="w-40 shrink-0">
+              <ProductCardSkeleton />
+            </div>
           ))}
         </div>
       </div>

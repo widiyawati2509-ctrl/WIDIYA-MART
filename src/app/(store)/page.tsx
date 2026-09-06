@@ -121,16 +121,26 @@ export default async function HomePage() {
         </div>
       )}
 
-      {/* Products Grid (2 Kolom, Gap 14px) */}
+      {/* Products Horizontal Row (Alfagift Style) */}
       <div className="px-4 mb-6">
         <Section
           title="Produk Terbaru"
           description="Kebutuhan segar & stok siap ambil"
+          action={
+            <Link
+              href="/kategori"
+              className="text-xs font-sora font-bold text-[var(--accent-2)] hover:underline flex items-center gap-0.5"
+            >
+              Lihat Semua &rarr;
+            </Link>
+          }
         >
           {products && products.length > 0 ? (
-            <div className="grid grid-cols-2 gap-3.5">
+            <div className="flex gap-3 overflow-x-auto scrollbar-hide snap-x snap-mandatory py-2 -mx-4 px-4">
               {products.map((product) => (
-                <ProductCard key={product.id} product={product} />
+                <div key={product.id} className="w-40 shrink-0 snap-start">
+                  <ProductCard product={product} />
+                </div>
               ))}
             </div>
           ) : (

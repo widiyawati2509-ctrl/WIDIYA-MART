@@ -87,9 +87,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
       {related && related.length > 0 && (
         <div className="mx-4 mt-4">
           <h2 className="font-sora font-bold text-sm text-[var(--ink)] mb-3">Produk Lainnya</h2>
-          <div className="grid grid-cols-2 gap-3.5">
+          <div className="flex gap-3 overflow-x-auto scrollbar-hide snap-x snap-mandatory py-2 -mx-4 px-4">
             {related.map((p) => (
-              <ProductCard key={p.id} product={p} />
+              <div key={p.id} className="w-40 shrink-0 snap-start">
+                <ProductCard product={p} />
+              </div>
             ))}
           </div>
         </div>
