@@ -11,15 +11,6 @@ interface AdminOrderDetailProps {
   params: Promise<{ id: string }>
 }
 
-const statuses = [
-  { value: 'menunggu_diproses', label: 'Menunggu Diproses' },
-  { value: 'diproses', label: 'Sedang Diproses' },
-  { value: 'siap_diambil', label: 'Siap Diambil' },
-  { value: 'selesai', label: 'Selesai' },
-  { value: 'tidak_diambil', label: 'Tidak Diambil (Kembalikan Stok)' },
-  { value: 'dibatalkan', label: 'Batalkan Pesanan (Kembalikan Stok)' },
-]
-
 export default async function AdminOrderDetailPage({ params }: AdminOrderDetailProps) {
   const { id } = await params
   const supabase = await createClient()
@@ -34,6 +25,23 @@ export default async function AdminOrderDetailPage({ params }: AdminOrderDetailP
   ])
 
   if (!order) notFound()
+
+  const isDelivery = order.metode_pengiriman === 'antar_alamat'
+
+  const statuses = [
+    { value: 'menunggu_diproses', label: 'Menunggu Diproses' },
+    { value: 'diproses', label: 'Sedang Diproses' },
+    { 
+      value: 'siap_diambil', 
+      label: isDelivery ? 'Pesanan Proses Pengantaran' : 'Siap Diambil' 
+    },
+    { value: 'selesai', label: 'Selesai' },
+    { 
+      value: 'tidak_diambil', 
+      label: isDelivery ? 'Gagal Diantar (Kembalikan Stok)' : 'Tidak Diambil (Kembalikan Stok)' 
+    },
+    { value: 'dibatalkan', label: 'Batalkan Pesanan (Kembalikan Stok)' },
+  ]
 
   return (
     <div>
@@ -103,14 +111,14 @@ export default async function AdminOrderDetailPage({ params }: AdminOrderDetailP
               )}
               <div className="flex justify-between items-center pt-2 border-t">
                 <span className="text-gray-500">Status</span>
-                <span className={`text-xs px-2 py-1 rounded-full font-medium ${getOrderStatusColor(order.status)}`}>
-                  {getOrderStatusLabel(order.status)}
+                <span className={`text-xs px-2 py-1 rounded-full font-medium ${getOrderStatusColor(order.status, order.metode_pengiriman)}`}>
+                  {getOrderStatusLabel(order.status, order.metode_pengiriman)}
                 </span>
               </div>
             </div>
 
             {/* Target Waktu Pengantaran Admin */}
-            {order.metode_pengiriman === 'antar_alamat' && order.estimasi_menit && (
+            {isDelivery && order.estimasi_menit && (
               <div className="p-3 rounded-xl bg-blue-50 border border-blue-200 text-xs text-blue-950 space-y-1.5">
                 <div className="flex items-center justify-between font-bold">
                   <span className="flex items-center gap-1.5 text-blue-900">
@@ -127,8 +135,28 @@ export default async function AdminOrderDetailPage({ params }: AdminOrderDetailP
               </div>
             )}
 
-            {/* Informasi Batas Ambil / Status Tidak Diambil */}
-            {order.status === 'siap_diambil' && order.batas_waktu_ambil && (
+            {/* Status Pesanan Proses Pengantaran (Khusus Antar Alamat) */}
+            {order.status === 'siap_diambil' && isDelivery && (
+              <div className="p-3 rounded-xl bg-blue-50 border border-blue-200/90 text-xs text-blue-950 space-y-1.5 shadow-2xs">
+                <div className="flex items-center justify-between font-bold">
+                  <span className="flex items-center gap-1.5 text-blue-900">
+                    <span>🛵</span>
+                    <span>Status: Pesanan Proses Pengantaran</span>
+                  </span>
+                  {order.estimasi_menit && (
+                    <span className="text-[11px] bg-blue-600 text-white px-2 py-0.5 rounded-full font-bold">
+                      ±{order.estimasi_menit} Menit
+                    </span>
+                  )}
+                </div>
+                <p className="text-[11px] text-blue-800 leading-relaxed font-medium">
+                  Kurir sedang dalam proses mengantar ke <strong>{order.alamat_pengiriman || 'alamat pemesan'}</strong>. Klik tombol &ldquo;Selesai&rdquo; setelah barang berhasil diserahkan dan uang COD diterima.
+                </p>
+              </div>
+            )}
+
+            {/* Informasi Batas Ambil (Khusus Ambil di Toko) */}
+            {order.status === 'siap_diambil' && !isDelivery && order.batas_waktu_ambil && (
               <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200/80 text-xs text-emerald-900 space-y-1">
                 <div className="flex items-center justify-between font-bold">
                   <span>⏰ Batas Waktu Pengambilan COD</span>

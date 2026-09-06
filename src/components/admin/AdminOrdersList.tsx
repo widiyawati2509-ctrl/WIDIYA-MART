@@ -30,7 +30,8 @@ import {
   PackageOpen,
   Filter,
   FileSpreadsheet,
-  Clock
+  Clock,
+  Truck
 } from 'lucide-react'
 import AdminPageTitle from './AdminPageTitle'
 import AdminOrderExportCsvModal from './AdminOrderExportCsvModal'
@@ -502,10 +503,11 @@ export default function AdminOrdersList({ initialOrders, initialStatus }: AdminO
                       </p>
                       <span
                         className={`text-[var(--text-caption)] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider ${getOrderStatusColor(
-                          order.status
+                          order.status,
+                          order.metode_pengiriman
                         )}`}
                       >
-                        {getOrderStatusLabel(order.status)}
+                        {getOrderStatusLabel(order.status, order.metode_pengiriman)}
                       </span>
                     </div>
                     <p className="text-xs text-[var(--ink-soft)] font-medium">
@@ -521,7 +523,13 @@ export default function AdminOrdersList({ initialOrders, initialStatus }: AdminO
                     <p className="text-[var(--text-caption)] text-gray-400 font-mono mt-0.5">
                       WA: {order.no_hp_pemesan}
                     </p>
-                    {order.status === 'siap_diambil' && order.batas_waktu_ambil && (
+                    {order.status === 'siap_diambil' && order.metode_pengiriman === 'antar_alamat' && (
+                      <div className="mt-1 flex items-center gap-1 text-[11px] font-semibold text-blue-800 bg-blue-50 px-2 py-0.5 rounded-md border border-blue-200/60 w-fit">
+                        <Truck className="w-3 h-3 text-blue-600 shrink-0" />
+                        <span>Proses Pengantaran {order.estimasi_menit ? `(±${order.estimasi_menit} mnt)` : ''}</span>
+                      </div>
+                    )}
+                    {order.status === 'siap_diambil' && order.metode_pengiriman !== 'antar_alamat' && order.batas_waktu_ambil && (
                       <div className="mt-1 flex items-center gap-1 text-[11px] font-semibold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200/60 w-fit">
                         <Clock className="w-3 h-3 text-emerald-600 shrink-0" />
                         <span>Ambil s/d {formatBatasWaktu(order.batas_waktu_ambil)} ({getPickupCountdown(order.batas_waktu_ambil).text})</span>

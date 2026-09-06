@@ -107,7 +107,7 @@ export default async function ProfilPage() {
                       isReady || isProcessing ? 'bg-white/20 text-white' : 'bg-orange-50 text-[var(--accent-2)]'
                     }`}>
                       {isReady ? <PackageCheck size={12} /> : <Clock size={12} />}
-                      {getOrderStatusLabel(ao.status)}
+                      {getOrderStatusLabel(ao.status, ao.metode_pengiriman)}
                     </span>
                     <span className={`text-[var(--text-caption)] font-medium ${isReady || isProcessing ? 'text-white/80' : 'text-[var(--ink-soft)]'}`}>
                       #{ao.id.slice(0, 8).toUpperCase()}

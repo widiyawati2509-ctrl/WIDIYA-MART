@@ -33,7 +33,7 @@ export default async function AdminDashboardPage() {
       .order('stok'),
     supabase
       .from('orders')
-      .select('id, status, total, nama_pemesan, created_at')
+      .select('id, status, total, nama_pemesan, created_at, metode_pengiriman')
       .order('created_at', { ascending: false })
       .limit(5),
     supabase
@@ -111,7 +111,7 @@ export default async function AdminDashboardPage() {
         }
       >
         <div className="space-y-2.5">
-          {(recentOrders.data ?? []).map((order: { id: string; nama_pemesan: string; created_at: string; total: number; status: string }) => (
+          {(recentOrders.data ?? []).map((order: { id: string; nama_pemesan: string; created_at: string; total: number; status: string; metode_pengiriman?: string | null }) => (
             <Link
               key={order.id}
               href={`/admin/pesanan/${order.id}`}
@@ -133,7 +133,7 @@ export default async function AdminDashboardPage() {
                   <div className="text-right">
                     <p className="text-xs font-sora font-bold text-[var(--accent-2)] tabular-nums">{formatRupiah(order.total)}</p>
                     <span className="text-[var(--text-caption)] font-bold bg-[var(--accent-bg)] text-[var(--accent-2)] px-2 py-0.5 rounded-full inline-block mt-0.5">
-                      {getOrderStatusLabel(order.status)}
+                      {getOrderStatusLabel(order.status, order.metode_pengiriman)}
                     </span>
                   </div>
                   <ChevronRight size={14} className="text-[var(--ink-soft)]" />

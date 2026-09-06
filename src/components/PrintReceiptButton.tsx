@@ -39,7 +39,10 @@ interface PrintReceiptButtonProps {
   store?: StoreData | null
 }
 
-function getStatusLabel(status: string) {
+function getStatusLabel(status: string, metodePengiriman?: string | null) {
+  if (status === 'siap_diambil') {
+    return metodePengiriman === 'antar_alamat' ? 'Pesanan Proses Pengantaran' : 'Siap Diambil'
+  }
   switch (status) {
     case 'menunggu_diproses':
       return 'Menunggu Diproses'
@@ -51,6 +54,8 @@ function getStatusLabel(status: string) {
       return 'Selesai'
     case 'dibatalkan':
       return 'Dibatalkan'
+    case 'tidak_diambil':
+      return 'Tidak Diambil'
     default:
       return status || 'Diproses'
   }
@@ -134,7 +139,7 @@ export default function PrintReceiptButton({ order, store }: PrintReceiptButtonP
         </div>
         <div className="flex justify-between">
           <span>Status</span>
-          <span className="font-bold">{getStatusLabel(order?.status || '')}</span>
+          <span className="font-bold">{getStatusLabel(order?.status || '', order?.metode_pengiriman)}</span>
         </div>
         <div className="flex justify-between">
           <span>Pengiriman</span>

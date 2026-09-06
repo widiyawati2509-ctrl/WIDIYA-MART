@@ -16,7 +16,10 @@ export function slugify(text: string): string {
     .replace(/^-+|-+$/g, '')
 }
 
-export function getOrderStatusLabel(status: string): string {
+export function getOrderStatusLabel(status: string, metodePengiriman?: string | null): string {
+  if (status === 'siap_diambil') {
+    return metodePengiriman === 'antar_alamat' ? 'Pesanan Proses Pengantaran' : 'Siap Diambil'
+  }
   const labels: Record<string, string> = {
     menunggu_diproses: 'Menunggu Diproses',
     diproses: 'Sedang Diproses',
@@ -28,7 +31,10 @@ export function getOrderStatusLabel(status: string): string {
   return labels[status] ?? status
 }
 
-export function getOrderStatusColor(status: string): string {
+export function getOrderStatusColor(status: string, metodePengiriman?: string | null): string {
+  if (status === 'siap_diambil' && metodePengiriman === 'antar_alamat') {
+    return 'bg-blue-100 text-blue-800'
+  }
   const colors: Record<string, string> = {
     menunggu_diproses: 'bg-yellow-100 text-yellow-800',
     diproses: 'bg-blue-100 text-blue-800',

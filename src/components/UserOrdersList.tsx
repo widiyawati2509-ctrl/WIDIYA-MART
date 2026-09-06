@@ -19,7 +19,8 @@ import {
   X,
   SlidersHorizontal,
   RotateCcw,
-  Clock
+  Clock,
+  Truck
 } from 'lucide-react'
 import { EmptyState } from '@/components/ui'
 
@@ -314,8 +315,8 @@ export default function UserOrdersList({ initialOrders }: UserOrdersListProps) {
                             })}
                           </span>
                           <div className="flex items-center gap-1.5">
-                            <span className={`text-[var(--text-caption)] font-bold px-2.5 py-0.5 rounded-full ${getOrderStatusColor(order.status)}`}>
-                              {getOrderStatusLabel(order.status)}
+                            <span className={`text-[var(--text-caption)] font-bold px-2.5 py-0.5 rounded-full ${getOrderStatusColor(order.status, order.metode_pengiriman)}`}>
+                              {getOrderStatusLabel(order.status, order.metode_pengiriman)}
                             </span>
                             {!isSelectMode && (
                               <ChevronRight size={14} className="text-[var(--ink-soft)]" />
@@ -323,8 +324,23 @@ export default function UserOrdersList({ initialOrders }: UserOrdersListProps) {
                           </div>
                         </div>
 
-                        {/* Pickup Deadline Countdown (siap_diambil) */}
-                        {order.status === 'siap_diambil' && order.batas_waktu_ambil && (
+                        {/* Pengantaran ke Alamat (siap_diambil) */}
+                        {order.status === 'siap_diambil' && order.metode_pengiriman === 'antar_alamat' && (
+                          <div className="mb-2 p-2 rounded-xl bg-blue-50 border border-blue-200/80 text-[11px] text-blue-900 flex items-center justify-between">
+                            <div className="flex items-center gap-1.5 font-semibold">
+                              <Truck size={13} className="text-blue-700 shrink-0" />
+                              <span>Sedang Diantar ke Alamat Anda</span>
+                            </div>
+                            {order.estimasi_menit && (
+                              <span className="font-bold text-blue-800 bg-blue-200/80 px-2 py-0.5 rounded-md text-[10px]">
+                                ±{order.estimasi_menit} mnt
+                              </span>
+                            )}
+                          </div>
+                        )}
+
+                        {/* Pickup Deadline Countdown (siap_diambil + ambil_di_toko) */}
+                        {order.status === 'siap_diambil' && order.metode_pengiriman !== 'antar_alamat' && order.batas_waktu_ambil && (
                           <div className="mb-2 p-2 rounded-xl bg-emerald-50 border border-emerald-200/80 text-[11px] text-emerald-900 flex items-center justify-between">
                             <div className="flex items-center gap-1.5 font-semibold">
                               <Clock size={13} className="text-emerald-700 shrink-0" />

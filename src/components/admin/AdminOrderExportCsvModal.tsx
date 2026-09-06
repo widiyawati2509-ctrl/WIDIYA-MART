@@ -132,7 +132,7 @@ export default function AdminOrderExportCsvModal({
           order.subtotal ?? (order.total - (order.ongkir || 0)),
           order.ongkir ?? 0,
           order.total,
-          getOrderStatusLabel(order.status),
+          getOrderStatusLabel(order.status, order.metode_pengiriman),
         ]
       })
 
