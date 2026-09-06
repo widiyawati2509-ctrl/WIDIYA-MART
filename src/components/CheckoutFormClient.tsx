@@ -3,7 +3,8 @@
 
 import { useState, useTransition, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import { formatRupiah, formatWhatsAppUrl, isStoreOpen } from '@/lib/utils'
+import { formatRupiah, formatWhatsAppUrl } from '@/lib/utils'
+import StoreStatusBadge from './StoreStatusBadge'
 import AlertBanner from './AlertBanner'
 import { createOrder } from '@/lib/actions/orders'
 import { 
@@ -367,19 +368,12 @@ export default function CheckoutFormClient({
           <div className="space-y-2.5 text-xs">
             <div className="flex items-center justify-between">
               <p className="font-bold text-[var(--ink)]">{store?.nama_toko || 'PENGENJEK MART'}</p>
-              {(() => {
-                const status = isStoreOpen(store?.jam_buka, store?.jam_tutup)
-                return (
-                  <span className={`inline-flex items-center gap-1 text-[10px] font-sora font-bold px-2 py-0.5 rounded-full border ${
-                    status.isOpen
-                      ? 'bg-emerald-50 text-emerald-800 border-emerald-300'
-                      : 'bg-rose-50 text-rose-800 border-rose-300'
-                  }`}>
-                    <span className={`w-1.5 h-1.5 rounded-full ${status.isOpen ? 'bg-emerald-500' : 'bg-rose-500'}`} />
-                    {status.statusText}
-                  </span>
-                )
-              })()}
+              <StoreStatusBadge
+                jamBuka={store?.jam_buka}
+                jamTutup={store?.jam_tutup}
+                jamOperasional={store?.jam_operasional}
+                variant="pill"
+              />
             </div>
 
             {store?.alamat_toko && (

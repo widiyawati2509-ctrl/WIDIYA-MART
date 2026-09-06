@@ -1,7 +1,8 @@
 // @ts-nocheck
 import { createPublicClient } from '@/lib/supabase/server'
 import PageHeader from '@/components/PageHeader'
-import { formatWhatsAppUrl, isStoreOpen } from '@/lib/utils'
+import StoreStatusBadge from '@/components/StoreStatusBadge'
+import { formatWhatsAppUrl } from '@/lib/utils'
 import { 
   Store, 
   MapPin, 
@@ -34,8 +35,6 @@ export default async function TentangTokoPage() {
   const whatsapp = store?.whatsapp || store?.no_hp_toko || '6281234567890'
   const noHp = store?.no_hp_toko || store?.whatsapp || ''
   const mapsUrl = store?.maps_url || 'https://maps.google.com/?q=Pengenjek+Lombok+Tengah'
-
-  const storeStatus = isStoreOpen(jamBuka, jamTutup)
 
   return (
     <div className="w-full pb-28">
@@ -73,17 +72,12 @@ export default async function TentangTokoPage() {
 
           {/* Live Status Badge */}
           <div className="pt-1 flex justify-center">
-            <div className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-sora font-bold border shadow-xs ${
-              storeStatus.isOpen 
-                ? 'bg-emerald-50 text-emerald-800 border-emerald-300 ring-2 ring-emerald-400/20'
-                : 'bg-rose-50 text-rose-800 border-rose-300 ring-2 ring-rose-400/20'
-            }`}>
-              <span className={`w-2.5 h-2.5 rounded-full animate-pulse ${
-                storeStatus.isOpen ? 'bg-emerald-500' : 'bg-rose-500'
-              }`} />
-              <span>{storeStatus.statusText}</span>
-              <span className="text-[10px] font-normal opacity-80">({storeStatus.timeRange})</span>
-            </div>
+            <StoreStatusBadge
+              jamBuka={jamBuka}
+              jamTutup={jamTutup}
+              jamOperasional={jamOperasional}
+              variant="full"
+            />
           </div>
         </div>
 

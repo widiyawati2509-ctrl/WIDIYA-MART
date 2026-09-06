@@ -7,8 +7,8 @@ import PromoBannerCarousel from '@/components/PromoBannerCarousel'
 import { Section } from '@/components/ui'
 import Image from 'next/image'
 import Link from 'next/link'
-import { Heart, Clock, Store } from 'lucide-react'
-import { isStoreOpen } from '@/lib/utils'
+import { Heart } from 'lucide-react'
+import StoreStatusBadge from '@/components/StoreStatusBadge'
 
 import { getPublicPromos } from '@/lib/actions/promos'
 
@@ -36,8 +36,6 @@ export default async function HomePage() {
         .single(),
       getPublicPromos(),
     ])
-
-  const storeStatus = isStoreOpen(storeInfo?.jam_buka, storeInfo?.jam_tutup)
 
   return (
     <div className="w-full pb-20">
@@ -82,18 +80,12 @@ export default async function HomePage() {
           href="/tentang"
           className="flex items-center justify-between p-2.5 rounded-2xl bg-white border border-[rgba(232,214,205,0.9)] shadow-xs hover:bg-[var(--paper)] transition-all press"
         >
-          <div className="flex items-center gap-2 min-w-0">
-            <span className={`w-2 h-2 rounded-full shrink-0 ${storeStatus.isOpen ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500'}`} />
-            <div className="flex items-center gap-1.5 text-xs truncate">
-              <span className={`font-sora font-bold ${storeStatus.isOpen ? 'text-emerald-700' : 'text-rose-700'}`}>
-                {storeStatus.statusText}
-              </span>
-              <span className="text-[var(--ink-soft)] font-medium">·</span>
-              <span className="text-[var(--ink-soft)] font-medium truncate">
-                {storeInfo?.jam_operasional || `${storeStatus.timeRange} WITA`}
-              </span>
-            </div>
-          </div>
+          <StoreStatusBadge
+            jamBuka={storeInfo?.jam_buka}
+            jamTutup={storeInfo?.jam_tutup}
+            jamOperasional={storeInfo?.jam_operasional}
+            variant="compact"
+          />
           <span className="text-[11px] font-sora font-bold text-[var(--accent-2)] shrink-0 flex items-center gap-0.5 ml-2">
             Info Toko &rarr;
           </span>

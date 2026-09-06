@@ -113,32 +113,119 @@ export function getPickupCountdown(dateStr?: string | null): {
   }
 }
 
+/**
+ * Ambil waktu saat ini dalam zona waktu WITA (Waktu Indonesia Tengah / Asia/Makassar / UTC+8).
+ * Menjamin konsistensi jam baik dieksekusi di server (UTC) maupun di browser/klien.
+ */
+export function getWitaTime(date: Date = new Date()): {
+  hours: number
+  minutes: number
+  timeString: string
+} {
+  try {
+    const formatter = new Intl.DateTimeFormat('en-GB', {
+      timeZone: 'Asia/Makassar',
+      hour: '2-digit',
+      minute: '2-digit',
+      hourCycle: 'h23',
+    })
+    const parts = formatter.formatToParts(date)
+    const h = parseInt(parts.find((p) => p.type === 'hour')?.value || '0', 10)
+    const m = parseInt(parts.find((p) => p.type === 'minute')?.value || '0', 10)
+    return {
+      hours: h,
+      minutes: m,
+      timeString: `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`,
+    }
+  } catch {
+    // Fallback perhitungan manual: UTC + 8 jam
+    const utcMs = date.getTime() + date.getTimezoneOffset() * 60 * 1000
+    const witaMs = utcMs + 8 * 60 * 60 * 1000
+    const witaDate = new Date(witaMs)
+    const h = witaDate.getHours()
+    const m = witaDate.getMinutes()
+    return {
+      hours: h,
+      minutes: m,
+      timeString: `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`,
+    }
+  }
+}
+
+/**
+ * Parsing jam dari string (mendukung format '07:00', '07.00', '7:00', dll).
+ */
+export function parseTimeString(
+  val: string | null | undefined,
+  fallbackH: number,
+  fallbackM: number
+): { hours: number; minutes: number; formatted: string } {
+  if (!val) {
+    return {
+      hours: fallbackH,
+      minutes: fallbackM,
+      formatted: `${String(fallbackH).padStart(2, '0')}:${String(fallbackM).padStart(2, '0')}`,
+    }
+  }
+  const match = val.match(/(\d{1,2})[:.](\d{2})/)
+  if (match) {
+    const h = parseInt(match[1], 10)
+    const m = parseInt(match[2], 10)
+    return {
+      hours: h,
+      minutes: m,
+      formatted: `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`,
+    }
+  }
+  return {
+    hours: fallbackH,
+    minutes: fallbackM,
+    formatted: `${String(fallbackH).padStart(2, '0')}:${String(fallbackM).padStart(2, '0')}`,
+  }
+}
+
+/**
+ * Cek status apakah toko sedang buka atau tutup berdasarkan jam operasional dan waktu nyata WITA.
+ */
 export function isStoreOpen(
   jamBuka?: string | null,
-  jamTutup?: string | null
-): { isOpen: boolean; statusText: string; timeRange: string } {
-  const buka = (jamBuka || '07:00').trim()
-  const tutup = (jamTutup || '21:00').trim()
-  const timeRange = `${buka} - ${tutup}`
-
+  jamTutup?: string | null,
+  jamOperasionalFallback?: string | null
+): {
+  isOpen: boolean
+  statusText: string
+  timeRange: string
+  currentWitaTime: string
+  jamBukaFormatted: string
+  jamTutupFormatted: string
+} {
   try {
-    const now = new Date()
-    const currentMinutes = now.getHours() * 60 + now.getMinutes()
+    let bukaStr = jamBuka?.trim() || null
+    let tutupStr = jamTutup?.trim() || null
 
-    const [bukaH, bukaM] = buka.split(':').map((v) => parseInt(v, 10))
-    const [tutupH, tutupM] = tutup.split(':').map((v) => parseInt(v, 10))
-
-    if (isNaN(bukaH) || isNaN(tutupH)) {
-      return { isOpen: true, statusText: 'Toko Buka', timeRange }
+    // Jika jamBuka / jamTutup kosong, coba ekstrak dari teks jam_operasional (mis: 'Senin–Minggu, 07.00–21.00')
+    if ((!bukaStr || !tutupStr) && jamOperasionalFallback) {
+      const matches = [...jamOperasionalFallback.matchAll(/(\d{1,2})[:.](\d{2})/g)]
+      if (matches.length >= 2) {
+        if (!bukaStr) bukaStr = matches[0][0]
+        if (!tutupStr) tutupStr = matches[1][0]
+      }
     }
 
-    const startMinutes = bukaH * 60 + (bukaM || 0)
-    const endMinutes = tutupH * 60 + (tutupM || 0)
+    const buka = parseTimeString(bukaStr, 7, 0)
+    const tutup = parseTimeString(tutupStr, 21, 0)
+    const timeRange = `${buka.formatted} – ${tutup.formatted} WITA`
+
+    const now = getWitaTime()
+    const currentMinutes = now.hours * 60 + now.minutes
+    const startMinutes = buka.hours * 60 + buka.minutes
+    const endMinutes = tutup.hours * 60 + tutup.minutes
 
     let isOpen = false
     if (endMinutes >= startMinutes) {
       isOpen = currentMinutes >= startMinutes && currentMinutes < endMinutes
     } else {
+      // Menangani jam operasional lewat tengah malam (mis: 20:00 - 04:00)
       isOpen = currentMinutes >= startMinutes || currentMinutes < endMinutes
     }
 
@@ -146,9 +233,19 @@ export function isStoreOpen(
       isOpen,
       statusText: isOpen ? 'Toko Buka' : 'Toko Tutup',
       timeRange,
+      currentWitaTime: now.timeString,
+      jamBukaFormatted: buka.formatted,
+      jamTutupFormatted: tutup.formatted,
     }
   } catch {
-    return { isOpen: true, statusText: 'Toko Buka', timeRange }
+    return {
+      isOpen: true,
+      statusText: 'Toko Buka',
+      timeRange: '07:00 – 21:00 WITA',
+      currentWitaTime: '12:00',
+      jamBukaFormatted: '07:00',
+      jamTutupFormatted: '21:00',
+    }
   }
 }
 
