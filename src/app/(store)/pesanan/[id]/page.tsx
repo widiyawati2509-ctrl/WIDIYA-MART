@@ -1,8 +1,8 @@
 // @ts-nocheck
 import { createClient } from '@/lib/supabase/server'
 import { notFound, redirect } from 'next/navigation'
-import { formatRupiah, getOrderStatusLabel, getOrderStatusColor, formatWhatsAppUrl, formatBatasWaktu, getPickupCountdown } from '@/lib/utils'
-import { ChevronLeft, CheckCircle, Clock, MapPin, Phone, Truck, Star, AlertTriangle } from 'lucide-react'
+import { formatRupiah, getOrderStatusLabel, getOrderStatusColor, formatWhatsAppUrl, formatBatasWaktu, getPickupCountdown, parseOrderShippingInfo } from '@/lib/utils'
+import { ChevronLeft, CheckCircle, Clock, MapPin, Phone, Truck, Star, AlertTriangle, Sparkles } from 'lucide-react'
 import Link from 'next/link'
 import PrintReceiptButton from '@/components/PrintReceiptButton'
 import PageHeader from '@/components/PageHeader'
@@ -12,10 +12,13 @@ import ProductReviewFormModal from '@/components/ProductReviewFormModal'
 
 interface OrderDetailPageProps {
   params: Promise<{ id: string }>
+  searchParams?: Promise<{ created?: string }>
 }
 
-export default async function OrderDetailPage({ params }: OrderDetailPageProps) {
+export default async function OrderDetailPage({ params, searchParams }: OrderDetailPageProps) {
   const { id } = await params
+  const sParams = searchParams ? await searchParams : {}
+  const isJustCreated = sParams?.created === 'true'
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
@@ -35,8 +38,10 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
     .select('nama_toko, alamat_toko, kota, jam_operasional, whatsapp, no_hp_toko')
     .single()
 
+  const shipping = parseOrderShippingInfo(order)
   const statuses = ['menunggu_diproses', 'diproses', 'siap_diambil', 'selesai']
   const currentIdx = statuses.indexOf(order.status)
+
 
   return (
     <div className="w-full pb-28">
@@ -51,12 +56,40 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
       />
 
       <div className="p-4 space-y-3.5">
+        {/* Banner Konfirmasi Sukses Checkout */}
+        {isJustCreated && (
+          <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-300 shadow-xs text-emerald-950 space-y-2">
+            <div className="flex items-center gap-2.5">
+              <span className="text-2xl">🎉</span>
+              <div>
+                <h3 className="font-sora font-extrabold text-sm text-emerald-950">Pesanan Berhasil Dibuat!</h3>
+                <p className="text-[11px] text-emerald-800 font-medium">Terima kasih telah berbelanja di {store?.nama_toko || 'PENGENJEK MART'}</p>
+              </div>
+            </div>
+            {shipping.isDelivery ? (
+              <div className="bg-white/85 rounded-xl p-2.5 border border-emerald-200 text-xs flex items-center justify-between">
+                <span className="font-semibold text-emerald-900 flex items-center gap-1.5">
+                  <Truck className="w-3.5 h-3.5 text-blue-600" />
+                  Estimasi Tiba Pengantaran:
+                </span>
+                <span className="bg-blue-600 text-white font-extrabold px-2.5 py-0.5 rounded-full text-[11px]">
+                  ±{shipping.estimasiMenit || 35} Menit
+                </span>
+              </div>
+            ) : (
+              <div className="bg-white/85 rounded-xl p-2.5 border border-emerald-200 text-xs text-emerald-900 font-medium">
+                Silakan ambil pesanan Anda langsung di toko saat status berubah menjadi <strong>Siap Diambil</strong>.
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Status Stepper Card */}
         <div className="card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-lg)] p-4 shadow-3d">
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-sora font-bold text-sm text-[var(--ink)]">Status Pesanan</h2>
-            <span className={`text-[var(--text-caption)] font-bold px-2.5 py-0.5 rounded-full ${getOrderStatusColor(order.status, order.metode_pengiriman)}`}>
-              {getOrderStatusLabel(order.status, order.metode_pengiriman)}
+            <span className={`text-[var(--text-caption)] font-bold px-2.5 py-0.5 rounded-full ${getOrderStatusColor(order.status, shipping.metode)}`}>
+              {getOrderStatusLabel(order.status, shipping.metode)}
             </span>
           </div>
 
@@ -88,7 +121,7 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
                 <span className={currentIdx >= 0 ? 'text-[var(--ink)] font-bold' : ''}>Menunggu</span>
                 <span className={currentIdx >= 1 ? 'text-[var(--ink)] font-bold' : ''}>Diproses</span>
                 <span className={currentIdx >= 2 ? 'text-[var(--ink)] font-bold' : ''}>
-                  {order.metode_pengiriman === 'antar_alamat' ? 'Diantar' : 'Siap Diambil'}
+                  {shipping.isDelivery ? 'Diantar' : 'Siap Diambil'}
                 </span>
                 <span className={currentIdx >= 3 ? 'text-[var(--ink)] font-bold' : ''}>Selesai</span>
               </div>
@@ -96,27 +129,27 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
           )}
 
           {/* Pengantaran ke Alamat (siap_diambil -> Pesanan Proses Pengantaran) */}
-          {order.status === 'siap_diambil' && order.metode_pengiriman === 'antar_alamat' && (
+          {order.status === 'siap_diambil' && shipping.isDelivery && (
             <div className="mt-4 p-3.5 rounded-2xl bg-blue-50 border border-blue-200 text-xs text-blue-950 space-y-1.5 shadow-xs">
               <div className="flex items-center justify-between font-bold text-blue-900">
                 <span className="flex items-center gap-1.5">
                   <Truck size={16} className="text-blue-700 animate-pulse" />
                   <span>Pesanan Sedang Diantar ke Alamat Anda!</span>
                 </span>
-                {order.estimasi_menit && (
+                {shipping.estimasiMenit && (
                   <span className="bg-blue-600 text-white px-2.5 py-0.5 rounded-full text-[11px] font-extrabold">
-                    ±{order.estimasi_menit} Menit
+                    ±{shipping.estimasiMenit} Menit
                   </span>
                 )}
               </div>
               <p className="text-[11px] text-blue-800 leading-relaxed font-medium">
-                Kurir sedang dalam perjalanan mengantarkan pesanan ke <strong>{order.alamat_pengiriman || 'alamat Anda'}</strong>. Mohon pastikan nomor HP aktif dan siapkan uang pas COD saat kurir tiba.
+                Kurir sedang dalam perjalanan mengantarkan pesanan ke <strong>{shipping.alamat || 'alamat Anda'}</strong>. Mohon pastikan nomor HP aktif dan siapkan uang pas COD saat kurir tiba.
               </p>
             </div>
           )}
 
           {/* Sisa Waktu Pengambilan COD (siap_diambil + ambil_di_toko) */}
-          {order.status === 'siap_diambil' && order.metode_pengiriman !== 'antar_alamat' && order.batas_waktu_ambil && (
+          {order.status === 'siap_diambil' && !shipping.isDelivery && order.batas_waktu_ambil && (
             <div className="mt-4 p-3.5 rounded-2xl bg-emerald-50 border border-emerald-300 text-xs text-emerald-950 space-y-1.5 shadow-xs">
               <div className="flex items-center justify-between font-bold text-emerald-900">
                 <span className="flex items-center gap-1.5">
@@ -134,7 +167,7 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
           )}
 
           {/* Estimasi Waktu Tiba Pengantaran (Antar Alamat) */}
-          {order.metode_pengiriman === 'antar_alamat' && order.estimasi_menit && (order.status === 'menunggu_diproses' || order.status === 'diproses') && (
+          {shipping.isDelivery && shipping.estimasiMenit && (order.status === 'menunggu_diproses' || order.status === 'diproses') && (
             <div className="mt-4 p-3.5 rounded-2xl bg-blue-50 border border-blue-200 text-xs text-blue-950 space-y-1.5 shadow-xs">
               <div className="flex items-center justify-between font-bold text-blue-900">
                 <span className="flex items-center gap-1.5">
@@ -142,7 +175,7 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
                   <span>Estimasi Pesanan Tiba:</span>
                 </span>
                 <span className="bg-blue-600 text-white px-2.5 py-0.5 rounded-full text-[11px] font-extrabold">
-                  ±{order.estimasi_menit} Menit
+                  ±{shipping.estimasiMenit} Menit
                 </span>
               </div>
               <p className="text-[11px] text-blue-800 leading-relaxed font-medium">
@@ -165,36 +198,39 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
           )}
         </div>
 
-        {/* Lokasi Pengambilan / Pengantaran */}
+        {/* Lokasi Pengambilan / Alamat Pengantaran */}
         <div className="card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-lg)] p-4 shadow-3d">
-          {order.metode_pengiriman === 'antar_alamat' ? (
+          {shipping.isDelivery ? (
             <>
               <h2 className="font-sora font-bold text-sm text-[var(--ink)] mb-2 flex items-center gap-2">
                 <Truck className="w-4 h-4 text-[var(--accent)]" />
-                Diantar ke Alamat (COD)
+                Alamat Pengantaran
               </h2>
-              <p className="font-bold text-xs text-[var(--ink)]">
-                {order.alamat_pengiriman || 'Alamat tidak tercantum'}
-              </p>
-              {order.jarak_km ? (
-                <p className="text-xs text-[var(--ink-soft)] mt-1 flex items-center gap-1 font-medium">
-                  <MapPin className="w-3.5 h-3.5 text-[var(--accent)]" />
-                  Jarak Pengantaran: ~{order.jarak_km} km dari toko
+              <div className="bg-[var(--paper)] p-3 rounded-xl border border-[var(--line)] space-y-1">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--ink-soft)] block">Tujuan Pengiriman:</span>
+                <p className="font-bold text-xs text-[var(--ink)] leading-relaxed">
+                  {shipping.alamat || 'Alamat tujuan tidak tercantum'}
+                </p>
+              </div>
+              {shipping.jarakKm ? (
+                <p className="text-xs text-[var(--ink-soft)] mt-2 flex items-center gap-1 font-medium">
+                  <MapPin className="w-3.5 h-3.5 text-[var(--accent)] shrink-0" />
+                  Jarak Pengantaran: ~{shipping.jarakKm} km dari toko
                 </p>
               ) : null}
               <p className="text-[var(--text-caption)] text-emerald-700 font-bold mt-1">
-                {order.ongkir === 0 ? '🎉 Gratis Ongkir (Radius ≤ 7 km)' : `Ongkir: ${formatRupiah(order.ongkir || 15000)}`}
+                {shipping.ongkir === 0 ? '🎉 Gratis Ongkir (Radius ≤ 7 km)' : `Ongkir: ${formatRupiah(shipping.ongkir || 15000)}`}
               </p>
 
               {/* Delivery estimate detail badge */}
-              {order.estimasi_menit ? (
+              {shipping.estimasiMenit ? (
                 <div className="mt-2.5 p-2.5 rounded-xl bg-blue-50/80 border border-blue-200/90 flex items-center justify-between text-xs">
                   <span className="text-blue-900 font-semibold flex items-center gap-1.5">
                     <Clock className="w-3.5 h-3.5 text-blue-600" />
                     Target Waktu Pengantaran:
                   </span>
                   <span className="font-sora font-extrabold text-blue-700 bg-blue-100/90 px-2 py-0.5 rounded-md text-[11px]">
-                    ±{order.estimasi_menit} Menit
+                    ±{shipping.estimasiMenit} Menit
                   </span>
                 </div>
               ) : null}
@@ -248,23 +284,24 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
             <div className="flex justify-between">
               <span className="text-[var(--ink-soft)]">Pengiriman</span>
               <span className="font-bold text-[var(--ink)]">
-                {order.metode_pengiriman === 'antar_alamat' ? 'Diantar ke Alamat' : 'Ambil di Toko'}
+                {shipping.isDelivery ? 'Diantar ke Alamat' : 'Ambil di Toko'}
               </span>
             </div>
             <div className="flex justify-between">
               <span className="text-[var(--ink-soft)]">Pembayaran</span>
               <span className="font-bold text-[var(--ink)]">
-                COD (Bayar saat {order.metode_pengiriman === 'antar_alamat' ? 'Pesanan Tiba' : 'Ambil di Toko'})
+                COD (Bayar saat {shipping.isDelivery ? 'Pesanan Tiba' : 'Ambil di Toko'})
               </span>
             </div>
-            {order.catatan && (
-              <div className="flex justify-between">
-                <span className="text-[var(--ink-soft)]">Catatan</span>
-                <span className="font-bold text-right max-w-[60%] text-[var(--ink)]">{order.catatan}</span>
+            {shipping.cleanCatatan && (
+              <div className="flex justify-between items-start pt-1 border-t border-[var(--line)]">
+                <span className="text-[var(--ink-soft)] shrink-0">Catatan</span>
+                <span className="font-bold text-right max-w-[65%] text-[var(--ink)]">{shipping.cleanCatatan}</span>
               </div>
             )}
           </div>
         </div>
+
 
         {/* Item Pesanan (Struk Nota Dashed) */}
         <div className="card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-lg)] p-4 shadow-3d">
@@ -304,10 +341,10 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
 
           {/* Ongkir Breakdown */}
           <div className="pt-1.5 flex justify-between items-center text-xs text-[var(--ink-soft)] font-medium">
-            <span>Biaya Pengiriman ({order.metode_pengiriman === 'antar_alamat' ? 'Diantar' : 'Ambil di Toko'})</span>
-            <span className={`font-sora font-semibold ${order.ongkir === 0 ? 'text-emerald-700' : 'text-[var(--ink)]'}`}>
-              {order.metode_pengiriman === 'antar_alamat'
-                ? (order.ongkir === 0 ? 'Gratis (≤ 7 km)' : formatRupiah(order.ongkir || 15000))
+            <span>Biaya Pengiriman ({shipping.isDelivery ? 'Diantar' : 'Ambil di Toko'})</span>
+            <span className={`font-sora font-semibold ${shipping.ongkir === 0 ? 'text-emerald-700' : 'text-[var(--ink)]'}`}>
+              {shipping.isDelivery
+                ? (shipping.ongkir === 0 ? 'Gratis (≤ 7 km)' : formatRupiah(shipping.ongkir || 15000))
                 : 'Gratis'}
             </span>
           </div>

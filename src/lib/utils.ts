@@ -322,3 +322,97 @@ export function serializeProductVariants(
   return `${trimmed}${VARIANTS_DELIMITER}${JSON.stringify(variants)}${VARIANTS_DELIMITER_END}`
 }
 
+export interface ParsedShippingInfo {
+  metode: 'antar_alamat' | 'ambil_di_toko'
+  isDelivery: boolean
+  alamat: string | null
+  jarakKm: number | null
+  ongkir: number
+  estimasiMenit: number | null
+  cleanCatatan: string | null
+}
+
+export function parseOrderShippingInfo(order?: {
+  metode_pengiriman?: string | null
+  alamat_pengiriman?: string | null
+  jarak_km?: number | null
+  ongkir?: number | null
+  estimasi_menit?: number | null
+  catatan?: string | null
+} | null): ParsedShippingInfo {
+  if (!order) {
+    return {
+      metode: 'ambil_di_toko',
+      isDelivery: false,
+      alamat: null,
+      jarakKm: null,
+      ongkir: 0,
+      estimasiMenit: null,
+      cleanCatatan: null,
+    }
+  }
+
+  let metode: 'antar_alamat' | 'ambil_di_toko' =
+    order.metode_pengiriman === 'antar_alamat' ? 'antar_alamat' : 'ambil_di_toko'
+  let alamat = order.alamat_pengiriman?.trim() || null
+  let jarakKm = typeof order.jarak_km === 'number' && !isNaN(order.jarak_km) ? order.jarak_km : null
+  let ongkir = typeof order.ongkir === 'number' && !isNaN(order.ongkir) ? order.ongkir : 0
+  let estimasiMenit = typeof order.estimasi_menit === 'number' && !isNaN(order.estimasi_menit) ? order.estimasi_menit : null
+  let rawCatatan = order.catatan?.trim() || null
+
+  // If order was created during schema fallback, parse legacy bracket format
+  if (rawCatatan) {
+    if (rawCatatan.includes('[Pengantaran ke:') || rawCatatan.includes('[Metode: Diantar')) {
+      metode = 'antar_alamat'
+      if (!alamat) {
+        const addrMatch = rawCatatan.match(/\[Pengantaran ke:\s*([^|\]]+)/i)
+        if (addrMatch && addrMatch[1]?.trim() && addrMatch[1].trim() !== '-') {
+          alamat = addrMatch[1].trim()
+        }
+      }
+      if (jarakKm === null) {
+        const jarakMatch = rawCatatan.match(/Jarak:\s*([0-9.]+)\s*km/i)
+        if (jarakMatch) {
+          jarakKm = parseFloat(jarakMatch[1])
+        }
+      }
+      if (ongkir === 0) {
+        const ongkirMatch = rawCatatan.match(/Ongkir:\s*Rp\s*([0-9.]+)/i)
+        if (ongkirMatch) {
+          ongkir = parseInt(ongkirMatch[1].replace(/\./g, ''), 10) || 0
+        }
+      }
+      if (!estimasiMenit) {
+        const estMatch = rawCatatan.match(/Estimasi:\s*±?([0-9]+)\s*mnt/i)
+        if (estMatch) {
+          estimasiMenit = parseInt(estMatch[1], 10)
+        }
+      }
+    } else if (rawCatatan.includes('[Metode: Ambil di Toko]')) {
+      metode = 'ambil_di_toko'
+    }
+
+    // Clean customer note from embedded tags
+    const cleaned = rawCatatan
+      .replace(/\[Pengantaran ke:[^\]]*\]/gi, '')
+      .replace(/\[Metode:[^\]]*\]/gi, '')
+      .replace(/\[Poin Digunakan:[^\]]*\]/gi, '')
+      .replace(/^Catatan:\s*/i, '')
+      .replace(/\n\s*Catatan:\s*/gi, '\n')
+      .trim()
+
+    rawCatatan = cleaned || null
+  }
+
+  return {
+    metode,
+    isDelivery: metode === 'antar_alamat',
+    alamat,
+    jarakKm,
+    ongkir,
+    estimasiMenit,
+    cleanCatatan: rawCatatan,
+  }
+}
+
+

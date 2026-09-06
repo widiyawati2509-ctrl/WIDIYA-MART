@@ -4,6 +4,7 @@
 import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { Printer } from 'lucide-react'
+import { parseOrderShippingInfo } from '@/lib/utils'
 
 interface OrderItem {
   id?: string
@@ -91,6 +92,8 @@ export default function PrintReceiptButton({ order, store }: PrintReceiptButtonP
     window.print()
   }
 
+  const shipping = parseOrderShippingInfo(order)
+
   const receiptContent = (
     <aside
       id="receipt-print-area"
@@ -139,18 +142,28 @@ export default function PrintReceiptButton({ order, store }: PrintReceiptButtonP
         </div>
         <div className="flex justify-between">
           <span>Status</span>
-          <span className="font-bold">{getStatusLabel(order?.status || '', order?.metode_pengiriman)}</span>
+          <span className="font-bold">{getStatusLabel(order?.status || '', shipping.metode)}</span>
         </div>
         <div className="flex justify-between">
           <span>Pengiriman</span>
-          <span>{order?.metode_pengiriman === 'antar_alamat' ? 'Diantar ke Alamat' : 'Ambil di Toko'}</span>
+          <span className="font-semibold">{shipping.isDelivery ? 'Diantar ke Alamat' : 'Ambil di Toko'}</span>
         </div>
-        {order?.metode_pengiriman === 'antar_alamat' && order?.estimasi_menit ? (
-          <div className="flex justify-between font-bold">
-            <span>Estimasi Tiba</span>
-            <span>±{order.estimasi_menit} Menit</span>
-          </div>
-        ) : null}
+        {shipping.isDelivery && (
+          <>
+            {shipping.alamat && (
+              <div className="pt-0.5">
+                <span className="block text-[10px] text-gray-700">Tujuan Antar:</span>
+                <span className="font-medium text-[11px] leading-tight block">{shipping.alamat}</span>
+              </div>
+            )}
+            {shipping.estimasiMenit ? (
+              <div className="flex justify-between font-bold">
+                <span>Estimasi Tiba</span>
+                <span>±{shipping.estimasiMenit} Menit</span>
+              </div>
+            ) : null}
+          </>
+        )}
       </div>
 
       <div className="border-b border-dashed border-black my-2" />
@@ -191,8 +204,8 @@ export default function PrintReceiptButton({ order, store }: PrintReceiptButtonP
           <span>{formatRp(order?.subtotal || order?.total || 0)}</span>
         </div>
         <div className="flex justify-between">
-          <span>Ongkir ({order?.metode_pengiriman === 'antar_alamat' ? 'Diantar' : 'Ambil di Toko'})</span>
-          <span>{formatRp(order?.ongkir || 0)}</span>
+          <span>Ongkir ({shipping.isDelivery ? 'Diantar' : 'Ambil di Toko'})</span>
+          <span>{formatRp(shipping.ongkir || order?.ongkir || 0)}</span>
         </div>
         <div className="flex justify-between font-bold text-xs pt-1 border-t border-black">
           <span>TOTAL BAYAR</span>
@@ -200,11 +213,11 @@ export default function PrintReceiptButton({ order, store }: PrintReceiptButtonP
         </div>
         <div className="flex justify-between pt-0.5 text-[var(--text-caption)] text-[var(--ink)]">
           <span>Metode Bayar</span>
-          <span>Tunai / COD di Toko</span>
+          <span>{shipping.isDelivery ? 'COD (Bayar saat Tiba)' : 'Tunai / COD di Kasir Toko'}</span>
         </div>
-        {order?.catatan && (
+        {shipping.cleanCatatan && (
           <div className="text-[var(--text-caption)] text-[var(--ink)] pt-1 italic">
-            Catatan: {order.catatan}
+            Catatan: {shipping.cleanCatatan}
           </div>
         )}
       </div>
@@ -215,7 +228,9 @@ export default function PrintReceiptButton({ order, store }: PrintReceiptButtonP
       <div className="text-center text-[var(--text-caption)] leading-tight space-y-1">
         <div className="font-bold">TERIMA KASIH ATAS KUNJUNGAN ANDA</div>
         <div className="text-[var(--ink)]">
-          Harap simpan struk ini saat mengambil pesanan di kasir toko.
+          {shipping.isDelivery
+            ? 'Pesanan akan segera diantarkan ke alamat Anda.'
+            : 'Harap simpan struk ini saat mengambil pesanan di kasir toko.'}
         </div>
       </div>
     </aside>

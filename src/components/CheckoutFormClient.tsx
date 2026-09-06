@@ -276,7 +276,7 @@ export default function CheckoutFormClient({
           setErrorMsg(res.error)
           window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })
         } else if (res?.orderId) {
-          window.location.href = `/pesanan/${res.orderId}`
+          window.location.href = `/pesanan/${res.orderId}?created=true`
         }
       } catch (err: any) {
         if (err?.message?.includes('NEXT_REDIRECT')) return
