@@ -29,22 +29,21 @@ export default function HomeHeader({ storeInfo }: HomeHeaderProps) {
       }
     }
 
-    // Set initial scroll position
+    // Set initial scroll position on mount
     setScrollY(window.scrollY)
 
     window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  // 1-to-1 scroll-linked interpolation (No layout shifts, pure 120fps GPU compositing)
+  // Hanya bagian Info Toko & Alamat yang bertransisi memudar secara proporsional 1-to-1
   const progress = Math.min(1, Math.max(0, scrollY / 60))
   const opacity = 1 - progress
   const translateY = progress * 12
-  const isStuck = scrollY > 55
 
   return (
-    <div className="w-full mb-3">
-      {/* 1. Bagian Atas: Nama Toko, Tagline, Favorit, Alamat & Jam Buka */}
+    <>
+      {/* 1. Bagian Atas: Nama Toko, Tagline, Favorit, Alamat & Jam Buka (Transisi menghilang saat di-scroll) */}
       <div
         className="px-4 pt-3 pb-1 flex flex-col gap-2 will-change-[opacity,transform]"
         style={{
@@ -93,16 +92,10 @@ export default function HomeHeader({ storeInfo }: HomeHeaderProps) {
         <AddressSelector storeInfo={storeInfo} />
       </div>
 
-      {/* 2. Tab Pencarian (Sticky Paling Atas Layar, Selalu Terlihat) */}
-      <div
-        className={`sticky top-[var(--admin-bar-offset,0px)] z-40 px-4 py-2 transition-all duration-200 ${
-          isStuck
-            ? 'bg-[rgba(250,240,235,0.96)] backdrop-blur-md border-b border-[rgba(232,214,205,0.8)] shadow-header'
-            : 'bg-transparent'
-        }`}
-      >
+      {/* 2. Tab Pencarian (TETAP TAMPIL & STICKY di Paling Atas Layar, TIDAK IKUT MENGHILANG) */}
+      <div className="sticky top-[var(--admin-bar-offset,0px)] z-40 px-4 py-2 bg-[rgba(250,240,235,0.96)] backdrop-blur-md border-b border-[rgba(232,214,205,0.8)] shadow-header mb-3">
         <SearchBar />
       </div>
-    </div>
+    </>
   )
 }
