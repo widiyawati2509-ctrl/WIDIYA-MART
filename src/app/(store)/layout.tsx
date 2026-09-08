@@ -2,6 +2,7 @@
 import { createClient, getAuthUser } from '@/lib/supabase/server'
 import BottomNav from '@/components/BottomNav'
 import UserOrderNotifier from '@/components/UserOrderNotifier'
+import AdminThemeColor from '@/components/AdminThemeColor'
 import Link from 'next/link'
 
 export default async function StoreLayout({
@@ -44,21 +45,30 @@ export default async function StoreLayout({
   return (
     <div
       className="max-w-[480px] mx-auto min-h-screen pb-24 relative bg-[var(--paper)]"
-      style={{ '--admin-bar-offset': isAdmin ? '34px' : '0px' } as React.CSSProperties}
+      style={{ '--admin-bar-offset': isAdmin ? 'calc(34px + env(safe-area-inset-top, 0px))' : '0px' } as React.CSSProperties}
     >
+      {/* Theme color manager: #FF6B35 for active admin mode, #FAF0EB (--paper) for regular visitors */}
+      {isAdmin && <meta name="theme-color" content="#FF6B35" />}
+      <AdminThemeColor isAdmin={isAdmin} />
+
       {isAdmin && (
-        <div className="sticky top-0 z-50 h-[34px] bg-gradient-to-r from-amber-600 via-orange-600 to-amber-600 text-white px-3.5 py-1 text-xs font-sora font-semibold flex items-center justify-between shadow-header">
-          <div className="flex items-center gap-1.5">
-            <span className="text-xs">👑</span>
-            <span>Mode Admin</span>
+        <div
+          className="sticky top-0 z-50 bg-gradient-to-r from-amber-600 via-orange-600 to-amber-600 text-white shadow-header"
+          style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}
+        >
+          <div className="h-[34px] px-3.5 py-1 text-xs font-sora font-semibold flex items-center justify-between">
+            <div className="flex items-center gap-1.5">
+              <span className="text-xs">👑</span>
+              <span>Mode Admin</span>
+            </div>
+            <Link
+              href="/admin"
+              prefetch={true}
+              className="px-2.5 py-0.5 rounded-full bg-white text-orange-600 font-extrabold text-[var(--text-caption)] shadow-xs active:scale-95 transition-all"
+            >
+              Panel &rarr;
+            </Link>
           </div>
-          <Link
-            href="/admin"
-            prefetch={true}
-            className="px-2.5 py-0.5 rounded-full bg-white text-orange-600 font-extrabold text-[var(--text-caption)] shadow-xs active:scale-95 transition-all"
-          >
-            Panel &rarr;
-          </Link>
         </div>
       )}
       <UserOrderNotifier />
