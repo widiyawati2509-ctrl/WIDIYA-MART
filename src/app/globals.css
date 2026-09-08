@@ -279,6 +279,14 @@ input.field:focus, textarea.field:focus, select.field:focus {
   box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.2), inset 0 1px 0 #ffffff;
 }
 
+/* Admin Mode Top Bar with Safe-Area */
+.admin-bar-safe-top {
+  background-color: #FF6B35;
+  background-image: linear-gradient(to right, #FF6B35, #E85521, #FF6B35);
+  padding-top: constant(safe-area-inset-top);
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
 /* Header */
 .top-header {
   top: var(--admin-bar-offset, 0px);

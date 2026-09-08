@@ -4,6 +4,32 @@ import BottomNav from '@/components/BottomNav'
 import UserOrderNotifier from '@/components/UserOrderNotifier'
 import AdminThemeColor from '@/components/AdminThemeColor'
 import Link from 'next/link'
+import type { Viewport } from 'next'
+
+export async function generateViewport(): Promise<Viewport> {
+  const user = await getAuthUser()
+  let isAdmin = false
+
+  if (user) {
+    const supabase = await createClient()
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
+      .single()
+
+    isAdmin = profile?.role === 'admin'
+  }
+
+  return {
+    themeColor: isAdmin ? '#FF6B35' : '#FAF0EB',
+    width: 'device-width',
+    initialScale: 1,
+    maximumScale: 1,
+    userScalable: false,
+    viewportFit: 'cover',
+  }
+}
 
 export default async function StoreLayout({
   children,
@@ -53,7 +79,7 @@ export default async function StoreLayout({
 
       {isAdmin && (
         <div
-          className="sticky top-0 z-50 bg-gradient-to-r from-amber-600 via-orange-600 to-amber-600 text-white shadow-header"
+          className="admin-bar-safe-top sticky top-0 z-50 text-white shadow-header bg-gradient-to-r from-[#FF6B35] via-[#E85521] to-[#FF6B35]"
           style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}
         >
           <div className="h-[34px] px-3.5 py-1 text-xs font-sora font-semibold flex items-center justify-between">
@@ -64,7 +90,7 @@ export default async function StoreLayout({
             <Link
               href="/admin"
               prefetch={true}
-              className="px-2.5 py-0.5 rounded-full bg-white text-orange-600 font-extrabold text-[var(--text-caption)] shadow-xs active:scale-95 transition-all"
+              className="px-2.5 py-0.5 rounded-full bg-white text-[#E85521] font-extrabold text-[var(--text-caption)] shadow-xs active:scale-95 transition-all"
             >
               Panel &rarr;
             </Link>

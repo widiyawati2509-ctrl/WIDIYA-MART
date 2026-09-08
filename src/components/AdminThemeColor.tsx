@@ -1,31 +1,58 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useLayoutEffect } from 'react'
 
 interface AdminThemeColorProps {
   isAdmin?: boolean
 }
 
 export default function AdminThemeColor({ isAdmin = false }: AdminThemeColorProps) {
-  useEffect(() => {
+  const syncThemeColor = () => {
     const targetColor = isAdmin ? '#FF6B35' : '#FAF0EB'
-    let meta = document.querySelector('meta[name="theme-color"]')
-    if (!meta) {
-      meta = document.createElement('meta')
-      meta.setAttribute('name', 'theme-color')
+    const metas = document.querySelectorAll('meta[name="theme-color"]')
+    if (metas.length > 0) {
+      metas.forEach((el) => el.setAttribute('content', targetColor))
+    } else {
+      const meta = document.createElement('meta')
+      meta.name = 'theme-color'
+      meta.content = targetColor
       document.head.appendChild(meta)
     }
-    meta.setAttribute('content', targetColor)
+  }
 
+  useLayoutEffect(() => {
+    syncThemeColor()
+  }, [isAdmin])
+
+  useEffect(() => {
+    syncThemeColor()
     return () => {
       if (isAdmin) {
-        const resetMeta = document.querySelector('meta[name="theme-color"]')
-        if (resetMeta) {
-          resetMeta.setAttribute('content', '#FAF0EB')
-        }
+        document.querySelectorAll('meta[name="theme-color"]').forEach((el) => {
+          el.setAttribute('content', '#FAF0EB')
+        })
       }
     }
   }, [isAdmin])
 
-  return null
+  return (
+    <script
+      dangerouslySetInnerHTML={{
+        __html: `(function(){
+          var color = ${JSON.stringify(isAdmin ? '#FF6B35' : '#FAF0EB')};
+          var metas = document.querySelectorAll('meta[name="theme-color"]');
+          if (metas.length > 0) {
+            for (var i = 0; i < metas.length; i++) {
+              metas[i].setAttribute('content', color);
+            }
+          } else {
+            var m = document.createElement('meta');
+            m.name = 'theme-color';
+            m.content = color;
+            document.head.appendChild(m);
+          }
+        })();`,
+      }}
+    />
+  )
 }
