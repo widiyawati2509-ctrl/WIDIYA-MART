@@ -90,9 +90,10 @@ export default async function StoreLayout({
             <Link
               href="/admin"
               prefetch={true}
-              className="px-2.5 py-0.5 rounded-full bg-white text-[#E85521] font-extrabold text-[var(--text-caption)] shadow-xs active:scale-95 transition-all"
+              className="px-2.5 py-0.5 rounded-full bg-white font-sora font-extrabold text-[11px] shadow-xs active:scale-95 transition-all inline-flex items-center"
+              style={{ color: '#E85521' }}
             >
-              Panel &rarr;
+              <span>Panel &rarr;</span>
             </Link>
           </div>
         </div>
