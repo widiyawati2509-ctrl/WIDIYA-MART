@@ -2,6 +2,7 @@
 'use client'
 
 import { useState, useEffect, useTransition } from 'react'
+import { createPortal } from 'react-dom'
 import { 
   MapPin, 
   ChevronDown, 
@@ -36,12 +37,17 @@ interface AddressSelectorProps {
 }
 
 export default function AddressSelector({ initialAddresses, storeInfo }: AddressSelectorProps) {
+  const [mounted, setMounted] = useState(false)
   const [addresses, setAddresses] = useState<UserAddress[]>(initialAddresses || [])
   const [selectedAddress, setSelectedAddress] = useState<UserAddress | null>(null)
   const [isOpen, setIsOpen] = useState(false)
   const [isAdding, setIsAdding] = useState(false)
   const [isLoading, setIsLoading] = useState(!initialAddresses)
   const [isPending, startTransition] = useTransition()
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   // Store open/close status state
   const [storeStatus, setStoreStatus] = useState(() =>
@@ -261,12 +267,13 @@ export default function AddressSelector({ initialAddresses, storeInfo }: Address
       {/* 1. SATU BARIS RINGKAS: ALAMAT & JAM BUKA TOKO */}
       <div className="flex flex-wrap items-center justify-between gap-x-2.5 gap-y-1 text-xs pt-2 border-t border-[rgba(232,214,205,0.7)] text-[var(--ink-soft)] font-medium leading-tight">
         {/* Info Alamat (Klik untuk buka modal ganti alamat) */}
-        <div
+        <button
+          type="button"
           onClick={() => {
             setIsAdding(false)
             setIsOpen(true)
           }}
-          className="flex items-center gap-1.5 min-w-0 flex-1 cursor-pointer hover:opacity-85 transition-opacity"
+          className="flex items-center gap-1.5 min-w-0 flex-1 text-left cursor-pointer hover:opacity-85 transition-opacity focus:outline-none"
           title="Klik untuk memilih atau mengubah alamat pengiriman"
         >
           <span className="shrink-0 text-xs select-none">📍</span>
@@ -287,7 +294,7 @@ export default function AddressSelector({ initialAddresses, storeInfo }: Address
               Pilih Alamat Pengiriman
             </span>
           )}
-        </div>
+        </button>
 
         {/* Info Jam Buka & Tombol [Ganti] */}
         <div className="flex items-center gap-2 shrink-0">
@@ -323,9 +330,9 @@ export default function AddressSelector({ initialAddresses, storeInfo }: Address
         </div>
       </div>
 
-      {/* 2. BOTTOM SHEET / MODAL PILIH ALAMAT */}
-      {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
+      {/* 2. BOTTOM SHEET / MODAL PILIH ALAMAT (PORTAL TO BODY TO PREVENT HEADER BACKDROP-BLUR TRAP) */}
+      {isOpen && mounted && createPortal(
+        <div className="fixed inset-0 z-[100] flex items-end justify-center bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
           <div 
             className="fixed inset-0" 
             onClick={() => {
@@ -613,7 +620,8 @@ export default function AddressSelector({ initialAddresses, storeInfo }: Address
               </div>
             )}
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </>
   )
