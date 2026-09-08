@@ -2,14 +2,11 @@
 import { createPublicClient } from '@/lib/supabase/server'
 import ProductCard from '@/components/ProductCard'
 import CategoryGrid from '@/components/CategoryGrid'
-import SearchBar from '@/components/SearchBar'
 import PromoBannerCarousel from '@/components/PromoBannerCarousel'
 import { Section } from '@/components/ui'
-import Image from 'next/image'
 import Link from 'next/link'
-import { Heart } from 'lucide-react'
 import { getPublicPromos } from '@/lib/actions/promos'
-import AddressSelector from '@/components/AddressSelector'
+import HomeHeader from '@/components/HomeHeader'
 
 export const revalidate = 60
 
@@ -55,50 +52,8 @@ export default async function HomePage() {
 
   return (
     <div className="w-full pb-32">
-      {/* Toko Kita Frosted Top Header */}
-      <header className="top-header sticky top-[var(--admin-bar-offset,0px)] z-40 px-4 pt-3 pb-2.5 flex flex-col gap-2 border-b border-[rgba(232,214,205,0.8)] shadow-header bg-[rgba(250,240,235,0.92)] backdrop-blur-md mb-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div className="logo-box flex items-center justify-center p-1 overflow-hidden shrink-0 shadow-badge">
-              <Image
-                src="/logo.png"
-                alt="PENGENJEK MART Logo"
-                width={34}
-                height={34}
-                className="rounded-[var(--radius-sm)] object-cover"
-                priority
-              />
-            </div>
-            <div>
-              <h1 className="font-sora font-bold text-[var(--text-subtitle)] leading-tight text-[var(--ink)]">
-                {storeInfo?.nama_toko ?? 'PENGENJEK MART'}
-              </h1>
-              <p className="text-[var(--text-caption)] text-[var(--ink-soft)] leading-tight font-medium">
-                Pesan online, ambil di toko (COD)
-              </p>
-            </div>
-          </div>
-
-          {/* Quick Link to Daftar Belanja (Favorit) */}
-          <Link
-            href="/daftar-belanja"
-            prefetch={true}
-            className="press flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-[rgba(232,214,205,0.9)] shadow-xs hover:border-rose-300 text-[var(--ink)] text-xs font-sora font-semibold transition-all active:scale-95"
-            title="Daftar Produk Disukai / Favorit"
-          >
-            <Heart size={14} className="text-rose-500 fill-rose-500/20" />
-            <span>Favorit</span>
-          </Link>
-        </div>
-
-        {/* SATU Baris Ringkas Alamat & Jam Buka */}
-        <AddressSelector storeInfo={storeInfo} />
-      </header>
-
-      {/* Search Bar */}
-      <div className="px-4 mb-4">
-        <SearchBar />
-      </div>
+      {/* Toko Kita Frosted Top Header dengan Transisi Scroll */}
+      <HomeHeader storeInfo={storeInfo} />
 
       {/* Promo Banner Carousel */}
       <div className="px-4 mb-5">
