@@ -1,7 +1,7 @@
-# Widiya Mart Design System Specification (`DESIGN.md`)
+# Widiya Mart / PENGENJEK MART Design System Specification (`DESIGN.md`)
 
-Documented design system for **Widiya Mart / PENGENJEK MART** e-commerce web application.
-This document serves as the single source of truth for aesthetics, typography, color palettes, spacing, motion, component design, and print thermal receipt standards.
+Documented design system for **PENGENJEK MART (Widiya Mart)** e-commerce web application.
+This document serves as the single source of truth for aesthetics, typography, color palettes, spacing tokens, motion, component design, sticky header ergonomics, and print thermal receipt standards.
 
 ---
 
@@ -25,7 +25,7 @@ This document serves as the single source of truth for aesthetics, typography, c
 | `--ink` | `#23150F` | Primary text, titles, prominent price labels |
 | `--ink-soft` | `#5E443B` | Muted subtitles, descriptions (WCAG AAA compliant > 7.9:1) |
 | `--line` | `#E8D6CD` | Subtle card borders, dividers, chip outlines |
-| `--accent` | `#FF6B35` | Vibrant coral/orange (primary CTA, active icons, brand badges) |
+| `--accent` | `#FF6B35` | Vibrant coral/orange (primary CTA, active icons, brand badges, Admin Mode) |
 | `--accent-2` | `#E85521` | Darker coral for gradient stops, active states, and focus |
 | `--accent-bg` | `#FFEBE3` | Soft coral tint for tags, badges, active tabs |
 | `--success` | `#10B981` | Order completed, in-stock badge, free shipping alert |
@@ -49,8 +49,23 @@ This document serves as the single source of truth for aesthetics, typography, c
 
 ---
 
-## 4. Spacing, Elevation & Corner Radii
+## 4. Spacing, Elevation & Compact Card Standards
 
+### A. Compact Spacing Tokens
+To maximize visible content per viewport while preserving legibility and tap accessibility, spacing across all cards is standardized as follows:
+
+- **ProductCard (`ProductCard.tsx`)**:
+  - Container padding: `p-2.5` (10px).
+  - Image container margin: `mb-1.5`, inner image padding: `p-1`.
+  - Typography spacing: `mb-0.5` between category, title, and price.
+  - Action footer: `mt-1.5 pt-1.5`.
+  - Product images and typography sizes remain 100% full-scale.
+- **Generic Cards (`Card` in `ui.tsx`)**: `p-3` (12px), reduced from `p-4` to remove dead space.
+- **List Item Cards (Cart, Wishlist, Orders, Admin Rows)**: `py-2.5 px-3` (10px vertical, 12px horizontal).
+- **Grids & Carousels**: `gap-2` (8px) between items.
+- **Touch Target Ergonomic Rule**: All buttons, chips, and interactive icons maintain a minimum interactive hit area of $\ge 40\times 40$px (`min-h-[40px]`).
+
+### B. Corner Radii & Shadows
 * **Corner Radius Scale**:
   - Small (`--radius-sm`): `12px` (badges, chips, small buttons)
   - Medium (`--radius-md`): `16px` (inputs, thumbnails, floating pills)
@@ -63,7 +78,36 @@ This document serves as the single source of truth for aesthetics, typography, c
 
 ---
 
-## 5. Mobile Retail Layout Patterns (Alfagift / Indomaret Model)
+## 5. Sticky Header & Scroll Transition Architecture
+
+The homepage header implements a high-performance, scroll-linked collapse pattern designed for maximum screen efficiency:
+
+1. **Component Separation for Zero Layout Shift**:
+   - The store branding info (`Nama Toko`, `Logo`, `Tagline`, `Favorit`, and unified `AddressSelector`) and the search bar are split into independent sibling DOM elements inside the root page flow (`<div className="w-full pb-32">`).
+   - Store info is in regular document flow and collapses smoothly.
+   - The `SearchBar` is permanently `sticky top-[var(--admin-bar-offset,0px)]` with its own blurred translucent backdrop (`rgba(250,240,235,0.96)`). It never participates in disappearing and remains docked across the entire page.
+
+2. **1-to-1 Linear Interpolation (`useScrollHeader`)**:
+   - Rather than relying on discrete toggle transitions (`max-height` or step classes) which suffer from dead-zones or jerky animations, the collapse tracks window scroll position in real-time:
+     $$\text{progress} = \min\left(1, \frac{\text{scrollY}}{60}\right)$$
+     $$\text{opacity} = 1 - \text{progress}$$
+     $$\text{translateY} = -(\text{progress} \times 12)\text{px}$$
+   - When $\text{progress} = 1$, the store info applies `visibility: hidden` and `pointer-events: none` to prevent phantom clicks.
+   - When scrolling back up, opacity and transform smoothly reverse in direct proportion to touch motion.
+
+3. **Unified Single-Line Info Row**:
+   - Active delivery address and store operating hours are merged into a single compact line below the store title:
+     `📍 Rumah · Pengenjek lauk dusun... · 🟢 Buka 06:00-23:00 [Ganti]`
+   - Eliminates redundant card frames and frees up vertical screen estate so product catalog is immediately visible above the fold.
+   - The address selection bottom sheet is portaled directly to `document.body` to avoid stacking context clipping from header backdrop filters.
+
+4. **Mode Admin Full-Bleed Status Bar**:
+   - When an administrator views the store, the top Mode Admin bar extends into the device status bar / notch area via `padding-top: env(safe-area-inset-top)`.
+   - The page `<meta name="theme-color">` dynamically switches to `#FF6B35` so browser chrome and physical device cutouts render as one cohesive, seamless orange surface.
+
+---
+
+## 6. Mobile Retail Layout Patterns (Alfagift / Indomaret Model)
 
 1. **Horizontal Carousel Cards**:
    - Beranda product sections use horizontal scroll row: `flex row`, `overflow-x-auto`, `snap-x snap-mandatory`, `scrollbar-hide`.
@@ -74,18 +118,6 @@ This document serves as the single source of truth for aesthetics, typography, c
 3. **Cart & Action Buttons**:
    - Bounded touch targets (`min-height: 44px`).
    - Active micro-interaction: `active:scale-95 transition-all`.
-
----
-
-## 6. Thermal Receipt Standard (58mm POS Printers)
-
-* **Physical Paper Width**: `58mm`
-* **Safe Printable Area**: `max-width: 48mm`
-* **Page Margin**: `0`
-* **Padding**: `3mm 2.5mm`
-* **Print Font**: `9.5px – 10.5px`, `line-height: 1.25`, monospace/clean sans.
-* **Footer**: Single-line concise closing: `"Terima kasih!"`.
-* **Media Query Isolation**: `@media print` strictly hides web UI, header, and buttons; only `#receipt-print-area` is rendered.
 
 ---
 
@@ -106,3 +138,14 @@ All media elements (hero banners, image carousels, photo galleries, and future v
    - Future video components (product previews, promotional clips) must be rendered as standard inline document elements inside normal page scroll flow.
    - Automatic video autoplay must remain silent (`muted`, `playsinline`), never lock or snap scroll position, and fullscreen is only triggered upon explicit user tap.
 
+---
+
+## 8. Thermal Receipt Standard (58mm POS Printers)
+
+* **Physical Paper Width**: `58mm`
+* **Safe Printable Area**: `max-width: 48mm`
+* **Page Margin**: `0`
+* **Padding**: `3mm 2.5mm`
+* **Print Font**: `9.5px – 10.5px`, `line-height: 1.25`, monospace/clean sans.
+* **Footer**: Single-line concise closing: `"Terima kasih!"`.
+* **Media Query Isolation**: `@media print` strictly hides web UI, header, and buttons; only `#receipt-print-area` is rendered.

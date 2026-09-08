@@ -92,8 +92,9 @@ Skrip `MASTER_SUPABASE_DISASTER_RECOVERY.sql` otomatis mencakup:
 - **`profiles`**: Autentikasi user & role admin.
 - **`categories`**: Kategori produk dengan auto-seed (Sembako, Minuman, Snack, dll).
 - **`products`**: Katalog produk, harga, stok, foto, dan status aktif.
+- **`product_variants`**: Varian spesifik produk (nama, harga khusus, stok khusus, foto khusus).
 - **`orders`**: Pesanan lengkap dengan sistem delivery (jarak_km, ongkir, estimasi_menit, deadline 48 jam, potongan poin loyalty).
-- **`order_items`**: Detail produk tiap pesanan.
+- **`order_items`**: Detail produk tiap pesanan beserta varian terpilih.
 - **`store_info`**: Konfigurasi toko, radius antar, ongkir per km, jam buka-tutup (07:00 - 21:00).
 - **`promos`**: Banner beranda dan voucher promo.
 - **`user_addresses`**: Alamat pelanggan dengan koordinat GPS lat/long.
