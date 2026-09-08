@@ -14,7 +14,7 @@ interface HomeHeaderProps {
 }
 
 export default function HomeHeader({ storeInfo }: HomeHeaderProps) {
-  const [isScrolled, setIsScrolled] = useState(false)
+  const [scrollY, setScrollY] = useState(0)
 
   useEffect(() => {
     let ticking = false
@@ -22,89 +22,87 @@ export default function HomeHeader({ storeInfo }: HomeHeaderProps) {
     const handleScroll = () => {
       if (!ticking) {
         window.requestAnimationFrame(() => {
-          const y = window.scrollY
-          setIsScrolled((prev) => {
-            if (!prev && y > 30) return true
-            if (prev && y < 15) return false
-            return prev
-          })
+          setScrollY(window.scrollY)
           ticking = false
         })
         ticking = true
       }
     }
 
-    // Check initial scroll position on mount
-    handleScroll()
+    // Set initial scroll position
+    setScrollY(window.scrollY)
 
     window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
+  // 1-to-1 scroll-linked interpolation (No layout shifts, pure 120fps GPU compositing)
+  const progress = Math.min(1, Math.max(0, scrollY / 60))
+  const opacity = 1 - progress
+  const translateY = progress * 12
+  const isStuck = scrollY > 55
+
   return (
-    <header className="top-header sticky top-[var(--admin-bar-offset,0px)] z-40 px-4 py-2.5 border-b border-[rgba(232,214,205,0.8)] shadow-header bg-[rgba(250,240,235,0.94)] backdrop-blur-md mb-3">
-      {/* Collapsible Section: Store Name, Tagline, Favorite & Address Bar */}
+    <div className="w-full mb-3">
+      {/* 1. Bagian Atas: Nama Toko, Tagline, Favorit, Alamat & Jam Buka */}
       <div
-        className="grid transition-[grid-template-rows,opacity,margin-bottom] duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] will-change-[grid-template-rows,opacity]"
+        className="px-4 pt-3 pb-1 flex flex-col gap-2 will-change-[opacity,transform]"
         style={{
-          gridTemplateRows: isScrolled ? '0fr' : '1fr',
-          opacity: isScrolled ? 0 : 1,
-          marginBottom: isScrolled ? '0px' : '8px',
-          pointerEvents: isScrolled ? 'none' : 'auto',
+          opacity,
+          transform: `translateY(-${translateY}px)`,
+          pointerEvents: opacity < 0.1 ? 'none' : 'auto',
+          visibility: opacity <= 0 ? 'hidden' : 'visible',
         }}
       >
-        <div className="overflow-hidden min-h-0">
-          <div
-            className="flex flex-col gap-2 transition-transform duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]"
-            style={{
-              transform: isScrolled ? 'translateY(-6px)' : 'translateY(0)',
-            }}
-          >
-            {/* Baris 1: Logo, Nama Toko, Tagline & Tombol Favorit */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2.5">
-                <div className="logo-box flex items-center justify-center p-1 overflow-hidden shrink-0 shadow-badge">
-                  <Image
-                    src="/logo.png"
-                    alt="PENGENJEK MART Logo"
-                    width={34}
-                    height={34}
-                    className="rounded-[var(--radius-sm)] object-cover"
-                    priority
-                  />
-                </div>
-                <div>
-                  <h1 className="font-sora font-bold text-[var(--text-subtitle)] leading-tight text-[var(--ink)]">
-                    {storeInfo?.nama_toko ?? 'PENGENJEK MART'}
-                  </h1>
-                  <p className="text-[var(--text-caption)] text-[var(--ink-soft)] leading-tight font-medium">
-                    Pesan online, ambil di toko (COD)
-                  </p>
-                </div>
-              </div>
-
-              {/* Quick Link to Daftar Belanja (Favorit) */}
-              <Link
-                href="/daftar-belanja"
-                prefetch={true}
-                className="press flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-[rgba(232,214,205,0.9)] shadow-xs hover:border-rose-300 text-[var(--ink)] text-xs font-sora font-semibold transition-all active:scale-95"
-                title="Daftar Produk Disukai / Favorit"
-              >
-                <Heart size={14} className="text-rose-500 fill-rose-500/20" />
-                <span>Favorit</span>
-              </Link>
+        {/* Baris 1: Logo, Nama Toko, Tagline & Tombol Favorit */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <div className="logo-box flex items-center justify-center p-1 overflow-hidden shrink-0 shadow-badge">
+              <Image
+                src="/logo.png"
+                alt="PENGENJEK MART Logo"
+                width={34}
+                height={34}
+                className="rounded-[var(--radius-sm)] object-cover"
+                priority
+              />
             </div>
-
-            {/* Baris 2: SATU Baris Ringkas Alamat & Jam Buka */}
-            <AddressSelector storeInfo={storeInfo} />
+            <div>
+              <h1 className="font-sora font-bold text-[var(--text-subtitle)] leading-tight text-[var(--ink)]">
+                {storeInfo?.nama_toko ?? 'PENGENJEK MART'}
+              </h1>
+              <p className="text-[var(--text-caption)] text-[var(--ink-soft)] leading-tight font-medium">
+                Pesan online, ambil di toko (COD)
+              </p>
+            </div>
           </div>
+
+          {/* Quick Link to Daftar Belanja (Favorit) */}
+          <Link
+            href="/daftar-belanja"
+            prefetch={true}
+            className="press flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-[rgba(232,214,205,0.9)] shadow-xs hover:border-rose-300 text-[var(--ink)] text-xs font-sora font-semibold transition-all active:scale-95"
+            title="Daftar Produk Disukai / Favorit"
+          >
+            <Heart size={14} className="text-rose-500 fill-rose-500/20" />
+            <span>Favorit</span>
+          </Link>
         </div>
+
+        {/* Baris 2: SATU Baris Ringkas Alamat & Jam Buka */}
+        <AddressSelector storeInfo={storeInfo} />
       </div>
 
-      {/* Tab Pencarian: Selalu terlihat & sticky di header */}
-      <div className="w-full">
+      {/* 2. Tab Pencarian (Sticky Paling Atas Layar, Selalu Terlihat) */}
+      <div
+        className={`sticky top-[var(--admin-bar-offset,0px)] z-40 px-4 py-2 transition-all duration-200 ${
+          isStuck
+            ? 'bg-[rgba(250,240,235,0.96)] backdrop-blur-md border-b border-[rgba(232,214,205,0.8)] shadow-header'
+            : 'bg-transparent'
+        }`}
+      >
         <SearchBar />
       </div>
-    </header>
+    </div>
   )
 }
