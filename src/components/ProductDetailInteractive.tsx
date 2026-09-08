@@ -8,6 +8,7 @@ import AddToCartButton from '@/components/AddToCartButton'
 import { Layers, Check, MessageCircle, Package, X, ArrowRight, ChevronLeft, ChevronRight, Bookmark, BookmarkCheck, Heart } from 'lucide-react'
 import Link from 'next/link'
 import { toggleShoppingListItem } from '@/lib/actions/shopping-list'
+import { useSwipeGesture } from '@/lib/useSwipeGesture'
 
 interface ProductDetailInteractiveProps {
   product: {
@@ -30,7 +31,6 @@ export default function ProductDetailInteractive({ product, storePhone = '087816
   )
   const [showStockModal, setShowStockModal] = useState(false)
   const [activeImageIndex, setActiveImageIndex] = useState(0)
-  const [touchStartX, setTouchStartX] = useState<number | null>(null)
   const [isWishlisted, setIsWishlisted] = useState(false)
   const [savingWishlist, setSavingWishlist] = useState(false)
   const [toastMessage, setToastMessage] = useState<string | null>(null)
@@ -136,23 +136,12 @@ export default function ProductDetailInteractive({ product, storePhone = '087816
     }
   }
 
-  const handleTouchStart = (e: React.TouchEvent) => {
-    setTouchStartX(e.touches[0].clientX)
-  }
-
-  const handleTouchEnd = (e: React.TouchEvent) => {
-    if (touchStartX === null) return
-    const touchEndX = e.changedTouches[0].clientX
-    const diff = touchStartX - touchEndX
-    if (Math.abs(diff) > 40) {
-      if (diff > 0) {
-        goToNext()
-      } else {
-        goToPrev()
-      }
-    }
-    setTouchStartX(null)
-  }
+  const { handleTouchStart, handleTouchEnd, touchClassName } = useSwipeGesture({
+    onSwipeLeft: goToNext,
+    onSwipeRight: goToPrev,
+    threshold: 45,
+    verticalToleranceRatio: 1.2,
+  })
 
   const activePrice = selectedVariant?.harga ?? product.harga
   const activeStock = selectedVariant?.stok ?? product.stok
@@ -175,7 +164,7 @@ export default function ProductDetailInteractive({ product, storePhone = '087816
       {/* Interactive Image Gallery / Slider */}
       <div className="mx-4 mt-3 flex flex-col gap-2.5">
         <div
-          className="relative aspect-square rounded-[var(--radius-xl)] bg-[var(--accent-bg)] border border-[rgba(232,214,205,0.9)] overflow-hidden shadow-thumb-inset select-none"
+          className={`relative aspect-square rounded-[var(--radius-xl)] bg-[var(--accent-bg)] border border-[rgba(232,214,205,0.9)] overflow-hidden shadow-thumb-inset select-none ${touchClassName}`}
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
         >

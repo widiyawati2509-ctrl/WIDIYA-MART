@@ -86,3 +86,23 @@ This document serves as the single source of truth for aesthetics, typography, c
 * **Print Font**: `9.5px – 10.5px`, `line-height: 1.25`, monospace/clean sans.
 * **Footer**: Single-line concise closing: `"Terima kasih!"`.
 * **Media Query Isolation**: `@media print` strictly hides web UI, header, and buttons; only `#receipt-print-area` is rendered.
+
+---
+
+## 7. Media, Video & Gesture Scrolling Standards (Instagram/Facebook Feed Ergonomics)
+
+All media elements (hero banners, image carousels, photo galleries, and future video players) across **PENGENJEK MART** must strictly obey natural, uninhibited vertical page scrolling:
+
+1. **Zero Vertical Scroll Locking**:
+   - Swiping vertically over any image, carousel, banner, or video must **always** scroll the page naturally without resistance or delay (identical to Facebook, Instagram, or TikTok vertical feed scrolling).
+2. **Technical Implementation Rules**:
+   - **NO `onTouchMove` with `preventDefault()`**: Never intercept or prevent default events during touch movement.
+   - **`touchstart` + `touchend` Gesture Detection Only**: Swipes must be calculated exclusively by comparing start coordinates on `touchstart` and end coordinates on `touchend`.
+   - **Horizontal Dominance Validation**: Only trigger horizontal slide changes if `Math.abs(diffX) >= 45` AND `Math.abs(diffX) > Math.abs(diffY) * 1.2`. If vertical motion dominates or is close, discard the swipe so the page scrolls vertically without accidental slide changes.
+   - **CSS `touch-action: pan-y` (`touch-pan-y`)**: Always add `touch-pan-y` to swipeable media wrappers. This signals the browser's touch pipeline that vertical dragging has primary native authority.
+   - **NEVER use `touch-pan-x`**: Do not use `touch-pan-x` on horizontal content lists because mobile browsers interpret it as a directive to disable vertical gestures.
+   - **Standard Reusable Hook**: All swipeable components must use `useSwipeGesture` from `@/lib/useSwipeGesture`.
+3. **Video Integration Standard**:
+   - Future video components (product previews, promotional clips) must be rendered as standard inline document elements inside normal page scroll flow.
+   - Automatic video autoplay must remain silent (`muted`, `playsinline`), never lock or snap scroll position, and fullscreen is only triggered upon explicit user tap.
+

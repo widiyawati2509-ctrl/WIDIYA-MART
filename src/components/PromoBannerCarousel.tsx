@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { ChevronRight, ChevronLeft } from 'lucide-react'
 
 import Image from 'next/image'
+import { useSwipeGesture } from '@/lib/useSwipeGesture'
 
 const banners = [
   {
@@ -74,13 +75,22 @@ export default function PromoBannerCarousel({ banners: propBanners }: { banners?
   const nextSlide = () => setCurrent((prev) => (prev + 1) % activeBanners.length)
   const prevSlide = () => setCurrent((prev) => (prev - 1 + activeBanners.length) % activeBanners.length)
 
+  const { handleTouchStart, handleTouchEnd, touchClassName } = useSwipeGesture({
+    onSwipeLeft: nextSlide,
+    onSwipeRight: prevSlide,
+    threshold: 45,
+    verticalToleranceRatio: 1.2,
+    onTouchStartExtra: () => setIsPaused(true),
+    onTouchEndExtra: () => setIsPaused(false),
+  })
+
   return (
     <div
-      className="relative overflow-hidden rounded-[var(--radius-lg)] shadow-3d group"
+      className={`relative overflow-hidden rounded-[var(--radius-lg)] shadow-3d group ${touchClassName}`}
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
-      onTouchStart={() => setIsPaused(true)}
-      onTouchEnd={() => setIsPaused(false)}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
     >
       {/* Slides */}
       <div
