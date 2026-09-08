@@ -6,7 +6,7 @@ import { getUserLoyaltySummary } from '@/lib/actions/loyalty'
 import { getShoppingList } from '@/lib/actions/shopping-list'
 import { getUserAddresses } from '@/lib/actions/addresses'
 import { getOrderStatusLabel, formatRupiah } from '@/lib/utils'
-import { User, ShoppingBag, ChevronRight, LogOut, ShieldCheck, Coins, Bookmark, Heart, Bell, Clock, PackageCheck, AlertCircle, Store } from 'lucide-react'
+import { User, ShoppingBag, ChevronRight, LogOut, ShieldCheck, Coins, Bookmark, Heart, Bell, Clock, PackageCheck, AlertCircle, Store, MapPin } from 'lucide-react'
 import Link from 'next/link'
 import PageHeader from '@/components/PageHeader'
 import UserAddressManager from '@/components/UserAddressManager'
@@ -231,6 +231,23 @@ export default async function ProfilPage() {
             {shoppingListCount > 0 && (
               <span className="text-[var(--text-caption)] font-bold bg-rose-100 text-rose-700 px-2 py-0.5 rounded-full mr-1">
                 {shoppingListCount}
+              </span>
+            )}
+            <ChevronRight size={15} className="text-[var(--ink-soft)]" />
+          </Link>
+
+          <Link
+            href="/alamat"
+            prefetch={true}
+            className="item press"
+          >
+            <span className="w-7 h-7 rounded-[var(--radius-sm)] bg-[var(--accent-bg)] text-[var(--accent-2)] flex items-center justify-center">
+              <MapPin size={15} />
+            </span>
+            <span className="flex-1 font-semibold text-xs text-[var(--ink)]">Kelola Alamat Pengiriman</span>
+            {savedAddresses.length > 0 && (
+              <span className="text-[var(--text-caption)] font-bold bg-[var(--paper)] text-[var(--ink-soft)] px-2 py-0.5 rounded-full mr-1 border border-[var(--line)]">
+                {savedAddresses.length}
               </span>
             )}
             <ChevronRight size={15} className="text-[var(--ink-soft)]" />

@@ -11,6 +11,7 @@ import { Heart } from 'lucide-react'
 import StoreStatusBadge from '@/components/StoreStatusBadge'
 
 import { getPublicPromos } from '@/lib/actions/promos'
+import AddressSelector from '@/components/AddressSelector'
 
 export const revalidate = 60
 
@@ -90,6 +91,9 @@ export default async function HomePage() {
           <span>Favorit</span>
         </Link>
       </header>
+
+      {/* Baris Alamat Pengiriman (Alfagift Pattern dengan 3D Puffy Coral) */}
+      <AddressSelector />
 
       {/* Store Hours & Quick Info Banner */}
       <div className="px-4 mb-3.5">
