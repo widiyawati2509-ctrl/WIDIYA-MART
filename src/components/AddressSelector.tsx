@@ -24,18 +24,37 @@ import {
   addAddress, 
   setDefaultAddress 
 } from '@/lib/actions/addresses'
+import { isStoreOpen } from '@/lib/utils'
 
 interface AddressSelectorProps {
   initialAddresses?: UserAddress[]
+  storeInfo?: {
+    jam_buka?: string | null
+    jam_tutup?: string | null
+    jam_operasional?: string | null
+  } | null
 }
 
-export default function AddressSelector({ initialAddresses }: AddressSelectorProps) {
+export default function AddressSelector({ initialAddresses, storeInfo }: AddressSelectorProps) {
   const [addresses, setAddresses] = useState<UserAddress[]>(initialAddresses || [])
   const [selectedAddress, setSelectedAddress] = useState<UserAddress | null>(null)
   const [isOpen, setIsOpen] = useState(false)
   const [isAdding, setIsAdding] = useState(false)
   const [isLoading, setIsLoading] = useState(!initialAddresses)
   const [isPending, startTransition] = useTransition()
+
+  // Store open/close status state
+  const [storeStatus, setStoreStatus] = useState(() =>
+    isStoreOpen(storeInfo?.jam_buka, storeInfo?.jam_tutup, storeInfo?.jam_operasional)
+  )
+
+  useEffect(() => {
+    setStoreStatus(isStoreOpen(storeInfo?.jam_buka, storeInfo?.jam_tutup, storeInfo?.jam_operasional))
+    const interval = setInterval(() => {
+      setStoreStatus(isStoreOpen(storeInfo?.jam_buka, storeInfo?.jam_tutup, storeInfo?.jam_operasional))
+    }, 10000)
+    return () => clearInterval(interval)
+  }, [storeInfo?.jam_buka, storeInfo?.jam_tutup, storeInfo?.jam_operasional])
 
   // New address form state
   const [newLabel, setNewLabel] = useState('Rumah')
@@ -239,72 +258,69 @@ export default function AddressSelector({ initialAddresses }: AddressSelectorPro
 
   return (
     <>
-      {/* 1. TOP HEADER BARIS ALAMAT (ALFAGIFT PATTERN DENGAN 3D NEUMORPHIC CORAL) */}
-      <div className="px-4 mb-3">
-        <button
-          type="button"
+      {/* 1. SATU BARIS RINGKAS: ALAMAT & JAM BUKA TOKO */}
+      <div className="flex flex-wrap items-center justify-between gap-x-2.5 gap-y-1 text-xs pt-2 border-t border-[rgba(232,214,205,0.7)] text-[var(--ink-soft)] font-medium leading-tight">
+        {/* Info Alamat (Klik untuk buka modal ganti alamat) */}
+        <div
           onClick={() => {
             setIsAdding(false)
             setIsOpen(true)
           }}
-          className="w-full text-left bg-white/95 hover:bg-white border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-lg)] p-2.5 px-3.5 shadow-xs hover:shadow-3d transition-all flex items-center justify-between gap-2.5 group active:scale-[0.99] focus:outline-none"
+          className="flex items-center gap-1.5 min-w-0 flex-1 cursor-pointer hover:opacity-85 transition-opacity"
           title="Klik untuk memilih atau mengubah alamat pengiriman"
         >
-          <div className="flex items-center gap-2.5 min-w-0 flex-1">
-            <div className="w-8 h-8 rounded-[var(--radius-md)] bg-[var(--accent-bg)] text-[var(--accent-2)] flex items-center justify-center shrink-0 shadow-thumb-inset group-hover:scale-105 transition-transform">
-              <MapPin size={16} className="text-[var(--accent)]" />
+          <span className="shrink-0 text-xs select-none">📍</span>
+          {isLoading ? (
+            <span className="h-3 w-24 bg-stone-200/80 animate-pulse rounded" />
+          ) : selectedAddress ? (
+            <div className="flex items-center gap-1 min-w-0 text-xs">
+              <span className="font-sora font-bold text-[var(--ink)] shrink-0">
+                {selectedAddress.label}
+              </span>
+              <span className="text-[var(--ink-soft)] shrink-0">·</span>
+              <span className="text-[var(--ink-soft)] truncate max-w-[120px] xs:max-w-[160px]">
+                {selectedAddress.alamat_lengkap}
+              </span>
             </div>
-
-            <div className="min-w-0 flex-1">
-              {isLoading ? (
-                <div className="flex items-center gap-2">
-                  <div className="h-3 w-20 bg-stone-200 animate-pulse rounded" />
-                  <div className="h-3 w-32 bg-stone-100 animate-pulse rounded" />
-                </div>
-              ) : selectedAddress ? (
-                <>
-                  <div className="flex items-center gap-1.5 leading-tight">
-                    <span className="text-[11px] font-medium text-[var(--ink-soft)]">
-                      Kirim ke:
-                    </span>
-                    <span className="font-sora font-bold text-xs text-[var(--ink)] truncate max-w-[120px]">
-                      {selectedAddress.label}
-                    </span>
-                    {selectedAddress.is_default && (
-                      <span className="bg-[var(--accent-bg)] text-[var(--accent-2)] text-[10px] font-sora font-extrabold px-1.5 py-0.2 rounded-full border border-[var(--accent)]/30">
-                        Utama
-                      </span>
-                    )}
-                  </div>
-                  <p className="text-[11px] text-[var(--ink-soft)] truncate font-normal mt-0.5">
-                    {selectedAddress.alamat_lengkap}
-                  </p>
-                </>
-              ) : (
-                <>
-                  <div className="flex items-center gap-1.5 leading-tight">
-                    <span className="font-sora font-bold text-xs text-[var(--ink)]">
-                      Pilih Alamat Pengiriman
-                    </span>
-                    <span className="bg-amber-100 text-amber-800 text-[10px] font-sora font-bold px-1.5 py-0.2 rounded-full">
-                      Atur Alamat
-                    </span>
-                  </div>
-                  <p className="text-[11px] text-[var(--ink-soft)] truncate font-normal mt-0.5">
-                    Tambah alamat untuk estimasi ongkir & pengantaran
-                  </p>
-                </>
-              )}
-            </div>
-          </div>
-
-          <div className="flex items-center gap-1 text-[var(--accent-2)] shrink-0 pl-1">
-            <span className="text-[11px] font-sora font-bold hidden xs:inline">
-              Ganti
+          ) : (
+            <span className="text-[var(--ink-soft)] text-xs truncate">
+              Pilih Alamat Pengiriman
             </span>
-            <ChevronDown size={15} className="group-hover:translate-y-0.5 transition-transform" />
-          </div>
-        </button>
+          )}
+        </div>
+
+        {/* Info Jam Buka & Tombol [Ganti] */}
+        <div className="flex items-center gap-2 shrink-0">
+          <Link
+            href="/tentang"
+            className="flex items-center gap-1 hover:underline text-[11px] font-medium transition-colors"
+            title="Lihat detail info toko & jam operasional"
+          >
+            <span
+              className={`w-1.5 h-1.5 rounded-full shrink-0 ${
+                storeStatus.isOpen ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500'
+              }`}
+            />
+            <span className={storeStatus.isOpen ? 'text-emerald-700 font-bold' : 'text-rose-700 font-bold'}>
+              {storeStatus.isOpen ? 'Buka' : 'Tutup'}
+            </span>
+            <span className="text-[var(--ink-soft)] font-medium">
+              {storeStatus.timeRange.replace(/\s*-\s*/, '-')}
+            </span>
+          </Link>
+
+          <button
+            type="button"
+            onClick={() => {
+              setIsAdding(false)
+              setIsOpen(true)
+            }}
+            className="text-[11px] font-sora font-bold text-[var(--accent-2)] hover:underline press shrink-0 ml-0.5"
+            title="Ganti alamat pengiriman"
+          >
+            [Ganti]
+          </button>
+        </div>
       </div>
 
       {/* 2. BOTTOM SHEET / MODAL PILIH ALAMAT */}
