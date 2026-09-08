@@ -101,7 +101,7 @@ export default function AdminPromoList({ initialPromos, products }: AdminPromoLi
       />
 
       {/* Promos List */}
-      <div className="space-y-3">
+      <div className="space-y-2">
         {promos.length === 0 ? (
           <div className="card-3d bg-white border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-lg)] p-8 text-center text-xs text-[var(--ink-soft)]">
             Belum ada promo aktif di database. Sistem saat ini menampilkan banner bawaan toko. Tambahkan promo pertama Anda!
@@ -110,7 +110,7 @@ export default function AdminPromoList({ initialPromos, products }: AdminPromoLi
           promos.map((p) => (
             <div
               key={p.id}
-              className="card-3d bg-white border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-lg)] p-4 shadow-3d flex items-center gap-3.5"
+              className="card-3d bg-white border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-lg)] py-2.5 px-3.5 shadow-3d flex items-center gap-3"
             >
               {/* Preview image */}
               <div

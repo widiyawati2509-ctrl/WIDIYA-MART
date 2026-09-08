@@ -264,7 +264,7 @@ export default function UserOrdersList({ initialOrders }: UserOrdersListProps) {
             actionLabel="Mulai Belanja"
           />
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-2">
             {orders.map((order) => {
               const isSelected = selectedIds.has(order.id)
 
@@ -282,7 +282,7 @@ export default function UserOrdersList({ initialOrders }: UserOrdersListProps) {
                     {isSelectMode && (
                       <div
                         onClick={(e) => handleToggleSelectOne(order.id, e)}
-                        className="p-4 pr-1 cursor-pointer select-none flex items-center justify-center self-stretch"
+                        className="py-3 pl-3 pr-1 cursor-pointer select-none flex items-center justify-center self-stretch"
                         title="Pilih pesanan ini"
                       >
                         {isSelected ? (
@@ -294,7 +294,7 @@ export default function UserOrdersList({ initialOrders }: UserOrdersListProps) {
                     )}
 
                     {/* Order Info (Click opens details unless in select mode) */}
-                    <div className="flex-1 min-w-0 p-4">
+                    <div className="flex-1 min-w-0 p-3">
                       <Link
                         href={isSelectMode ? '#' : `/pesanan/${order.id}`}
                         onClick={(e) => {
@@ -367,7 +367,7 @@ export default function UserOrdersList({ initialOrders }: UserOrdersListProps) {
                         </p>
 
                         {/* Total Pesanan */}
-                        <div className="receipt-dashed pt-2.5 flex justify-between items-center text-xs">
+                        <div className="receipt-dashed pt-2 flex justify-between items-center text-xs">
                           <span className="text-[var(--ink-soft)] font-medium">
                             Total Pesanan
                           </span>

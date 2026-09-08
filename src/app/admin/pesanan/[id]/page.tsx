@@ -78,11 +78,11 @@ export default async function AdminOrderDetailPage({ params }: AdminOrderDetailP
         rightSlot={<PrintReceiptButton order={order} store={store} />}
       />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         {/* Left Column */}
-        <div className="space-y-4">
+        <div className="space-y-3">
           {/* 1. KARTU INFO PESANAN */}
-          <div className="bg-white border rounded-2xl p-4 space-y-3 shadow-xs">
+          <div className="bg-white border rounded-2xl p-3 space-y-2 shadow-xs">
             <div className="flex items-center justify-between border-b pb-2.5">
               <h2 className="font-semibold text-sm text-gray-900 flex items-center gap-2">
                 <Hash className="w-4 h-4 text-gray-500" />
@@ -161,7 +161,7 @@ export default async function AdminOrderDetailPage({ params }: AdminOrderDetailP
           </div>
 
           {/* 2. KARTU TERPISAH: INFO PENGIRIMAN (TERSTRUKTUR) */}
-          <div className="bg-white border rounded-2xl p-4 space-y-3 shadow-xs">
+          <div className="bg-white border rounded-2xl p-3 space-y-2 shadow-xs">
             <div className="flex items-center justify-between border-b pb-2.5">
               <h2 className="font-semibold text-sm text-gray-900 flex items-center gap-2">
                 {isDelivery ? <Truck className="w-4 h-4 text-blue-600" /> : <Store className="w-4 h-4 text-emerald-600" />}
@@ -307,28 +307,28 @@ export default async function AdminOrderDetailPage({ params }: AdminOrderDetailP
           </div>
 
           {/* 3. UPDATE STATUS */}
-          <div className="bg-white border rounded-2xl p-4 shadow-xs">
-            <h2 className="font-semibold mb-3 text-sm text-gray-900">Update Status Pesanan</h2>
+          <div className="bg-white border rounded-2xl p-3 shadow-xs">
+            <h2 className="font-semibold mb-2.5 text-sm text-gray-900">Update Status Pesanan</h2>
             <AdminOrderStatusButtons
               orderId={order.id}
               currentStatus={order.status}
               statuses={statuses}
             />
-            <div className="mt-4 pt-3 border-t">
+            <div className="mt-3 pt-2.5 border-t">
               <DeleteOrderButton orderId={order.id} orderNumber={order.id.slice(0, 8).toUpperCase()} />
             </div>
           </div>
         </div>
 
         {/* Right Column — Item Pesanan & Rincian Pembayaran */}
-        <div className="bg-white border rounded-2xl p-4 shadow-xs space-y-4 h-fit">
-          <div className="border-b pb-2.5">
+        <div className="bg-white border rounded-2xl p-3 shadow-xs space-y-3 h-fit">
+          <div className="border-b pb-2">
             <h2 className="font-semibold text-sm text-gray-900">Item Pesanan ({order.order_items?.length || 0})</h2>
           </div>
 
-          <div className="space-y-3">
+          <div className="space-y-2">
             {order.order_items.map((item) => (
-              <div key={item.id} className="flex justify-between items-start border-b pb-3 last:border-0 last:pb-0">
+              <div key={item.id} className="flex justify-between items-start border-b pb-2 last:border-0 last:pb-0">
                 <div>
                   <p className="text-sm font-semibold text-gray-900">{item.nama_produk}</p>
                   <p className="text-xs text-gray-500">

@@ -148,7 +148,7 @@ export default function AdminStoreSettingsForm({ store }: AdminStoreSettingsForm
       )}
 
       {/* Live Timezone & Store Status Preview Card */}
-      <div className="bg-gradient-to-br from-amber-500/10 via-orange-500/10 to-amber-500/5 border border-amber-300/80 rounded-2xl p-4 space-y-3">
+      <div className="bg-gradient-to-br from-amber-500/10 via-orange-500/10 to-amber-500/5 border border-amber-300/80 rounded-2xl p-3 space-y-2">
         <div className="flex items-center justify-between flex-wrap gap-2">
           <div className="flex items-center gap-2">
             <span className="w-8 h-8 rounded-xl bg-amber-500 text-white flex items-center justify-center font-bold text-sm shadow-xs">
@@ -182,7 +182,7 @@ export default function AdminStoreSettingsForm({ store }: AdminStoreSettingsForm
       </div>
 
       {/* Main Settings Form */}
-      <div className="bg-white border border-[rgba(232,214,205,0.9)] rounded-2xl p-4 shadow-3d">
+      <div className="bg-white border border-[rgba(232,214,205,0.9)] rounded-2xl p-3 shadow-3d">
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="text-xs font-semibold text-gray-700 block mb-1">
@@ -224,7 +224,7 @@ export default function AdminStoreSettingsForm({ store }: AdminStoreSettingsForm
           </div>
 
           {/* Pengaturan Jam Buka & Tutup */}
-          <div className="p-3.5 rounded-2xl bg-amber-50/60 border border-amber-200/80 space-y-3">
+          <div className="p-2.5 rounded-2xl bg-amber-50/60 border border-amber-200/80 space-y-2">
             <div className="flex items-center justify-between">
               <label className="text-xs font-sora font-bold text-amber-950 flex items-center gap-1.5">
                 <Clock size={14} className="text-amber-700" />
@@ -323,7 +323,7 @@ export default function AdminStoreSettingsForm({ store }: AdminStoreSettingsForm
           </div>
 
           {/* Estimasi Waktu Pengantaran (Antar Alamat) */}
-          <div className="p-4 rounded-2xl bg-blue-50/70 border border-blue-200/80 space-y-3.5">
+          <div className="p-2.5 rounded-2xl bg-blue-50/70 border border-blue-200/80 space-y-2">
             <div className="flex items-center gap-2.5 text-blue-950">
               <div className="w-8 h-8 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center shrink-0">
                 <Truck className="w-4 h-4" />

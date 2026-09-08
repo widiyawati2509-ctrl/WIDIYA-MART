@@ -58,10 +58,10 @@ export default async function OrderDetailPage({ params, searchParams }: OrderDet
         rightSlot={<PrintReceiptButton order={order} store={store} />}
       />
 
-      <div className="p-4 space-y-3.5">
+      <div className="p-3.5 space-y-2.5">
         {/* Banner Konfirmasi Sukses Checkout */}
         {isJustCreated && (
-          <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-300 shadow-xs text-emerald-950 space-y-2">
+          <div className="p-3 rounded-2xl bg-emerald-50 border border-emerald-300 shadow-xs text-emerald-950 space-y-2">
             <div className="flex items-center gap-2.5">
               <span className="text-2xl">🎉</span>
               <div>
@@ -88,7 +88,7 @@ export default async function OrderDetailPage({ params, searchParams }: OrderDet
         )}
 
         {/* Status Stepper Card */}
-        <div className="card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-lg)] p-4 shadow-3d">
+        <div className="card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-lg)] p-3 shadow-3d">
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-sora font-bold text-sm text-[var(--ink)]">Status Pesanan</h2>
             <span className={`text-[var(--text-caption)] font-bold px-2.5 py-0.5 rounded-full ${getOrderStatusColor(order.status, shipping.metode)}`}>
@@ -202,7 +202,7 @@ export default async function OrderDetailPage({ params, searchParams }: OrderDet
         </div>
 
         {/* Lokasi Pengambilan / Alamat Pengantaran */}
-        <div className="card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-lg)] p-4 shadow-3d">
+        <div className="card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-lg)] p-3 shadow-3d">
           {shipping.isDelivery ? (
             <>
               <h2 className="font-sora font-bold text-sm text-[var(--ink)] mb-2 flex items-center gap-2">
@@ -273,8 +273,8 @@ export default async function OrderDetailPage({ params, searchParams }: OrderDet
         </div>
 
         {/* Info Pemesan */}
-        <div className="card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-lg)] p-4 shadow-3d">
-          <h2 className="font-sora font-bold text-sm text-[var(--ink)] mb-3">Info Pemesan</h2>
+        <div className="card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-lg)] p-3 shadow-3d">
+          <h2 className="font-sora font-bold text-sm text-[var(--ink)] mb-2">Info Pemesan</h2>
           <div className="space-y-1.5 text-xs font-medium">
             <div className="flex justify-between">
               <span className="text-[var(--ink-soft)]">Nama</span>
@@ -307,9 +307,9 @@ export default async function OrderDetailPage({ params, searchParams }: OrderDet
 
 
         {/* Item Pesanan (Struk Nota Dashed) */}
-        <div className="card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-lg)] p-4 shadow-3d">
-          <h2 className="font-sora font-bold text-sm text-[var(--ink)] mb-3">Item Pesanan</h2>
-          <div className="space-y-3">
+        <div className="card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-lg)] p-3 shadow-3d">
+          <h2 className="font-sora font-bold text-sm text-[var(--ink)] mb-2">Item Pesanan</h2>
+          <div className="space-y-2">
             {order.order_items.map((item) => (
               <div key={item.id} className="text-xs">
                 <div className="flex justify-between items-start">

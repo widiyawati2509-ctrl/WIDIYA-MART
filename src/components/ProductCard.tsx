@@ -16,18 +16,18 @@ export default function ProductCard({ product }: ProductCardProps) {
   return (
     <Link href={`/produk/${product.slug}`} prefetch={true} className="block group h-full">
       <div
-        className={`product card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-lg)] p-3 shadow-3d transition-all duration-200 h-full flex flex-col justify-between ${
+        className={`product card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-lg)] p-2.5 shadow-3d transition-all duration-200 h-full flex flex-col justify-between ${
           outOfStock ? 'opacity-60' : ''
         }`}
       >
         {/* Thumbnail (14px radius, accent-bg) */}
-        <div className="relative aspect-square w-full rounded-[var(--radius-md)] bg-[var(--accent-bg)] shadow-thumb-inset overflow-hidden mb-2.5">
+        <div className="relative aspect-square w-full rounded-[var(--radius-md)] bg-[var(--accent-bg)] shadow-thumb-inset overflow-hidden mb-1.5">
           {product.image_url ? (
             <Image
               src={product.image_url}
               alt={product.nama}
               fill
-              className="object-contain p-2 group-hover:scale-105 transition-transform duration-300"
+              className="object-contain p-1 group-hover:scale-105 transition-transform duration-300"
               sizes="(max-width: 480px) 50vw, 240px"
             />
           ) : (
@@ -69,17 +69,17 @@ export default function ProductCard({ product }: ProductCardProps) {
         </div>
 
         {/* Info Produk */}
-        <h3 className="text-[var(--text-body)] font-bold text-[var(--ink)] line-clamp-2 leading-tight mb-1 group-hover:text-[var(--accent)] transition-colors">
+        <h3 className="text-[var(--text-body)] font-bold text-[var(--ink)] line-clamp-2 leading-tight mb-0.5 group-hover:text-[var(--accent)] transition-colors">
           {product.nama}
         </h3>
 
         {/* Harga (Sora bold, accent-2) */}
-        <p className="font-sora font-bold text-[var(--accent-2)] text-[var(--text-body)] leading-tight mb-1 tabular-nums">
+        <p className="font-sora font-bold text-[var(--accent-2)] text-[var(--text-body)] leading-tight mb-0.5 tabular-nums">
           {formatRupiah(product.harga)}
         </p>
 
         {/* Stok & Tombol Love (Favorit) */}
-        <div className="mt-2 pt-2 border-t border-[rgba(232,214,205,0.7)] flex items-center justify-between">
+        <div className="mt-1.5 pt-1.5 border-t border-[rgba(232,214,205,0.7)] flex items-center justify-between">
           <p className="text-[var(--text-caption)] text-[var(--ink-soft)] font-medium">
             {outOfStock ? 'Stok kosong' : `Stok: ${product.stok}`}
           </p>

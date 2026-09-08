@@ -63,7 +63,7 @@ export default async function KeranjangPage() {
         ) : (
           <>
             {/* List-as-Card: Individual 3D cards with gap */}
-            <div className="space-y-3 mb-4">
+            <div className="space-y-2 mb-3">
               {items.map((item) => (
                 <CartItemRow key={item.id} item={item} />
               ))}

@@ -279,7 +279,7 @@ export default function ShoppingListClient({ initialItems }: ShoppingListClientP
       </div>
 
       {/* Item Cards */}
-      <div className="space-y-3">
+      <div className="space-y-2">
         {items.map((item) => {
           const product = item.products
           if (!product) return null
@@ -288,7 +288,7 @@ export default function ShoppingListClient({ initialItems }: ShoppingListClientP
           return (
             <div
               key={item.id}
-              className="card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-lg)] p-3.5 shadow-3d flex items-center gap-3"
+              className="card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-lg)] py-2.5 px-3 shadow-3d flex items-center gap-2.5"
             >
               {/* Image */}
               <Link

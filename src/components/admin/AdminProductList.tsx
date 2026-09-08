@@ -454,7 +454,7 @@ export default function AdminProductList({ products, categories }: AdminProductL
     <div className="bg-white border rounded-2xl overflow-hidden shadow-xs">
       <div className="divide-y divide-[var(--line)]">
         {products.map((product) => (
-          <div key={product.id} className="p-4 transition-colors">
+          <div key={product.id} className="py-2.5 px-3.5 transition-colors">
             <ProductItemRow
               product={product}
               categories={categories}

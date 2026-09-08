@@ -286,9 +286,9 @@ export default function CheckoutFormClient({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-3.5 px-4">
+    <form onSubmit={handleSubmit} className="space-y-2.5 px-4">
       {/* 1. METODE PENGIRIMAN TOGGLE */}
-      <Card className="space-y-3">
+      <Card className="space-y-2.5">
         <div className="flex items-center justify-between">
           <h2 className="font-sora font-bold text-sm text-[var(--ink)] flex items-center gap-2">
             <Truck size={17} className="text-[var(--accent)]" />
@@ -299,12 +299,12 @@ export default function CheckoutFormClient({
           </span>
         </div>
 
-        <div className="grid grid-cols-2 gap-2.5 pt-1">
+        <div className="grid grid-cols-2 gap-2 pt-1">
           {/* Option: Ambil di Toko */}
           <button
             type="button"
             onClick={() => setMetodePengiriman('ambil_di_toko')}
-            className={`p-3 rounded-2xl border text-left transition-all relative flex flex-col justify-between ${
+            className={`p-2.5 rounded-2xl border text-left transition-all relative flex flex-col justify-between ${
               metodePengiriman === 'ambil_di_toko'
                 ? 'border-[var(--accent)] bg-[var(--accent-bg)] shadow-card-accent ring-1 ring-[var(--accent)]'
                 : 'border-[var(--line)] bg-white hover:border-[var(--line)]'
@@ -335,7 +335,7 @@ export default function CheckoutFormClient({
                 handleDetectLocation()
               }
             }}
-            className={`p-3 rounded-2xl border text-left transition-all relative flex flex-col justify-between ${
+            className={`p-2.5 rounded-2xl border text-left transition-all relative flex flex-col justify-between ${
               metodePengiriman === 'antar_alamat'
                 ? 'border-[var(--accent)] bg-[var(--accent-bg)] shadow-card-accent ring-1 ring-[var(--accent)]'
                 : 'border-[var(--line)] bg-white hover:border-[var(--line)]'

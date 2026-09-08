@@ -42,7 +42,7 @@ export default function CartItemRow({ item }: CartItemRowProps) {
 
   return (
     <div
-      className={`card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-lg)] p-3.5 shadow-3d flex gap-3 items-center ${
+      className={`card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-lg)] py-2.5 px-3 shadow-3d flex gap-2.5 items-center ${
         isPending ? 'opacity-50' : ''
       } transition-opacity`}
     >
@@ -64,7 +64,7 @@ export default function CartItemRow({ item }: CartItemRowProps) {
           {formatRupiah(product.harga)}
         </p>
 
-        <div className="flex items-center justify-between mt-2.5">
+        <div className="flex items-center justify-between mt-1.5">
           {/* Stepper Qty */}
           <div className="flex items-center gap-1 border border-[var(--line)] bg-[var(--paper)] rounded-[var(--radius-sm)] px-1.5 py-0.5">
             <button

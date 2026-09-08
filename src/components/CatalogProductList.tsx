@@ -64,7 +64,7 @@ export default function CatalogProductList({
   return (
     <div className="space-y-4">
       {/* Product Grid */}
-      <div className="grid grid-cols-2 gap-3.5">
+      <div className="grid grid-cols-2 gap-2">
         {products.map((product) => (
           <ProductCard key={product.id} product={product} />
         ))}

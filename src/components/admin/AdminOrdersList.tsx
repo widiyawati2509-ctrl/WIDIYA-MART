@@ -313,7 +313,7 @@ export default function AdminOrdersList({ initialOrders, initialStatus }: AdminO
       )}
 
       {/* Filter and Search Bar */}
-      <div className="card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-lg)] p-3 shadow-3d space-y-3">
+      <div className="card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-lg)] p-2.5 shadow-3d space-y-2">
         {/* Kasir Quick Access: Pesanan Siap Diambil */}
         <button
           type="button"
@@ -481,7 +481,7 @@ export default function AdminOrdersList({ initialOrders, initialStatus }: AdminO
                 {/* Checkbox Baris */}
                 <div
                   onClick={(e) => handleToggleSelectOne(order.id, e)}
-                  className="pl-4 pr-2 py-4 cursor-pointer select-none flex items-center justify-center"
+                  className="pl-3.5 pr-2 py-2.5 cursor-pointer select-none flex items-center justify-center"
                   title="Pilih transaksi ini"
                 >
                   {isSelected ? (
@@ -494,7 +494,7 @@ export default function AdminOrdersList({ initialOrders, initialStatus }: AdminO
                 {/* Konten Transaksi (Klik untuk buka detail) */}
                 <Link
                   href={`/admin/pesanan/${order.id}`}
-                  className="flex-1 min-w-0 py-3.5 pr-2 flex items-center justify-between"
+                  className="flex-1 min-w-0 py-2.5 pr-2 flex items-center justify-between"
                 >
                   <div className="min-w-0 flex-1 pr-2">
                     <div className="flex items-center gap-2 mb-1 flex-wrap">

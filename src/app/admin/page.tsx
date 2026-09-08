@@ -116,10 +116,10 @@ export default async function AdminDashboardPage() {
       />
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-2">
         {stats.map(({ label, value, sublabel, icon: Icon, color, href }) => {
           const content = (
-            <div className="card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-lg)] p-3.5 shadow-3d press h-full flex flex-col justify-between">
+            <div className="card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-lg)] p-2.5 shadow-3d press h-full flex flex-col justify-between">
               <div>
                 <div className="flex items-center gap-2 mb-2">
                   <span className="w-8 h-8 rounded-[var(--radius-sm)] bg-[var(--accent-bg)] text-[var(--accent-2)] flex items-center justify-center shrink-0">

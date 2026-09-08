@@ -58,8 +58,8 @@ export default function AdminLoyaltyManager({ config: initialConfig, transaction
       />
 
       {/* Quick Stats Grid */}
-      <div className="grid grid-cols-2 gap-3">
-        <div className="card-3d bg-white border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-lg)] p-4 shadow-3d">
+      <div className="grid grid-cols-2 gap-2">
+        <div className="card-3d bg-white border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-lg)] p-3 shadow-3d">
           <div className="flex items-center gap-2 mb-1">
             <span className="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
               <TrendingUp size={14} />
@@ -71,7 +71,7 @@ export default function AdminLoyaltyManager({ config: initialConfig, transaction
           </p>
         </div>
 
-        <div className="card-3d bg-white border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-lg)] p-4 shadow-3d">
+        <div className="card-3d bg-white border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-lg)] p-3 shadow-3d">
           <div className="flex items-center gap-2 mb-1">
             <span className="w-7 h-7 rounded-lg bg-orange-50 text-orange-600 flex items-center justify-center">
               <Coins size={14} />
@@ -85,7 +85,7 @@ export default function AdminLoyaltyManager({ config: initialConfig, transaction
       </div>
 
       {/* Configuration Form */}
-      <div className="card-3d bg-white border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-lg)] p-5 shadow-3d">
+      <div className="card-3d bg-white border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-lg)] p-3.5 shadow-3d">
         <h3 className="font-sora font-bold text-xs text-[var(--ink)] mb-3 flex items-center gap-1.5">
           <ShieldCheck size={14} className="text-[var(--accent)]" />
           Konfigurasi Aturan Loyalitas Toko
