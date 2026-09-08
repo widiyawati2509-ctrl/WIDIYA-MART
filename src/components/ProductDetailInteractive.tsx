@@ -1,7 +1,7 @@
 // @ts-nocheck
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
 import { formatRupiah, parseProductVariants, formatWhatsAppUrl, type ProductVariant } from '@/lib/utils'
 import AddToCartButton from '@/components/AddToCartButton'
@@ -136,22 +136,47 @@ export default function ProductDetailInteractive({ product, storePhone = '087816
     }
   }
 
+  const touchStartXRef = useRef<number | null>(null)
+  const touchStartYRef = useRef<number | null>(null)
+  const isSwipedRef = useRef(false)
+
   const handleTouchStart = (e: React.TouchEvent) => {
-    setTouchStartX(e.touches[0].clientX)
+    isSwipedRef.current = false
+    if (e.touches && e.touches.length > 0) {
+      const clientX = e.touches[0].clientX
+      const clientY = e.touches[0].clientY
+      setTouchStartX(clientX)
+      touchStartXRef.current = clientX
+      touchStartYRef.current = clientY
+    }
   }
 
   const handleTouchEnd = (e: React.TouchEvent) => {
-    if (touchStartX === null) return
+    const startX = touchStartXRef.current ?? touchStartX
+    if (startX === null || !e.changedTouches || e.changedTouches.length === 0) {
+      setTouchStartX(null)
+      touchStartXRef.current = null
+      touchStartYRef.current = null
+      return
+    }
+
     const touchEndX = e.changedTouches[0].clientX
-    const diff = touchStartX - touchEndX
-    if (Math.abs(diff) > 40) {
-      if (diff > 0) {
+    const touchEndY = e.changedTouches[0].clientY
+    const diffX = startX - touchEndX
+    const diffY = touchStartYRef.current !== null ? touchStartYRef.current - touchEndY : 0
+
+    if (Math.abs(diffX) > 35 && Math.abs(diffX) > Math.abs(diffY)) {
+      isSwipedRef.current = true
+      if (diffX > 0) {
         goToNext()
       } else {
         goToPrev()
       }
     }
+
     setTouchStartX(null)
+    touchStartXRef.current = null
+    touchStartYRef.current = null
   }
 
   const activePrice = selectedVariant?.harga ?? product.harga
@@ -182,7 +207,9 @@ export default function ProductDetailInteractive({ product, storePhone = '087816
           {/* Main Slide Image */}
           <button
             type="button"
-            onClick={() => setShowStockModal(true)}
+            onClick={() => {
+              if (!isSwipedRef.current) setShowStockModal(true)
+            }}
             className="w-full h-full text-left relative block focus:outline-none"
             title="Ketuk gambar untuk menanyakan stok produk via WhatsApp"
           >
