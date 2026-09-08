@@ -135,60 +135,6 @@ export default async function ProfilPage() {
           </div>
         )}
 
-        {/* Admin Panel Quick Access (if admin) */}
-        {profile?.role === 'admin' && (
-          <div className="card-3d bg-gradient-to-br from-[#2B1810] to-[#1E0F0A] text-white rounded-[var(--radius-lg)] p-4 shadow-card-dark border border-[var(--warning)]/30">
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-2.5">
-                <span className="w-8 h-8 rounded-[var(--radius-sm)] bg-[var(--warning)]/20 text-[var(--warning)] flex items-center justify-center text-base">
-                  👑
-                </span>
-                <div>
-                  <h2 className="font-sora font-bold text-sm text-white leading-tight">Panel Pemilik Toko</h2>
-                  <p className="text-[var(--text-caption)] text-white/80 font-medium">Akses penuh pengelolaan toko</p>
-                </div>
-              </div>
-              <Link
-                href="/admin"
-                prefetch={true}
-                className="press px-3 py-1.5 rounded-full bg-gradient-to-r from-[var(--accent)] to-[var(--accent-2)] text-white text-xs font-sora font-bold shadow-sm active:scale-95"
-              >
-                Buka Admin &rarr;
-              </Link>
-            </div>
-
-            <div className="grid grid-cols-4 gap-1.5 pt-2 border-t border-white/10 text-center">
-              <Link
-                href="/admin/pesanan"
-                prefetch={true}
-                className="py-1.5 px-1 rounded-xl bg-white/5 hover:bg-white/10 text-[var(--text-caption)] font-medium text-white/90 transition-colors"
-              >
-                📦 Pesanan
-              </Link>
-              <Link
-                href="/admin/produk"
-                prefetch={true}
-                className="py-1.5 px-1 rounded-xl bg-white/5 hover:bg-white/10 text-[var(--text-caption)] font-medium text-white/90 transition-colors"
-              >
-                🏷️ Produk
-              </Link>
-              <Link
-                href="/admin/promo"
-                prefetch={true}
-                className="py-1.5 px-1 rounded-xl bg-white/5 hover:bg-white/10 text-[var(--text-caption)] font-medium text-white/90 transition-colors"
-              >
-                🎉 Promo
-              </Link>
-              <Link
-                href="/admin/poin"
-                prefetch={true}
-                className="py-1.5 px-1 rounded-xl bg-white/5 hover:bg-white/10 text-[var(--text-caption)] font-medium text-white/90 transition-colors"
-              >
-                🪙 Poin
-              </Link>
-            </div>
-          </div>
-        )}
 
         {/* Loyalty Points Banner Card */}
         <Link
