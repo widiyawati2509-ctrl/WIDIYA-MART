@@ -3,6 +3,7 @@ import type { Metadata, Viewport } from 'next'
 import { Suspense } from 'react'
 import { Sora, Inter } from 'next/font/google'
 import TopProgressBar from '@/components/TopProgressBar'
+import ServiceWorkerRegister from '@/components/ServiceWorkerRegister'
 import './globals.css'
 
 const sora = Sora({
@@ -10,6 +11,7 @@ const sora = Sora({
   weight: ['600', '700', '800'],
   variable: '--font-sora',
   display: 'swap',
+  preload: true,
 })
 
 const inter = Inter({
@@ -17,6 +19,7 @@ const inter = Inter({
   weight: ['400', '500', '600', '700'],
   variable: '--font-inter',
   display: 'swap',
+  preload: true,
 })
 
 export const viewport: Viewport = {
@@ -62,7 +65,16 @@ export default function RootLayout({
 }) {
   return (
     <html lang="id" className={`${sora.variable} ${inter.variable}`}>
+      <head>
+        <link
+          rel="preconnect"
+          href="https://byhpcdgehartffitbrde.supabase.co"
+          crossOrigin="anonymous"
+        />
+        <link rel="dns-prefetch" href="https://byhpcdgehartffitbrde.supabase.co" />
+      </head>
       <body className="font-sans antialiased bg-[var(--paper)] text-[var(--ink)] selection:bg-[var(--accent)]/20 min-h-screen">
+        <ServiceWorkerRegister />
         <Suspense fallback={null}>
           <TopProgressBar />
         </Suspense>

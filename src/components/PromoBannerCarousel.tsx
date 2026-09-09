@@ -97,7 +97,7 @@ export default function PromoBannerCarousel({ banners: propBanners }: { banners?
         className="flex transition-transform duration-500 ease-out"
         style={{ transform: `translateX(-${current * 100}%)` }}
       >
-        {activeBanners.map((b) => {
+        {activeBanners.map((b, idx) => {
           const badgeText = b.badge_text || b.badge || 'PROMO'
           const titleText = b.judul || b.title
           const subtitleText = b.subjudul || b.subtitle
@@ -156,6 +156,7 @@ export default function PromoBannerCarousel({ banners: propBanners }: { banners?
                       src={imgSrc}
                       alt={titleText || 'Promo'}
                       fill
+                      priority={idx === 0}
                       className="object-contain p-1.5"
                       sizes="96px"
                       unoptimized

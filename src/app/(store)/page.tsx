@@ -24,7 +24,8 @@ export default async function HomePage() {
         .select('id, nama, slug, harga, stok, image_url, category_id, created_at, categories(id, nama, slug)')
         .eq('is_active', true)
         .gt('stok', 0)
-        .order('created_at', { ascending: false }),
+        .order('created_at', { ascending: false })
+        .limit(50),
       supabase
         .from('store_info')
         .select('*')

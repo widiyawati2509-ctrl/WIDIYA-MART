@@ -1,6 +1,10 @@
 // @ts-nocheck
+'use client'
+
+import { useEffect } from 'react'
 import Link from 'next/link'
 import type { Category } from '@/types/database'
+import { setCachedCategories } from '@/lib/categoryCache'
 
 interface CategoryFilterProps {
   categories: Category[]
@@ -8,6 +12,12 @@ interface CategoryFilterProps {
 }
 
 export default function CategoryFilter({ categories, activeSlug }: CategoryFilterProps) {
+  useEffect(() => {
+    if (categories && categories.length > 0) {
+      setCachedCategories(categories)
+    }
+  }, [categories])
+
   return (
     <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide py-1">
       <Link

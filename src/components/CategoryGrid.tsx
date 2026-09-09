@@ -1,13 +1,23 @@
 // @ts-nocheck
+'use client'
+
+import { useEffect } from 'react'
 import Link from 'next/link'
 import type { Category } from '@/types/database'
 import { REAL_CATEGORY_ICONS, LainnyaRealIcon } from '@/components/icons/RealIcons'
+import { setCachedCategories } from '@/lib/categoryCache'
 
 interface CategoryGridProps {
   categories: Category[]
 }
 
 export default function CategoryGrid({ categories }: CategoryGridProps) {
+  useEffect(() => {
+    if (categories && categories.length > 0) {
+      setCachedCategories(categories)
+    }
+  }, [categories])
+
   return (
     <div className="flex gap-3 overflow-x-auto scrollbar-hide py-1.5 -mx-4 px-4">
       {categories.map((cat) => {
@@ -35,4 +45,3 @@ export default function CategoryGrid({ categories }: CategoryGridProps) {
     </div>
   )
 }
-
