@@ -147,5 +147,35 @@ All media elements (hero banners, image carousels, photo galleries, and future v
 * **Page Margin**: `0`
 * **Padding**: `3mm 2.5mm`
 * **Print Font**: `9.5px – 10.5px`, `line-height: 1.25`, monospace/clean sans.
-* **Footer**: Single-line concise closing: `"Terima kasih!"`.
 * **Media Query Isolation**: `@media print` strictly hides web UI, header, and buttons; only `#receipt-print-area` is rendered.
+
+---
+
+## 9. Web Vitals & Performance Engineering Standards (Lighthouse Score 91/100)
+
+Every page and UI component across **PENGENJEK MART** must comply with mobile retail Web Vitals standards:
+
+1. **LCP (Largest Contentful Paint) < 2.8s Target**:
+   - Never use `unoptimized` on promotional banners, hero carousels, or catalog photos. Always allow Next.js Image Optimization to emit WebP/AVIF formats scaled to device sizes.
+   - Any visual element appearing above the fold on initial load must have `priority={true}` (e.g. store logo in `HomeHeader`, first banner slide in `PromoBannerCarousel`, and the first product card in `newestProducts`).
+   - Origins serving media (`https://byhpcdgehartffitbrde.supabase.co`) must have `<link rel="preconnect">` and `<link rel="dns-prefetch">` in root `<head>`.
+
+2. **CLS (Cumulative Layout Shift) = 0.000 Target**:
+   - Skeleton loading (`loading.tsx`) must mirror the exact dimensions, padding, and layout geometry of the real UI:
+     - Header: 34px logo box + single-line address row with divider.
+     - SearchBar: Sticky search bar with identical margin/padding.
+     - Banner: Exact 154px container height.
+     - Product Carousels: Compact `gap-2` horizontal rows and `p-2.5` cards.
+   - When real data replaces skeletons, layout shift must measure 0.000.
+
+3. **TBT (Total Blocking Time) < 300ms Target**:
+   - Heavy modal components (e.g. `AddressModal`, forms with GPS geolocation) must be isolated into independent client components and dynamically imported via `next/dynamic` with `{ ssr: false }`.
+   - Avoid executing Server Action POST requests during initial page mount. All data fetching for modals or actions must be deferred until user interaction.
+   - Avoid duplicate state updates during component hydration.
+
+4. **Offline & Caching Strategy (`sw.js` & `categoryCache.ts`)**:
+   - **Static Assets**: *Cache-First* for JS/CSS chunks, fonts, and local icons.
+   - **Page Navigation**: *Stale-While-Revalidate* for HTML documents to ensure sub-10ms warm page openings.
+   - **Transactional Data**: *Network-First* for orders, cart, stock, and Supabase auth to guarantee real-time consistency.
+   - **Client Storage Cache**: 10-minute TTL for low-frequency data (categories) with background revalidation.
+

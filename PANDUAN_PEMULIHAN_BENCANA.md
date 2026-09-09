@@ -15,7 +15,8 @@ Semua komponen penting telah dicadangkan dan diverifikasi:
 | 1 | **Arsip Kode Lengkap** | `BACKUP_WIDIYA_MART_20260906.zip` *(23 MB)* | Berisi seluruh source code, aset gambar, ikon, dan konfigurasi tanpa folder temporary. |
 | 2 | **Master Database SQL** | `MASTER_SUPABASE_DISASTER_RECOVERY.sql` | 1 skrip SQL tunggal untuk membangkitkan ulang seluruh 12 tabel, fungsi stok atomik, RLS, dan storage. |
 | 3 | **Git Rollback Tag** | Tag: `v1.0-stable-20260906` | Checkpoint stabil di GitHub remote (`git@github.com:widiyawati2509-ctrl/WIDIYA-MART.git`). |
-| 4 | **Dokumentasi Desain** | `widiya-mart/DESIGN.md` | Standar token warna, tipografi, dan arsitektur UI/UX toko. |
+| 4 | **Dokumentasi Desain** | `widiya-mart/DESIGN.md` | Standar token warna, tipografi, arsitektur Web Vitals, dan UI/UX toko. |
+| 5 | **Service Worker & PWA Caching** | `public/sw.js` & `src/lib/categoryCache.ts` | Sistem caching statis offline-ready berkecepatan tinggi (Lighthouse 91/100). |
 
 ---
 
