@@ -22,92 +22,76 @@ interface AddressSelectorProps {
 
 export default function AddressSelector({ initialAddresses, storeInfo }: AddressSelectorProps) {
   const [addresses, setAddresses] = useState<UserAddress[]>(initialAddresses || [])
-  const [selectedAddress, setSelectedAddress] = useState<UserAddress | null>(null)
+  const [selectedAddress, setSelectedAddress] = useState<UserAddress | null>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const saved = localStorage.getItem('pengenjek_selected_address')
+        if (saved) return JSON.parse(saved)
+      } catch {}
+    }
+    return initialAddresses?.[0] || null
+  })
   const [isOpen, setIsOpen] = useState(false)
-  const [isLoading, setIsLoading] = useState(!initialAddresses)
+  const [isLoading, setIsLoading] = useState(false)
 
-  // Store open/close status state
+  // Store open/close status state (avoid immediate duplicate state write on mount)
   const [storeStatus, setStoreStatus] = useState(() =>
     isStoreOpen(storeInfo?.jam_buka, storeInfo?.jam_tutup, storeInfo?.jam_operasional)
   )
 
   useEffect(() => {
-    setStoreStatus(isStoreOpen(storeInfo?.jam_buka, storeInfo?.jam_tutup, storeInfo?.jam_operasional))
     const interval = setInterval(() => {
       setStoreStatus(isStoreOpen(storeInfo?.jam_buka, storeInfo?.jam_tutup, storeInfo?.jam_operasional))
-    }, 10000)
+    }, 15000)
     return () => clearInterval(interval)
   }, [storeInfo?.jam_buka, storeInfo?.jam_tutup, storeInfo?.jam_operasional])
 
-  // Load addresses & initialize active address
+  // Hydrate selected address from localStorage on client mount if not already populated
   useEffect(() => {
-    let isMounted = true
-
-    const initAddresses = async () => {
-      let list = initialAddresses || []
-      if (!initialAddresses) {
-        setIsLoading(true)
-        const res = await getUserAddresses()
-        list = res.data || []
-        if (isMounted) {
-          setAddresses(list)
-          setIsLoading(false)
-        }
+    try {
+      const saved = localStorage.getItem('pengenjek_selected_address')
+      if (saved) {
+        setSelectedAddress(JSON.parse(saved))
       }
-
-      // Read from localStorage
-      try {
-        const saved = localStorage.getItem('pengenjek_selected_address')
-        if (saved) {
-          const parsed = JSON.parse(saved)
-          const matched = list.find((a) => a.id === parsed.id)
-          if (matched) {
-            if (isMounted) setSelectedAddress(matched)
-            return
-          }
-        }
-      } catch (e) {
-        console.error('Error reading saved address:', e)
-      }
-
-      // Default fallback: find default address or first address
-      if (list.length > 0) {
-        const def = list.find((a) => a.is_default) || list[0]
-        if (isMounted) {
-          setSelectedAddress(def)
-          try {
-            localStorage.setItem('pengenjek_selected_address', JSON.stringify(def))
-          } catch (e) {}
-        }
-      } else {
-        if (isMounted) setSelectedAddress(null)
-      }
+    } catch (e) {
+      console.error('Error reading saved address:', e)
     }
 
-    initAddresses()
-
-    // Listen for custom address update events from other components
+    // Listen for custom address update events from other tabs/components
     const handleSync = (e: Event) => {
       const customEvent = e as CustomEvent<UserAddress>
       if (customEvent.detail) {
         setSelectedAddress(customEvent.detail)
-      } else {
-        getUserAddresses().then((res) => {
-          if (isMounted && res.data) {
-            setAddresses(res.data)
-            const def = res.data.find((a) => a.is_default) || res.data[0] || null
-            setSelectedAddress(def)
-          }
-        })
       }
     }
 
     window.addEventListener('pengenjek_address_changed', handleSync)
-    return () => {
-      isMounted = false
-      window.removeEventListener('pengenjek_address_changed', handleSync)
+    return () => window.removeEventListener('pengenjek_address_changed', handleSync)
+  }, [])
+
+  // Open modal and fetch full addresses on-demand (zero cost during initial page load)
+  const handleOpenModal = async () => {
+    setIsOpen(true)
+    if (addresses.length === 0) {
+      setIsLoading(true)
+      try {
+        const res = await getUserAddresses()
+        const list = res.data || []
+        setAddresses(list)
+        if (!selectedAddress && list.length > 0) {
+          const def = list.find((a) => a.is_default) || list[0]
+          setSelectedAddress(def)
+          try {
+            localStorage.setItem('pengenjek_selected_address', JSON.stringify(def))
+          } catch {}
+        }
+      } catch (err) {
+        console.warn('Error fetching addresses on demand:', err)
+      } finally {
+        setIsLoading(false)
+      }
     }
-  }, [initialAddresses])
+  }
 
   // Select an address and persist in localStorage
   const handleSelectAddress = (addr: UserAddress) => {
@@ -152,7 +136,7 @@ export default function AddressSelector({ initialAddresses, storeInfo }: Address
         {/* Info Alamat (Klik untuk buka modal ganti alamat) */}
         <button
           type="button"
-          onClick={() => setIsOpen(true)}
+          onClick={handleOpenModal}
           className="flex items-center gap-1.5 min-w-0 flex-1 text-left cursor-pointer hover:opacity-85 transition-opacity focus:outline-none"
           title="Klik untuk memilih atau mengubah alamat pengiriman"
         >
@@ -198,7 +182,7 @@ export default function AddressSelector({ initialAddresses, storeInfo }: Address
 
           <button
             type="button"
-            onClick={() => setIsOpen(true)}
+            onClick={handleOpenModal}
             className="text-[11px] font-sora font-bold text-[var(--accent-2)] hover:underline press shrink-0 ml-0.5"
             title="Ganti alamat pengiriman"
           >

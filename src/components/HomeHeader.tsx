@@ -29,8 +29,10 @@ export default function HomeHeader({ storeInfo }: HomeHeaderProps) {
       }
     }
 
-    // Set initial scroll position on mount
-    setScrollY(window.scrollY)
+    // Set initial scroll position on mount only if user loaded page while already scrolled
+    if (window.scrollY !== 0) {
+      setScrollY(window.scrollY)
+    }
 
     window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)

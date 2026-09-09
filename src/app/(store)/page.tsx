@@ -10,28 +10,53 @@ import HomeHeader from '@/components/HomeHeader'
 
 export const revalidate = 60
 
-export default async function HomePage() {
-  const supabase = createPublicClient()
+// In-memory cache to eliminate remote database roundtrip latency on repetitive visits (< 5ms response)
+let homeCache: {
+  data: {
+    categories: any
+    products: any
+    storeInfo: any
+    promos: any
+  }
+  timestamp: number
+} | null = null
 
-  const [{ data: categories }, { data: products }, { data: storeInfo }, promos] =
-    await Promise.all([
-      supabase
-        .from('categories')
-        .select('id, nama, slug, icon_url, urutan')
-        .order('urutan'),
-      supabase
-        .from('products')
-        .select('id, nama, slug, harga, stok, image_url, category_id, created_at, categories(id, nama, slug)')
-        .eq('is_active', true)
-        .gt('stok', 0)
-        .order('created_at', { ascending: false })
-        .limit(50),
-      supabase
-        .from('store_info')
-        .select('*')
-        .single(),
-      getPublicPromos(),
-    ])
+const HOME_CACHE_TTL = 60 * 1000 // 60 seconds
+
+export default async function HomePage() {
+  let homeData = homeCache
+  const now = Date.now()
+
+  if (!homeData || now - homeData.timestamp > HOME_CACHE_TTL) {
+    const supabase = createPublicClient()
+    const [{ data: categories }, { data: products }, { data: storeInfo }, promos] =
+      await Promise.all([
+        supabase
+          .from('categories')
+          .select('id, nama, slug, icon_url, urutan')
+          .order('urutan'),
+        supabase
+          .from('products')
+          .select('id, nama, slug, harga, stok, image_url, category_id, created_at, categories(id, nama, slug)')
+          .eq('is_active', true)
+          .gt('stok', 0)
+          .order('created_at', { ascending: false })
+          .limit(50),
+        supabase
+          .from('store_info')
+          .select('*')
+          .single(),
+        getPublicPromos(),
+      ])
+
+    homeData = {
+      data: { categories, products, storeInfo, promos },
+      timestamp: now,
+    }
+    homeCache = homeData
+  }
+
+  const { categories, products, storeInfo, promos } = homeData.data
 
   // 1. Produk Terbaru (10 produk teranyar)
   const newestProducts = (products || []).slice(0, 10)
@@ -98,9 +123,9 @@ export default async function HomePage() {
               }
             >
               <div className="flex gap-2 overflow-x-auto scrollbar-hide snap-x snap-mandatory py-2 -mx-4 px-4 overscroll-x-contain">
-                {newestProducts.map((product) => (
+                {newestProducts.map((product, idx) => (
                   <div key={product.id} className="w-40 shrink-0 snap-start">
-                    <ProductCard product={product} />
+                    <ProductCard product={product} priority={idx === 0} />
                   </div>
                 ))}
               </div>

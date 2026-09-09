@@ -159,7 +159,6 @@ export default function PromoBannerCarousel({ banners: propBanners }: { banners?
                       priority={idx === 0}
                       className="object-contain p-1.5"
                       sizes="96px"
-                      unoptimized
                     />
                   </div>
                 </div>

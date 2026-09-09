@@ -80,24 +80,27 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // C. HTML Navigation Requests (Page Visits): Network-First with Cache Fallback
+  // C. HTML Navigation Requests (Page Visits): Stale-While-Revalidate for Instant Warm Start
   if (request.mode === 'navigate') {
     event.respondWith(
-      fetch(request)
-        .then((networkResponse) => {
-          if (networkResponse && networkResponse.status === 200) {
-            const responseToCache = networkResponse.clone();
-            caches.open(CACHE_NAME).then((cache) => {
-              cache.put(request, responseToCache);
-            });
-          }
-          return networkResponse;
-        })
-        .catch(() => {
-          return caches.match(request).then((cached) => {
-            return cached || caches.match('/');
+      caches.match(request).then((cachedResponse) => {
+        const networkFetch = fetch(request)
+          .then((networkResponse) => {
+            if (networkResponse && networkResponse.status === 200) {
+              const responseToCache = networkResponse.clone();
+              caches.open(CACHE_NAME).then((cache) => {
+                cache.put(request, responseToCache);
+              });
+            }
+            return networkResponse;
+          })
+          .catch(() => {
+            return cachedResponse || caches.match('/');
           });
-        })
+
+        // Serve cached version instantly (< 2ms) if available, otherwise wait for network
+        return cachedResponse || networkFetch;
+      })
     );
     return;
   }

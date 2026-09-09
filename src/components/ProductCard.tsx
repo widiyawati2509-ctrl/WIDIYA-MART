@@ -8,9 +8,10 @@ import type { Product } from '@/types/database'
 
 interface ProductCardProps {
   product: Product & { categories?: { nama: string; slug: string } | null }
+  priority?: boolean
 }
 
-export default function ProductCard({ product }: ProductCardProps) {
+export default function ProductCard({ product, priority = false }: ProductCardProps) {
   const outOfStock = product.stok === 0
 
   return (
@@ -27,6 +28,7 @@ export default function ProductCard({ product }: ProductCardProps) {
               src={product.image_url}
               alt={product.nama}
               fill
+              priority={priority}
               className="object-contain p-1 group-hover:scale-105 transition-transform duration-300"
               sizes="(max-width: 480px) 50vw, 240px"
             />
