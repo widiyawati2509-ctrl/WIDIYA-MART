@@ -3,7 +3,7 @@
 
 import { useState, useEffect, useTransition } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { 
   formatRupiah, 
   getOrderStatusLabel, 
@@ -77,11 +77,12 @@ const statusFilters = [
 
 export default function AdminOrdersList({ initialOrders, initialStatus }: AdminOrdersListProps) {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [orders, setOrders] = useState<Order[]>(initialOrders)
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
   const [searchQuery, setSearchQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState(initialStatus || 'all')
-  const [isCsvModalOpen, setIsCsvModalOpen] = useState(false)
+  const [isCsvModalOpen, setIsCsvModalOpen] = useState(searchParams?.get('export') === 'true')
   const [isPending, startTransition] = useTransition()
   const [isCheckingExpiry, setIsCheckingExpiry] = useState(false)
 

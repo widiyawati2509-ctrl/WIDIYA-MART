@@ -4,7 +4,7 @@
 import { useState, useTransition, useEffect } from 'react'
 import ProductCard from '@/components/ProductCard'
 import ProductCardSkeleton from '@/components/ProductCardSkeleton'
-import { fetchMoreCatalogProducts } from '@/lib/actions/products'
+import { fetchCatalogProductsWithSWR, setCachedCatalogData } from '@/lib/catalogCache'
 import { ChevronDown, Loader2, Check } from 'lucide-react'
 
 interface CatalogProductListProps {
@@ -12,6 +12,8 @@ interface CatalogProductListProps {
   totalCount: number
   kategori?: string
   q?: string
+  urutan?: string
+  filter?: string
   pageSize?: number
 }
 
@@ -20,27 +22,35 @@ export default function CatalogProductList({
   totalCount,
   kategori,
   q,
+  urutan,
+  filter,
   pageSize = 12,
 }: CatalogProductListProps) {
   const [products, setProducts] = useState<any[]>(initialProducts)
   const [hasMore, setHasMore] = useState(initialProducts.length < totalCount)
   const [isPending, startTransition] = useTransition()
 
-  // Sync state when filter/search parameters change
+  // Sync state when filter/search parameters change and seed SWR cache
   useEffect(() => {
     setProducts(initialProducts)
     setHasMore(initialProducts.length < totalCount)
-  }, [initialProducts, totalCount, kategori, q])
+    setCachedCatalogData(
+      JSON.stringify({ kategori, q, urutan, filter, offset: 0, limit: pageSize }),
+      { products: initialProducts, totalCount }
+    )
+  }, [initialProducts, totalCount, kategori, q, urutan, filter, pageSize])
 
   const handleLoadMore = () => {
     if (isPending || !hasMore) return
 
     startTransition(async () => {
-      const res = await fetchMoreCatalogProducts({
+      const res = await fetchCatalogProductsWithSWR({
         offset: products.length,
         limit: pageSize,
         kategori,
         q,
+        urutan,
+        filter,
       })
 
       if (res.products && res.products.length > 0) {
@@ -48,7 +58,7 @@ export default function CatalogProductList({
           const existingIds = new Set(prev.map((p) => p.id))
           const newUnique = res.products.filter((p: any) => !existingIds.has(p.id))
           const updated = [...prev, ...newUnique]
-          if (updated.length >= totalCount || !res.hasMore) {
+          if (updated.length >= (res.totalCount || totalCount) || res.products.length < pageSize) {
             setHasMore(false)
           }
           return updated

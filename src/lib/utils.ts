@@ -432,11 +432,27 @@ export function parseOrderShippingInfo(order?: {
       metode = 'ambil_di_toko'
     }
 
+    // Extract coupon fallback if not in native columns
+    const kuponMatch = rawCatatan.match(/\[Kupon:\s*([^\s\(\]]+)(?:\s*\(Diskon\s*Rp\s*([0-9\.\,]+)\))?\]/i)
+    if (kuponMatch) {
+      if (!order.kode_kupon) order.kode_kupon = kuponMatch[1]
+      if (!order.diskon_kupon && kuponMatch[2]) {
+        order.diskon_kupon = parseInt(kuponMatch[2].replace(/\D/g, ''), 10) || 0
+      }
+    }
+
+    // Extract dusun fallback if not in native column
+    const dusunMatch = rawCatatan.match(/\(Dusun:\s*([^\)]+)\)/i)
+    if (dusunMatch && !order.dusun_pengiriman) {
+      order.dusun_pengiriman = dusunMatch[1].trim()
+    }
+
     // Clean customer note from embedded tags
     const cleaned = rawCatatan
       .replace(/\[Pengantaran ke:[^\]]*\]/gi, '')
       .replace(/\[Metode:[^\]]*\]/gi, '')
       .replace(/\[Poin Digunakan:[^\]]*\]/gi, '')
+      .replace(/\[Kupon:[^\]]*\]/gi, '')
       .replace(/^Catatan:\s*/i, '')
       .replace(/\n\s*Catatan:\s*/gi, '\n')
       .trim()
@@ -454,5 +470,231 @@ export function parseOrderShippingInfo(order?: {
     cleanCatatan: rawCatatan,
   }
 }
+
+export interface DusunShippingOption {
+  id: string
+  nama: string
+  kategori: 'desa_pengenjek' | 'sekitar_pengenjek' | 'luar_area'
+  ongkir: number
+  gratisOngkirMin: number
+  estimasiMenit: number
+  keterangan: string
+}
+
+export const DUSUN_PENGENJEK_LIST: DusunShippingOption[] = [
+  {
+    id: 'baremayung',
+    nama: 'Dusun Baremayung (Pengenjek)',
+    kategori: 'desa_pengenjek',
+    ongkir: 3000,
+    gratisOngkirMin: 25000,
+    estimasiMenit: 15,
+    keterangan: 'Gratis ongkir min. belanja Rp 25.000',
+  },
+  {
+    id: 'pengenjek_daye',
+    nama: 'Dusun Pengenjek Daye',
+    kategori: 'desa_pengenjek',
+    ongkir: 3000,
+    gratisOngkirMin: 25000,
+    estimasiMenit: 15,
+    keterangan: 'Gratis ongkir min. belanja Rp 25.000',
+  },
+  {
+    id: 'pengenjek_lauk',
+    nama: 'Dusun Pengenjek Lauk',
+    kategori: 'desa_pengenjek',
+    ongkir: 3000,
+    gratisOngkirMin: 25000,
+    estimasiMenit: 15,
+    keterangan: 'Gratis ongkir min. belanja Rp 25.000',
+  },
+  {
+    id: 'karang_anyar',
+    nama: 'Dusun Karang Anyar (Pengenjek)',
+    kategori: 'desa_pengenjek',
+    ongkir: 3000,
+    gratisOngkirMin: 25000,
+    estimasiMenit: 20,
+    keterangan: 'Gratis ongkir min. belanja Rp 25.000',
+  },
+  {
+    id: 'dasan_kebon',
+    nama: 'Dusun Dasan Kebon (Pengenjek)',
+    kategori: 'desa_pengenjek',
+    ongkir: 3000,
+    gratisOngkirMin: 25000,
+    estimasiMenit: 20,
+    keterangan: 'Gratis ongkir min. belanja Rp 25.000',
+  },
+  {
+    id: 'sukarara',
+    nama: 'Sekitar: Sukarara / Ubung (≤ 7 km)',
+    kategori: 'sekitar_pengenjek',
+    ongkir: 7000,
+    gratisOngkirMin: 50000,
+    estimasiMenit: 30,
+    keterangan: 'Gratis ongkir min. belanja Rp 50.000',
+  },
+  {
+    id: 'puyung_bonjeruk',
+    nama: 'Sekitar: Puyung / Bonjeruk (≤ 7 km)',
+    kategori: 'sekitar_pengenjek',
+    ongkir: 7000,
+    gratisOngkirMin: 50000,
+    estimasiMenit: 35,
+    keterangan: 'Gratis ongkir min. belanja Rp 50.000',
+  },
+  {
+    id: 'luar_pengenjek',
+    nama: 'Luar Wilayah (> 7 km)',
+    kategori: 'luar_area',
+    ongkir: 15000,
+    gratisOngkirMin: 100000,
+    estimasiMenit: 45,
+    keterangan: 'Gratis ongkir min. belanja Rp 100.000',
+  },
+]
+
+export function calculateDusunShipping(
+  dusunId: string,
+  subtotal: number
+): {
+  dusun: DusunShippingOption | null
+  ongkir: number
+  isFree: boolean
+  minBelanja: number
+  sisaUntukGratis: number
+  estimasiMenit: number
+} {
+  const dusun = DUSUN_PENGENJEK_LIST.find((d) => d.id === dusunId) || null
+
+  if (!dusun) {
+    // Default fallback if GPS or not listed
+    const isFree = subtotal >= 50000
+    const sisa = Math.max(0, 50000 - subtotal)
+    return {
+      dusun: null,
+      ongkir: isFree ? 0 : 7000,
+      isFree,
+      minBelanja: 50000,
+      sisaUntukGratis: sisa,
+      estimasiMenit: 30,
+    }
+  }
+
+  const isFree = subtotal >= dusun.gratisOngkirMin
+  const sisa = Math.max(0, dusun.gratisOngkirMin - subtotal)
+
+  return {
+    dusun,
+    ongkir: isFree ? 0 : dusun.ongkir,
+    isFree,
+    minBelanja: dusun.gratisOngkirMin,
+    sisaUntukGratis: sisa,
+    estimasiMenit: dusun.estimasiMenit,
+  }
+}
+
+/**
+ * Buat format pesan WhatsApp yang rapi, profesional, dan lengkap
+ * untuk konfirmasi pesanan ke admin toko.
+ */
+export function buildOrderWhatsAppMessage(
+  order: any,
+  store?: { nama_toko?: string } | null
+): string {
+  if (!order) return ''
+
+  const orderId = order.id ? `#${order.id.slice(0, 8).toUpperCase()}` : ''
+  const storeName = store?.nama_toko || 'PENGENJEK MART'
+
+  const dateStr = order.created_at
+    ? new Date(order.created_at).toLocaleString('id-ID', {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      }) + ' WITA'
+    : '-'
+
+  const isDelivery =
+    order.metode_pengiriman === 'antar_alamat' ||
+    (order.alamat_pengiriman && order.alamat_pengiriman.trim().length > 0)
+
+  const itemsList =
+    order.order_items && order.order_items.length > 0
+      ? order.order_items
+          .map(
+            (item: any, idx: number) =>
+              `${idx + 1}. ${item.nama_produk || 'Produk'} (${item.qty}x) - ${formatRupiah(
+                item.subtotal || item.harga_saat_beli * item.qty
+              )}`
+          )
+          .join('\n')
+      : '- Tidak ada item -'
+
+  const subtotalStr = formatRupiah(order.subtotal || order.total)
+  const ongkirVal = Number(order.ongkir || 0)
+  const ongkirStr = isDelivery
+    ? ongkirVal === 0
+      ? 'Rp 0 (Gratis Ongkir)'
+      : formatRupiah(ongkirVal)
+    : 'Rp 0 (Ambil di Toko)'
+
+  const lines = [
+    `*PESANAN BARU - ${storeName.toUpperCase()}*`,
+    '----------------------------------------',
+    `*ID Pesanan:* ${orderId}`,
+    `*Waktu:* ${dateStr}`,
+    '',
+    '*DATA PEMESAN:*',
+    `Nama: ${order.nama_pemesan || 'Pelanggan'}`,
+    `No. HP: ${order.no_hp_pemesan || '-'}`,
+    `Metode: ${isDelivery ? 'Diantar ke Alamat (COD)' : 'Ambil di Toko (COD)'}`,
+  ]
+
+  if (isDelivery) {
+    if (order.dusun_pengiriman) {
+      lines.push(`Dusun / Area: ${order.dusun_pengiriman}`)
+    }
+    lines.push(`Alamat Lengkap: ${order.alamat_pengiriman || '-'}`)
+    if (order.estimasi_menit) {
+      lines.push(`Target Pengantaran: ±${order.estimasi_menit} Menit`)
+    }
+  }
+
+  lines.push('')
+  lines.push('*RINCIAN PRODUK:*')
+  lines.push(itemsList)
+  lines.push('----------------------------------------')
+  lines.push(`Subtotal Produk: ${subtotalStr}`)
+  lines.push(`Biaya Pengiriman: ${ongkirStr}`)
+
+  if (order.kode_kupon || order.diskon_kupon > 0) {
+    const couponCode = order.kode_kupon ? ` (${order.kode_kupon})` : ''
+    lines.push(`Voucher Diskon${couponCode}: -${formatRupiah(order.diskon_kupon || 0)}`)
+  }
+
+  if (order.diskon_poin > 0) {
+    const points = order.poin_digunakan ? ` (${order.poin_digunakan} poin)` : ''
+    lines.push(`Diskon Poin${points}: -${formatRupiah(order.diskon_poin)}`)
+  }
+
+  lines.push('----------------------------------------')
+  lines.push(`*TOTAL PEMBAYARAN (COD): ${formatRupiah(order.total)}*`)
+  lines.push('----------------------------------------')
+
+  if (order.catatan) {
+    lines.push(`Catatan: ${order.catatan}`)
+    lines.push('')
+  }
+
+  lines.push(`Halo Admin ${storeName}, mohon konfirmasi dan proses pesanan saya di atas ya. Terima kasih! 🙏`)
+
+  return lines.join('\n')
+}
+
 
 

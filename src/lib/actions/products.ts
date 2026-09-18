@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase/server'
 import { productSchema } from '@/lib/validations'
 import { slugify, serializeProductVariants } from '@/lib/utils'
 import { processProductImage } from '@/lib/imageProcessing'
+import { getActivePromoProductIds } from '@/lib/actions/promos'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type SupabaseClient = any
@@ -218,6 +219,8 @@ export async function fetchMoreCatalogProducts(params: {
   limit?: number
   kategori?: string
   q?: string
+  urutan?: string
+  filter?: string
 }): Promise<{ products: any[]; hasMore: boolean }> {
   try {
     const limit = params.limit ?? 12
@@ -227,7 +230,17 @@ export async function fetchMoreCatalogProducts(params: {
       .from('products')
       .select('id, nama, slug, harga, stok, image_url, category_id, categories(nama, slug)')
       .eq('is_active', true)
-      .gt('stok', 0)
+
+    if (params.filter === 'promo') {
+      const promoIds = await getActivePromoProductIds()
+      if (promoIds.length > 0) {
+        query = query.in('id', promoIds)
+      } else {
+        query = query.eq('id', '00000000-0000-0000-0000-000000000000')
+      }
+    } else if (params.filter === 'ready' || !params.filter) {
+      query = query.gt('stok', 0)
+    }
 
     if (params.q) {
       query = query.ilike('nama', `%${params.q}%`)
@@ -245,8 +258,17 @@ export async function fetchMoreCatalogProducts(params: {
       }
     }
 
+    if (params.urutan === 'termurah') {
+      query = query.order('harga', { ascending: true })
+    } else if (params.urutan === 'termahal') {
+      query = query.order('harga', { ascending: false })
+    } else if (params.urutan === 'terbaru') {
+      query = query.order('created_at', { ascending: false })
+    } else {
+      query = query.order('nama', { ascending: true })
+    }
+
     const { data: products, error } = await query
-      .order('nama')
       .range(params.offset, params.offset + limit - 1)
 
     if (error || !products) {

@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import PageHeader from '@/components/PageHeader'
 import CartItemRow from '@/components/CartItemRow'
+import CartCouponSection from '@/components/CartCouponSection'
 import { formatRupiah } from '@/lib/utils'
 import { ShoppingCart, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
@@ -69,39 +70,8 @@ export default async function KeranjangPage() {
               ))}
             </div>
 
-            {/* Receipt Summary Card */}
-            <Card className="mb-6 border border-[rgba(232,214,205,0.9)]">
-              <div className="flex justify-between items-center text-sm font-semibold text-[var(--ink)] mb-2">
-                <span>Subtotal ({items.length} item)</span>
-                <span className="font-sora font-bold text-[var(--ink)] tabular-nums">
-                  {formatRupiah(total)}
-                </span>
-              </div>
-              <div className="receipt-dashed pt-2.5 mt-2 flex justify-between items-center">
-                <span className="font-sora font-bold text-[var(--ink)] text-base">Total Tagihan</span>
-                <span className="font-sora font-bold text-[var(--accent-2)] text-xl tabular-nums">
-                  {formatRupiah(total)}
-                </span>
-              </div>
-              <p className="text-[var(--text-caption)] text-[var(--ink-soft)] mt-2 font-medium">
-                *Pembayaran tunai / QRIS (COD) saat ambil langsung di toko
-              </p>
-            </Card>
-
-            {/* Checkout floating button */}
-            <div className="fixed bottom-20 left-1/2 -translate-x-1/2 max-w-[480px] w-full px-4 z-40">
-              <Link
-                href="/checkout"
-                prefetch={true}
-                className="w-full flex items-center justify-between checkout-btn py-3.5 px-5 text-base"
-              >
-                <span className="font-sora font-bold">Checkout ({items.length} item)</span>
-                <div className="flex items-center gap-1.5 tabular-nums font-sora font-bold">
-                  <span>{formatRupiah(total)}</span>
-                  <ArrowRight size={18} />
-                </div>
-              </Link>
-            </div>
+            {/* Promo Voucher & Receipt Summary Section */}
+            <CartCouponSection subtotal={total} itemCount={items.length} />
           </>
         )}
       </div>

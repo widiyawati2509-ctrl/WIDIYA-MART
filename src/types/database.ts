@@ -190,6 +190,9 @@ export type Database = {
           poin_didapat?: number | null
           batas_waktu_ambil?: string | null
           estimasi_menit?: number | null
+          kode_kupon?: string | null
+          diskon_kupon?: number | null
+          dusun_pengiriman?: string | null
           created_at: string
           updated_at: string
         }
@@ -211,6 +214,9 @@ export type Database = {
           poin_didapat?: number | null
           batas_waktu_ambil?: string | null
           estimasi_menit?: number | null
+          kode_kupon?: string | null
+          diskon_kupon?: number | null
+          dusun_pengiriman?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -232,6 +238,9 @@ export type Database = {
           poin_didapat?: number | null
           batas_waktu_ambil?: string | null
           estimasi_menit?: number | null
+          kode_kupon?: string | null
+          diskon_kupon?: number | null
+          dusun_pengiriman?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -382,6 +391,59 @@ export type Database = {
           updated_at?: string
         }
       }
+      coupons: {
+        Row: {
+          id: string
+          kode: string
+          judul: string
+          deskripsi: string | null
+          tipe: 'flat' | 'persen'
+          nilai: number
+          min_belanja: number
+          max_potongan: number | null
+          kuota: number | null
+          terpakai: number
+          start_date: string
+          end_date: string | null
+          is_active: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          kode: string
+          judul: string
+          deskripsi?: string | null
+          tipe?: 'flat' | 'persen'
+          nilai: number
+          min_belanja?: number
+          max_potongan?: number | null
+          kuota?: number | null
+          terpakai?: number
+          start_date?: string
+          end_date?: string | null
+          is_active?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          kode?: string
+          judul?: string
+          deskripsi?: string | null
+          tipe?: 'flat' | 'persen'
+          nilai?: number
+          min_belanja?: number
+          max_potongan?: number | null
+          kuota?: number | null
+          terpakai?: number
+          start_date?: string
+          end_date?: string | null
+          is_active?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+      }
     }
     Enums: {
       order_status: 'menunggu_diproses' | 'diproses' | 'siap_diambil' | 'selesai' | 'dibatalkan' | 'tidak_diambil'
@@ -400,6 +462,7 @@ export type CartItem = Database['public']['Tables']['cart_items']['Row']
 export type Order = Database['public']['Tables']['orders']['Row']
 export type OrderItem = Database['public']['Tables']['order_items']['Row']
 export type StoreInfo = Database['public']['Tables']['store_info']['Row']
+export type Coupon = Database['public']['Tables']['coupons']['Row']
 export type OrderStatus = Database['public']['Enums']['order_status']
 
 export type CartItemWithProduct = CartItem & {
@@ -415,3 +478,4 @@ export type ProductWithCategory = Product & {
 }
 
 export type ProductReview = Database['public']['Tables']['product_reviews']['Row']
+

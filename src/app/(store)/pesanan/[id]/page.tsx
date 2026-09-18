@@ -1,8 +1,8 @@
 // @ts-nocheck
 import { createClient } from '@/lib/supabase/server'
 import { notFound, redirect } from 'next/navigation'
-import { formatRupiah, getOrderStatusLabel, getOrderStatusColor, formatWhatsAppUrl, formatBatasWaktu, getPickupCountdown, parseOrderShippingInfo } from '@/lib/utils'
-import { ChevronLeft, CheckCircle, Clock, MapPin, Phone, Truck, Star, AlertTriangle, Sparkles } from 'lucide-react'
+import { formatRupiah, getOrderStatusLabel, getOrderStatusColor, formatWhatsAppUrl, formatBatasWaktu, getPickupCountdown, parseOrderShippingInfo, buildOrderWhatsAppMessage } from '@/lib/utils'
+import { ChevronLeft, CheckCircle, Clock, MapPin, Phone, Truck, Star, AlertTriangle, Sparkles, MessageCircle } from 'lucide-react'
 import Link from 'next/link'
 import PrintReceiptButton from '@/components/PrintReceiptButton'
 import PageHeader from '@/components/PageHeader'
@@ -45,6 +45,9 @@ export default async function OrderDetailPage({ params, searchParams }: OrderDet
   const statuses = ['menunggu_diproses', 'diproses', 'siap_diambil', 'selesai']
   const currentIdx = statuses.indexOf(order.status)
 
+  const waPhone = store?.whatsapp || store?.no_hp_toko
+  const waMessage = buildOrderWhatsAppMessage(order, store)
+  const waUrl = waPhone ? formatWhatsAppUrl(waPhone, waMessage) : '#'
 
   return (
     <div className="w-full pb-28">
@@ -85,6 +88,19 @@ export default async function OrderDetailPage({ params, searchParams }: OrderDet
               </div>
             )}
           </div>
+        )}
+
+        {/* WhatsApp Direct Order Confirmation Button (Task 8) */}
+        {waPhone && (
+          <a
+            href={waUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="press w-full py-3 px-4 rounded-2xl bg-[#25D366] hover:bg-[#20bd5a] text-white font-sora font-extrabold text-xs shadow-md flex items-center justify-center gap-2 transition-all active:scale-98"
+          >
+            <MessageCircle size={18} className="fill-white/20" />
+            <span>Kirim Rincian Pesanan ke WhatsApp Toko</span>
+          </a>
         )}
 
         {/* Status Stepper Card */}
@@ -351,6 +367,14 @@ export default async function OrderDetailPage({ params, searchParams }: OrderDet
                 : 'Gratis'}
             </span>
           </div>
+
+          {/* Voucher Diskon */}
+          {order.diskon_kupon > 0 && (
+            <div className="pt-1.5 flex justify-between items-center text-xs text-emerald-700 font-semibold">
+              <span>Voucher Diskon ({order.kode_kupon || 'Promo'})</span>
+              <span>-{formatRupiah(order.diskon_kupon)}</span>
+            </div>
+          )}
 
           {/* Diskon Poin & Ringkasan */}
           {order.diskon_poin > 0 && (

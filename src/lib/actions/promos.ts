@@ -178,6 +178,42 @@ export async function getPublicPromos(): Promise<PromoItem[]> {
   }
 }
 
+export async function getActivePromoProductIds(): Promise<string[]> {
+  try {
+    const promos = await getPublicPromos()
+    const promoProductIds = new Set<string>()
+    const promoSlugs = new Set<string>()
+
+    for (const p of promos) {
+      if (p.product_id) promoProductIds.add(p.product_id)
+      if (p.products?.id) promoProductIds.add(p.products.id)
+      if (p.link_url && p.link_url.startsWith('/produk/')) {
+        const cleanSlug = p.link_url.replace('/produk/', '').split('?')[0].split('#')[0]
+        if (cleanSlug) promoSlugs.add(cleanSlug)
+      }
+    }
+
+    if (promoSlugs.size > 0) {
+      const supabase = createPublicClient()
+      const { data: slugProducts } = await supabase
+        .from('products')
+        .select('id')
+        .in('slug', Array.from(promoSlugs))
+
+      if (slugProducts) {
+        for (const sp of slugProducts) {
+          promoProductIds.add(sp.id)
+        }
+      }
+    }
+
+    return Array.from(promoProductIds)
+  } catch (err) {
+    console.warn('getActivePromoProductIds error:', err)
+    return []
+  }
+}
+
 export async function getAllPromosAdmin(): Promise<PromoItem[]> {
   try {
     const supabase: SupabaseClient = await createClient()

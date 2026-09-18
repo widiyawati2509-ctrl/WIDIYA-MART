@@ -70,7 +70,8 @@ export default function BottomNav({ cartCount, isLoggedIn }: BottomNavProps) {
         const isActive = pathname === href || (href !== '/' && pathname.startsWith(href))
         const isCart = href === '/keranjang'
         const isProfil = href === '/profil'
-        const resolvedHref = isProfil && !isLoggedIn ? '/masuk' : href
+        const isPesanan = href === '/pesanan'
+        const resolvedHref = (isProfil || isPesanan) && !isLoggedIn ? '/masuk' : href
 
         return (
           <Link

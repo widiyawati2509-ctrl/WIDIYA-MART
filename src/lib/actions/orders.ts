@@ -7,6 +7,8 @@ import { checkoutSchema } from '@/lib/validations'
 
 import { getLoyaltyConfig, getUserLoyaltySummary } from '@/lib/actions/loyalty'
 import { addToCart } from '@/lib/actions/cart'
+import { validateCoupon } from '@/lib/actions/coupons'
+import { calculateDusunShipping } from '@/lib/utils'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type SupabaseClient = any
@@ -87,6 +89,25 @@ export async function createOrder(formData: FormData): Promise<{ error?: string;
       return sum + (product?.harga ?? 0) * item.qty
     }, 0)
 
+    // Rate limit check: Prevent double-click spam / rapid submissions within 15 seconds
+    const { data: recentOrder } = await supabase
+      .from('orders')
+      .select('created_at')
+      .eq('user_id', user.id)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle()
+
+    if (recentOrder?.created_at) {
+      const elapsedMs = Date.now() - new Date(recentOrder.created_at).getTime()
+      if (elapsedMs < 15000) {
+        const remainingSec = Math.ceil((15000 - elapsedMs) / 1000)
+        return {
+          error: `Pesanan Anda baru saja dibuat. Harap tunggu ${remainingSec} detik sebelum membuat pesanan baru untuk mencegah duplikasi.`,
+        }
+      }
+    }
+
     // Loyalty points deduction handling
     const poinToRedeem = Math.max(0, parseInt(formData.get('poin_digunakan') as string) || 0)
     let diskonPoin = 0
@@ -109,9 +130,25 @@ export async function createOrder(formData: FormData): Promise<{ error?: string;
       }
     }
 
+    // Coupon / Voucher validation & discount calculation
+    const inputKodeKupon = (formData.get('kode_kupon') as string)?.trim().toUpperCase() || null
+    let validKodeKupon: string | null = null
+    let diskonKupon = 0
+
+    if (inputKodeKupon) {
+      const couponCheck = await validateCoupon(inputKodeKupon, subtotal)
+      if (!couponCheck.valid) {
+        return { error: couponCheck.error || 'Kode voucher tidak valid atau tidak memenuhi syarat' }
+      }
+      validKodeKupon = couponCheck.coupon?.kode || inputKodeKupon
+      diskonKupon = couponCheck.discountAmount || 0
+    }
+
     // Shipping & Delivery: Recalculate on server (NEVER trust client-submitted ongkir)
     const metodePengiriman = (formData.get('metode_pengiriman') as string) || 'ambil_di_toko'
     const alamatPengiriman = (formData.get('alamat_pengiriman') as string)?.trim() || null
+    const dusunId = (formData.get('dusun_id') as string)?.trim() || null
+    const dusunNama = (formData.get('dusun_pengiriman') as string)?.trim() || null
     const userLatRaw = formData.get('user_lat') as string
     const userLngRaw = formData.get('user_lng') as string
 
@@ -124,37 +161,44 @@ export async function createOrder(formData: FormData): Promise<{ error?: string;
         return { error: 'Alamat pengiriman wajib diisi untuk opsi antar ke alamat' }
       }
 
-      if (userLatRaw && userLngRaw) {
-        const userLat = parseFloat(userLatRaw)
-        const userLng = parseFloat(userLngRaw)
-        if (!isNaN(userLat) && !isNaN(userLng)) {
-          verifiedJarakKm = calculateHaversineDistance(
-            STORE_COORDS.lat,
-            STORE_COORDS.lng,
-            userLat,
-            userLng
-          )
-        }
-      }
-
-      // If coordinates verified distance is within free radius (<= 7 km), ongkir is 0, else flat fee Rp 15.000
-      if (verifiedJarakKm !== null && verifiedJarakKm <= FREE_SHIPPING_MAX_KM) {
-        serverOngkir = 0
+      if (dusunId) {
+        // Priority: Use local Dusun tariff with free shipping rule
+        const dusunTariff = calculateDusunShipping(dusunId, subtotal)
+        serverOngkir = dusunTariff.ongkir
+        serverEstimasiMenit = dusunTariff.estimasiMenit
       } else {
-        serverOngkir = FLAT_SHIPPING_FEE
+        if (userLatRaw && userLngRaw) {
+          const userLat = parseFloat(userLatRaw)
+          const userLng = parseFloat(userLngRaw)
+          if (!isNaN(userLat) && !isNaN(userLng)) {
+            verifiedJarakKm = calculateHaversineDistance(
+              STORE_COORDS.lat,
+              STORE_COORDS.lng,
+              userLat,
+              userLng
+            )
+          }
+        }
+
+        // If coordinates verified distance is within free radius (<= 7 km), ongkir is 0, else flat fee Rp 15.000
+        if (verifiedJarakKm !== null && verifiedJarakKm <= FREE_SHIPPING_MAX_KM) {
+          serverOngkir = 0
+        } else {
+          serverOngkir = FLAT_SHIPPING_FEE
+        }
+
+        // Query store parameters for delivery estimation
+        const { data: storeInfo } = await supabase
+          .from('store_info')
+          .select('estimasi_menit_per_km, estimasi_menit_tambahan')
+          .single()
+
+        const menitPerKm = Number(storeInfo?.estimasi_menit_per_km ?? 5)
+        const menitTambahan = Number(storeInfo?.estimasi_menit_tambahan ?? 15)
+        const clientJarak = formData.get('jarak_km') ? parseFloat(formData.get('jarak_km') as string) : null
+        const effectiveDistance = verifiedJarakKm ?? (clientJarak && !isNaN(clientJarak) ? clientJarak : 3)
+        serverEstimasiMenit = Math.round(menitTambahan + (effectiveDistance * menitPerKm))
       }
-
-      // Query store parameters for delivery estimation
-      const { data: storeInfo } = await supabase
-        .from('store_info')
-        .select('estimasi_menit_per_km, estimasi_menit_tambahan')
-        .single()
-
-      const menitPerKm = Number(storeInfo?.estimasi_menit_per_km ?? 5)
-      const menitTambahan = Number(storeInfo?.estimasi_menit_tambahan ?? 15)
-      const clientJarak = formData.get('jarak_km') ? parseFloat(formData.get('jarak_km') as string) : null
-      const effectiveDistance = verifiedJarakKm ?? (clientJarak && !isNaN(clientJarak) ? clientJarak : 3)
-      serverEstimasiMenit = Math.round(menitTambahan + (effectiveDistance * menitPerKm))
     } else {
       // 'ambil_di_toko' - per aturan: tidak perlu estimasi waktu antar
       serverOngkir = 0
@@ -162,7 +206,7 @@ export async function createOrder(formData: FormData): Promise<{ error?: string;
       serverEstimasiMenit = null
     }
 
-    const finalTotal = Math.max(0, subtotal - diskonPoin + serverOngkir)
+    const finalTotal = Math.max(0, subtotal - diskonPoin - diskonKupon + serverOngkir)
 
     // Decrement stock atomically before creating order to prevent race conditions and overselling
     const decrementedItems: { id: string; qty: number; nama: string }[] = []
@@ -236,6 +280,9 @@ export async function createOrder(formData: FormData): Promise<{ error?: string;
       total: finalTotal,
       poin_digunakan: diskonPoin > 0 ? poinToRedeem : 0,
       diskon_poin: diskonPoin,
+      kode_kupon: validKodeKupon,
+      diskon_kupon: diskonKupon,
+      dusun_pengiriman: dusunNama,
       jarak_km: verifiedJarakKm,
       ongkir: serverOngkir,
       alamat_pengiriman: alamatPengiriman,
@@ -256,7 +303,7 @@ export async function createOrder(formData: FormData): Promise<{ error?: string;
     if (orderFullError) {
       const isEstimasiMissing = orderFullError.message?.includes('estimasi_menit')
       if (isEstimasiMissing) {
-        const { estimasi_menit, ...payloadWithoutEstimasi } = orderPayload
+        const { estimasi_menit: _unusedEstimasi, ...payloadWithoutEstimasi } = orderPayload
         const { data: retryOrder, error: retryError } = await supabase
           .from('orders')
           .insert(payloadWithoutEstimasi)
@@ -272,18 +319,21 @@ export async function createOrder(formData: FormData): Promise<{ error?: string;
           orderFullError.message?.includes('column') ||
           orderFullError.message?.includes('schema cache') ||
           orderFullError.message?.includes('alamat_pengiriman') ||
+          orderFullError.message?.includes('kode_kupon') ||
+          orderFullError.message?.includes('dusun_pengiriman') ||
           orderFullError.code === 'PGRST204'
 
         if (isColumnMissing) {
           console.warn('Orders table missing columns, saving shipping info in catatan:', orderFullError.message)
 
-          // Construct detailed catatan so no address or shipping data is lost
+          // Construct detailed catatan so no address, dusun, coupon, or shipping data is lost
           const shippingNotes = [
             parsed.data.catatan ? `Catatan: ${parsed.data.catatan}` : '',
             metodePengiriman === 'antar_alamat'
-              ? `[Pengantaran ke: ${alamatPengiriman || '-'} | Ongkir: Rp ${serverOngkir.toLocaleString('id-ID')} | Jarak: ${verifiedJarakKm ?? '-'} km | Estimasi: ±${serverEstimasiMenit ?? '-'} mnt]`
+              ? `[Pengantaran ke: ${alamatPengiriman || '-'}${dusunNama ? ` (Dusun: ${dusunNama})` : ''} | Ongkir: Rp ${serverOngkir.toLocaleString('id-ID')} | Jarak: ${verifiedJarakKm ?? '-'} km | Estimasi: ±${serverEstimasiMenit ?? '-'} mnt]`
               : '[Metode: Ambil di Toko]',
             diskonPoin > 0 ? `[Poin Digunakan: ${poinToRedeem} (Diskon Rp ${diskonPoin.toLocaleString('id-ID')})]` : '',
+            diskonKupon > 0 ? `[Kupon: ${validKodeKupon} (Diskon Rp ${diskonKupon.toLocaleString('id-ID')})]` : '',
           ]
             .filter(Boolean)
             .join('\n')
@@ -323,6 +373,30 @@ export async function createOrder(formData: FormData): Promise<{ error?: string;
     if (!order) {
       await rollbackStock()
       return { error: 'Gagal membuat pesanan (ID tidak didapatkan)' }
+    }
+
+    // Increment coupon usage counter if coupon used
+    if (validKodeKupon) {
+      try {
+        const { error: rpcErr } = await supabase.rpc('use_coupon', { p_code: validKodeKupon })
+        if (rpcErr) {
+          // Fallback to fetch-and-increment if RPC is not yet in database
+          const { data: cData } = await supabase
+            .from('coupons')
+            .select('id, terpakai')
+            .ilike('kode', validKodeKupon)
+            .maybeSingle()
+
+          if (cData) {
+            await supabase
+              .from('coupons')
+              .update({ terpakai: (cData.terpakai || 0) + 1, updated_at: new Date().toISOString() })
+              .eq('id', cData.id)
+          }
+        }
+      } catch (e) {
+        console.warn('Coupon usage update note:', e)
+      }
     }
 
     // Record points debit transaction if redeemed

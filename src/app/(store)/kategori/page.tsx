@@ -1,6 +1,8 @@
 // @ts-nocheck
 import { createPublicClient } from '@/lib/supabase/server'
+import { getActivePromoProductIds } from '@/lib/actions/promos'
 import CategoryFilter from '@/components/CategoryFilter'
+import CatalogSortFilterBar from '@/components/CatalogSortFilterBar'
 import SearchBar from '@/components/SearchBar'
 import PageHeader from '@/components/PageHeader'
 import CatalogProductList from '@/components/CatalogProductList'
@@ -11,11 +13,16 @@ export const revalidate = 30
 const PAGE_SIZE = 12
 
 interface KategoriPageProps {
-  searchParams: Promise<{ q?: string; kategori?: string }>
+  searchParams: Promise<{
+    q?: string
+    kategori?: string
+    urutan?: string
+    filter?: string
+  }>
 }
 
 export default async function KategoriPage({ searchParams }: KategoriPageProps) {
-  const { q, kategori } = await searchParams
+  const { q, kategori, urutan, filter } = await searchParams
   const supabase = createPublicClient()
 
   const { data: categories } = await supabase
@@ -27,9 +34,23 @@ export default async function KategoriPage({ searchParams }: KategoriPageProps) 
     .from('products')
     .select('id, nama, slug, harga, stok, image_url, category_id, categories(nama, slug)', { count: 'exact' })
     .eq('is_active', true)
-    .gt('stok', 0)
 
+  // Stock / Promo filter
+  if (filter === 'promo') {
+    const promoIds = await getActivePromoProductIds()
+    if (promoIds.length > 0) {
+      query = query.in('id', promoIds)
+    } else {
+      query = query.eq('id', '00000000-0000-0000-0000-000000000000')
+    }
+  } else if (filter === 'ready' || !filter) {
+    query = query.gt('stok', 0)
+  }
+
+  // Search keyword
   if (q) query = query.ilike('nama', `%${q}%`)
+
+  // Category filter
   if (kategori && categories) {
     const matchedCategory = categories.find((c) => c.slug === kategori)
     if (matchedCategory) {
@@ -37,10 +58,18 @@ export default async function KategoriPage({ searchParams }: KategoriPageProps) 
     }
   }
 
-  const { data: products, count } = await query
-    .order('nama')
-    .range(0, PAGE_SIZE - 1)
+  // Price sorting
+  if (urutan === 'termurah') {
+    query = query.order('harga', { ascending: true })
+  } else if (urutan === 'termahal') {
+    query = query.order('harga', { ascending: false })
+  } else if (urutan === 'terbaru') {
+    query = query.order('created_at', { ascending: false })
+  } else {
+    query = query.order('nama', { ascending: true })
+  }
 
+  const { data: products, count } = await query.range(0, PAGE_SIZE - 1)
   const totalCount = count ?? products?.length ?? 0
 
   return (
@@ -54,30 +83,51 @@ export default async function KategoriPage({ searchParams }: KategoriPageProps) 
         <SearchBar defaultValue={q} />
       </PageHeader>
 
-      <div className="px-4 mb-3.5">
+      {/* Category Chips Bar */}
+      <div className="px-4 mb-2">
         <CategoryFilter categories={categories ?? []} activeSlug={kategori} />
       </div>
 
+      {/* Sorting & Quick Filter Toolbar */}
+      <div className="px-4 mb-3.5">
+        <CatalogSortFilterBar activeSort={urutan} activeFilter={filter} />
+      </div>
+
+      {/* Product List */}
       <div className="px-4">
         {products && products.length > 0 ? (
           <>
-            <p className="text-xs font-semibold text-[var(--ink-soft)] mb-3">
-              {totalCount} produk ditemukan
-            </p>
+            <div className="flex items-center justify-between text-xs text-[var(--ink-soft)] font-medium mb-3">
+              <span>
+                Menampilkan <strong className="text-[var(--ink)]">{products.length}</strong> dari{' '}
+                <strong className="text-[var(--ink)]">{totalCount}</strong> produk
+              </span>
+              {q && (
+                <span className="truncate max-w-[150px] italic">
+                  untuk &quot;{q}&quot;
+                </span>
+              )}
+            </div>
             <CatalogProductList
               initialProducts={products}
               totalCount={totalCount}
               kategori={kategori}
               q={q}
+              urutan={urutan}
+              filter={filter}
               pageSize={PAGE_SIZE}
             />
           </>
         ) : (
           <EmptyState
             icon={Package}
-            message="Produk tidak ditemukan. Coba gunakan kata kunci lain atau pilih kategori berbeda."
+            message={
+              q
+                ? `Tidak ada produk yang cocok dengan pencarian "${q}".`
+                : 'Belum ada produk yang sesuai dengan filter yang dipilih.'
+            }
             actionHref="/kategori"
-            actionLabel="Semua Produk"
+            actionLabel="Reset Semua Filter"
           />
         )}
       </div>

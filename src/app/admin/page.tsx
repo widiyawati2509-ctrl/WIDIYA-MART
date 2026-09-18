@@ -147,6 +147,27 @@ export default async function AdminDashboardPage() {
         })}
       </div>
 
+      {/* Quick Export Sales Report Banner (Task 4) */}
+      <div className="card-3d bg-emerald-50 border border-emerald-300 rounded-[var(--radius-lg)] p-3 shadow-3d flex items-center justify-between gap-3">
+        <div className="flex items-center gap-2.5">
+          <div className="w-9 h-9 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold shrink-0">
+            📊
+          </div>
+          <div>
+            <h3 className="font-sora font-bold text-xs text-emerald-950">Export Laporan Penjualan (CSV)</h3>
+            <p className="text-[10.5px] text-emerald-800 font-medium">Rekapitulasi omzet dan rincian transaksi untuk Excel</p>
+          </div>
+        </div>
+
+        <Link
+          href="/admin/pesanan?export=true"
+          className="press shrink-0 px-3 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-sora font-bold text-xs shadow-xs flex items-center gap-1.5 transition-all"
+        >
+          <span>Unduh CSV</span>
+          <ChevronRight size={13} />
+        </Link>
+      </div>
+
       {/* Low Stock Warning */}
       {lowStockProducts.data && lowStockProducts.data.length > 0 && (
         <Section title="Peringatan Stok Menipis" description="Segera restock sebelum habis">

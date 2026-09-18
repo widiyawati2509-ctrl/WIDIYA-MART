@@ -97,10 +97,14 @@ export default function AdminOrderExportCsvModal({
         'Nama Pembeli',
         'No WhatsApp / HP',
         'Metode Pengiriman',
+        'Dusun / Area',
         'Alamat Pengiriman',
         'Item Pesanan',
         'Subtotal (Rp)',
         'Ongkir (Rp)',
+        'Voucher Kupon',
+        'Diskon Kupon (Rp)',
+        'Diskon Poin (Rp)',
         'Total Belanja (Rp)',
         'Status Pesanan',
       ]
@@ -119,6 +123,7 @@ export default function AdminOrderExportCsvModal({
           : '-'
 
         const metodePengirimanLabel = order.metode_pengiriman === 'antar_alamat' ? 'Diantar ke Alamat' : 'Ambil di Toko'
+        const dusun = order.dusun_pengiriman || '-'
         const alamatPengiriman = order.alamat_pengiriman || '-'
 
         return [
@@ -128,10 +133,14 @@ export default function AdminOrderExportCsvModal({
           order.nama_pemesan || 'Pelanggan',
           order.no_hp_pemesan || '-',
           metodePengirimanLabel,
+          dusun,
           alamatPengiriman,
           itemDetails,
           order.subtotal ?? (order.total - (order.ongkir || 0)),
           order.ongkir ?? 0,
+          order.kode_kupon || '-',
+          order.diskon_kupon ?? 0,
+          order.diskon_poin ?? 0,
           order.total,
           getOrderStatusLabel(order.status, order.metode_pengiriman),
         ]
