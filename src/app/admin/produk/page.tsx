@@ -4,6 +4,7 @@ import { formatRupiah } from '@/lib/utils'
 import { createProduct } from '@/lib/actions/products'
 import AdminProductList from '@/components/admin/AdminProductList'
 import AdminPageTitle from '@/components/admin/AdminPageTitle'
+import FileInputWithValidation from '@/components/admin/FileInputWithValidation'
 import { Plus } from 'lucide-react'
 
 export const dynamic = 'force-dynamic'
@@ -73,8 +74,7 @@ export default async function AdminProdukPage() {
               </div>
               <div>
                 <label className="text-sm font-medium text-[var(--ink)] block mb-1">Foto Produk</label>
-                <input type="file" name="image" accept="image/*"
-                  className="w-full text-sm text-[var(--ink-soft)] file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-[var(--accent-bg)] file:text-[var(--accent-2)] hover:file:bg-[var(--accent-bg)]/80" />
+                <FileInputWithValidation name="image" accept="image/*" />
               </div>
               <div>
                 <label className="text-sm font-medium text-[var(--ink)] block mb-1">Status</label>

@@ -3,6 +3,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { createClient, createPublicClient } from '@/lib/supabase/server'
+import { processProductImage } from '@/lib/imageProcessing'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type SupabaseClient = any
@@ -38,7 +39,7 @@ const FALLBACK_BANNERS: PromoItem[] = [
     subjudul: 'Sabun cuci piring refill 650g cuma Rp 10.000',
     tipe: 'banner',
     badge_text: 'PROMO SPESIAL',
-    image_url: '/products/1788105463290-z57uce.jpeg',
+    image_url: 'https://byhpcdgehartffitbrde.supabase.co/storage/v1/object/public/products/catalog/1788105463290-z57uce.jpeg',
     banner_bg: 'linear-gradient(135deg, #FF6B35 0%, #E85521 100%)',
     link_url: '/produk/mama-lemon-sabun-cuci-piring-jeruk-nipis-refill-650-g',
     is_active: true,
@@ -50,7 +51,7 @@ const FALLBACK_BANNERS: PromoItem[] = [
     subjudul: 'Susu UHT Nutribrain 6 x 110 ml cuma Rp 24.000',
     tipe: 'banner',
     badge_text: 'NUTRISI ANAK',
-    image_url: '/products/1788105762288-zi1d3s.jpeg',
+    image_url: 'https://byhpcdgehartffitbrde.supabase.co/storage/v1/object/public/products/catalog/1788105762288-zi1d3s.jpeg',
     banner_bg: 'linear-gradient(145deg, #2B1810 0%, #452419 100%)',
     link_url: '/produk/frisian-flag-nutribrain-susu-uht-cair-cokelat-kotak-6-x-110-ml',
     is_active: true,
@@ -62,13 +63,25 @@ const FALLBACK_BANNERS: PromoItem[] = [
     subjudul: 'Pembersih wajah multivitamin 100g cerahkan kulit',
     tipe: 'banner',
     badge_text: 'SKINCARE HARIAN',
-    image_url: '/products/1788105042968-b41tnf.jpeg',
+    image_url: 'https://byhpcdgehartffitbrde.supabase.co/storage/v1/object/public/products/catalog/1788105042968-b41tnf.jpeg',
     banner_bg: 'linear-gradient(135deg, #FF7E47 0%, #D84315 100%)',
     link_url: '/produk/glow-lovely-pembersih-wajah-foam-untuk-kulit-kusam-multivitamin-100-g',
     is_active: true,
     urutan: 3,
   },
 ]
+
+const SUPABASE_CATALOG_BASE =
+  'https://byhpcdgehartffitbrde.supabase.co/storage/v1/object/public/products/catalog/'
+
+function normalizePromoImageUrl(url?: string | null): string | null {
+  if (!url) return null
+  if (url.startsWith('/products/')) {
+    const filename = url.split('/').pop()
+    return `${SUPABASE_CATALOG_BASE}${filename}`
+  }
+  return url
+}
 
 /**
  * Membaca data promo dari kolom `store_info.logo_url` yang dipakai sebagai media penyimpanan
@@ -89,7 +102,17 @@ async function getPromosFromStoreInfo(supabase: SupabaseClient): Promise<PromoIt
     const trimmed = data.logo_url.trim()
     if (trimmed.startsWith('[') || trimmed.startsWith('{')) {
       const parsed = JSON.parse(trimmed)
-      const list = Array.isArray(parsed) ? parsed : parsed.promos || []
+      const rawList = Array.isArray(parsed) ? parsed : parsed.promos || []
+      const list = rawList.map((item: any) => ({
+        ...item,
+        image_url: normalizePromoImageUrl(item.image_url),
+        products: item.products
+          ? {
+              ...item.products,
+              image_url: normalizePromoImageUrl(item.products.image_url),
+            }
+          : item.products,
+      }))
       return list.length > 0 ? list : null
     }
     return null
@@ -233,13 +256,16 @@ export async function createPromo(formData: FormData): Promise<{ success: boolea
     const imageFile = formData.get('image_file') as File | null
     if (imageFile && imageFile.size > 0) {
       try {
-        const ext = imageFile.name.split('.').pop()?.toLowerCase() || 'jpg'
-        const filename = `promo-${Date.now()}-${Math.random().toString(36).substring(2, 6)}.${ext}`
+        const processed = await processProductImage(imageFile)
+        const filename = `promo-${Date.now()}-${Math.random().toString(36).substring(2, 6)}.${processed.ext}`
 
-        // Coba simpan ke Supabase Storage terlebih dahulu
+        // Simpan ke Supabase Storage
         const { error: upErr } = await supabase.storage
           .from('products')
-          .upload(`promos/${filename}`, imageFile, { upsert: true })
+          .upload(`promos/${filename}`, processed.buffer, {
+            contentType: processed.contentType,
+            upsert: true,
+          })
 
         if (!upErr) {
           const { data: publicUrlData } = supabase.storage
@@ -248,19 +274,9 @@ export async function createPromo(formData: FormData): Promise<{ success: boolea
           if (publicUrlData?.publicUrl) {
             image_url = publicUrlData.publicUrl
           }
-        } else {
-          // Fallback lokal public/uploads/promos jika Storage gagal
-          const bytes = await imageFile.arrayBuffer()
-          const buffer = Buffer.from(bytes)
-          const fs = await import('fs/promises')
-          const path = await import('path')
-          const uploadDir = path.join(process.cwd(), 'public', 'uploads', 'promos')
-          await fs.mkdir(uploadDir, { recursive: true })
-          await fs.writeFile(path.join(uploadDir, filename), buffer)
-          image_url = `/uploads/promos/${filename}`
         }
       } catch (uploadErr) {
-        console.warn('Image upload fallback warning:', uploadErr)
+        console.warn('Image upload error in createPromo:', uploadErr)
       }
     }
 
@@ -369,12 +385,15 @@ export async function updatePromo(id: string, formData: FormData): Promise<{ suc
     const imageFile = formData.get('image_file') as File | null
     if (imageFile && imageFile.size > 0) {
       try {
-        const ext = imageFile.name.split('.').pop()?.toLowerCase() || 'jpg'
-        const filename = `promo-${id}-${Date.now()}.${ext}`
+        const processed = await processProductImage(imageFile)
+        const filename = `promo-${id}-${Date.now()}.${processed.ext}`
 
         const { error: upErr } = await supabase.storage
           .from('products')
-          .upload(`promos/${filename}`, imageFile, { upsert: true })
+          .upload(`promos/${filename}`, processed.buffer, {
+            contentType: processed.contentType,
+            upsert: true,
+          })
 
         if (!upErr) {
           const { data: publicUrlData } = supabase.storage
@@ -383,18 +402,9 @@ export async function updatePromo(id: string, formData: FormData): Promise<{ suc
           if (publicUrlData?.publicUrl) {
             image_url = publicUrlData.publicUrl
           }
-        } else {
-          const bytes = await imageFile.arrayBuffer()
-          const buffer = Buffer.from(bytes)
-          const fs = await import('fs/promises')
-          const path = await import('path')
-          const uploadDir = path.join(process.cwd(), 'public', 'uploads', 'promos')
-          await fs.mkdir(uploadDir, { recursive: true })
-          await fs.writeFile(path.join(uploadDir, filename), buffer)
-          image_url = `/uploads/promos/${filename}`
         }
       } catch (uploadErr) {
-        console.warn('Image upload fallback warning:', uploadErr)
+        console.warn('Image upload error in updatePromo:', uploadErr)
       }
     }
 

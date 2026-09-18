@@ -5,6 +5,7 @@ import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 import { productSchema } from '@/lib/validations'
 import { slugify, serializeProductVariants } from '@/lib/utils'
+import { processProductImage } from '@/lib/imageProcessing'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type SupabaseClient = any
@@ -28,16 +29,17 @@ export async function createProduct(formData: FormData): Promise<void> {
 
   let image_url: string | null = null
   const imageFile = formData.get('image') as File | null
-  const ALLOWED_MIME = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg']
-  const MAX_FILE_SIZE = 5 * 1024 * 1024 // 5MB
 
   if (imageFile && imageFile.size > 0) {
-    if (imageFile.size <= MAX_FILE_SIZE && ALLOWED_MIME.includes(imageFile.type)) {
-      const ext = imageFile.name.split('.').pop()?.toLowerCase() || 'jpg'
-      const path = `${slug}.${ext}`
+    try {
+      const processed = await processProductImage(imageFile)
+      const path = `catalog/${slug}.${processed.ext}`
       const { error: uploadError } = await supabase.storage
         .from('products')
-        .upload(path, imageFile, { upsert: true })
+        .upload(path, processed.buffer, {
+          contentType: processed.contentType,
+          upsert: true,
+        })
 
       if (!uploadError) {
         const { data: urlData } = supabase.storage
@@ -45,6 +47,8 @@ export async function createProduct(formData: FormData): Promise<void> {
           .getPublicUrl(path)
         image_url = urlData.publicUrl
       }
+    } catch (err) {
+      console.error('Error processing product image:', err)
     }
   }
 
@@ -56,18 +60,25 @@ export async function createProduct(formData: FormData): Promise<void> {
       if (Array.isArray(parsedVariants)) {
         for (let i = 0; i < parsedVariants.length; i++) {
           const vFile = formData.get(`variant_image_${i}`) as File | null
-          if (vFile && vFile.size > 0 && vFile.size <= MAX_FILE_SIZE && ALLOWED_MIME.includes(vFile.type)) {
-            const vExt = vFile.name.split('.').pop()?.toLowerCase() || 'jpg'
-            const vPath = `variants/${slug}-var-${i}-${Date.now()}.${vExt}`
-            const { error: vUploadError } = await supabase.storage
-              .from('products')
-              .upload(vPath, vFile, { upsert: true })
-
-            if (!vUploadError) {
-              const { data: vUrlData } = supabase.storage
+          if (vFile && vFile.size > 0) {
+            try {
+              const processedV = await processProductImage(vFile)
+              const vPath = `variants/${slug}-var-${i}-${Date.now()}.${processedV.ext}`
+              const { error: vUploadError } = await supabase.storage
                 .from('products')
-                .getPublicUrl(vPath)
-              parsedVariants[i].image_url = vUrlData.publicUrl
+                .upload(vPath, processedV.buffer, {
+                  contentType: processedV.contentType,
+                  upsert: true,
+                })
+
+              if (!vUploadError) {
+                const { data: vUrlData } = supabase.storage
+                  .from('products')
+                  .getPublicUrl(vPath)
+                parsedVariants[i].image_url = vUrlData.publicUrl
+              }
+            } catch (err) {
+              console.error(`Error processing variant image ${i}:`, err)
             }
           }
         }
@@ -113,22 +124,26 @@ export async function updateProduct(id: string, formData: FormData): Promise<voi
   let image_url: string | undefined
   const imageFile = formData.get('image') as File | null
   if (imageFile && imageFile.size > 0) {
-    const ext = imageFile.name.split('.').pop()
-    const path = `${id}.${ext}`
-    const { error: uploadError } = await supabase.storage
-      .from('products')
-      .upload(path, imageFile, { upsert: true })
-
-    if (!uploadError) {
-      const { data: urlData } = supabase.storage
+    try {
+      const processed = await processProductImage(imageFile)
+      const path = `catalog/${id}-${Date.now()}.${processed.ext}`
+      const { error: uploadError } = await supabase.storage
         .from('products')
-        .getPublicUrl(path)
-      image_url = urlData.publicUrl
+        .upload(path, processed.buffer, {
+          contentType: processed.contentType,
+          upsert: true,
+        })
+
+      if (!uploadError) {
+        const { data: urlData } = supabase.storage
+          .from('products')
+          .getPublicUrl(path)
+        image_url = urlData.publicUrl
+      }
+    } catch (err) {
+      console.error('Error processing update product image:', err)
     }
   }
-
-  const ALLOWED_MIME = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg']
-  const MAX_FILE_SIZE = 5 * 1024 * 1024 // 5MB
 
   const variantsJson = formData.get('variants') as string | null
   let finalDeskripsi = parsed.data.deskripsi ?? ''
@@ -138,18 +153,25 @@ export async function updateProduct(id: string, formData: FormData): Promise<voi
       if (Array.isArray(parsedVariants)) {
         for (let i = 0; i < parsedVariants.length; i++) {
           const vFile = formData.get(`variant_image_${i}`) as File | null
-          if (vFile && vFile.size > 0 && vFile.size <= MAX_FILE_SIZE && ALLOWED_MIME.includes(vFile.type)) {
-            const vExt = vFile.name.split('.').pop()?.toLowerCase() || 'jpg'
-            const vPath = `variants/${id}-var-${i}-${Date.now()}.${vExt}`
-            const { error: vUploadError } = await supabase.storage
-              .from('products')
-              .upload(vPath, vFile, { upsert: true })
-
-            if (!vUploadError) {
-              const { data: vUrlData } = supabase.storage
+          if (vFile && vFile.size > 0) {
+            try {
+              const processedV = await processProductImage(vFile)
+              const vPath = `variants/${id}-var-${i}-${Date.now()}.${processedV.ext}`
+              const { error: vUploadError } = await supabase.storage
                 .from('products')
-                .getPublicUrl(vPath)
-              parsedVariants[i].image_url = vUrlData.publicUrl
+                .upload(vPath, processedV.buffer, {
+                  contentType: processedV.contentType,
+                  upsert: true,
+                })
+
+              if (!vUploadError) {
+                const { data: vUrlData } = supabase.storage
+                  .from('products')
+                  .getPublicUrl(vPath)
+                parsedVariants[i].image_url = vUrlData.publicUrl
+              }
+            } catch (err) {
+              console.error(`Error processing variant image ${i}:`, err)
             }
           }
         }

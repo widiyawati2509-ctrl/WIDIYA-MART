@@ -5,6 +5,7 @@ import { useState, useTransition } from 'react'
 import Image from 'next/image'
 import { createPromo, updatePromo, deletePromo, type PromoItem } from '@/lib/actions/promos'
 import { Sparkles, Plus, Edit2, Trash2, Check, X, ImagePlus, Loader2, Tag, ExternalLink } from 'lucide-react'
+import FileInputWithValidation from './FileInputWithValidation'
 import AdminPageTitle from './AdminPageTitle'
 
 interface AdminPromoListProps {
@@ -257,11 +258,10 @@ export default function AdminPromoList({ initialPromos, products }: AdminPromoLi
 
               <div>
                 <label className="font-bold text-[var(--ink)] block mb-1">Foto Banner / Produk Promo</label>
-                <input
-                  type="file"
+                <FileInputWithValidation
                   name="image_file"
                   accept="image/*"
-                  className="w-full text-xs"
+                  className="w-full text-xs text-[var(--ink-soft)] file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-xs file:font-medium file:bg-[var(--accent-bg)] file:text-[var(--accent-2)] cursor-pointer"
                 />
               </div>
 

@@ -6,6 +6,7 @@ import Image from 'next/image'
 import { formatRupiah, parseProductVariants, type ProductVariant } from '@/lib/utils'
 import { updateProduct, deleteProduct } from '@/lib/actions/products'
 import { Package, Edit2, Trash2, X, Check, Plus, Layers, Camera, ImagePlus } from 'lucide-react'
+import FileInputWithValidation from '@/components/admin/FileInputWithValidation'
 import type { Product, Category } from '@/types/database'
 
 interface AdminProductListProps {
@@ -40,6 +41,11 @@ function ProductItemRow({
   const handleVariantFileChange = (idx: number, e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        alert(`Ukuran foto varian (${(file.size / (1024 * 1024)).toFixed(1)}MB) melebihi batas maksimal 5MB. Silakan pilih foto lain.`)
+        e.target.value = ''
+        return
+      }
       const preview = URL.createObjectURL(file)
       setVariants((prev) => {
         const updated = [...prev]
@@ -154,8 +160,7 @@ function ProductItemRow({
 
           <div className="col-span-2">
             <label className="text-[var(--text-caption)] font-bold text-[var(--ink)] block mb-1">Ganti Foto Produk (Opsional)</label>
-            <input
-              type="file"
+            <FileInputWithValidation
               name="image"
               accept="image/*"
               className="w-full text-sm text-[var(--ink-soft)] file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-[var(--accent-bg)] file:text-[var(--accent-2)] cursor-pointer"
