@@ -19,6 +19,14 @@ const nextConfig: NextConfig = {
   experimental: {
     optimizePackageImports: ['lucide-react'],
   },
+  async rewrites() {
+    return [
+      {
+        source: '/products/:path*',
+        destination: 'https://byhpcdgehartffitbrde.supabase.co/storage/v1/object/public/products/catalog/:path*',
+      },
+    ];
+  },
   async headers() {
     return [
       {

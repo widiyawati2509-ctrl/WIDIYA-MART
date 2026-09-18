@@ -59,6 +59,19 @@ const banners = [
   },
 ]
 
+const SUPABASE_CATALOG_BASE =
+  'https://byhpcdgehartffitbrde.supabase.co/storage/v1/object/public/products/catalog/'
+
+function resolvePromoImg(b: any): string | null {
+  const raw = b?.image_url || b?.productImage || b?.products?.image_url
+  if (!raw) return null
+  if (typeof raw === 'string' && raw.startsWith('/products/')) {
+    const filename = raw.split('/').pop()
+    return `${SUPABASE_CATALOG_BASE}${filename}`
+  }
+  return raw
+}
+
 export default function PromoBannerCarousel({ banners: propBanners }: { banners?: any[] }) {
   const activeBanners = propBanners && propBanners.length > 0 ? propBanners : banners
   const [current, setCurrent] = useState(0)
@@ -102,7 +115,7 @@ export default function PromoBannerCarousel({ banners: propBanners }: { banners?
           const titleText = b.judul || b.title
           const subtitleText = b.subjudul || b.subtitle
           const linkUrl = b.link_url || b.link || '#'
-          const imgSrc = b.image_url || b.productImage
+          const imgSrc = resolvePromoImg(b)
           const bgStyle = b.banner_bg || b.backgroundStyle || 'linear-gradient(135deg, #FF6B35 0%, #E85521 100%)'
           const ctaText = b.cta || (b.diskon_persen ? `Diskon ${b.diskon_persen}%` : 'Beli Sekarang')
 
@@ -159,6 +172,7 @@ export default function PromoBannerCarousel({ banners: propBanners }: { banners?
                       priority={idx === 0}
                       className="object-contain p-1.5"
                       sizes="96px"
+                      unoptimized
                     />
                   </div>
                 </div>
