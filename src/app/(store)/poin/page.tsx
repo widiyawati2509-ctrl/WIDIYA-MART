@@ -50,7 +50,7 @@ export default async function PoinPage() {
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[var(--warning)]/20 border border-[var(--warning)]/30 text-[var(--warning)] text-[var(--text-caption)] font-sora font-bold uppercase tracking-wider">
               <Sparkles size={12} /> Saldo Poin Belanja
             </span>
-            <span className="text-[var(--text-caption)] text-white/80 font-medium">PENGENJEK MART</span>
+            <span className="text-[var(--text-caption)] text-white/80 font-medium">WIDIYA MART</span>
           </div>
 
           <div className="relative z-10 mb-4">
@@ -78,7 +78,7 @@ export default async function PoinPage() {
         </div>
 
         {/* How It Works Card */}
-        <div className="card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-lg)] p-3 shadow-3d space-y-2.5">
+        <div className="bg-white border border-[var(--line)] rounded-2xl p-3.5 shadow-xs space-y-2.5">
           <h2 className="font-sora font-bold text-xs text-[var(--ink)] flex items-center gap-1.5">
             <Info size={14} className="text-[var(--accent)]" />
             Cara Kerja Poin Loyalitas
@@ -105,7 +105,7 @@ export default async function PoinPage() {
         </div>
 
         {/* Transaction History */}
-        <div className="card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-lg)] p-3 shadow-3d">
+        <div className="bg-white border border-[var(--line)] rounded-2xl p-3.5 shadow-xs">
           <h2 className="font-sora font-bold text-xs text-[var(--ink)] mb-3 flex items-center gap-1.5">
             <History size={14} className="text-[var(--accent)]" />
             Riwayat Poin

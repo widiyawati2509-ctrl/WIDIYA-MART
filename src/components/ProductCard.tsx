@@ -17,12 +17,12 @@ export default function ProductCard({ product, priority = false }: ProductCardPr
   return (
     <Link href={`/produk/${product.slug}`} prefetch={true} className="block group h-full">
       <div
-        className={`product card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-lg)] p-2.5 shadow-3d transition-all duration-200 h-full flex flex-col justify-between ${
+        className={`product bg-white border border-[var(--line)] rounded-2xl p-2.5 shadow-xs transition-all duration-200 h-full flex flex-col justify-between hover:border-[var(--accent)]/50 ${
           outOfStock ? 'opacity-60' : ''
         }`}
       >
-        {/* Thumbnail (14px radius, accent-bg) */}
-        <div className="relative aspect-square w-full rounded-[var(--radius-md)] bg-[var(--accent-bg)] shadow-thumb-inset overflow-hidden mb-1.5">
+        {/* Thumbnail (12px radius, accent-bg) */}
+        <div className="relative aspect-square w-full rounded-xl bg-[var(--accent-bg)] overflow-hidden mb-1.5">
           {product.image_url ? (
             <Image
               src={product.image_url}

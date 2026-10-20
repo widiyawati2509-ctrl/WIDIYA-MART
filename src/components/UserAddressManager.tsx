@@ -244,7 +244,7 @@ export default function UserAddressManager({ initialAddresses }: UserAddressMana
 
       {/* Addresses List */}
       {addresses.length === 0 ? (
-        <div className="card-3d bg-white border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-lg)] p-5 text-center shadow-3d space-y-2">
+        <div className="bg-white border border-[var(--line)] rounded-2xl p-5 text-center shadow-xs space-y-2">
           <div className="w-10 h-10 rounded-full bg-[var(--accent-bg)] text-[var(--accent-2)] flex items-center justify-center mx-auto">
             <MapPin size={20} />
           </div>
@@ -255,7 +255,7 @@ export default function UserAddressManager({ initialAddresses }: UserAddressMana
           <button
             type="button"
             onClick={openAddModal}
-            className="mt-2 text-xs font-sora font-bold text-white bg-gradient-to-r from-[var(--accent)] to-[var(--accent-2)] px-4 py-2 rounded-[var(--radius-md)] shadow-3d press active:scale-95 transition-all inline-flex items-center gap-1.5"
+            className="mt-2 text-xs font-sora font-bold text-white bg-gradient-to-r from-[var(--accent)] to-[var(--accent-2)] px-4 py-2 rounded-xl shadow-btn press active:scale-95 transition-all inline-flex items-center gap-1.5"
           >
             <Plus size={14} />
             <span>Tambah Alamat Pertama</span>
@@ -270,10 +270,10 @@ export default function UserAddressManager({ initialAddresses }: UserAddressMana
             return (
               <div
                 key={addr.id}
-                className={`card-3d bg-white border rounded-[var(--radius-lg)] p-3.5 shadow-3d transition-all ${
+                className={`bg-white border rounded-2xl p-3.5 shadow-xs transition-all ${
                   addr.is_default 
-                    ? 'border-[var(--accent-2)]/60 bg-gradient-to-br from-white to-[var(--accent-bg)]/20 shadow-card-accent' 
-                    : 'border-[rgba(232,214,205,0.9)]'
+                    ? 'border-[var(--accent)] bg-orange-50/20' 
+                    : 'border-[var(--line)]'
                 }`}
               >
                 <div className="flex items-start justify-between gap-2">
@@ -380,7 +380,7 @@ export default function UserAddressManager({ initialAddresses }: UserAddressMana
       {/* Modal Add / Edit Address */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs animate-in fade-in duration-300">
-          <div className="card-3d bg-white border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-xl)] w-full max-w-md p-5 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+          <div className="bg-white border border-[var(--line)] rounded-2xl w-full max-w-md p-5 shadow-2xl relative max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between pb-3 border-b border-[var(--line)] mb-4">
               <div className="flex items-center gap-2">
                 <span className="w-8 h-8 rounded-full bg-[var(--accent-bg)] text-[var(--accent-2)] flex items-center justify-center font-bold">

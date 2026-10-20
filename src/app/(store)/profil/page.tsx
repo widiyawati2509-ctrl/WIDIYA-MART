@@ -55,7 +55,7 @@ export default async function ProfilPage() {
 
       <div className="px-4 space-y-2.5">
         {/* User Identity Card */}
-        <div className="card-3d bg-white border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-xl)] p-3 shadow-3d flex items-center gap-3">
+        <div className="bg-white border border-[var(--line)] rounded-2xl p-3.5 shadow-xs flex items-center gap-3">
           <div className="w-13 h-13 rounded-[var(--radius-md)] bg-gradient-to-br from-[var(--accent)] to-[var(--accent-2)] text-white flex items-center justify-center shadow-badge shrink-0">
             <User size={24} />
           </div>
@@ -97,12 +97,12 @@ export default async function ProfilPage() {
                 <Link
                   key={ao.id}
                   href={`/pesanan/${ao.id}`}
-                  className={`block card-3d p-3 rounded-[var(--radius-lg)] border shadow-3d transition-all press ${
+                  className={`block p-3 rounded-2xl border shadow-xs transition-all press ${
                     isReady
-                      ? 'bg-emerald-500 text-white border-emerald-600 shadow-status-success'
+                      ? 'bg-emerald-500 text-white border-emerald-600'
                       : isProcessing
-                      ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white border-amber-600 shadow-status-warning'
-                      : 'bg-white text-[var(--ink)] border-[rgba(232,214,205,0.9)]'
+                      ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white border-amber-600'
+                      : 'bg-white text-[var(--ink)] border-[var(--line)]'
                   }`}
                 >
                   <div className="flex items-center justify-between mb-2">
@@ -139,7 +139,7 @@ export default async function ProfilPage() {
         {/* Loyalty Points Banner Card */}
         <Link
           href="/poin"
-          className="block card-3d bg-gradient-to-r from-[var(--warning)]/15 via-orange-500/10 to-[var(--warning)]/15 border border-[var(--warning)]/40 rounded-[var(--radius-lg)] p-3 shadow-3d press transition-all"
+          className="block bg-gradient-to-r from-[var(--warning)]/15 via-orange-500/10 to-[var(--warning)]/15 border border-[var(--warning)]/40 rounded-2xl p-3.5 shadow-xs press transition-all"
         >
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">

@@ -26,7 +26,7 @@ export function CheckoutVoucherModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs animate-in fade-in duration-200">
-      <div className="card-3d bg-white border border-[rgba(232,214,205,0.9)] rounded-3xl w-full max-w-sm p-5 shadow-2xl space-y-4">
+      <div className="bg-white border border-[var(--line)] rounded-2xl w-full max-w-sm p-5 shadow-2xl space-y-4">
         <div className="flex items-center justify-between pb-2 border-b border-[var(--line)]">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-xl bg-orange-100 text-[var(--accent-2)] flex items-center justify-center">

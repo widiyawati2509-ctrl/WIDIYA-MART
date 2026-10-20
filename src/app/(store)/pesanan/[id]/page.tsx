@@ -104,9 +104,9 @@ export default async function OrderDetailPage({ params, searchParams }: OrderDet
         )}
 
         {/* Status Stepper Card */}
-        <div className="card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-lg)] p-3 shadow-3d">
+        <div className="bg-white border border-[var(--line)] rounded-2xl p-3.5 shadow-xs">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="font-sora font-bold text-sm text-[var(--ink)]">Status Pesanan</h2>
+            <h2 className="font-sora font-bold text-xs text-[var(--ink)]">Status Pesanan</h2>
             <span className={`text-[var(--text-caption)] font-bold px-2.5 py-0.5 rounded-full ${getOrderStatusColor(order.status, shipping.metode)}`}>
               {getOrderStatusLabel(order.status, shipping.metode)}
             </span>
@@ -218,11 +218,11 @@ export default async function OrderDetailPage({ params, searchParams }: OrderDet
         </div>
 
         {/* Lokasi Pengambilan / Alamat Pengantaran */}
-        <div className="card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-lg)] p-3 shadow-3d">
+        <div className="bg-white border border-[var(--line)] rounded-2xl p-3.5 shadow-xs">
           {shipping.isDelivery ? (
             <>
-              <h2 className="font-sora font-bold text-sm text-[var(--ink)] mb-2 flex items-center gap-2">
-                <Truck className="w-4 h-4 text-[var(--accent)]" />
+              <h2 className="font-sora font-bold text-xs text-[var(--ink)] mb-2 flex items-center gap-1.5">
+                <Truck className="w-3.5 h-3.5 text-[var(--accent)]" />
                 Alamat Pengantaran
               </h2>
               <div className="bg-[var(--paper)] p-3 rounded-xl border border-[var(--line)] space-y-1">
@@ -289,8 +289,8 @@ export default async function OrderDetailPage({ params, searchParams }: OrderDet
         </div>
 
         {/* Info Pemesan */}
-        <div className="card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-lg)] p-3 shadow-3d">
-          <h2 className="font-sora font-bold text-sm text-[var(--ink)] mb-2">Info Pemesan</h2>
+        <div className="bg-white border border-[var(--line)] rounded-2xl p-3.5 shadow-xs">
+          <h2 className="font-sora font-bold text-xs text-[var(--ink)] mb-2">Info Pemesan</h2>
           <div className="space-y-1.5 text-xs font-medium">
             <div className="flex justify-between">
               <span className="text-[var(--ink-soft)]">Nama</span>
@@ -323,8 +323,8 @@ export default async function OrderDetailPage({ params, searchParams }: OrderDet
 
 
         {/* Item Pesanan (Struk Nota Dashed) */}
-        <div className="card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-lg)] p-3 shadow-3d">
-          <h2 className="font-sora font-bold text-sm text-[var(--ink)] mb-2">Item Pesanan</h2>
+        <div className="bg-white border border-[var(--line)] rounded-2xl p-3.5 shadow-xs">
+          <h2 className="font-sora font-bold text-xs text-[var(--ink)] mb-2">Item Pesanan</h2>
           <div className="space-y-2">
             {order.order_items.map((item) => (
               <div key={item.id} className="text-xs">

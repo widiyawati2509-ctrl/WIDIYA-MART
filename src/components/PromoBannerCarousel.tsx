@@ -64,12 +64,17 @@ const SUPABASE_CATALOG_BASE =
 
 function resolvePromoImg(b: any): string | null {
   const raw = b?.image_url || b?.productImage || b?.products?.image_url
-  if (!raw) return null
-  if (typeof raw === 'string' && raw.startsWith('/products/')) {
-    const filename = raw.split('/').pop()
+  if (!raw || typeof raw !== 'string') return null
+  const trimmed = raw.trim()
+  if (trimmed.startsWith('[') || trimmed.startsWith('{')) return null
+  if (trimmed.startsWith('/products/')) {
+    const filename = trimmed.split('/').pop()
     return `${SUPABASE_CATALOG_BASE}${filename}`
   }
-  return raw
+  if (trimmed.startsWith('http://') || trimmed.startsWith('https://') || trimmed.startsWith('/')) {
+    return trimmed
+  }
+  return null
 }
 
 export default function PromoBannerCarousel({ banners: propBanners }: { banners?: any[] }) {

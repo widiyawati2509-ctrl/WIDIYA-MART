@@ -47,9 +47,9 @@ export default async function TentangTokoPage() {
         className="mb-4"
       />
 
-      <div className="px-4 space-y-4">
+      <div className="px-4 space-y-3">
         {/* Toko Identity Card */}
-        <div className="card-3d bg-white border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-xl)] p-5 shadow-3d text-center space-y-3">
+        <div className="bg-white border border-[var(--line)] rounded-2xl p-5 shadow-xs text-center space-y-3">
           <div className="w-20 h-20 mx-auto rounded-2xl p-2 bg-gradient-to-br from-amber-50 to-orange-50 border border-orange-200/80 shadow-md flex items-center justify-center overflow-hidden">
             <Image
               src="/logo.png"
@@ -105,7 +105,7 @@ export default async function TentangTokoPage() {
         </div>
 
         {/* Informasi Kontak & Lokasi */}
-        <div className="card-3d bg-white border border-[rgba(232,214,205,0.9)] rounded-2xl p-4 shadow-3d space-y-3.5">
+        <div className="bg-white border border-[var(--line)] rounded-2xl p-4 shadow-xs space-y-3.5">
           <h2 className="font-sora font-bold text-sm text-[var(--ink)] flex items-center gap-2">
             <Store size={16} className="text-[var(--accent)]" />
             Detail Kontak & Lokasi
@@ -168,7 +168,7 @@ export default async function TentangTokoPage() {
         </div>
 
         {/* Kebijakan Pengambilan Pesanan COD (Feature Unclaimed Order) */}
-        <div className="card-3d bg-amber-50/80 border border-amber-200/90 rounded-2xl p-4 shadow-3d space-y-2.5">
+        <div className="bg-amber-50/80 border border-amber-200/90 rounded-2xl p-4 shadow-xs space-y-2.5">
           <div className="flex items-center gap-2 text-amber-900">
             <PackageCheck size={18} className="text-amber-700 shrink-0" />
             <h2 className="font-sora font-bold text-xs">
@@ -205,7 +205,7 @@ export default async function TentangTokoPage() {
         </div>
 
         {/* Info Pengantaran Alamat */}
-        <div className="card-3d bg-emerald-50/80 border border-emerald-200/80 rounded-2xl p-4 shadow-3d space-y-2">
+        <div className="bg-emerald-50/80 border border-emerald-200/80 rounded-2xl p-4 shadow-xs space-y-2">
           <div className="flex items-center gap-2 text-emerald-950">
             <Truck size={17} className="text-emerald-700 shrink-0" />
             <h2 className="font-sora font-bold text-xs">

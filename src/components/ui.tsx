@@ -54,7 +54,7 @@ export function Button({
   )
 }
 
-// 3D PUFFY CARD (Radius 20px, Shadow-3D)
+// UNIFIED CARD (Radius 16px / rounded-2xl, border-line, shadow-xs)
 interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   nested?: boolean
   className?: string
@@ -64,7 +64,7 @@ interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
 export function Card({ className = '', children, ...props }: CardProps) {
   return (
     <div
-      className={`card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-lg)] shadow-3d p-3 ${className}`}
+      className={`bg-white border border-[var(--line)] rounded-2xl shadow-xs p-3.5 transition-all ${className}`}
       {...props}
     >
       {children}

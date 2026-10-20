@@ -68,7 +68,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
   const storePhone = storeResult.data?.whatsapp || storeResult.data?.no_hp_toko || '087816182036'
 
   return (
-    <div className="w-full pb-36">
+    <div className="w-full pb-44">
       {/* Top Header */}
       <PageHeader
         title={product.nama}
@@ -83,13 +83,13 @@ export default async function ProductPage({ params }: ProductPageProps) {
       {/* Customer Reviews Section */}
       <ProductReviewsSection reviews={reviews} />
 
-      {/* Related Products */}
+      {/* Related Products - Added safe bottom margin */}
       {related && related.length > 0 && (
-        <div className="mx-4 mt-4">
-          <h2 className="font-sora font-bold text-sm text-[var(--ink)] mb-3">Produk Lainnya</h2>
-          <div className="flex gap-3 overflow-x-auto scrollbar-hide snap-x snap-mandatory py-2 -mx-4 px-4">
+        <div className="mx-4 mt-4 mb-4">
+          <h2 className="font-sora font-bold text-xs text-[var(--ink)] mb-2.5">Produk Lainnya</h2>
+          <div className="flex gap-2.5 overflow-x-auto scrollbar-hide snap-x snap-mandatory py-1 -mx-4 px-4">
             {related.map((p) => (
-              <div key={p.id} className="w-40 shrink-0 snap-start">
+              <div key={p.id} className="w-36 shrink-0 snap-start">
                 <ProductCard product={p} />
               </div>
             ))}

@@ -342,8 +342,8 @@ export default function ProductDetailInteractive({ product, storePhone = '087816
         )}
       </div>
 
-      {/* Info Card */}
-      <div className="mx-4 mt-3 card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-lg)] p-4 shadow-3d">
+      {/* Info Card - Consistent Rounded & Padding */}
+      <div className="mx-4 mt-2.5 bg-white border border-[var(--line)] rounded-2xl p-3.5 shadow-xs">
         {product.categories && (
           <Link
             href={`/kategori?kategori=${product.categories.slug}`}
@@ -429,10 +429,12 @@ export default function ProductDetailInteractive({ product, storePhone = '087816
         )}
       </div>
 
-      {/* Description */}
+      {/* Description - Consistent Rounded & Padding */}
       {cleanDeskripsi && (
-        <div className="mx-4 mt-3 card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-lg)] p-4 shadow-3d">
-          <h2 className="font-sora font-bold text-sm text-[var(--ink)] mb-2">Deskripsi Produk</h2>
+        <div className="mx-4 mt-2.5 bg-white border border-[var(--line)] rounded-2xl p-3.5 shadow-xs">
+          <h2 className="font-sora font-bold text-xs text-[var(--ink)] mb-1.5 flex items-center gap-1.5">
+            Deskripsi Produk
+          </h2>
           <p className="text-[var(--ink-soft)] text-xs leading-relaxed whitespace-pre-line font-inter">
             {cleanDeskripsi}
           </p>

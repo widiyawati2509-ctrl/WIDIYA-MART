@@ -156,7 +156,7 @@ export default function ShoppingListClient({ initialItems }: ShoppingListClientP
     // If user just moved items to cart, show the reassuring success screen
     if (lastMoved) {
       return (
-        <div className="card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-xl)] p-6 text-center shadow-3d space-y-4">
+        <div className="bg-white border border-[var(--line)] rounded-2xl p-6 text-center shadow-xs space-y-4">
           <div className="w-16 h-16 mx-auto rounded-full bg-emerald-50 border-2 border-emerald-200 flex items-center justify-center text-emerald-600 shadow-sm animate-bounce-short">
             <CheckCircle2 size={36} className="stroke-[2.2]" />
           </div>
@@ -254,7 +254,7 @@ export default function ShoppingListClient({ initialItems }: ShoppingListClientP
       )}
 
       {/* Top action: Move All to Cart */}
-      <div className="card-3d bg-white border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-lg)] p-3 shadow-3d flex items-center justify-between">
+      <div className="bg-white border border-[var(--line)] rounded-2xl p-3 shadow-xs flex items-center justify-between">
         <span className="text-xs font-semibold text-[var(--ink)]">
           {items.length} produk tersimpan
         </span>
@@ -288,7 +288,7 @@ export default function ShoppingListClient({ initialItems }: ShoppingListClientP
           return (
             <div
               key={item.id}
-              className="card-3d bg-card border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-lg)] py-2.5 px-3 shadow-3d flex items-center gap-2.5"
+              className="bg-white border border-[var(--line)] rounded-2xl py-2.5 px-3 shadow-xs flex items-center gap-2.5"
             >
               {/* Image */}
               <Link

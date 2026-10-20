@@ -323,7 +323,7 @@ export default function UserOrdersList({ initialOrders }: UserOrdersListProps) {
       {/* Batch Select Toolbar when Selection Mode active */}
       {filteredOrders.length > 0 && isSelectMode && (
         <div className="px-4">
-          <div className="card-3d bg-white border border-[rgba(232,214,205,0.9)] rounded-2xl p-3 shadow-3d flex items-center justify-between gap-2">
+          <div className="bg-white border border-[var(--line)] rounded-2xl p-3 shadow-xs flex items-center justify-between gap-2">
             <button
               type="button"
               onClick={handleToggleSelectAll}
@@ -402,10 +402,10 @@ export default function UserOrdersList({ initialOrders }: UserOrdersListProps) {
               return (
                 <div
                   key={order.id}
-                  className={`card-3d bg-card border rounded-[var(--radius-lg)] transition-all overflow-hidden relative shadow-3d ${
+                  className={`bg-white border rounded-2xl transition-all overflow-hidden relative shadow-xs ${
                     isSelected
                       ? 'border-[var(--accent)] bg-orange-50/40'
-                      : 'border-[rgba(232,214,205,0.9)] hover:border-[var(--accent)]'
+                      : 'border-[var(--line)] hover:border-[var(--accent)]/50'
                   }`}
                 >
                   <div className="flex items-start">
@@ -640,7 +640,7 @@ export default function UserOrdersList({ initialOrders }: UserOrdersListProps) {
       {/* Confirmation Delete Modal */}
       {confirmModal.isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-300">
-          <div className="card-3d bg-white rounded-3xl p-6 max-w-sm w-full shadow-2xl border border-[rgba(232,214,205,0.9)] space-y-4">
+          <div className="bg-white rounded-2xl p-5 max-w-sm w-full shadow-2xl border border-[var(--line)] space-y-4">
             <div className="w-12 h-12 rounded-2xl bg-[var(--accent-bg)] text-[var(--danger)] flex items-center justify-center mx-auto shadow-inner">
               <AlertTriangle className="w-6 h-6" />
             </div>

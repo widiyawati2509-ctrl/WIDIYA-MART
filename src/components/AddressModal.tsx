@@ -320,7 +320,7 @@ export default function AddressModal({
             /* LIST OF SAVED ADDRESSES */
             <>
               {addresses.length === 0 ? (
-                <div className="card-3d bg-white border border-[rgba(232,214,205,0.9)] rounded-[var(--radius-lg)] p-5 text-center shadow-3d space-y-2.5">
+                <div className="bg-white border border-[var(--line)] rounded-2xl p-5 text-center shadow-xs space-y-2.5">
                   <div className="w-10 h-10 rounded-full bg-[var(--accent-bg)] text-[var(--accent-2)] flex items-center justify-center mx-auto">
                     <MapPin size={20} />
                   </div>
@@ -347,9 +347,9 @@ export default function AddressModal({
                       <div
                         key={addr.id}
                         onClick={() => onSelectAddress(addr)}
-                        className={`p-3.5 rounded-[var(--radius-lg)] border transition-all cursor-pointer flex items-start gap-3 ${
+                        className={`p-3.5 rounded-2xl border transition-all cursor-pointer flex items-start gap-3 ${
                           isSelected
-                            ? 'bg-[var(--accent-bg)]/40 border-[var(--accent)] shadow-3d ring-1 ring-[var(--accent)]'
+                            ? 'bg-[var(--accent-bg)]/40 border-[var(--accent)] shadow-xs ring-1 ring-[var(--accent)]'
                             : 'bg-white border-[var(--line)] hover:border-[var(--accent)]/50 shadow-xs'
                         }`}
                       >
