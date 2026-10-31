@@ -5,10 +5,8 @@ import { useState, useTransition, useCallback, useRef, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import {
   formatRupiah,
-  formatWhatsAppUrl,
   DUSUN_PENGENJEK_LIST,
   calculateDusunShipping,
-  type DusunShippingOption,
 } from '@/lib/utils'
 import { CheckoutOrderSummary } from './checkout/CheckoutOrderSummary'
 import { CheckoutVoucherModal } from './checkout/CheckoutVoucherModal'
@@ -19,31 +17,30 @@ import { validateCoupon, getAvailableCoupons } from '@/lib/actions/coupons'
 import type { Coupon } from '@/types/database'
 import {
   Coins,
-  Sparkles,
   Loader2,
-  AlertCircle,
   MapPin,
   Truck,
   Store,
   Clock,
-  Phone,
   ShieldCheck,
   CheckCircle2,
   Navigation,
-  Info,
   Bookmark,
-  MessageCircle,
   TicketPercent,
-  Tag,
   Check,
   X,
   Gift,
   ArrowRight,
+  Phone,
+  User,
+  FileText,
+  ChevronRight,
+  Sparkles,
 } from 'lucide-react'
 import { UserAddress } from '@/types/database'
-import { Card, Button, Badge } from '@/components/ui'
+import { Card } from '@/components/ui'
 
-// Fixed store coordinates: PENGENJEK MART (Pengenjek, Jonggat, Lombok Tengah)
+// Fixed store coordinates: WIDIYA MART (Pengenjek, Jonggat, Lombok Tengah)
 const STORE_COORDS = {
   lat: -8.636636,
   lng: 116.244461,
@@ -124,6 +121,7 @@ export default function CheckoutFormClient({
   const [metodePengiriman, setMetodePengiriman] = useState<'ambil_di_toko' | 'antar_alamat'>('ambil_di_toko')
   const [selectedAddressId, setSelectedAddressId] = useState<string>(defaultAddr ? defaultAddr.id : 'manual')
   const [alamatPengiriman, setAlamatPengiriman] = useState(defaultAddr?.alamat_lengkap || '')
+  const [isChangingAddress, setIsChangingAddress] = useState(false)
 
   // Dusun area selection (Pengenjek & around)
   const [selectedDusunId, setSelectedDusunId] = useState<string>('baremayung')
@@ -151,11 +149,9 @@ export default function CheckoutFormClient({
   const [geoMessage, setGeoMessage] = useState<string>('')
 
   // Coupon / Promo Voucher states
-  const [couponInput, setCouponInput] = useState('')
   const [appliedCoupon, setAppliedCoupon] = useState<Coupon | null>(null)
   const [couponDiscount, setCouponDiscount] = useState(0)
   const [couponFeedback, setCouponFeedback] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
-  const [isCheckingCoupon, setIsCheckingCoupon] = useState(false)
   const [availableCoupons, setAvailableCoupons] = useState<Coupon[]>([])
   const [isCouponModalOpen, setIsCouponModalOpen] = useState(false)
 
@@ -174,12 +170,15 @@ export default function CheckoutFormClient({
 
   const handleSelectSavedAddress = (addrId: string) => {
     setSelectedAddressId(addrId)
+    setIsChangingAddress(false)
+
     if (addrId === 'manual') {
       setAlamatPengiriman('')
       setUserCoords(null)
       setJarakKm(null)
       setGeoStatus('idle')
       setGeoMessage('')
+      setUseGpsDistance(false)
       return
     }
 
@@ -201,6 +200,7 @@ export default function CheckoutFormClient({
         setUserCoords(null)
         setJarakKm(null)
         setGeoStatus('idle')
+        setUseGpsDistance(false)
       }
     }
   }
@@ -242,12 +242,12 @@ export default function CheckoutFormClient({
   const handleDetectLocation = useCallback(() => {
     if (typeof window === 'undefined' || !navigator.geolocation) {
       setGeoStatus('error')
-      setGeoMessage('Browser tidak mendukung deteksi lokasi otomatis.')
+      setGeoMessage('Browser tidak mendukung deteksi GPS.')
       return
     }
 
     setGeoStatus('locating')
-    setGeoMessage('Mencari koordinat lokasi Anda...')
+    setGeoMessage('Mencari posisi koordinat Anda...')
 
     navigator.geolocation.getCurrentPosition(
       (pos) => {
@@ -264,28 +264,27 @@ export default function CheckoutFormClient({
         setGeoStatus('success')
         setUseGpsDistance(true)
         if (distance <= 7.0) {
-          setGeoMessage(`Lokasi terdeteksi (~${distance} km). Radius ≤ 7 km: GRATIS ONGKIR!`)
+          setGeoMessage(`Lokasi terdeteksi (~${distance} km dari toko). Radius ≤ 7 km: GRATIS ONGKIR!`)
         } else {
-          setGeoMessage(`Lokasi terdeteksi (~${distance} km dari toko). Jarak > 7 km: Ongkir flat Rp 15.000.`)
+          setGeoMessage(`Lokasi terdeteksi (~${distance} km dari toko). Jarak > 7 km: Ongkir Rp 15.000.`)
         }
       },
-      (err) => {
+      () => {
         setGeoStatus('error')
-        setGeoMessage('Gagal mendeteksi koordinat GPS. Tarif ongkir dusun berlaku.')
+        setGeoMessage('Izin GPS ditolak atau tidak terdeteksi. Menggunakan tarif dusun.')
       },
       { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
     )
   }, [])
 
   // Apply voucher
-  const handleApplyCoupon = async (codeToApply?: string) => {
-    const targetCode = (codeToApply || couponInput).trim()
+  const handleApplyCoupon = async (codeToApply: string) => {
+    const targetCode = (codeToApply || '').trim().toUpperCase()
     if (!targetCode) {
       setCouponFeedback({ type: 'error', text: 'Masukkan kode voucher terlebih dahulu' })
       return
     }
 
-    setIsCheckingCoupon(true)
     setCouponFeedback(null)
 
     try {
@@ -301,20 +300,17 @@ export default function CheckoutFormClient({
       } else {
         setCouponFeedback({
           type: 'error',
-          text: res.error || 'Kode kupon tidak valid atau tidak memenuhi syarat',
+          text: res.error || 'Kode kupon tidak valid atau belum memenuhi syarat',
         })
       }
     } catch {
       setCouponFeedback({ type: 'error', text: 'Terjadi kesalahan saat memeriksa kupon' })
-    } finally {
-      setIsCheckingCoupon(false)
     }
   }
 
   // Auto-apply coupon from URL param if present (e.g. from Cart or Promo link)
   useEffect(() => {
     if (initialCouponCode && !appliedCoupon) {
-      setCouponInput(initialCouponCode)
       handleApplyCoupon(initialCouponCode)
     }
   }, [initialCouponCode])
@@ -323,7 +319,6 @@ export default function CheckoutFormClient({
     setAppliedCoupon(null)
     setCouponDiscount(0)
     setCouponFeedback(null)
-    setCouponInput('')
   }
 
   // Submit checkout
@@ -337,8 +332,8 @@ export default function CheckoutFormClient({
     }
 
     if (metodePengiriman === 'antar_alamat' && !alamatPengiriman.trim()) {
-      setErrorMsg('Harap isi alamat lengkap pengiriman untuk pengantaran pesanan')
-      window.scrollTo({ top: 300, behavior: 'smooth' })
+      setErrorMsg('Harap isi alamat lengkap pengiriman untuk kurir toko')
+      window.scrollTo({ top: 150, behavior: 'smooth' })
       return
     }
 
@@ -355,7 +350,7 @@ export default function CheckoutFormClient({
           setErrorMsg(res.error)
           isSubmittingRef.current = false
           setIsSubmitting(false)
-          window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })
+          window.scrollTo({ top: 0, behavior: 'smooth' })
         } else if (res?.orderId) {
           router.push(`/pesanan/${res.orderId}?created=true`)
         }
@@ -368,84 +363,107 @@ export default function CheckoutFormClient({
     })
   }
 
+  const activeSavedAddress = savedAddresses.find((a) => a.id === selectedAddressId)
+
   return (
-    <form onSubmit={handleSubmit} className="space-y-2.5 px-4 pb-12">
-      {/* 1. METODE PENGIRIMAN TOGGLE */}
-      <Card className="space-y-2.5">
+    <form onSubmit={handleSubmit} className="space-y-3 px-4 pb-36">
+      {/* Visual Step Progress Header */}
+      <div className="flex items-center justify-between px-1 py-1 text-xs">
+        <div className="flex items-center gap-1.5 font-sora font-bold text-[var(--accent-2)]">
+          <span className="w-5 h-5 rounded-full bg-[var(--accent)] text-white text-[11px] flex items-center justify-center">1</span>
+          <span>Pengiriman</span>
+        </div>
+        <div className="h-0.5 w-6 bg-[var(--line)]" />
+        <div className="flex items-center gap-1.5 font-sora font-semibold text-[var(--ink-soft)]">
+          <span className="w-5 h-5 rounded-full bg-[var(--paper)] border border-[var(--line)] text-[11px] flex items-center justify-center text-[var(--ink-soft)]">2</span>
+          <span>Penerima</span>
+        </div>
+        <div className="h-0.5 w-6 bg-[var(--line)]" />
+        <div className="flex items-center gap-1.5 font-sora font-semibold text-[var(--ink-soft)]">
+          <span className="w-5 h-5 rounded-full bg-[var(--paper)] border border-[var(--line)] text-[11px] flex items-center justify-center text-[var(--ink-soft)]">3</span>
+          <span>Bayar (COD)</span>
+        </div>
+      </div>
+
+      {/* LANGKAH 1: CARA PENGIRIMAN */}
+      <Card className="space-y-3">
         <div className="flex items-center justify-between">
-          <h2 className="font-sora font-bold text-sm text-[var(--ink)] flex items-center gap-2">
-            <Truck size={17} className="text-[var(--accent)]" />
-            Metode Pengiriman
-          </h2>
-          <span className="text-[var(--text-caption)] font-semibold text-[var(--accent-2)] bg-[var(--accent-bg)] px-2.5 py-0.5 rounded-full">
+          <div className="flex items-center gap-2">
+            <span className="w-6 h-6 rounded-lg bg-[var(--accent-bg)] text-[var(--accent-2)] font-sora font-bold text-xs flex items-center justify-center">
+              1
+            </span>
+            <h2 className="font-sora font-bold text-xs text-[var(--ink)]">Metode & Tujuan Pengiriman</h2>
+          </div>
+          <span className="text-[10px] font-sora font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
             {metodePengiriman === 'ambil_di_toko'
-              ? 'Bebas Ongkir'
+              ? 'Bebas Biaya'
               : ongkir === 0
-              ? 'Gratis Ongkir'
+              ? '🎉 Gratis Ongkir'
               : `Ongkir ${formatRupiah(ongkir)}`}
           </span>
         </div>
 
-        <div className="grid grid-cols-2 gap-2 pt-1">
-          {/* Option: Ambil di Toko */}
+        {/* 2-Option Selector: Ambil di Toko vs Diantar ke Rumah */}
+        <div className="grid grid-cols-2 gap-2 pt-0.5">
+          {/* Opsi 1: Ambil di Toko */}
           <button
             type="button"
             onClick={() => setMetodePengiriman('ambil_di_toko')}
-            className={`p-2.5 rounded-2xl border text-left transition-all relative flex flex-col justify-between ${
+            className={`p-3 rounded-2xl border text-left transition-all flex flex-col justify-between relative ${
               metodePengiriman === 'ambil_di_toko'
-                ? 'border-[var(--accent)] bg-[var(--accent-bg)] shadow-card-accent ring-1 ring-[var(--accent)]'
-                : 'border-[var(--line)] bg-white hover:border-[var(--line)]'
+                ? 'border-[var(--accent)] bg-orange-50/40 shadow-xs ring-1 ring-[var(--accent)]'
+                : 'border-[var(--line)] bg-white hover:border-[var(--accent)]/50'
             }`}
           >
-            <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center justify-between mb-1.5">
               <span
-                className={`w-8 h-8 rounded-xl flex items-center justify-center ${
+                className={`w-7 h-7 rounded-xl flex items-center justify-center ${
                   metodePengiriman === 'ambil_di_toko'
                     ? 'bg-[var(--accent)] text-white'
                     : 'bg-[var(--paper)] text-[var(--ink-soft)]'
                 }`}
               >
-                <Store size={16} />
+                <Store size={15} />
               </span>
               {metodePengiriman === 'ambil_di_toko' && (
                 <CheckCircle2 size={16} className="text-[var(--accent)]" />
               )}
             </div>
             <div>
-              <p className="font-sora font-bold text-xs text-[var(--ink)]">Ambil di Toko</p>
-              <p className="text-[var(--text-caption)] text-emerald-700 font-extrabold mt-0.5">
-                Gratis (Rp 0)
+              <p className="font-sora font-bold text-xs text-[var(--ink)]">Ambil Sendiri</p>
+              <p className="text-[10px] text-emerald-700 font-extrabold mt-0.5">
+                Gratis di Kasir (Rp 0)
               </p>
             </div>
           </button>
 
-          {/* Option: Diantar ke Alamat */}
+          {/* Opsi 2: Diantar ke Alamat */}
           <button
             type="button"
             onClick={() => setMetodePengiriman('antar_alamat')}
-            className={`p-2.5 rounded-2xl border text-left transition-all relative flex flex-col justify-between ${
+            className={`p-3 rounded-2xl border text-left transition-all flex flex-col justify-between relative ${
               metodePengiriman === 'antar_alamat'
-                ? 'border-[var(--accent)] bg-[var(--accent-bg)] shadow-card-accent ring-1 ring-[var(--accent)]'
-                : 'border-[var(--line)] bg-white hover:border-[var(--line)]'
+                ? 'border-[var(--accent)] bg-orange-50/40 shadow-xs ring-1 ring-[var(--accent)]'
+                : 'border-[var(--line)] bg-white hover:border-[var(--accent)]/50'
             }`}
           >
-            <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center justify-between mb-1.5">
               <span
-                className={`w-8 h-8 rounded-xl flex items-center justify-center ${
+                className={`w-7 h-7 rounded-xl flex items-center justify-center ${
                   metodePengiriman === 'antar_alamat'
                     ? 'bg-[var(--accent)] text-white'
                     : 'bg-[var(--paper)] text-[var(--ink-soft)]'
                 }`}
               >
-                <Truck size={16} />
+                <Truck size={15} />
               </span>
               {metodePengiriman === 'antar_alamat' && (
                 <CheckCircle2 size={16} className="text-[var(--accent)]" />
               )}
             </div>
             <div>
-              <p className="font-sora font-bold text-xs text-[var(--ink)]">Diantar ke Alamat</p>
-              <p className="text-[var(--text-caption)] text-[var(--accent-2)] font-semibold mt-0.5">
+              <p className="font-sora font-bold text-xs text-[var(--ink)]">Diantar Kurir (COD)</p>
+              <p className="text-[10px] text-[var(--accent-2)] font-semibold mt-0.5">
                 Pengenjek & Sekitar
               </p>
             </div>
@@ -453,366 +471,344 @@ export default function CheckoutFormClient({
         </div>
 
         <input type="hidden" name="metode_pengiriman" value={metodePengiriman} />
-      </Card>
 
-      {/* 2. DETAIL LOKASI / ALAMAT */}
-      {metodePengiriman === 'ambil_di_toko' ? (
-        <Card className="space-y-2.5">
-          <div className="flex items-center justify-between">
-            <h2 className="font-sora font-bold text-sm text-[var(--ink)] flex items-center gap-2">
-              <Store size={16} className="text-[var(--accent)]" />
-              Titik Pengambilan Pesanan
-            </h2>
-            <StoreStatusBadge />
-          </div>
-
-          <div className="space-y-2 text-xs">
-            <p className="font-bold text-[var(--ink)] text-sm">
-              {store?.nama_toko || 'PENGENJEK MART'}
+        {/* Content Opsi 1: Info Toko Pengambilan */}
+        {metodePengiriman === 'ambil_di_toko' ? (
+          <div className="p-3 rounded-xl bg-[var(--paper)] border border-[var(--line)]/60 space-y-1.5 text-xs">
+            <div className="flex items-center justify-between">
+              <span className="font-sora font-bold text-[var(--ink)] flex items-center gap-1.5">
+                <Store size={14} className="text-[var(--accent)]" />
+                {store?.nama_toko || 'WIDIYA MART'}
+              </span>
+              <StoreStatusBadge />
+            </div>
+            <p className="text-[11px] text-[var(--ink-soft)] flex items-center gap-1">
+              <MapPin size={12} className="text-emerald-600 shrink-0" />
+              <span>{store?.alamat_toko || 'Desa Pengenjek, Kec. Jonggat'}</span>
             </p>
-            {store?.alamat_toko && (
-              <p className="text-[var(--ink-soft)] flex gap-2 font-medium">
-                <MapPin size={15} className="shrink-0 mt-0.5 text-emerald-600" />
-                <span>
-                  {store.alamat_toko}
-                  {store.kota ? `, ${store.kota}` : ''}
-                </span>
-              </p>
-            )}
-            {store?.jam_operasional && (
-              <p className="text-[var(--ink-soft)] flex gap-2 font-medium">
-                <Clock size={15} className="shrink-0 mt-0.5 text-emerald-600" />
-                <span>{store.jam_operasional}</span>
-              </p>
-            )}
+            <p className="text-[10.5px] text-emerald-800 font-medium pt-1">
+              ✓ Barang disiapkan kasir toko. Bisa diambil kapan saja saat status sudah &quot;Siap Diambil&quot;.
+            </p>
           </div>
-        </Card>
-      ) : (
-        <Card className="space-y-3.5">
-          <div className="flex items-center justify-between">
-            <h2 className="font-sora font-bold text-sm text-[var(--ink)] flex items-center gap-2">
-              <Navigation size={16} className="text-[var(--accent)]" />
-              Area & Alamat Pengantaran
-            </h2>
-            <span
-              className={`text-[var(--text-caption)] font-bold px-2 py-0.5 rounded-full ${
-                ongkir === 0
-                  ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                  : 'bg-[var(--accent-bg)] text-[var(--accent-2)]'
-              }`}
-            >
-              {ongkir === 0 ? '🎉 Gratis Ongkir' : `Ongkir: ${formatRupiah(ongkir)}`}
-            </span>
-          </div>
+        ) : (
+          /* Content Opsi 2: Alamat Pengantaran */
+          <div className="space-y-3 pt-1">
+            {/* Case A: User has saved addresses and is NOT currently choosing manual */}
+            {savedAddresses.length > 0 && selectedAddressId !== 'manual' && activeSavedAddress && !isChangingAddress ? (
+              <div className="p-3 rounded-xl bg-orange-50/30 border border-orange-200/80 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="inline-flex items-center gap-1 text-[10px] font-sora font-bold bg-[var(--accent-bg)] text-[var(--accent-2)] px-2 py-0.5 rounded-full">
+                    <Bookmark size={11} /> {activeSavedAddress.label} {activeSavedAddress.is_default ? '(Utama)' : ''}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setIsChangingAddress(true)}
+                    className="text-[11px] font-sora font-bold text-[var(--accent-2)] hover:underline"
+                  >
+                    Ganti Alamat
+                  </button>
+                </div>
+                <p className="text-xs font-semibold text-[var(--ink)] leading-snug">
+                  {activeSavedAddress.alamat_lengkap}
+                </p>
+              </div>
+            ) : null}
 
-          {/* DUSUN / AREA SELECTOR (Task 8: Kalkulator Ongkir Lokal) */}
-          <div className="p-3 rounded-2xl bg-[var(--paper)] border border-[var(--line)] space-y-2">
-            <label className="text-xs font-sora font-bold text-[var(--ink)] flex items-center justify-between">
-              <span className="flex items-center gap-1.5">
-                <MapPin size={14} className="text-[var(--accent)]" />
-                Pilih Dusun / Wilayah Pengantaran
-              </span>
-              <span className="text-[10px] text-emerald-700 font-extrabold">
-                {dusunShipping.isFree ? 'Gratis Ongkir' : `Tarif: ${formatRupiah(selectedDusun.ongkir)}`}
-              </span>
-            </label>
+            {/* Case B: Address Picker List when changing address */}
+            {savedAddresses.length > 0 && isChangingAddress && (
+              <div className="p-3 rounded-xl bg-[var(--paper)] border border-[var(--line)] space-y-2 animate-in fade-in duration-200">
+                <div className="flex items-center justify-between pb-1 border-b border-[var(--line)]/50">
+                  <span className="text-xs font-sora font-bold text-[var(--ink)]">Pilih Alamat Tersimpan:</span>
+                  <button
+                    type="button"
+                    onClick={() => setIsChangingAddress(false)}
+                    className="text-[11px] text-[var(--ink-soft)] hover:underline"
+                  >
+                    Batal
+                  </button>
+                </div>
+                <div className="space-y-1.5 max-h-48 overflow-y-auto pr-1">
+                  {savedAddresses.map((addr) => (
+                    <div
+                      key={addr.id}
+                      onClick={() => handleSelectSavedAddress(addr.id)}
+                      className={`p-2.5 rounded-xl border text-xs cursor-pointer transition-all ${
+                        selectedAddressId === addr.id
+                          ? 'border-[var(--accent)] bg-white shadow-xs'
+                          : 'border-[var(--line)] bg-white/70 hover:border-[var(--accent)]/50'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="font-sora font-bold text-[var(--ink)] text-[11px]">{addr.label}</span>
+                        {selectedAddressId === addr.id && <Check size={14} className="text-[var(--accent)]" />}
+                      </div>
+                      <p className="text-[11px] text-[var(--ink-soft)] line-clamp-2">{addr.alamat_lengkap}</p>
+                    </div>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() => handleSelectSavedAddress('manual')}
+                    className="w-full py-2 rounded-xl border border-dashed border-[var(--accent)]/50 text-xs font-sora font-bold text-[var(--accent-2)] hover:bg-orange-50 text-center"
+                  >
+                    + Tulis Alamat Baru / Manual
+                  </button>
+                </div>
+              </div>
+            )}
 
-            <select
-              value={useGpsDistance ? 'gps' : selectedDusunId}
-              onChange={(e) => {
-                const val = e.target.value
-                if (val === 'gps') {
-                  setUseGpsDistance(true)
-                  if (geoStatus === 'idle') {
-                    handleDetectLocation()
-                  }
-                } else {
-                  setUseGpsDistance(false)
-                  setSelectedDusunId(val)
-                }
-              }}
-              className="w-full text-xs font-medium p-2.5 rounded-[var(--radius-md)] border border-[rgba(232,214,205,0.9)] bg-white focus:outline-hidden focus:border-[var(--accent)]"
-            >
-              <optgroup label="Desa Pengenjek (Tarif Rp 3.000 / Gratis min. Rp 25rb)">
-                {DUSUN_PENGENJEK_LIST.filter((d) => d.kategori === 'desa_pengenjek').map((d) => (
-                  <option key={d.id} value={d.id}>
-                    {d.nama} — {d.keterangan}
-                  </option>
-                ))}
-              </optgroup>
-              <optgroup label="Sekitar Pengenjek ≤ 7 km (Tarif Rp 7.000 / Gratis min. Rp 50rb)">
-                {DUSUN_PENGENJEK_LIST.filter((d) => d.kategori === 'sekitar_pengenjek').map((d) => (
-                  <option key={d.id} value={d.id}>
-                    {d.nama} — {d.keterangan}
-                  </option>
-                ))}
-              </optgroup>
-              <optgroup label="Luar Wilayah > 7 km (Tarif Rp 15.000 / Gratis min. Rp 100rb)">
-                {DUSUN_PENGENJEK_LIST.filter((d) => d.kategori === 'luar_area').map((d) => (
-                  <option key={d.id} value={d.id}>
-                    {d.nama} — {d.keterangan}
-                  </option>
-                ))}
-              </optgroup>
-              <option value="gps">📍 Gunakan Deteksi GPS Otomatis (Radius KM)</option>
-            </select>
-
-            {/* Free Shipping Dynamic Progress */}
-            {!useGpsDistance && (
-              <div className="pt-1">
-                {dusunShipping.isFree ? (
-                  <div className="p-2 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs flex items-center gap-1.5 font-semibold">
-                    <Check size={14} className="text-emerald-600 shrink-0" />
-                    <span>Belanja Anda mencapai syarat: <strong>GRATIS ONGKIR</strong> ke {selectedDusun.nama}!</span>
-                  </div>
-                ) : (
-                  <div className="p-2 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs flex items-center justify-between font-medium">
-                    <span>
-                      Belanja <strong>{formatRupiah(dusunShipping.sisaUntukGratis)}</strong> lagi untuk{' '}
-                      <strong>Gratis Ongkir</strong>
-                    </span>
-                    <span className="text-[10px] font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-md">
-                      Min. {formatRupiah(dusunShipping.minBelanja)}
-                    </span>
+            {/* Case C: Manual Address Fields (or if no saved addresses) */}
+            {(savedAddresses.length === 0 || selectedAddressId === 'manual') && (
+              <div className="space-y-2.5 p-3 rounded-xl bg-[var(--paper)] border border-[var(--line)]">
+                {savedAddresses.length > 0 && (
+                  <div className="flex justify-between items-center pb-1 border-b border-[var(--line)]/50">
+                    <span className="text-xs font-sora font-bold text-[var(--ink)]">Tulis Alamat Baru</span>
+                    <button
+                      type="button"
+                      onClick={() => handleSelectSavedAddress(defaultAddr ? defaultAddr.id : savedAddresses[0].id)}
+                      className="text-[11px] font-sora font-bold text-[var(--accent-2)] hover:underline"
+                    >
+                      ← Pakai Alamat Tersimpan
+                    </button>
                   </div>
                 )}
+
+                {/* Dusun Picker */}
+                <div>
+                  <label className="text-[11px] font-sora font-bold text-[var(--ink)] flex items-center justify-between mb-1">
+                    <span className="flex items-center gap-1">
+                      <MapPin size={13} className="text-[var(--accent)]" />
+                      Pilih Dusun / Wilayah:
+                    </span>
+                    <span className="text-[10px] text-emerald-700 font-extrabold">
+                      {dusunShipping.isFree ? 'Gratis Ongkir' : `Tarif: ${formatRupiah(selectedDusun.ongkir)}`}
+                    </span>
+                  </label>
+                  <select
+                    value={selectedDusunId}
+                    onChange={(e) => {
+                      setUseGpsDistance(false)
+                      setSelectedDusunId(e.target.value)
+                    }}
+                    className="w-full text-xs font-semibold p-2.5 rounded-xl border border-[var(--line)] bg-white text-[var(--ink)] outline-none focus:border-[var(--accent)]"
+                  >
+                    <optgroup label="Desa Pengenjek (Tarif Rp 3.000 / Gratis min. Rp 25rb)">
+                      {DUSUN_PENGENJEK_LIST.filter((d) => d.kategori === 'desa_pengenjek').map((d) => (
+                        <option key={d.id} value={d.id}>
+                          {d.nama} — {d.keterangan}
+                        </option>
+                      ))}
+                    </optgroup>
+                    <optgroup label="Sekitar Pengenjek ≤ 7 km (Tarif Rp 7.000 / Gratis min. Rp 50rb)">
+                      {DUSUN_PENGENJEK_LIST.filter((d) => d.kategori === 'sekitar_pengenjek').map((d) => (
+                        <option key={d.id} value={d.id}>
+                          {d.nama} — {d.keterangan}
+                        </option>
+                      ))}
+                    </optgroup>
+                    <optgroup label="Luar Wilayah > 7 km (Tarif Rp 15.000 / Gratis min. Rp 100rb)">
+                      {DUSUN_PENGENJEK_LIST.filter((d) => d.kategori === 'luar_area').map((d) => (
+                        <option key={d.id} value={d.id}>
+                          {d.nama} — {d.keterangan}
+                        </option>
+                      ))}
+                    </optgroup>
+                  </select>
+                </div>
+
+                {/* Alamat Lengkap & Patokan */}
+                <div>
+                  <label className="text-[11px] font-sora font-bold text-[var(--ink)] block mb-1">
+                    Patokan Rumah / Alamat Lengkap <span className="text-[var(--danger)]">*</span>
+                  </label>
+                  <textarea
+                    rows={2}
+                    value={alamatPengiriman}
+                    onChange={(e) => setAlamatPengiriman(e.target.value)}
+                    placeholder={`Contoh: Dusun ${selectedDusun.nama.split('(')[0].trim()}, RT 02 samping musholla, pagar warna hijau`}
+                    required={metodePengiriman === 'antar_alamat'}
+                    className="w-full text-xs p-2.5 rounded-xl border border-[var(--line)] bg-white text-[var(--ink)] placeholder:text-[var(--ink-soft)] outline-none focus:border-[var(--accent)] resize-none"
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Hidden Input for Form Submission */}
+            <input type="hidden" name="alamat_pengiriman" value={alamatPengiriman} />
+            <input type="hidden" name="dusun_id" value={selectedDusunId} />
+            <input type="hidden" name="dusun_pengiriman" value={selectedDusun.nama} />
+            <input type="hidden" name="user_lat" value={userCoords?.lat || ''} />
+            <input type="hidden" name="user_lng" value={userCoords?.lng || ''} />
+
+            {/* Dynamic Free Shipping Indicator */}
+            {dusunShipping.isFree ? (
+              <div className="p-2.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs flex items-center gap-2 font-semibold">
+                <Check size={14} className="text-emerald-600 shrink-0" />
+                <span>Belanjaan Anda memenuhi syarat: <strong>GRATIS ONGKIR</strong> ke {selectedDusun.nama}!</span>
+              </div>
+            ) : (
+              <div className="p-2.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs flex items-center justify-between font-medium">
+                <span>
+                  Belanja <strong>{formatRupiah(dusunShipping.sisaUntukGratis)}</strong> lagi untuk <strong>Gratis Ongkir</strong>
+                </span>
+                <span className="text-[10px] font-bold text-amber-800 bg-amber-100 px-2 py-0.5 rounded-md">
+                  Min. {formatRupiah(dusunShipping.minBelanja)}
+                </span>
+              </div>
+            )}
+
+            {/* Estimasi Waktu Tiba */}
+            {estimasiMenit !== null && (
+              <div className="p-2.5 rounded-xl bg-blue-50/90 border border-blue-200 text-xs text-blue-950 flex items-center justify-between">
+                <div className="flex items-center gap-1.5">
+                  <Clock size={14} className="text-blue-600 shrink-0" />
+                  <span className="font-semibold">Estimasi Pengantaran: ±{estimasiMenit} Menit</span>
+                </div>
+                <span className="text-[10px] font-sora font-extrabold bg-blue-600 text-white px-2 py-0.5 rounded-full">
+                  Siap Antar
+                </span>
               </div>
             )}
           </div>
+        )}
+      </Card>
 
-          <input type="hidden" name="dusun_id" value={selectedDusunId} />
-          <input type="hidden" name="dusun_pengiriman" value={selectedDusun.nama} />
+      {/* LANGKAH 2: DATA PENERIMA */}
+      <Card className="space-y-3">
+        <div className="flex items-center gap-2 pb-1 border-b border-[var(--line)]/50">
+          <span className="w-6 h-6 rounded-lg bg-[var(--accent-bg)] text-[var(--accent-2)] font-sora font-bold text-xs flex items-center justify-center">
+            2
+          </span>
+          <div>
+            <h2 className="font-sora font-bold text-xs text-[var(--ink)]">Data Penerima Pesanan</h2>
+            <p className="text-[10px] text-[var(--ink-soft)]">Kurir/kasir akan menghubungi kontak ini</p>
+          </div>
+        </div>
 
-          {/* Saved Addresses Picker if available */}
-          {savedAddresses && savedAddresses.length > 0 && (
-            <div className="space-y-1.5 p-3 rounded-2xl bg-[var(--paper)] border border-[var(--line)]">
-              <label className="text-xs font-sora font-bold text-[var(--ink)] flex items-center justify-between">
-                <span className="flex items-center gap-1.5">
-                  <Bookmark size={13} className="text-[var(--accent-2)]" />
-                  Alamat Tersimpan
-                </span>
-                <span className="text-[10px] text-[var(--accent-2)] font-semibold">
-                  {savedAddresses.length} Tersimpan
-                </span>
-              </label>
-
-              <select
-                value={selectedAddressId}
-                onChange={(e) => handleSelectSavedAddress(e.target.value)}
-                className="w-full text-xs font-medium p-2.5 rounded-[var(--radius-md)] border border-[rgba(232,214,205,0.9)] bg-white focus:outline-hidden focus:border-[var(--accent)]"
-              >
-                {savedAddresses.map((addr) => (
-                  <option key={addr.id} value={addr.id}>
-                    {addr.label} {addr.is_default ? '(Utama)' : ''} — {addr.alamat_lengkap.slice(0, 45)}...
-                  </option>
-                ))}
-                <option value="manual">+ Tulis Alamat Baru</option>
-              </select>
-            </div>
-          )}
-
-          {/* Manual Address Input */}
-          <div className="space-y-1.5">
-            <label
-              htmlFor="alamat_pengiriman"
-              className="text-xs font-sora font-bold text-[var(--ink)] flex items-center justify-between"
-            >
-              <span>
-                Alamat Detail / Patokan Rumah <span className="text-[var(--danger)]">*</span>
-              </span>
-              <span className="text-[var(--text-caption)] text-[var(--ink-soft)] font-normal">
-                RT / RW / depan masjid / gang
-              </span>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+          <div>
+            <label htmlFor="nama_pemesan" className="text-[11px] font-sora font-bold text-[var(--ink)] flex items-center gap-1 mb-1">
+              <User size={12} className="text-[var(--accent)]" />
+              <span>Nama Lengkap <span className="text-[var(--danger)]">*</span></span>
             </label>
-            <textarea
-              id="alamat_pengiriman"
-              name="alamat_pengiriman"
-              rows={2}
-              value={alamatPengiriman}
-              onChange={(e) => {
-                setAlamatPengiriman(e.target.value)
-                if (selectedAddressId !== 'manual') {
-                  setSelectedAddressId('manual')
-                }
-              }}
-              placeholder={`Contoh: Dusun ${selectedDusun.nama.split('(')[0].trim()}, RT 02 samping Musholla, rumah cat hijau`}
-              required={metodePengiriman === 'antar_alamat'}
-              className="w-full min-w-0 rounded-[var(--radius-md)] border border-[var(--line)] bg-white px-3.5 py-2.5 text-xs text-[var(--ink)] placeholder:text-[var(--ink-soft)] shadow-input outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20 resize-none"
+            <input
+              id="nama_pemesan"
+              name="nama_pemesan"
+              defaultValue={profile?.nama || ''}
+              required
+              placeholder="Nama penerima pesanan"
+              className="w-full text-xs p-2.5 rounded-xl border border-[var(--line)] bg-white text-[var(--ink)] placeholder:text-[var(--ink-soft)] outline-none focus:border-[var(--accent)] shadow-xs"
             />
           </div>
 
-          {/* Estimasi Pengantaran Badge */}
-          {estimasiMenit !== null && (
-            <div className="p-3 rounded-2xl bg-blue-50/90 border border-blue-200/90 flex items-center justify-between text-xs text-blue-950 shadow-2xs">
-              <div className="flex items-center gap-2">
-                <Clock size={16} className="text-blue-700 shrink-0" />
-                <span className="font-sora font-bold text-blue-950">
-                  Estimasi Pengantaran: ±{estimasiMenit} Menit
-                </span>
-              </div>
-              <span className="px-2.5 py-0.5 rounded-full bg-blue-600 text-white font-sora font-extrabold text-[10px]">
-                Cepat & Siap
-              </span>
-            </div>
-          )}
-        </Card>
-      )}
-
-      {/* 3. METODE PEMBAYARAN */}
-      <Card>
-        <div className="flex items-center gap-2 mb-2">
-          <ShieldCheck size={16} className="text-[var(--accent)]" />
-          <h2 className="font-sora font-bold text-sm text-[var(--ink)]">Metode Pembayaran</h2>
+          <div>
+            <label htmlFor="no_hp_pemesan" className="text-[11px] font-sora font-bold text-[var(--ink)] flex items-center gap-1 mb-1">
+              <Phone size={12} className="text-[var(--accent)]" />
+              <span>No. WhatsApp / HP <span className="text-[var(--danger)]">*</span></span>
+            </label>
+            <input
+              id="no_hp_pemesan"
+              type="tel"
+              name="no_hp_pemesan"
+              defaultValue={profile?.no_hp || ''}
+              required
+              placeholder="08xxxxxxxxxx"
+              className="w-full text-xs p-2.5 rounded-xl border border-[var(--line)] bg-white text-[var(--ink)] placeholder:text-[var(--ink-soft)] outline-none focus:border-[var(--accent)] shadow-xs"
+            />
+          </div>
         </div>
-        <div className="rounded-[var(--radius-md)] bg-[var(--accent-bg)] border border-[var(--accent)]/30 p-3 text-xs">
-          <p className="font-bold text-[var(--accent-2)]">
-            COD (Bayar Tunai / Scan QRIS saat {metodePengiriman === 'ambil_di_toko' ? 'Ambil di Toko' : 'Pesanan Tiba'})
-          </p>
-          <p className="text-[var(--text-caption)] text-[var(--ink-soft)] mt-0.5 font-medium">
-            Bayar langsung ke kurir / toko saat barang Anda terima
-          </p>
-        </div>
-      </Card>
 
-      {/* 4. DATA PEMESAN */}
-      <Card className="space-y-3">
-        <h2 className="font-sora font-bold text-sm text-[var(--ink)]">Data Pemesan</h2>
-        <div className="space-y-1">
-          <label htmlFor="nama_pemesan" className="text-xs font-sora font-bold text-[var(--ink)]">
-            Nama Lengkap <span className="text-[var(--danger)]">*</span>
+        <div>
+          <label htmlFor="catatan" className="text-[11px] font-sora font-bold text-[var(--ink)] flex items-center gap-1 mb-1">
+            <FileText size={12} className="text-[var(--accent)]" />
+            <span>Catatan untuk Toko (opsional)</span>
           </label>
           <input
-            id="nama_pemesan"
-            name="nama_pemesan"
-            defaultValue={profile?.nama}
-            required
-            placeholder="Nama penerima pesanan"
-            className="w-full min-w-0 rounded-[var(--radius-md)] border border-[var(--line)] bg-white px-3.5 py-2 text-xs text-[var(--ink)] placeholder:text-[var(--ink-soft)] shadow-xs outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
-          />
-        </div>
-        <div className="space-y-1">
-          <label htmlFor="no_hp_pemesan" className="text-xs font-sora font-bold text-[var(--ink)]">
-            Nomor WhatsApp / HP <span className="text-[var(--danger)]">*</span>
-          </label>
-          <input
-            id="no_hp_pemesan"
-            type="tel"
-            name="no_hp_pemesan"
-            defaultValue={profile?.no_hp ?? ''}
-            required
-            placeholder="08xxxxxxxxxx"
-            className="w-full min-w-0 rounded-[var(--radius-md)] border border-[var(--line)] bg-white px-3.5 py-2 text-xs text-[var(--ink)] placeholder:text-[var(--ink-soft)] shadow-xs outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
-          />
-        </div>
-        <div className="space-y-1">
-          <label htmlFor="catatan" className="text-xs font-sora font-bold text-[var(--ink)]">
-            Catatan Tambahan (opsional)
-          </label>
-          <textarea
             id="catatan"
             name="catatan"
-            rows={2}
-            className="w-full min-w-0 rounded-[var(--radius-md)] border border-[var(--line)] bg-white px-3.5 py-2 text-xs text-[var(--ink)] placeholder:text-[var(--ink-soft)] shadow-xs outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20 resize-none"
             placeholder="Contoh: Tolong bungkus terpisah, kirim sebelum siang"
+            className="w-full text-xs p-2.5 rounded-xl border border-[var(--line)] bg-white text-[var(--ink)] placeholder:text-[var(--ink-soft)] outline-none focus:border-[var(--accent)] shadow-xs"
           />
         </div>
       </Card>
 
-      {/* 5. VOUCHER & KODE PROMO (Task 3: Sistem Kupon) */}
-      <Card className="space-y-2.5">
-        <div className="flex items-center justify-between">
-          <h2 className="font-sora font-bold text-sm text-[var(--ink)] flex items-center gap-2">
-            <TicketPercent size={17} className="text-[var(--accent)]" />
-            Voucher & Kode Promo
-          </h2>
-          <button
-            type="button"
-            onClick={() => setIsCouponModalOpen(true)}
-            className="text-xs font-sora font-bold text-[var(--accent-2)] hover:underline flex items-center gap-1"
-          >
-            <Gift size={13} />
-            <span>Lihat Kupon ({availableCoupons.length})</span>
-          </button>
+      {/* LANGKAH 3: PEMBAYARAN & DISKON (COD) */}
+      <Card className="space-y-3">
+        <div className="flex items-center gap-2 pb-1 border-b border-[var(--line)]/50">
+          <span className="w-6 h-6 rounded-lg bg-[var(--accent-bg)] text-[var(--accent-2)] font-sora font-bold text-xs flex items-center justify-center">
+            3
+          </span>
+          <h2 className="font-sora font-bold text-xs text-[var(--ink)]">Pembayaran & Diskon Hemat</h2>
         </div>
 
+        {/* COD Guaranteed Banner */}
+        <div className="p-3 rounded-xl bg-orange-50/50 border border-orange-200 flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-xl bg-[var(--accent)] text-white flex items-center justify-center font-bold shrink-0 shadow-xs">
+            <ShieldCheck size={18} />
+          </div>
+          <div>
+            <p className="font-sora font-bold text-xs text-[var(--ink)]">
+              Bayar di Tempat (COD / QRIS Kasir)
+            </p>
+            <p className="text-[10px] text-[var(--ink-soft)] font-medium leading-tight">
+              Bayar tunai atau scan QRIS saat barang tiba atau diambil di toko. Aman & tanpa transfer.
+            </p>
+          </div>
+        </div>
+
+        {/* Voucher Promo Row */}
         {appliedCoupon ? (
-          <div className="p-3 rounded-2xl bg-emerald-50 border border-emerald-300 flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold">
-                <Check size={16} />
-              </div>
-              <div>
-                <p className="font-sora font-extrabold text-xs text-emerald-950">
+          <div className="p-2.5 rounded-xl bg-emerald-50 border border-emerald-300 flex items-center justify-between">
+            <div className="flex items-center gap-2 min-w-0">
+              <CheckCircle2 size={16} className="text-emerald-600 shrink-0" />
+              <div className="min-w-0">
+                <p className="text-xs font-sora font-extrabold text-emerald-950 truncate">
                   {appliedCoupon.kode} &bull; Hemat {formatRupiah(couponDiscount)}
                 </p>
-                <p className="text-[10px] text-emerald-800 font-medium">
-                  {appliedCoupon.judul}
-                </p>
+                <p className="text-[10px] text-emerald-700 truncate">{appliedCoupon.judul}</p>
               </div>
             </div>
-
             <button
               type="button"
               onClick={handleRemoveCoupon}
-              className="press px-2.5 py-1 rounded-lg bg-white border border-emerald-200 text-emerald-800 text-xs font-bold hover:bg-rose-50 hover:text-rose-600 transition-colors"
+              className="press px-2.5 py-1 rounded-lg bg-white border border-emerald-200 text-emerald-800 text-xs font-bold hover:bg-rose-50 hover:text-rose-600 transition-colors shrink-0"
             >
               Hapus
             </button>
           </div>
         ) : (
-          <div className="space-y-2">
-            <div className="flex gap-2">
-              <input
-                type="text"
-                value={couponInput}
-                onChange={(e) => setCouponInput(e.target.value.toUpperCase())}
-                placeholder="Masukkan kode promo (mis: PENGENJEK5K)"
-                className="flex-1 text-xs px-3.5 py-2 rounded-[var(--radius-md)] border border-[var(--line)] bg-white uppercase font-sora font-bold text-[var(--ink)] placeholder:normal-case placeholder:font-normal outline-hidden focus:border-[var(--accent)]"
-              />
-              <button
-                type="button"
-                onClick={() => handleApplyCoupon()}
-                disabled={isCheckingCoupon || !couponInput.trim()}
-                className="press px-4 py-2 rounded-[var(--radius-md)] bg-[var(--accent)] text-white text-xs font-sora font-bold hover:brightness-95 disabled:opacity-50 transition-all flex items-center gap-1.5 shrink-0"
-              >
-                {isCheckingCoupon ? <Loader2 size={13} className="animate-spin" /> : 'Terapkan'}
-              </button>
+          <button
+            type="button"
+            onClick={() => setIsCouponModalOpen(true)}
+            className="w-full p-2.5 rounded-xl border border-dashed border-[var(--accent)]/60 bg-white hover:bg-orange-50/30 flex items-center justify-between text-xs transition-colors"
+          >
+            <div className="flex items-center gap-2 text-[var(--accent-2)] font-sora font-bold">
+              <TicketPercent size={15} />
+              <span>Gunakan Voucher Promo</span>
             </div>
-
-            {couponFeedback && (
-              <p
-                className={`text-[11px] font-medium ${
-                  couponFeedback.type === 'success' ? 'text-emerald-700 font-bold' : 'text-[var(--danger)]'
-                }`}
-              >
-                {couponFeedback.text}
-              </p>
-            )}
-          </div>
+            <span className="text-[11px] font-sora font-bold text-[var(--accent-2)] flex items-center">
+              <span>{availableCoupons.length > 0 ? `Pilih Kupon (${availableCoupons.length})` : 'Masukkan Kupon'}</span>
+              <ChevronRight size={14} />
+            </span>
+          </button>
         )}
 
         <input type="hidden" name="kode_kupon" value={appliedCoupon?.kode || ''} />
-      </Card>
 
-      {/* 6. LOYALTY POINTS REDEMPTION TOGGLE */}
-      {canUseLoyalty && (
-        <Card>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
-              <span className="w-8 h-8 rounded-xl bg-[var(--warning)]/20 text-[var(--warning)] flex items-center justify-center font-bold">
-                <Coins size={16} />
+        {/* Loyalty Points Redemption (jika punya poin) */}
+        {canUseLoyalty && (
+          <div className="p-2.5 rounded-xl bg-amber-50/60 border border-amber-200 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="w-7 h-7 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center font-bold">
+                <Coins size={15} />
               </span>
               <div>
-                <h3 className="font-sora font-bold text-xs text-[var(--ink)] flex items-center gap-1">
-                  <span>Tukar Poin Toko</span>
-                  <span className="text-[var(--text-caption)] text-[var(--warning)] bg-[var(--warning)]/10 px-2 py-0.5 rounded-full border border-[var(--warning)]/30">
-                    {availablePoints} Poin
-                  </span>
-                </h3>
-                <p className="text-[var(--text-caption)] text-[var(--ink-soft)] font-medium">
+                <p className="font-sora font-bold text-xs text-[var(--ink)]">
+                  Tukar {availablePoints} Poin Belanja
+                </p>
+                <p className="text-[10px] text-amber-800 font-medium">
                   {usePoints
-                    ? `Hemat ${formatRupiah(discountAmount)} (${pointsToUse} poin)`
-                    : `Tukarkan poin jadi diskon hingga ${formatRupiah(maxRedeemablePoints * redeemRate)}`}
+                    ? `Potongan diskon ${formatRupiah(discountAmount)}`
+                    : `Hemat hingga ${formatRupiah(maxRedeemablePoints * redeemRate)}`}
                 </p>
               </div>
             </div>
@@ -824,15 +820,20 @@ export default function CheckoutFormClient({
                 onChange={(e) => setUsePoints(e.target.checked)}
                 className="sr-only peer"
               />
-              <div className="w-11 h-6 bg-[var(--line)] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-[var(--line)] after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[var(--accent)]"></div>
+              <div className="w-10 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[var(--accent)]"></div>
             </label>
           </div>
+        )}
 
-          <input type="hidden" name="poin_digunakan" value={pointsToUse} />
-        </Card>
+        <input type="hidden" name="poin_digunakan" value={pointsToUse} />
+      </Card>
+
+      {/* ERROR ALERT BANNER */}
+      {errorMsg && (
+        <AlertBanner type="error" message={errorMsg} className="animate-fade-in" />
       )}
 
-      {/* 7. RINGKASAN BELANJA (MODULAR COMPONENT) */}
+      {/* RINGKASAN BELANJA (COLLAPSIBLE / ACCORDION) */}
       <CheckoutOrderSummary
         items={items}
         subtotal={subtotal}
@@ -846,28 +847,37 @@ export default function CheckoutFormClient({
         finalTotal={finalTotal}
       />
 
-      {/* Error Message */}
-      {errorMsg && (
-        <AlertBanner type="error" message={errorMsg} className="animate-fade-in" />
-      )}
+      {/* STICKY BOTTOM CHECKOUT ACTION BAR */}
+      <div className="fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-md border-t border-[var(--line)] shadow-pop px-4 py-3 max-w-[480px] mx-auto flex items-center justify-between gap-3">
+        <div className="min-w-0">
+          <span className="text-[10px] text-[var(--ink-soft)] font-medium block">
+            Total Tagihan ({metodePengiriman === 'ambil_di_toko' ? 'Ambil Toko' : 'COD'})
+          </span>
+          <span className="font-sora font-extrabold text-[var(--accent-2)] text-lg tabular-nums leading-tight">
+            {formatRupiah(finalTotal)}
+          </span>
+        </div>
 
-      {/* Submit Button (Task 7: Anti-Spam & Double Submission Lock) */}
-      <button
-        type="submit"
-        disabled={isPending || isSubmitting}
-        className="checkout-btn w-full py-3.5 text-base gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
-      >
-        {isPending || isSubmitting ? (
-          <>
-            <Loader2 className="w-5 h-5 animate-spin" />
-            <span>Memproses Pesanan Anda...</span>
-          </>
-        ) : (
-          <span>Buat Pesanan (COD) — {formatRupiah(finalTotal)}</span>
-        )}
-      </button>
+        <button
+          type="submit"
+          disabled={isPending || isSubmitting}
+          className="press flex-1 max-w-[210px] py-3 px-4 bg-gradient-to-r from-[var(--accent)] to-[var(--accent-2)] text-white font-sora font-bold text-xs rounded-xl shadow-btn flex items-center justify-center gap-1.5 disabled:opacity-60 disabled:cursor-not-allowed"
+        >
+          {isPending || isSubmitting ? (
+            <>
+              <Loader2 size={15} className="animate-spin" />
+              <span>Memproses...</span>
+            </>
+          ) : (
+            <>
+              <span>Pesan Sekarang</span>
+              <ArrowRight size={15} />
+            </>
+          )}
+        </button>
+      </div>
 
-      {/* Interactive Voucher Picker Modal (Modular Component) */}
+      {/* Interactive Voucher Picker Modal */}
       <CheckoutVoucherModal
         isOpen={isCouponModalOpen}
         onClose={() => setIsCouponModalOpen(false)}
