@@ -6,13 +6,19 @@ import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import type { Category } from '@/types/database'
 import { setCachedCategories } from '@/lib/categoryCache'
+import { getCategoryIconEmoji } from '@/components/telegram/TelegramMiniAppView'
 
 interface CategoryFilterProps {
   categories: Category[]
   activeSlug?: string
+  variant?: 'rail' | 'chips'
 }
 
-export default function CategoryFilter({ categories, activeSlug }: CategoryFilterProps) {
+export default function CategoryFilter({
+  categories,
+  activeSlug,
+  variant = 'rail',
+}: CategoryFilterProps) {
   const searchParams = useSearchParams()
 
   useEffect(() => {
@@ -32,14 +38,70 @@ export default function CategoryFilter({ categories, activeSlug }: CategoryFilte
     return qs ? `/kategori?${qs}` : '/kategori'
   }
 
+  if (variant === 'chips') {
+    return (
+      <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide py-1">
+        <Link
+          href={buildCategoryUrl()}
+          prefetch={true}
+          className={`cat-chip shrink-0 ${!activeSlug ? 'active' : ''}`}
+        >
+          Semua
+        </Link>
+        {categories.map((cat) => {
+          const isActive = activeSlug === cat.slug
+          return (
+            <Link
+              key={cat.id}
+              href={buildCategoryUrl(cat.slug)}
+              prefetch={true}
+              className={`cat-chip shrink-0 ${isActive ? 'active' : ''}`}
+            >
+              {cat.nama}
+            </Link>
+          )
+        })}
+      </div>
+    )
+  }
+
   return (
-    <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide py-1">
+    <aside
+      aria-label="Navigasi Kategori Minimarket"
+      className="w-[82px] sm:w-[92px] shrink-0 sticky top-[16px] max-h-[calc(100vh-110px)] overflow-y-auto scrollbar-hide flex flex-col gap-1.5 rounded-r-[var(--radius-md)] bg-white/85 backdrop-blur-md border-y border-r border-[rgba(232,214,205,0.9)] p-1.5 shadow-[var(--shadow-sm)]"
+    >
+      <div className="px-1.5 pt-1 pb-0.5 text-[9px] font-extrabold uppercase tracking-[0.06em] text-[var(--ink-faint)] text-center">
+        Kategori
+      </div>
       <Link
         href={buildCategoryUrl()}
         prefetch={true}
-        className={`cat-chip shrink-0 ${!activeSlug ? 'active' : ''}`}
+        aria-current={!activeSlug ? 'page' : undefined}
+        className={`press relative flex flex-col items-center justify-center text-center gap-1 px-1.5 py-2 rounded-[var(--radius-sm)] transition-[background-color,color,box-shadow,transform] duration-200 ${
+          !activeSlug
+            ? 'bg-[var(--accent-bg)] text-[var(--accent-deep)] font-extrabold shadow-[inset_0_0_0_1px_rgba(255,107,53,0.28)]'
+            : 'text-[var(--ink-soft)] hover:bg-[var(--bg)] font-semibold'
+        }`}
       >
-        Semua
+        {!activeSlug && (
+          <span
+            aria-hidden="true"
+            className="absolute left-0 top-2 bottom-2 w-[3.5px] rounded-r-full bg-[var(--accent)]"
+          />
+        )}
+        <span
+          aria-hidden="true"
+          className={`w-8 h-8 rounded-[10px] flex items-center justify-center text-[17px] transition-transform ${
+            !activeSlug
+              ? 'bg-white shadow-[0_2px_6px_rgba(232,85,33,0.18)] scale-105'
+              : 'bg-[var(--bg)]'
+          }`}
+        >
+          🏪
+        </span>
+        <span className="text-[10.5px] leading-[1.15] line-clamp-2 break-words">
+          Semua
+        </span>
       </Link>
       {categories.map((cat) => {
         const isActive = activeSlug === cat.slug
@@ -48,12 +110,35 @@ export default function CategoryFilter({ categories, activeSlug }: CategoryFilte
             key={cat.id}
             href={buildCategoryUrl(cat.slug)}
             prefetch={true}
-            className={`cat-chip shrink-0 ${isActive ? 'active' : ''}`}
+            aria-current={isActive ? 'page' : undefined}
+            className={`press relative flex flex-col items-center justify-center text-center gap-1 px-1.5 py-2 rounded-[var(--radius-sm)] transition-[background-color,color,box-shadow,transform] duration-200 ${
+              isActive
+                ? 'bg-[var(--accent-bg)] text-[var(--accent-deep)] font-extrabold shadow-[inset_0_0_0_1px_rgba(255,107,53,0.28)]'
+                : 'text-[var(--ink-soft)] hover:bg-[var(--bg)] font-semibold'
+            }`}
           >
-            {cat.nama}
+            {isActive && (
+              <span
+                aria-hidden="true"
+                className="absolute left-0 top-2 bottom-2 w-[3.5px] rounded-r-full bg-[var(--accent)]"
+              />
+            )}
+            <span
+              aria-hidden="true"
+              className={`w-8 h-8 rounded-[10px] flex items-center justify-center text-[17px] transition-transform ${
+                isActive
+                  ? 'bg-white shadow-[0_2px_6px_rgba(232,85,33,0.18)] scale-105'
+                  : 'bg-[var(--bg)]'
+              }`}
+            >
+              {getCategoryIconEmoji(cat.nama)}
+            </span>
+            <span className="text-[10.5px] leading-[1.15] line-clamp-2 break-words">
+              {cat.nama}
+            </span>
           </Link>
         )
       })}
-    </div>
+    </aside>
   )
 }

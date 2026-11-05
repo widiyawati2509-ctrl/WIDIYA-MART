@@ -83,53 +83,57 @@ export default async function KategoriPage({ searchParams }: KategoriPageProps) 
         <SearchBar defaultValue={q} />
       </PageHeader>
 
-      {/* Category Chips Bar */}
-      <div className="px-4 mb-2">
-        <CategoryFilter categories={categories ?? []} activeSlug={kategori} />
-      </div>
+      {/* Split-Sidebar Quick-Commerce Minimarket Layout */}
+      <div className="flex items-start gap-2.5 pr-3">
+        {/* Left Fixed/Sticky Vertical Category Rail */}
+        <CategoryFilter categories={categories ?? []} activeSlug={kategori} variant="rail" />
 
-      {/* Sorting & Quick Filter Toolbar */}
-      <div className="px-4 mb-3.5">
-        <CatalogSortFilterBar activeSort={urutan} activeFilter={filter} />
-      </div>
+        {/* Right Main Product Area */}
+        <div className="flex-1 min-w-0">
+          {/* Sorting & Quick Filter Toolbar */}
+          <div className="mb-3">
+            <CatalogSortFilterBar activeSort={urutan} activeFilter={filter} />
+          </div>
 
-      {/* Product List */}
-      <div className="px-4">
-        {products && products.length > 0 ? (
-          <>
-            <div className="flex items-center justify-between text-xs text-[var(--ink-soft)] font-medium mb-3">
-              <span>
-                Menampilkan <strong className="text-[var(--ink)]">{products.length}</strong> dari{' '}
-                <strong className="text-[var(--ink)]">{totalCount}</strong> produk
-              </span>
-              {q && (
-                <span className="truncate max-w-[150px] italic">
-                  untuk &quot;{q}&quot;
-                </span>
-              )}
-            </div>
-            <CatalogProductList
-              initialProducts={products}
-              totalCount={totalCount}
-              kategori={kategori}
-              q={q}
-              urutan={urutan}
-              filter={filter}
-              pageSize={PAGE_SIZE}
-            />
-          </>
-        ) : (
-          <EmptyState
-            icon={Package}
-            message={
-              q
-                ? `Tidak ada produk yang cocok dengan pencarian "${q}".`
-                : 'Belum ada produk yang sesuai dengan filter yang dipilih.'
-            }
-            actionHref="/kategori"
-            actionLabel="Reset Semua Filter"
-          />
-        )}
+          {/* Product List */}
+          <div>
+            {products && products.length > 0 ? (
+              <>
+                <div className="flex items-center justify-between text-[11px] text-[var(--ink-soft)] font-medium mb-2.5 px-1">
+                  <span>
+                    Menampilkan <strong className="text-[var(--ink)]">{products.length}</strong> dari{' '}
+                    <strong className="text-[var(--ink)]">{totalCount}</strong> produk
+                  </span>
+                  {q && (
+                    <span className="truncate max-w-[130px] italic">
+                      untuk &quot;{q}&quot;
+                    </span>
+                  )}
+                </div>
+                <CatalogProductList
+                  initialProducts={products}
+                  totalCount={totalCount}
+                  kategori={kategori}
+                  q={q}
+                  urutan={urutan}
+                  filter={filter}
+                  pageSize={PAGE_SIZE}
+                />
+              </>
+            ) : (
+              <EmptyState
+                icon={Package}
+                message={
+                  q
+                    ? `Tidak ada produk yang cocok dengan pencarian "${q}".`
+                    : 'Belum ada produk yang sesuai dengan filter yang dipilih.'
+                }
+                actionHref="/kategori"
+                actionLabel="Reset Semua Filter"
+              />
+            )}
+          </div>
+        </div>
       </div>
     </div>
   )
