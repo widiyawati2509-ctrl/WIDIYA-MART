@@ -1,7 +1,7 @@
 // @ts-nocheck
 'use client'
 
-import { useState, useTransition } from 'react'
+import { useState, useTransition, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { 
   MapPin, 
@@ -20,6 +20,7 @@ import {
 import Link from 'next/link'
 import type { UserAddress } from '@/types/database'
 import { addAddress, setDefaultAddress } from '@/lib/actions/addresses'
+import { projectMomentum, rubberband } from '@/lib/useSwipeGesture'
 
 interface AddressModalProps {
   isOpen: boolean
@@ -54,7 +55,58 @@ export default function AddressModal({
   const [formError, setFormError] = useState<string | null>(null)
   const [feedbackMsg, setFeedbackMsg] = useState<string | null>(null)
 
+  // Apple Design §2, §5, §6, §9: Direct 1:1 sheet manipulation + rubber-banding + momentum projection
+  const [dragY, setDragY] = useState(0)
+  const [isDragging, setIsDragging] = useState(false)
+  const dragStartRef = useRef<{ y: number; lastY: number; lastTime: number; velocityY: number } | null>(null)
+
   if (!isOpen || typeof document === 'undefined') return null
+
+  const handleSheetPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    if ((e.target as HTMLElement).closest('button')) return
+    e.currentTarget.setPointerCapture(e.pointerId)
+    setIsDragging(true)
+    dragStartRef.current = {
+      y: e.clientY - dragY,
+      lastY: e.clientY,
+      lastTime: performance.now(),
+      velocityY: 0,
+    }
+  }
+
+  const handleSheetPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!isDragging || !dragStartRef.current) return
+    const now = performance.now()
+    const dt = Math.max(1, now - dragStartRef.current.lastTime)
+    const dy = e.clientY - dragStartRef.current.lastY
+    dragStartRef.current.velocityY = (dy / dt) * 1000 // px/s
+    dragStartRef.current.lastY = e.clientY
+    dragStartRef.current.lastTime = now
+
+    const rawOffset = e.clientY - dragStartRef.current.y
+    if (rawOffset < 0) {
+      // §9 Rubber-banding when pulling upward past top boundary
+      setDragY(-rubberband(Math.abs(rawOffset), 260, 0.35))
+    } else {
+      setDragY(rawOffset)
+    }
+  }
+
+  const handleSheetPointerUp = () => {
+    if (!isDragging || !dragStartRef.current) return
+    const releaseVelocity = dragStartRef.current.velocityY
+    const projectedY = dragY + projectMomentum(releaseVelocity, 0.99)
+    setIsDragging(false)
+    dragStartRef.current = null
+
+    // §6 Momentum projection: dismiss if projected past 115px and moving downward
+    if (projectedY > 115 && releaseVelocity >= -80 && !isPending) {
+      setDragY(0)
+      onClose()
+    } else {
+      setDragY(0)
+    }
+  }
 
   // Set default address
   const handleSetDefault = (e: React.MouseEvent, addr: UserAddress) => {
@@ -158,13 +210,23 @@ export default function AddressModal({
       />
 
       <div 
-        className="relative w-full max-w-[480px] bg-[var(--paper)] rounded-t-[28px] border-t border-[var(--line)] shadow-pop max-h-[85vh] flex flex-col z-10 animate-in slide-in-from-bottom duration-300"
+        className="relative w-full max-w-[480px] bg-[var(--paper)] rounded-t-[28px] border-t border-[var(--line)] shadow-pop max-h-[85vh] flex flex-col z-10 animate-in slide-in-from-bottom duration-300 will-change-transform"
+        style={{
+          transform: dragY !== 0 ? `translateY(${dragY}px)` : undefined,
+          transition: isDragging ? 'none' : 'transform 320ms var(--ease-spring)',
+        }}
         role="dialog"
         aria-modal="true"
       >
-        {/* Modal Handle & Header */}
-        <div className="p-4 border-b border-[var(--line)]/80 bg-white/70 rounded-t-[28px] backdrop-blur-md">
-          <div className="w-10 h-1 bg-stone-300 rounded-full mx-auto mb-3" />
+        {/* Modal Handle & Header — Apple Design §2 1:1 Pointer Drag-to-Dismiss */}
+        <div
+          onPointerDown={handleSheetPointerDown}
+          onPointerMove={handleSheetPointerMove}
+          onPointerUp={handleSheetPointerUp}
+          onPointerCancel={handleSheetPointerUp}
+          className="p-4 border-b border-[var(--line)]/80 bg-white/85 rounded-t-[28px] backdrop-blur-xl cursor-grab active:cursor-grabbing select-none touch-none"
+        >
+          <div className="w-10 h-1.5 bg-stone-300/90 rounded-full mx-auto mb-3 transition-transform" />
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <div className="w-7 h-7 rounded-[var(--radius-sm)] bg-[var(--accent-bg)] text-[var(--accent-2)] flex items-center justify-center font-bold">

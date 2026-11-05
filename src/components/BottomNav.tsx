@@ -59,12 +59,14 @@ export default function BottomNav({ cartCount, isLoggedIn }: BottomNavProps) {
 
   return (
     <nav
-      className={`fixed left-1/2 -translate-x-1/2 bottom-3.5 max-w-[calc(480px-32px)] w-[calc(100%-32px)] rounded-[var(--radius-xl)] p-1 flex items-center justify-between z-50 border border-white/12 shadow-nav transition-all duration-200 ease-out hover:opacity-100 hover:translate-y-0 hover:scale-100 ${
+      className={`fixed left-1/2 -translate-x-1/2 bottom-3.5 max-w-[calc(480px-32px)] w-[calc(100%-32px)] rounded-[var(--radius-xl)] p-1 flex items-center justify-between z-50 border border-white/15 shadow-nav backdrop-blur-xl transition-all duration-300 ease-[var(--ease-spring)] hover:opacity-100 hover:translate-y-0 hover:scale-100 will-change-transform ${
         isCollapsed
-          ? 'opacity-40 translate-y-2 scale-[0.97]'
+          ? 'opacity-45 translate-y-2 scale-[0.97]'
           : 'opacity-100 translate-y-0 scale-100'
       }`}
-      style={{ background: 'linear-gradient(145deg, #2B1810, #1E0F0A)' }}
+      style={{
+        background: 'linear-gradient(145deg, rgba(43, 24, 16, 0.92), rgba(30, 15, 10, 0.94))',
+      }}
     >
       {navItems.map(({ href, label, IconComponent }) => {
         const isActive = pathname === href || (href !== '/' && pathname.startsWith(href))

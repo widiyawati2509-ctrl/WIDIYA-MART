@@ -98,8 +98,18 @@ export function TelegramMiniAppView({
     return { count, total }
   }, [cartQuantities, products])
 
+  // Apple Design §13: Causal & harmonious haptic pulse on meaningful interactions
+  const triggerHaptic = (ms = 8) => {
+    if (typeof window !== 'undefined' && 'vibrate' in navigator) {
+      try {
+        navigator.vibrate(ms)
+      } catch {}
+    }
+  }
+
   // Handler Checklist Toggle
   const toggleCheck = (id: string) => {
+    triggerHaptic(8)
     setCheckedIds((prev) => {
       const next = new Set(prev)
       if (next.has(id)) {
@@ -113,6 +123,7 @@ export function TelegramMiniAppView({
 
   // Handler Stepper Kuantitas
   const updateQty = (productId: string, delta: number) => {
+    triggerHaptic(10)
     const current = cartQuantities[productId] || 0
     const next = Math.max(0, current + delta)
 
@@ -133,6 +144,7 @@ export function TelegramMiniAppView({
   // Masukkan semua item checklist ke keranjang
   const handleAddAllChecklist = () => {
     if (checklistSummary.count === 0) return
+    triggerHaptic(12)
 
     startTransition(async () => {
       for (const prod of checklistSummary.items) {
@@ -148,10 +160,12 @@ export function TelegramMiniAppView({
     setTimeout(() => setToast(null), 3000)
   }
 
+  const activeTabIndex = activeTab === 'katalog' ? 0 : activeTab === 'checklist' ? 1 : 2
+
   return (
     <div className="min-h-screen bg-[var(--paper)] text-[var(--ink)] pb-32">
-      {/* 1. HEADER KHAS TOKO WIDIYA MART (WARM CORAL BRANDING) */}
-      <header className="sticky top-0 z-40 bg-[rgba(250,240,235,0.96)] backdrop-blur-md border-b border-[var(--line)] px-4 py-3 shadow-header">
+      {/* 1. HEADER KHAS TOKO WIDIYA MART (WARM CORAL BRANDING + APPLE TRANSLUCENT CHROME) */}
+      <header className="sticky top-0 z-40 apple-material-header px-4 py-3">
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-2.5 min-w-0">
             {/* Logo Asli Widiya Mart */}
@@ -168,7 +182,7 @@ export function TelegramMiniAppView({
             <div className="min-w-0">
               <div className="flex items-center gap-1.5">
                 <h1 className="font-sora font-extrabold text-sm truncate text-[var(--ink)]">
-                  {storeInfo?.nama_toko || 'PENGENJEK MART'}
+                  {storeInfo?.nama_toko || 'WIDIYA MART'}
                 </h1>
                 <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-[var(--accent)] text-white text-[9px] font-bold">
                   ✓
@@ -187,10 +201,10 @@ export function TelegramMiniAppView({
 
           {/* Tombol Chat Kasir WhatsApp */}
           <a
-            href={formatWhatsAppUrl(adminWa, 'Halo Admin Pengenjek Mart, saya mau tanya ketersediaan stok')}
+            href={formatWhatsAppUrl(adminWa, 'Halo Admin Widiya Mart, saya mau tanya ketersediaan stok')}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[var(--accent-bg)] text-[var(--accent-2)] hover:bg-[var(--accent)] hover:text-white transition-all text-xs font-bold shrink-0 shadow-card-sm active:scale-95"
+            className="press flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[var(--accent-bg)] text-[var(--accent-2)] hover:bg-[var(--accent)] hover:text-white transition-all text-xs font-bold shrink-0 shadow-card-sm"
           >
             <MessageCircle size={15} />
             <span className="hidden xs:inline">Chat Kasir</span>
@@ -220,25 +234,44 @@ export function TelegramMiniAppView({
         </div>
       </header>
 
-      {/* 2. SEGMENTED TAB SWITCHER (WARNA TOKO KITA) */}
+      {/* 2. APPLE-STYLE SLIDING SEGMENTED CONTROL (§4 Springs & §7 Spatial Consistency) */}
       <div className="px-4 pt-3">
-        <div className="bg-[rgba(232,214,205,0.6)] p-1 rounded-2xl flex items-center gap-1">
+        <div className="relative bg-[rgba(232,214,205,0.65)] p-1 rounded-2xl grid grid-cols-3 items-center shadow-inner">
+          {/* Sliding Active Pill Indicator */}
+          <div
+            aria-hidden="true"
+            className="absolute top-1 bottom-1 left-1 w-[calc((100%-8px)/3)] rounded-xl bg-white shadow-xs pointer-events-none will-change-transform"
+            style={{
+              transform: `translateX(${activeTabIndex * 100}%)`,
+              transition: 'transform 280ms var(--ease-spring)',
+            }}
+          />
+
           <button
-            onClick={() => setActiveTab('katalog')}
-            className={`flex-1 py-1.5 text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-1.5 ${
+            type="button"
+            onClick={() => {
+              triggerHaptic(6)
+              setActiveTab('katalog')
+            }}
+            className={`relative z-10 py-1.5 text-xs font-bold rounded-xl transition-colors flex items-center justify-center gap-1.5 press ${
               activeTab === 'katalog'
-                ? 'bg-white text-[var(--accent-2)] shadow-xs'
+                ? 'text-[var(--accent-2)]'
                 : 'text-[var(--ink-soft)] hover:text-[var(--ink)]'
             }`}
           >
             <Zap size={14} className={activeTab === 'katalog' ? 'text-[var(--accent)]' : ''} />
             <span>Katalog Cepat</span>
           </button>
+
           <button
-            onClick={() => setActiveTab('checklist')}
-            className={`flex-1 py-1.5 text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-1.5 relative ${
+            type="button"
+            onClick={() => {
+              triggerHaptic(6)
+              setActiveTab('checklist')
+            }}
+            className={`relative z-10 py-1.5 text-xs font-bold rounded-xl transition-colors flex items-center justify-center gap-1.5 press ${
               activeTab === 'checklist'
-                ? 'bg-white text-[var(--accent-2)] shadow-xs'
+                ? 'text-[var(--accent-2)]'
                 : 'text-[var(--ink-soft)] hover:text-[var(--ink)]'
             }`}
           >
@@ -250,11 +283,16 @@ export function TelegramMiniAppView({
               </span>
             )}
           </button>
+
           <button
-            onClick={() => setActiveTab('promo')}
-            className={`flex-1 py-1.5 text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-1.5 ${
+            type="button"
+            onClick={() => {
+              triggerHaptic(6)
+              setActiveTab('promo')
+            }}
+            className={`relative z-10 py-1.5 text-xs font-bold rounded-xl transition-colors flex items-center justify-center gap-1.5 press ${
               activeTab === 'promo'
-                ? 'bg-white text-[var(--accent-2)] shadow-xs'
+                ? 'text-[var(--accent-2)]'
                 : 'text-[var(--ink-soft)] hover:text-[var(--ink)]'
             }`}
           >

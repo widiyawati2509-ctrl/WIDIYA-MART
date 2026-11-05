@@ -847,8 +847,8 @@ export default function CheckoutFormClient({
         finalTotal={finalTotal}
       />
 
-      {/* STICKY BOTTOM CHECKOUT ACTION BAR */}
-      <div className="fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-md border-t border-[var(--line)] shadow-pop px-4 py-3 max-w-[480px] mx-auto flex items-center justify-between gap-3">
+      {/* STICKY BOTTOM CHECKOUT ACTION BAR (§12 Apple Translucent Material) */}
+      <div className="fixed bottom-0 inset-x-0 z-40 apple-material-bar px-4 py-3 max-w-[480px] mx-auto flex items-center justify-between gap-3">
         <div className="min-w-0">
           <span className="text-[10px] text-[var(--ink-soft)] font-medium block">
             Total Tagihan ({metodePengiriman === 'ambil_di_toko' ? 'Ambil Toko' : 'COD'})
