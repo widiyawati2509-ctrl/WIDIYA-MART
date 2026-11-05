@@ -201,7 +201,12 @@ export default function AddressModal({
   }
 
   return createPortal(
-    <div className="fixed inset-0 z-[100] flex items-end justify-center bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
+    <div
+      onKeyDown={(e) => {
+        if (e.key === 'Escape' && !isPending) onClose()
+      }}
+      className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 backdrop-blur-xs animate-fade-in"
+    >
       <div 
         className="fixed inset-0" 
         onClick={() => {
@@ -210,13 +215,15 @@ export default function AddressModal({
       />
 
       <div 
-        className="relative w-full max-w-[480px] bg-[var(--paper)] rounded-t-[28px] border-t border-[var(--line)] shadow-pop max-h-[85vh] flex flex-col z-10 animate-in slide-in-from-bottom duration-300 will-change-transform"
+        className="relative w-full max-w-[480px] bg-[var(--paper)] rounded-t-[28px] border-t border-[var(--line)] shadow-pop max-h-[85dvh] flex flex-col z-10 animate-page-in"
         style={{
           transform: dragY !== 0 ? `translateY(${dragY}px)` : undefined,
           transition: isDragging ? 'none' : 'transform 320ms var(--ease-spring)',
+          willChange: isDragging ? 'transform' : undefined,
         }}
         role="dialog"
         aria-modal="true"
+        aria-labelledby="address-modal-title"
       >
         {/* Modal Handle & Header — Apple Design §2 1:1 Pointer Drag-to-Dismiss */}
         <div
@@ -229,11 +236,11 @@ export default function AddressModal({
           <div className="w-10 h-1.5 bg-stone-300/90 rounded-full mx-auto mb-3 transition-transform" />
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-[var(--radius-sm)] bg-[var(--accent-bg)] text-[var(--accent-2)] flex items-center justify-center font-bold">
+              <div className="size-7 rounded-[var(--radius-sm)] bg-[var(--accent-bg)] text-[var(--accent-2)] flex items-center justify-center font-bold" aria-hidden="true">
                 <MapPin size={15} />
               </div>
               <div>
-                <h3 className="font-sora font-bold text-sm text-[var(--ink)]">
+                <h3 id="address-modal-title" className="font-sora font-bold text-sm text-[var(--ink)]">
                   {isAdding ? 'Tambah Alamat Baru' : 'Alamat Pengiriman'}
                 </h3>
                 <p className="text-[11px] text-[var(--ink-soft)] font-medium">
@@ -244,6 +251,7 @@ export default function AddressModal({
 
             <button
               type="button"
+              aria-label="Tutup modal alamat"
               onClick={() => {
                 if (isAdding) {
                   setIsAdding(false)
@@ -251,9 +259,9 @@ export default function AddressModal({
                   onClose()
                 }
               }}
-              className="w-8 h-8 rounded-full bg-stone-100 hover:bg-stone-200 text-[var(--ink-soft)] flex items-center justify-center transition-all press"
+              className="size-8 rounded-full bg-stone-100 hover:bg-stone-200 text-[var(--ink-soft)] flex items-center justify-center transition-colors press"
             >
-              <X size={16} />
+              <X size={16} aria-hidden="true" />
             </button>
           </div>
 

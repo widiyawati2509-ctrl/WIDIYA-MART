@@ -17,7 +17,7 @@ export default function ProductCard({ product, priority = false }: ProductCardPr
   return (
     <Link href={`/produk/${product.slug}`} prefetch={true} className="block group h-full">
       <div
-        className={`product bg-white border border-[var(--line)] rounded-2xl p-2.5 shadow-xs transition-all duration-200 h-full flex flex-col justify-between hover:border-[var(--accent)]/50 ${
+        className={`product bg-white border border-[var(--line)] rounded-2xl p-2.5 shadow-xs transition-[transform,border-color,box-shadow] duration-200 h-full flex flex-col justify-between hover:border-[var(--accent)]/50 ${
           outOfStock ? 'opacity-60' : ''
         }`}
       >

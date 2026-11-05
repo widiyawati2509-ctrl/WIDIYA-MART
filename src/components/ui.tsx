@@ -16,7 +16,7 @@ export function buttonClass({
   className = '',
 }: ButtonClassProps = {}): string {
   const base =
-    'inline-flex items-center justify-center gap-1.5 font-sora font-bold transition-all active:scale-[0.96] active:translate-y-[2px] disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100 disabled:shadow-none'
+    'inline-flex items-center justify-center gap-1.5 font-sora font-bold transition-[transform,box-shadow,background-color,opacity] active:scale-[0.96] active:translate-y-[2px] disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100 disabled:shadow-none'
 
   const variants = {
     primary:
@@ -245,10 +245,16 @@ export function ConfirmDialog({
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#23150F]/75 px-4 backdrop-blur-sm">
+    <div
+      role="alertdialog"
+      aria-modal="true"
+      aria-labelledby="confirm-dialog-title"
+      aria-describedby={description ? 'confirm-dialog-desc' : undefined}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-[#23150F]/75 px-4 backdrop-blur-sm"
+    >
       <div className="bg-card w-full max-w-[420px] animate-page-in rounded-[var(--radius-xl)] p-5 shadow-pop border border-[rgba(232,214,205,0.9)]">
-        <h3 className="text-base font-sora font-bold text-[var(--ink)]">{title}</h3>
-        {description && <p className="mt-1.5 text-xs text-[var(--ink-soft)]">{description}</p>}
+        <h3 id="confirm-dialog-title" className="text-base font-sora font-bold text-[var(--ink)]">{title}</h3>
+        {description && <p id="confirm-dialog-desc" className="mt-1.5 text-xs text-[var(--ink-soft)]">{description}</p>}
         <div className="mt-5 flex justify-end gap-2.5">
           <button
             type="button"

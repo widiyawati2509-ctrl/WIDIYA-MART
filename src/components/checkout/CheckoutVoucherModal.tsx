@@ -38,25 +38,34 @@ export function CheckoutVoucherModal({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="voucher-modal-title"
+      onKeyDown={(e) => {
+        if (e.key === 'Escape') onClose()
+      }}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-fade-in"
+    >
       <div className="bg-white border border-[var(--line)] rounded-2xl w-full max-w-sm p-4 shadow-2xl space-y-3.5">
         {/* Header */}
         <div className="flex items-center justify-between pb-2 border-b border-[var(--line)]/60">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-xl bg-orange-100 text-[var(--accent-2)] flex items-center justify-center font-bold">
+            <div className="size-8 rounded-xl bg-orange-100 text-[var(--accent-2)] flex items-center justify-center font-bold" aria-hidden="true">
               <TicketPercent size={18} />
             </div>
             <div>
-              <h3 className="font-sora font-bold text-sm text-[var(--ink)]">Voucher & Kupon Promo</h3>
+              <h3 id="voucher-modal-title" className="font-sora font-bold text-sm text-[var(--ink)]">Voucher & Kupon Promo</h3>
               <p className="text-[10px] text-[var(--ink-soft)] font-medium">Gunakan kupon untuk potongan harga</p>
             </div>
           </div>
           <button
             type="button"
+            aria-label="Tutup modal voucher"
             onClick={onClose}
-            className="w-7 h-7 rounded-full text-[var(--ink-soft)] hover:bg-[var(--paper)] flex items-center justify-center"
+            className="size-7 rounded-full text-[var(--ink-soft)] hover:bg-[var(--paper)] flex items-center justify-center"
           >
-            <X size={15} />
+            <X size={15} aria-hidden="true" />
           </button>
         </div>
 
@@ -64,6 +73,7 @@ export function CheckoutVoucherModal({
         <div className="flex gap-2">
           <input
             type="text"
+            aria-label="Masukkan kode kupon promo"
             value={manualCode}
             onChange={(e) => setManualCode(e.target.value.toUpperCase())}
             placeholder="Ketik kode kupon (mis: HEMAT)"
@@ -73,7 +83,7 @@ export function CheckoutVoucherModal({
             type="button"
             onClick={handleManualApply}
             disabled={isApplying || !manualCode.trim()}
-            className="press px-3.5 py-2 rounded-xl bg-[var(--accent)] text-white text-xs font-sora font-bold hover:bg-[var(--accent-2)] disabled:opacity-50 transition-all shrink-0 flex items-center gap-1"
+            className="press px-3.5 py-2 rounded-xl bg-[var(--accent)] text-white text-xs font-sora font-bold hover:bg-[var(--accent-2)] disabled:opacity-50 transition-colors shrink-0 flex items-center gap-1"
           >
             {isApplying ? <Loader2 size={13} className="animate-spin" /> : 'Pakai'}
           </button>

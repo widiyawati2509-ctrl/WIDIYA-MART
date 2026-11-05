@@ -574,16 +574,17 @@ export default function CheckoutFormClient({
 
                 {/* Dusun Picker */}
                 <div>
-                  <label className="text-[11px] font-sora font-bold text-[var(--ink)] flex items-center justify-between mb-1">
+                  <label htmlFor="dusun_select" className="text-[11px] font-sora font-bold text-[var(--ink)] flex items-center justify-between mb-1">
                     <span className="flex items-center gap-1">
-                      <MapPin size={13} className="text-[var(--accent)]" />
+                      <MapPin size={13} aria-hidden="true" className="text-[var(--accent)]" />
                       Pilih Dusun / Wilayah:
                     </span>
-                    <span className="text-[10px] text-emerald-700 font-extrabold">
+                    <span className="text-[10px] text-emerald-700 font-extrabold tabular-nums">
                       {dusunShipping.isFree ? 'Gratis Ongkir' : `Tarif: ${formatRupiah(selectedDusun.ongkir)}`}
                     </span>
                   </label>
                   <select
+                    id="dusun_select"
                     value={selectedDusunId}
                     onChange={(e) => {
                       setUseGpsDistance(false)
@@ -617,10 +618,11 @@ export default function CheckoutFormClient({
 
                 {/* Alamat Lengkap & Patokan */}
                 <div>
-                  <label className="text-[11px] font-sora font-bold text-[var(--ink)] block mb-1">
+                  <label htmlFor="alamat_lengkap_input" className="text-[11px] font-sora font-bold text-[var(--ink)] block mb-1">
                     Patokan Rumah / Alamat Lengkap <span className="text-[var(--danger)]">*</span>
                   </label>
                   <textarea
+                    id="alamat_lengkap_input"
                     rows={2}
                     value={alamatPengiriman}
                     onChange={(e) => setAlamatPengiriman(e.target.value)}

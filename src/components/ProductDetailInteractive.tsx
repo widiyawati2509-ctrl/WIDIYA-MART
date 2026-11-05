@@ -499,10 +499,14 @@ export default function ProductDetailInteractive({ product, storePhone = '087816
 
       {/* Floating Notification Toast when Saved */}
       {toastMessage && (
-        <div className="fixed bottom-36 left-1/2 -translate-x-1/2 max-w-[calc(480px-32px)] w-[calc(100%-32px)] z-50 animate-bounce-short">
+        <div
+          role="status"
+          aria-live="polite"
+          className="fixed bottom-36 left-1/2 -translate-x-1/2 max-w-[calc(480px-32px)] w-[calc(100%-32px)] z-50 animate-bounce-short"
+        >
           <div className="bg-[#2B1810] text-white p-3 rounded-2xl shadow-xl flex items-center justify-between border border-rose-500/40">
             <div className="flex items-center gap-2 text-xs">
-              <Heart size={17} className="fill-rose-500 text-rose-500 shrink-0" />
+              <Heart size={17} aria-hidden="true" className="fill-rose-500 text-rose-500 shrink-0" />
               <span className="font-medium">{toastMessage}</span>
             </div>
             <Link
@@ -518,20 +522,30 @@ export default function ProductDetailInteractive({ product, storePhone = '087816
 
       {/* Modal Konfirmasi Tanya Stok via WA */}
       {showStockModal && (
-        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-end sm:items-center justify-center p-4 animate-page-in">
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="stock-modal-title"
+          onKeyDown={(e) => {
+            if (e.key === 'Escape') setShowStockModal(false)
+          }}
+          className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-end sm:items-center justify-center p-4 animate-page-in"
+        >
           <div className="card-3d bg-white rounded-[var(--radius-xl)] p-5 w-full max-w-[400px] shadow-2xl border border-[var(--line)]">
             <div className="flex items-center justify-between pb-3 border-b border-[var(--line)]">
               <div className="flex items-center gap-2">
-                <span className="w-8 h-8 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                <span className="size-8 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center" aria-hidden="true">
                   <MessageCircle size={18} />
                 </span>
-                <h3 className="font-sora font-bold text-sm text-[var(--ink)]">Tanya Stok Produk</h3>
+                <h3 id="stock-modal-title" className="font-sora font-bold text-sm text-[var(--ink)]">Tanya Stok Produk</h3>
               </div>
               <button
+                type="button"
+                aria-label="Tutup dialog"
                 onClick={() => setShowStockModal(false)}
-                className="w-7 h-7 rounded-full bg-gray-100 text-gray-400 hover:text-gray-600 flex items-center justify-center"
+                className="size-7 rounded-full bg-gray-100 text-gray-400 hover:text-gray-600 flex items-center justify-center"
               >
-                <X size={15} />
+                <X size={15} aria-hidden="true" />
               </button>
             </div>
 

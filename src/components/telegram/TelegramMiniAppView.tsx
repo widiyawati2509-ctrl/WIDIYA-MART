@@ -163,13 +163,13 @@ export function TelegramMiniAppView({
   const activeTabIndex = activeTab === 'katalog' ? 0 : activeTab === 'checklist' ? 1 : 2
 
   return (
-    <div className="min-h-screen bg-[var(--paper)] text-[var(--ink)] pb-32">
+    <div className="min-h-dvh bg-[var(--paper)] text-[var(--ink)] pb-32">
       {/* 1. HEADER KHAS TOKO WIDIYA MART (WARM CORAL BRANDING + APPLE TRANSLUCENT CHROME) */}
       <header className="sticky top-0 z-40 apple-material-header px-4 py-3">
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-2.5 min-w-0">
             {/* Logo Asli Widiya Mart */}
-            <div className="relative w-10 h-10 rounded-2xl overflow-hidden shadow-sm shrink-0 border border-[var(--line)] bg-white">
+            <div className="relative size-10 rounded-2xl overflow-hidden shadow-sm shrink-0 border border-[var(--line)] bg-white">
               <Image
                 src={storeInfo?.logo_url || '/logo.png'}
                 alt={storeInfo?.nama_toko || 'Widiya Mart'}
@@ -184,16 +184,22 @@ export function TelegramMiniAppView({
                 <h1 className="font-sora font-extrabold text-sm truncate text-[var(--ink)]">
                   {storeInfo?.nama_toko || 'WIDIYA MART'}
                 </h1>
-                <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-[var(--accent)] text-white text-[9px] font-bold">
+                <span
+                  aria-label="Toko Terverifikasi"
+                  className="inline-flex items-center justify-center size-4 rounded-full bg-[var(--accent)] text-white text-[9px] font-bold"
+                >
                   ✓
                 </span>
               </div>
               <div className="flex items-center gap-1.5 text-[11px] text-[var(--ink-soft)]">
-                <span className={`w-2 h-2 rounded-full ${storeStatus.isOpen ? 'bg-emerald-600' : 'bg-rose-600'}`} />
-                <span className="font-medium">
+                <span
+                  aria-hidden="true"
+                  className={`size-2 rounded-full ${storeStatus.isOpen ? 'bg-emerald-600' : 'bg-rose-600'}`}
+                />
+                <span className="font-medium tabular-nums">
                   {storeStatus.isOpen ? `Buka s/d ${storeStatus.jamTutupFormatted}` : 'Tutup Sementara'}
                 </span>
-                <span>•</span>
+                <span aria-hidden="true">•</span>
                 <span>Lombok Tengah</span>
               </div>
             </div>
@@ -204,9 +210,10 @@ export function TelegramMiniAppView({
             href={formatWhatsAppUrl(adminWa, 'Halo Admin Widiya Mart, saya mau tanya ketersediaan stok')}
             target="_blank"
             rel="noopener noreferrer"
-            className="press flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[var(--accent-bg)] text-[var(--accent-2)] hover:bg-[var(--accent)] hover:text-white transition-all text-xs font-bold shrink-0 shadow-card-sm"
+            aria-label="Chat Kasir via WhatsApp"
+            className="press flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[var(--accent-bg)] text-[var(--accent-2)] hover:bg-[var(--accent)] hover:text-white transition-colors text-xs font-bold shrink-0 shadow-card-sm"
           >
-            <MessageCircle size={15} />
+            <MessageCircle size={15} aria-hidden="true" />
             <span className="hidden xs:inline">Chat Kasir</span>
           </a>
         </div>
@@ -214,21 +221,24 @@ export function TelegramMiniAppView({
         {/* Input Pencarian Cepat Terintegrasi */}
         <div className="mt-2.5 relative">
           <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none text-[var(--ink-soft)]">
-            <Search size={16} />
+            <Search size={16} aria-hidden="true" />
           </div>
           <input
-            type="text"
+            type="search"
+            aria-label="Cari produk di katalog"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Cari beras, minyak, sabun, pulpen..."
-            className="w-full pl-9 pr-8 py-2 bg-white border border-[var(--line)] focus:border-[var(--accent)] rounded-xl text-xs font-medium text-[var(--ink)] placeholder-[var(--ink-soft)]/60 outline-none shadow-xs transition-all"
+            className="w-full pl-9 pr-8 py-2 bg-white border border-[var(--line)] focus:border-[var(--accent)] rounded-xl text-xs font-medium text-[var(--ink)] placeholder-[var(--ink-soft)]/60 outline-none shadow-xs transition-colors"
           />
           {searchQuery && (
             <button
+              type="button"
+              aria-label="Bersihkan pencarian"
               onClick={() => setSearchQuery('')}
               className="absolute inset-y-0 right-2.5 flex items-center text-[var(--ink-soft)] hover:text-[var(--ink)]"
             >
-              <X size={15} />
+              <X size={15} aria-hidden="true" />
             </button>
           )}
         </div>
@@ -236,11 +246,15 @@ export function TelegramMiniAppView({
 
       {/* 2. APPLE-STYLE SLIDING SEGMENTED CONTROL (§4 Springs & §7 Spatial Consistency) */}
       <div className="px-4 pt-3">
-        <div className="relative bg-[rgba(232,214,205,0.65)] p-1 rounded-2xl grid grid-cols-3 items-center shadow-inner">
+        <div
+          role="tablist"
+          aria-label="Pilih mode tampilan toko"
+          className="relative bg-[rgba(232,214,205,0.65)] p-1 rounded-2xl grid grid-cols-3 items-center shadow-inner"
+        >
           {/* Sliding Active Pill Indicator */}
           <div
             aria-hidden="true"
-            className="absolute top-1 bottom-1 left-1 w-[calc((100%-8px)/3)] rounded-xl bg-white shadow-xs pointer-events-none will-change-transform"
+            className="absolute top-1 bottom-1 left-1 w-[calc((100%-8px)/3)] rounded-xl bg-white shadow-xs pointer-events-none"
             style={{
               transform: `translateX(${activeTabIndex * 100}%)`,
               transition: 'transform 280ms var(--ease-spring)',
@@ -249,6 +263,8 @@ export function TelegramMiniAppView({
 
           <button
             type="button"
+            role="tab"
+            aria-selected={activeTab === 'katalog'}
             onClick={() => {
               triggerHaptic(6)
               setActiveTab('katalog')
@@ -259,12 +275,14 @@ export function TelegramMiniAppView({
                 : 'text-[var(--ink-soft)] hover:text-[var(--ink)]'
             }`}
           >
-            <Zap size={14} className={activeTab === 'katalog' ? 'text-[var(--accent)]' : ''} />
+            <Zap size={14} aria-hidden="true" className={activeTab === 'katalog' ? 'text-[var(--accent)]' : ''} />
             <span>Katalog Cepat</span>
           </button>
 
           <button
             type="button"
+            role="tab"
+            aria-selected={activeTab === 'checklist'}
             onClick={() => {
               triggerHaptic(6)
               setActiveTab('checklist')
@@ -275,10 +293,10 @@ export function TelegramMiniAppView({
                 : 'text-[var(--ink-soft)] hover:text-[var(--ink)]'
             }`}
           >
-            <CheckSquare size={14} className={activeTab === 'checklist' ? 'text-[var(--accent)]' : ''} />
+            <CheckSquare size={14} aria-hidden="true" className={activeTab === 'checklist' ? 'text-[var(--accent)]' : ''} />
             <span>Daftar Checklist</span>
             {checkedIds.size > 0 && (
-              <span className="w-4 h-4 rounded-full bg-[var(--accent)] text-white text-[10px] font-bold flex items-center justify-center">
+              <span className="size-4 rounded-full bg-[var(--accent)] text-white text-[10px] font-bold flex items-center justify-center tabular-nums">
                 {checkedIds.size}
               </span>
             )}
@@ -286,6 +304,8 @@ export function TelegramMiniAppView({
 
           <button
             type="button"
+            role="tab"
+            aria-selected={activeTab === 'promo'}
             onClick={() => {
               triggerHaptic(6)
               setActiveTab('promo')
@@ -296,7 +316,7 @@ export function TelegramMiniAppView({
                 : 'text-[var(--ink-soft)] hover:text-[var(--ink)]'
             }`}
           >
-            <TicketPercent size={14} className={activeTab === 'promo' ? 'text-[var(--accent)]' : ''} />
+            <TicketPercent size={14} aria-hidden="true" className={activeTab === 'promo' ? 'text-[var(--accent)]' : ''} />
             <span>Kupon & Info</span>
           </button>
         </div>
@@ -306,8 +326,9 @@ export function TelegramMiniAppView({
       {activeTab !== 'promo' && (
         <div className="px-4 py-2.5 overflow-x-auto scrollbar-hide flex items-center gap-2">
           <button
+            type="button"
             onClick={() => setSelectedCategory('all')}
-            className={`px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap transition-all ${
+            className={`px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap transition-colors tabular-nums ${
               selectedCategory === 'all'
                 ? 'bg-[var(--accent)] text-white shadow-chip-active'
                 : 'bg-white text-[var(--ink-soft)] border border-[var(--line)] shadow-xs hover:border-[var(--accent)]'
@@ -322,8 +343,9 @@ export function TelegramMiniAppView({
             return (
               <button
                 key={cat.id}
+                type="button"
                 onClick={() => setSelectedCategory(cat.slug || cat.id)}
-                className={`px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap transition-all ${
+                className={`px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap transition-colors tabular-nums ${
                   isSelected
                     ? 'bg-[var(--accent)] text-white shadow-chip-active'
                     : 'bg-white text-[var(--ink-soft)] border border-[var(--line)] shadow-xs hover:border-[var(--accent)]'
@@ -343,9 +365,21 @@ export function TelegramMiniAppView({
           <div className="space-y-2">
             {filteredProducts.length === 0 ? (
               <div className="bg-white rounded-2xl p-8 text-center border border-[var(--line)] shadow-xs">
-                <p className="text-3xl mb-2">🔍</p>
+                <p className="text-3xl mb-2" aria-hidden="true">🔍</p>
                 <p className="font-bold text-sm text-[var(--ink)]">Produk tidak ditemukan</p>
                 <p className="text-xs text-[var(--ink-soft)] mt-1">Gunakan kata kunci atau pilih kategori lain</p>
+                {(searchQuery || selectedCategory !== 'all') && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSearchQuery('')
+                      setSelectedCategory('all')
+                    }}
+                    className="press mt-3 inline-flex items-center justify-center px-3.5 py-1.5 rounded-xl bg-[var(--accent)] text-white text-xs font-sora font-bold shadow-xs"
+                  >
+                    Tampilkan Semua Produk
+                  </button>
+                )}
               </div>
             ) : (
               filteredProducts.map((product) => {
@@ -353,12 +387,12 @@ export function TelegramMiniAppView({
                 return (
                   <div
                     key={product.id}
-                    className="bg-white rounded-2xl p-2.5 border border-[var(--line)] flex items-center gap-3 transition-all hover:border-[var(--accent)]/50 shadow-xs"
+                    className="bg-white rounded-2xl p-2.5 border border-[var(--line)] flex items-center gap-3 transition-colors hover:border-[var(--accent)]/50 shadow-xs"
                   >
                     {/* Gambar Thumbnail */}
                     <Link
                       href={`/produk/${product.slug}`}
-                      className="w-14 h-14 rounded-xl bg-[var(--accent-bg)] relative overflow-hidden shrink-0 border border-[var(--line)]/50"
+                      className="size-14 rounded-xl bg-[var(--accent-bg)] relative overflow-hidden shrink-0 border border-[var(--line)]/50"
                     >
                       {product.image_url ? (
                         <Image
@@ -369,7 +403,7 @@ export function TelegramMiniAppView({
                           sizes="60px"
                         />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center text-xs text-[var(--ink-soft)]">
+                        <div className="w-full h-full flex items-center justify-center text-xs text-[var(--ink-soft)]" aria-hidden="true">
                           📦
                         </div>
                       )}
@@ -382,7 +416,7 @@ export function TelegramMiniAppView({
                           {product.nama}
                         </h3>
                       </Link>
-                      <div className="flex items-center gap-2 mt-1">
+                      <div className="flex items-center gap-2 mt-1 tabular-nums">
                         <span className="font-sora font-extrabold text-xs text-[var(--accent-2)]">
                           {formatRupiah(product.harga)}
                         </span>
@@ -396,30 +430,36 @@ export function TelegramMiniAppView({
                     <div className="shrink-0">
                       {qty === 0 ? (
                         <button
+                          type="button"
                           onClick={() => updateQty(product.id, 1)}
                           disabled={product.stok <= 0}
-                          className="px-3 py-1.5 rounded-xl bg-[var(--accent-bg)] text-[var(--accent-2)] font-bold text-xs hover:bg-[var(--accent)] hover:text-white transition-all flex items-center gap-1 active:scale-95 disabled:opacity-50 shadow-xs"
+                          aria-label={`Tambah ${product.nama} ke keranjang`}
+                          className="press px-3 py-1.5 rounded-xl bg-[var(--accent-bg)] text-[var(--accent-2)] font-bold text-xs hover:bg-[var(--accent)] hover:text-white transition-colors flex items-center gap-1 disabled:opacity-50 shadow-xs"
                         >
-                          <Plus size={14} />
+                          <Plus size={14} aria-hidden="true" />
                           <span>Tambah</span>
                         </button>
                       ) : (
                         <div className="flex items-center gap-1 bg-[var(--paper)] rounded-xl p-1 border border-[var(--line)]">
                           <button
+                            type="button"
+                            aria-label={`Kurangi jumlah ${product.nama}`}
                             onClick={() => updateQty(product.id, -1)}
-                            className="w-6 h-6 rounded-lg bg-white flex items-center justify-center text-[var(--ink)] font-bold active:scale-95 shadow-2xs"
+                            className="press size-6 rounded-lg bg-white flex items-center justify-center text-[var(--ink)] font-bold shadow-2xs"
                           >
-                            <Minus size={12} />
+                            <Minus size={12} aria-hidden="true" />
                           </button>
-                          <span className="w-5 text-center font-sora font-bold text-xs text-[var(--accent-2)]">
+                          <span className="w-5 text-center font-sora font-bold text-xs text-[var(--accent-2)] tabular-nums">
                             {qty}
                           </span>
                           <button
+                            type="button"
+                            aria-label={`Tambah jumlah ${product.nama}`}
                             onClick={() => updateQty(product.id, 1)}
                             disabled={qty >= product.stok}
-                            className="w-6 h-6 rounded-lg bg-[var(--accent)] flex items-center justify-center text-white font-bold active:scale-95 shadow-2xs disabled:opacity-50"
+                            className="press size-6 rounded-lg bg-[var(--accent)] flex items-center justify-center text-white font-bold shadow-2xs disabled:opacity-50"
                           >
-                            <Plus size={12} />
+                            <Plus size={12} aria-hidden="true" />
                           </button>
                         </div>
                       )}
@@ -444,6 +484,7 @@ export function TelegramMiniAppView({
                 </p>
               </div>
               <button
+                type="button"
                 onClick={() => {
                   if (checkedIds.size === filteredProducts.length) {
                     setCheckedIds(new Set())
@@ -461,33 +502,36 @@ export function TelegramMiniAppView({
               {filteredProducts.map((product) => {
                 const isChecked = checkedIds.has(product.id)
                 return (
-                  <div
+                  <button
                     key={`check-${product.id}`}
+                    type="button"
+                    role="checkbox"
+                    aria-checked={isChecked}
                     onClick={() => toggleCheck(product.id)}
-                    className={`p-2.5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between gap-3 ${
+                    className={`w-full text-left p-2.5 rounded-2xl border transition-colors cursor-pointer flex items-center justify-between gap-3 ${
                       isChecked
                         ? 'bg-[var(--accent-bg)]/80 border-[var(--accent)]'
                         : 'bg-white border-[var(--line)]'
                     }`}
                   >
                     <div className="flex items-center gap-3 min-w-0">
-                      <div className="text-[var(--accent)] shrink-0">
+                      <div className="text-[var(--accent)] shrink-0" aria-hidden="true">
                         {isChecked ? <CheckSquare size={20} /> : <Square size={20} className="text-[var(--ink-soft)]/50" />}
                       </div>
                       <div className="min-w-0">
                         <p className={`text-xs font-bold line-clamp-1 ${isChecked ? 'text-[var(--accent-2)]' : 'text-[var(--ink)]'}`}>
                           {product.nama}
                         </p>
-                        <p className="text-[10px] text-[var(--ink-soft)]">
+                        <p className="text-[10px] text-[var(--ink-soft)] tabular-nums">
                           Sisa stok: {product.stok}
                         </p>
                       </div>
                     </div>
 
-                    <span className="font-sora font-extrabold text-xs text-[var(--ink)] shrink-0">
+                    <span className="font-sora font-extrabold text-xs text-[var(--ink)] shrink-0 tabular-nums">
                       {formatRupiah(product.harga)}
                     </span>
-                  </div>
+                  </button>
                 )
               })}
             </div>
@@ -495,7 +539,7 @@ export function TelegramMiniAppView({
             {/* Checklist Floating Action Bar */}
             {checklistSummary.count > 0 && (
               <div className="mt-4 p-3.5 bg-white rounded-2xl border border-[var(--accent)] shadow-md flex items-center justify-between">
-                <div>
+                <div className="tabular-nums">
                   <span className="text-[10px] text-[var(--ink-soft)] font-medium block">
                     {checklistSummary.count} Item Dicentang
                   </span>
@@ -504,11 +548,12 @@ export function TelegramMiniAppView({
                   </span>
                 </div>
                 <button
+                  type="button"
                   onClick={handleAddAllChecklist}
                   disabled={isPending}
-                  className="px-4 py-2 rounded-xl bg-[var(--accent)] text-white font-bold text-xs hover:bg-[var(--accent-2)] transition-all flex items-center gap-1.5 shadow-btn active:scale-95"
+                  className="press px-4 py-2 rounded-xl bg-[var(--accent)] text-white font-bold text-xs hover:bg-[var(--accent-2)] transition-colors flex items-center gap-1.5 shadow-btn"
                 >
-                  <ShoppingCart size={14} />
+                  <ShoppingCart size={14} aria-hidden="true" />
                   <span>{isPending ? 'Menyimpan...' : 'Beli Semua'}</span>
                 </button>
               </div>
@@ -522,13 +567,13 @@ export function TelegramMiniAppView({
             {/* Kartu Informasi Toko */}
             <div className="bg-white rounded-2xl p-4 border border-[var(--line)] shadow-xs">
               <div className="flex items-center gap-2 mb-2">
-                <Store size={18} className="text-[var(--accent)]" />
+                <Store size={18} aria-hidden="true" className="text-[var(--accent)]" />
                 <h3 className="font-bold text-xs text-[var(--ink)]">Informasi & Layanan Toko</h3>
               </div>
               <p className="text-xs text-[var(--ink-soft)] leading-relaxed">
                 Melayani pesan antar kebutuhan pokok, sembako, alat tulis, dan perlengkapan harian ke seluruh dusun Desa Pengenjek dan sekitarnya (Bisa COD / Bayar di Kasir).
               </p>
-              <div className="mt-3 pt-3 border-t border-[var(--line)] flex items-center justify-between text-xs">
+              <div className="mt-3 pt-3 border-t border-[var(--line)] flex items-center justify-between text-xs tabular-nums">
                 <span className="text-[var(--ink-soft)]">Jam Operasional Toko:</span>
                 <strong className="text-[var(--accent-2)]">07.00 – 21.00 WITA</strong>
               </div>
@@ -539,7 +584,7 @@ export function TelegramMiniAppView({
               <h4 className="font-bold text-xs text-[var(--ink-soft)] px-1">Kupon Promo Toko:</h4>
               <div className="bg-white rounded-2xl p-3 border border-[var(--line)] flex items-center justify-between gap-3 shadow-xs">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-9 h-9 rounded-xl bg-[var(--accent-bg)] text-[var(--accent-2)] flex items-center justify-center font-bold">
+                  <div className="size-9 rounded-xl bg-[var(--accent-bg)] text-[var(--accent-2)] flex items-center justify-center font-bold" aria-hidden="true">
                     🎟️
                   </div>
                   <div>
@@ -548,11 +593,12 @@ export function TelegramMiniAppView({
                   </div>
                 </div>
                 <button
+                  type="button"
                   onClick={() => {
                     navigator.clipboard?.writeText('HEMATDESA')
                     showToast('Kode kupon HEMATDESA disalin!')
                   }}
-                  className="px-3 py-1.5 rounded-xl border border-[var(--accent)] text-[var(--accent-2)] font-bold text-xs hover:bg-[var(--accent)] hover:text-white transition-all shrink-0 active:scale-95"
+                  className="press px-3 py-1.5 rounded-xl border border-[var(--accent)] text-[var(--accent-2)] font-bold text-xs hover:bg-[var(--accent)] hover:text-white transition-colors shrink-0"
                 >
                   Salin
                 </button>
@@ -565,8 +611,8 @@ export function TelegramMiniAppView({
       {/* 5. MAINBUTTON MELAYANG KHAS TELEGRAM APP (WARNA CORAL RESMI) */}
       {(totalLocalCart.count > 0 || checkedIds.size > 0) && (
         <div className="fixed bottom-20 inset-x-0 z-50 p-3 max-w-lg mx-auto">
-          <div className="bg-gradient-to-r from-[var(--accent)] to-[var(--accent-2)] text-white rounded-2xl p-3.5 shadow-btn flex items-center justify-between animate-in slide-in-from-bottom-2 duration-200">
-            <div>
+          <div className="bg-gradient-to-r from-[var(--accent)] to-[var(--accent-2)] text-white rounded-2xl p-3.5 shadow-btn flex items-center justify-between animate-fade-in">
+            <div className="tabular-nums">
               <span className="text-[10px] opacity-90 block font-medium">
                 {totalLocalCart.count > 0 ? `${totalLocalCart.count} Item di Keranjang` : `${checkedIds.size} Item Terpilih`}
               </span>
@@ -576,10 +622,10 @@ export function TelegramMiniAppView({
             </div>
             <Link
               href="/keranjang"
-              className="px-4 py-2 bg-white text-[var(--accent-2)] font-sora font-bold text-xs rounded-xl flex items-center gap-1.5 shadow-sm hover:bg-[var(--paper)] transition-all active:scale-95"
+              className="press px-4 py-2 bg-white text-[var(--accent-2)] font-sora font-bold text-xs rounded-xl flex items-center gap-1.5 shadow-sm hover:bg-[var(--paper)] transition-colors"
             >
               <span>Lanjut Bayar</span>
-              <ArrowRight size={14} />
+              <ArrowRight size={14} aria-hidden="true" />
             </Link>
           </div>
         </div>
@@ -587,9 +633,13 @@ export function TelegramMiniAppView({
 
       {/* Toast Notification */}
       {toast && (
-        <div className="fixed top-20 inset-x-4 z-50 flex justify-center pointer-events-none">
-          <div className="bg-[var(--navy)]/95 text-white text-xs font-medium px-4 py-2.5 rounded-full shadow-lg backdrop-blur-sm flex items-center gap-2 animate-in fade-in zoom-in-95 duration-150">
-            <Check size={14} className="text-emerald-400" />
+        <div
+          role="status"
+          aria-live="polite"
+          className="fixed top-20 inset-x-4 z-50 flex justify-center pointer-events-none"
+        >
+          <div className="bg-[var(--navy)]/95 text-white text-xs font-medium px-4 py-2.5 rounded-full shadow-lg backdrop-blur-sm flex items-center gap-2 animate-fade-in">
+            <Check size={14} aria-hidden="true" className="text-emerald-400" />
             <span>{toast}</span>
           </div>
         </div>

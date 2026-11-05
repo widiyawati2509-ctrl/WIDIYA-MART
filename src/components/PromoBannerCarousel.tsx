@@ -84,7 +84,11 @@ export default function PromoBannerCarousel({ banners: propBanners }: { banners?
 
   useEffect(() => {
     if (isPaused || activeBanners.length <= 1) return
+    if (typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
+      return
+    }
     const timer = setInterval(() => {
+      if (typeof document !== 'undefined' && document.hidden) return
       setCurrent((prev) => (prev + 1) % activeBanners.length)
     }, 4000)
     return () => clearInterval(timer)

@@ -133,8 +133,21 @@
 }
 
 /* Apple Design §1 & §10: Kill tap disambiguation latency on interactive elements */
-button, a, input, select, textarea, [role="button"] {
+button, a, input, select, textarea, [role="button"], [role="tab"], [role="checkbox"] {
   touch-action: manipulation;
+}
+
+/* fixing-accessibility §2 & §7: Visible keyboard focus outline for Tab navigation */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[role="button"]:focus-visible,
+[role="tab"]:focus-visible,
+[role="checkbox"]:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 /* Apple Design §15: Optical sizing, antialiased rendering, comfortable body leading */
@@ -149,10 +162,20 @@ body {
   letter-spacing: 0em;
 }
 
-/* Apple Design §15: Size-specific tracking & inverse leading on headings */
+/* baseline-ui Typography: text-pretty for paragraphs & tabular-nums for data */
+p {
+  text-wrap: pretty;
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Apple Design §15 & baseline-ui: Size-specific tracking, inverse leading, & text-balance on headings */
 h1, h2, h3, h4, h5, h6, .font-heading {
   font-family: var(--font-sora);
   font-optical-sizing: auto;
+  text-wrap: balance;
 }
 
 h1 {
@@ -342,6 +365,7 @@ header.top-header,
   -webkit-backdrop-filter: blur(20px) saturate(180%);
   border-top: 1px solid rgba(255, 255, 255, 0.65);
   box-shadow: 0 -8px 28px -6px rgba(43, 24, 16, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  padding-bottom: max(0.75rem, env(safe-area-inset-bottom, 0px));
 }
 
 .logo-box {

@@ -31,9 +31,33 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
   const product = await getProduct(slug)
 
   if (!product) return { title: 'Produk tidak ditemukan' }
+  const plainDesc = (product.deskripsi || `Beli ${product.nama} dengan harga hemat di WIDIYA MART. Bisa diantar kurir atau ambil di toko (COD).`)
+    .replace(/\[VARIAN:[\s\S]*?\]/g, '')
+    .trim()
+    .slice(0, 160)
+  const canonicalPath = `/produk/${slug}`
+  const ogImages = product.image_url ? [{ url: product.image_url, alt: product.nama }] : [{ url: '/logo.png', alt: product.nama }]
+
   return {
     title: product.nama,
-    description: product.deskripsi ?? undefined,
+    description: plainDesc,
+    alternates: {
+      canonical: canonicalPath,
+    },
+    openGraph: {
+      title: `${product.nama} | WIDIYA MART`,
+      description: plainDesc,
+      url: canonicalPath,
+      type: 'website',
+      locale: 'id_ID',
+      images: ogImages,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${product.nama} | WIDIYA MART`,
+      description: plainDesc,
+      images: product.image_url ? [product.image_url] : ['/logo.png'],
+    },
   }
 }
 

@@ -53,18 +53,23 @@ export function CheckoutOrderSummary({
         {items.length > 2 && (
           <button
             type="button"
+            aria-expanded={showItems}
+            aria-controls="checkout-items-list"
             onClick={() => setShowItems(!showItems)}
             className="text-[11px] font-sora font-semibold text-[var(--accent-2)] hover:underline flex items-center gap-1"
           >
             <span>{showItems ? 'Sembunyikan' : 'Lihat Produk'}</span>
-            {showItems ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+            {showItems ? <ChevronUp size={14} aria-hidden="true" /> : <ChevronDown size={14} aria-hidden="true" />}
           </button>
         )}
       </div>
 
       {/* Item List (Accordion / Collapsible) */}
       {showItems && (
-        <div className="space-y-1.5 text-xs max-h-56 overflow-y-auto pr-1 animate-in fade-in duration-200">
+        <div
+          id="checkout-items-list"
+          className="space-y-1.5 text-xs max-h-56 overflow-y-auto pr-1 animate-fade-in"
+        >
           {items.map((item) => (
             <div key={item.id} className="flex justify-between items-center py-1">
               <span className="text-[var(--ink-soft)] line-clamp-1 pr-2 font-medium">

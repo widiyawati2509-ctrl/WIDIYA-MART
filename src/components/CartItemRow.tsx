@@ -98,10 +98,11 @@ export default function CartItemRow({ item }: CartItemRowProps) {
               type="button"
               onClick={remove}
               disabled={isPending}
+              aria-label={`Hapus ${product.nama} dari keranjang`}
               className="press p-1.5 text-[var(--ink-soft)] hover:text-[var(--danger)] hover:bg-red-50 rounded-full transition-colors"
               title="Hapus"
             >
-              <Trash2 size={15} />
+              <Trash2 size={15} aria-hidden="true" />
             </button>
           </div>
         </div>

@@ -1,3 +1,53 @@
+---
+version: alpha
+name: widiya-mart
+description: Design system specification for WIDIYA MART (Pengenjek Mart) mobile-first retail e-commerce application.
+colors:
+  paper: "#FAF0EB"
+  card: "#FFFFFF"
+  navy: "#2B1810"
+  ink: "#23150F"
+  ink-soft: "#5E443B"
+  line: "#E8D6CD"
+  accent: "#FF6B35"
+  accent-2: "#E85521"
+  accent-bg: "#FFEBE3"
+  danger: "#E74C3C"
+  success: "#10B981"
+  warning: "#F59E0B"
+typography:
+  sora:
+    fontFamily: Sora
+  inter:
+    fontFamily: Inter
+  sans:
+    fontFamily: Inter
+  caption:
+    fontSize: 11px
+  small:
+    fontSize: 12px
+  body:
+    fontSize: 14px
+    lineHeight: "1.5"
+  subtitle:
+    fontSize: 15px
+  title:
+    fontSize: 16px
+    fontFamily: Sora
+    fontWeight: 700
+  heading:
+    fontSize: 18px
+    fontFamily: Sora
+    fontWeight: 700
+    letterSpacing: -0.022em
+    lineHeight: "1.15"
+rounded:
+  sm: 12px
+  md: 16px
+  lg: 20px
+  xl: 24px
+---
+
 # Widiya Mart / PENGENJEK MART Design System Specification (`DESIGN.md`)
 
 Documented design system for **PENGENJEK MART (Widiya Mart)** e-commerce web application.

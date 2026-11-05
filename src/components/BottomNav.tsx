@@ -59,7 +59,8 @@ export default function BottomNav({ cartCount, isLoggedIn }: BottomNavProps) {
 
   return (
     <nav
-      className={`fixed left-1/2 -translate-x-1/2 bottom-3.5 max-w-[calc(480px-32px)] w-[calc(100%-32px)] rounded-[var(--radius-xl)] p-1 flex items-center justify-between z-50 border border-white/15 shadow-nav backdrop-blur-xl transition-all duration-300 ease-[var(--ease-spring)] hover:opacity-100 hover:translate-y-0 hover:scale-100 will-change-transform ${
+      aria-label="Navigasi Utama"
+      className={`fixed left-1/2 -translate-x-1/2 bottom-3.5 max-w-[calc(480px-32px)] w-[calc(100%-32px)] rounded-[var(--radius-xl)] p-1 flex items-center justify-between z-50 border border-white/15 shadow-nav backdrop-blur-xl transition-[transform,opacity] duration-300 ease-[var(--ease-spring)] hover:opacity-100 hover:translate-y-0 hover:scale-100 ${
         isCollapsed
           ? 'opacity-45 translate-y-2 scale-[0.97]'
           : 'opacity-100 translate-y-0 scale-100'
@@ -80,7 +81,8 @@ export default function BottomNav({ cartCount, isLoggedIn }: BottomNavProps) {
             key={href}
             href={resolvedHref}
             prefetch={true}
-            className={`flex-1 flex flex-col items-center justify-center py-1.5 px-1 min-h-[42px] min-w-[42px] rounded-[var(--radius-lg)] transition-all relative press ${
+            aria-current={isActive ? 'page' : undefined}
+            className={`flex-1 flex flex-col items-center justify-center py-1.5 px-1 min-h-[42px] min-w-[42px] rounded-[var(--radius-lg)] transition-colors relative press ${
               isActive
                 ? 'text-white border border-[rgba(255,107,53,0.4)] shadow-chip-active'
                 : 'text-[#A8928B] hover:text-white/80'
@@ -96,13 +98,14 @@ export default function BottomNav({ cartCount, isLoggedIn }: BottomNavProps) {
           >
             <div className="relative">
               <IconComponent
-                className={`w-[18px] h-[18px] transition-transform ${
+                aria-hidden="true"
+                className={`size-[18px] transition-transform ${
                   isActive ? 'scale-110 text-white' : 'text-[#A8928B]'
                 }`}
                 strokeWidth={isActive ? 2.3 : 1.8}
               />
               {isCart && cartCount > 0 && (
-                <span className="absolute -top-1.5 -right-2.5 bg-[var(--accent)] text-white text-[9px] font-extrabold rounded-full px-1 min-w-[15px] h-3.5 flex items-center justify-center shadow-xs">
+                <span className="absolute -top-1.5 -right-2.5 bg-[var(--accent)] text-white text-[9px] font-extrabold rounded-full px-1 min-w-[15px] h-3.5 flex items-center justify-center shadow-xs tabular-nums">
                   {cartCount > 9 ? '9+' : cartCount}
                 </span>
               )}

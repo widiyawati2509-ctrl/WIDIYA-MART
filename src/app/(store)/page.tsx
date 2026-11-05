@@ -53,12 +53,36 @@ export default async function HomePage() {
 
   const { categories, products, storeInfo, promos } = homeData.data
 
+  const storeJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'GroceryStore',
+    name: storeInfo?.nama_toko || 'WIDIYA MART',
+    url: 'https://widiya-mart.vercel.app',
+    image: 'https://widiya-mart.vercel.app/logo.png',
+    telephone: storeInfo?.no_telepon || storeInfo?.no_hp_toko || '087765432100',
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: storeInfo?.alamat_toko || 'Desa Pengenjek, Kec. Jonggat',
+      addressLocality: storeInfo?.kota || 'Lombok Tengah',
+      addressRegion: 'Nusa Tenggara Barat',
+      addressCountry: 'ID',
+    },
+    openingHours: 'Mo-Su 07:00-21:00',
+    priceRange: 'Rp',
+  }
+
   return (
-    <TelegramMiniAppView
-      categories={categories || []}
-      products={products || []}
-      storeInfo={storeInfo || null}
-      promos={promos || []}
-    />
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(storeJsonLd) }}
+      />
+      <TelegramMiniAppView
+        categories={categories || []}
+        products={products || []}
+        storeInfo={storeInfo || null}
+        promos={promos || []}
+      />
+    </>
   )
 }

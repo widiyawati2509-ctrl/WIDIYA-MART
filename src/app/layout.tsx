@@ -26,23 +26,54 @@ export const viewport: Viewport = {
   themeColor: '#FAF0EB',
   width: 'device-width',
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
   viewportFit: 'cover',
 }
 
 export const metadata: Metadata = {
-  applicationName: 'PENGENJEK MART',
+  metadataBase: new URL('https://widiya-mart.vercel.app'),
+  applicationName: 'WIDIYA MART',
   title: {
-    default: 'PENGENJEK MART',
-    template: '%s | PENGENJEK MART',
+    default: 'WIDIYA MART — Belanja Sembako & Kebutuhan Harian Pengenjek',
+    template: '%s | WIDIYA MART',
   },
-  description: 'Belanja kebutuhan sehari-hari di PENGENJEK MART. Pesan online, ambil di toko, bayar COD.',
+  description:
+    'Belanja kebutuhan sehari-hari, sembako, jajanan, dan alat tulis di WIDIYA MART (Pengenjek). Pesan online cepat, ambil di toko atau diantar kurir, bayar COD.',
+  alternates: {
+    canonical: '/',
+  },
   manifest: '/manifest.webmanifest',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
-    title: 'PENGENJEK MART',
+    title: 'WIDIYA MART',
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'id_ID',
+    url: 'https://widiya-mart.vercel.app',
+    siteName: 'WIDIYA MART',
+    title: 'WIDIYA MART — Belanja Sembako & Kebutuhan Harian Pengenjek',
+    description:
+      'Belanja kebutuhan sehari-hari, sembako, jajanan, dan alat tulis di WIDIYA MART (Pengenjek). Pesan online cepat, ambil di toko atau diantar kurir, bayar COD.',
+    images: [
+      {
+        url: '/logo.png',
+        width: 512,
+        height: 512,
+        alt: 'Logo Resmi WIDIYA MART',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'WIDIYA MART — Belanja Sembako & Kebutuhan Harian Pengenjek',
+    description:
+      'Belanja kebutuhan sehari-hari di WIDIYA MART (Pengenjek). Pesan online, ambil di toko atau diantar kurir, bayar COD.',
+    images: ['/logo.png'],
+  },
+  robots: {
+    index: true,
+    follow: true,
   },
   icons: {
     icon: [
@@ -73,7 +104,7 @@ export default function RootLayout({
         />
         <link rel="dns-prefetch" href="https://byhpcdgehartffitbrde.supabase.co" />
       </head>
-      <body className="font-sans antialiased bg-[var(--paper)] text-[var(--ink)] selection:bg-[var(--accent)]/20 min-h-screen">
+      <body className="font-sans antialiased bg-[var(--paper)] text-[var(--ink)] selection:bg-[var(--accent)]/20 min-h-dvh">
         <ServiceWorkerRegister />
         <Suspense fallback={null}>
           <TopProgressBar />
