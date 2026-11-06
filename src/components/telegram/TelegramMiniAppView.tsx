@@ -250,7 +250,7 @@ export function TelegramMiniAppView({
           </a>
         </div>
 
-        {/* Input Pencarian Cepat Terintegrasi */}
+        {/* Input Pencarian Cepat Terintegrasi (jakubkrehel/better-typography: text-[16px] sm:text-xs prevents iOS Safari auto-zoom) */}
         <div className="mt-2 relative">
           <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none text-[var(--ink-soft)]">
             <Search size={15} aria-hidden="true" />
@@ -261,14 +261,14 @@ export function TelegramMiniAppView({
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Cari beras, minyak, sabun, alat tulis..."
-            className="w-full pl-9 pr-8 py-2 bg-white border border-[var(--line)] focus:border-[var(--accent)] rounded-xl text-xs font-medium text-[var(--ink)] placeholder-[var(--ink-soft)]/60 outline-none shadow-xs transition-colors"
+            className="w-full pl-9 pr-8 py-2 bg-white border border-[var(--line)] focus:border-[var(--accent)] rounded-xl text-[16px] sm:text-xs font-medium text-[var(--ink)] placeholder-[var(--ink-soft)]/60 outline-none shadow-input transition-colors"
           />
           {searchQuery && (
             <button
               type="button"
               aria-label="Bersihkan pencarian"
               onClick={() => setSearchQuery('')}
-              className="absolute inset-y-0 right-2.5 flex items-center text-[var(--ink-soft)] hover:text-[var(--ink)]"
+              className="press absolute inset-y-0 right-2.5 flex items-center text-[var(--ink-soft)] hover:text-[var(--ink)]"
             >
               <X size={15} aria-hidden="true" />
             </button>
@@ -451,8 +451,8 @@ export function TelegramMiniAppView({
 
           {/* KOLOM KANAN: DAFTAR PRODUK UTAMA */}
           <main className="flex-1 min-w-0 p-2.5 sm:p-3">
-            {/* Baris Judul Kategori Aktif & Saklar Mode Grid/List */}
-            <div className="flex items-center justify-between gap-2 mb-2.5 bg-white/85 rounded-2xl px-3 py-2 border border-[var(--line)] shadow-2xs">
+            {/* Baris Judul Kategori Aktif & Saklar Mode Grid/List (jakubantalik/transitions-dev: sliding pill toggle) */}
+            <div className="flex items-center justify-between gap-2 mb-2 bg-white/85 rounded-2xl px-3 py-2 border border-[var(--line)] shadow-card-sm">
               <div className="min-w-0">
                 <div className="flex items-center gap-1.5">
                   <span aria-hidden="true" className="text-sm">{activeCategoryMeta.icon}</span>
@@ -469,8 +469,17 @@ export function TelegramMiniAppView({
                 <div
                   role="group"
                   aria-label="Pilih tata letak produk"
-                  className="flex items-center gap-0.5 bg-[var(--paper)] p-0.5 rounded-xl border border-[var(--line)] shrink-0"
+                  className="relative grid grid-cols-2 items-center bg-[var(--paper)] p-0.5 rounded-xl border border-[var(--line)] shrink-0"
                 >
+                  {/* Sliding Active Pill Indicator */}
+                  <div
+                    aria-hidden="true"
+                    className="absolute top-0.5 bottom-0.5 left-0.5 w-[calc((100%-4px)/2)] rounded-lg bg-white shadow-2xs pointer-events-none"
+                    style={{
+                      transform: `translateX(${viewMode === 'list' ? '100%' : '0%'})`,
+                      transition: 'transform 240ms var(--ease-spring)',
+                    }}
+                  />
                   <button
                     type="button"
                     aria-label="Tampilan Grid 2 Kolom"
@@ -479,9 +488,9 @@ export function TelegramMiniAppView({
                       triggerHaptic(5)
                       setViewMode('grid')
                     }}
-                    className={`press px-2 py-1 rounded-lg text-[10px] font-bold flex items-center gap-1 transition-colors ${
+                    className={`relative z-10 press px-2 py-1 rounded-lg text-[10px] font-bold flex items-center justify-center gap-1 transition-colors ${
                       viewMode === 'grid'
-                        ? 'bg-white text-[var(--accent-2)] shadow-2xs'
+                        ? 'text-[var(--accent-2)]'
                         : 'text-[var(--ink-soft)] hover:text-[var(--ink)]'
                     }`}
                   >
@@ -496,9 +505,9 @@ export function TelegramMiniAppView({
                       triggerHaptic(5)
                       setViewMode('list')
                     }}
-                    className={`press px-2 py-1 rounded-lg text-[10px] font-bold flex items-center gap-1 transition-colors ${
+                    className={`relative z-10 press px-2 py-1 rounded-lg text-[10px] font-bold flex items-center justify-center gap-1 transition-colors ${
                       viewMode === 'list'
-                        ? 'bg-white text-[var(--accent-2)] shadow-2xs'
+                        ? 'text-[var(--accent-2)]'
                         : 'text-[var(--ink-soft)] hover:text-[var(--ink)]'
                     }`}
                   >
@@ -509,11 +518,44 @@ export function TelegramMiniAppView({
               )}
             </div>
 
+            {/* Quick-Search Popular Essential Pills (pbakaus/clarify & jakubantalik/transitions-dev: 1-tap filter without typing) */}
+            <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide pb-2 mb-0.5">
+              <span className="text-[10px] font-bold text-[var(--ink-soft)] shrink-0">Cepat:</span>
+              {[
+                { label: '🌾 Beras', kw: 'Beras' },
+                { label: '🌻 Minyak', kw: 'Minyak' },
+                { label: '🍜 Mie', kw: 'Mie' },
+                { label: '🧼 Sabun', kw: 'Sabun' },
+                { label: '🥚 Telur', kw: 'Telur' },
+                { label: '🍬 Gula', kw: 'Gula' },
+              ].map((tag) => {
+                const isTagActive = searchQuery.toLowerCase().trim() === tag.kw.toLowerCase()
+                return (
+                  <button
+                    key={tag.kw}
+                    type="button"
+                    aria-pressed={isTagActive}
+                    onClick={() => {
+                      triggerHaptic(5)
+                      setSearchQuery(isTagActive ? '' : tag.kw)
+                    }}
+                    className={`press shrink-0 px-2.5 py-1 rounded-full text-[10.5px] font-sora font-bold transition-colors border ${
+                      isTagActive
+                        ? 'bg-[var(--accent)] text-white border-[var(--accent)] shadow-xs'
+                        : 'bg-white text-[var(--ink-soft)] border-[var(--line)] hover:border-[var(--accent)]/60 hover:text-[var(--ink)]'
+                    }`}
+                  >
+                    {tag.label}
+                  </button>
+                )
+              })}
+            </div>
+
             {/* TAB 1: KATALOG (GRID 2 KOLOM ATAU DAFTAR BARIS) */}
             {activeTab === 'katalog' && (
               <>
                 {filteredProducts.length === 0 ? (
-                  <div className="bg-white rounded-2xl p-6 text-center border border-[var(--line)] shadow-xs">
+                  <div className="bg-white rounded-2xl p-6 text-center border border-[var(--line)] shadow-card-sm">
                     <p className="text-3xl mb-2" aria-hidden="true">🔍</p>
                     <p className="font-bold text-sm text-[var(--ink)]">Produk tidak ditemukan</p>
                     <p className="text-xs text-[var(--ink-soft)] mt-1">
@@ -540,13 +582,13 @@ export function TelegramMiniAppView({
                       return (
                         <div
                           key={product.id}
-                          className="bg-white rounded-2xl p-2 border border-[var(--line)] flex flex-col justify-between transition-[transform,border-color,box-shadow] hover:border-[var(--accent)]/50 shadow-xs"
+                          className="bg-white rounded-2xl p-2 border border-[var(--line)] flex flex-col justify-between transition-[transform,border-color,box-shadow] hover:border-[var(--accent)]/50 shadow-card-sm"
                         >
                           <div>
-                            {/* Gambar Produk Persegi */}
+                            {/* Gambar Produk Persegi (jakubkrehel/better-ui: img-ring-inset) */}
                             <Link
                               href={`/produk/${product.slug}`}
-                              className="block relative aspect-square w-full rounded-xl bg-[var(--accent-bg)] overflow-hidden mb-1.5 border border-[var(--line)]/40"
+                              className="block relative aspect-square w-full rounded-xl bg-[var(--accent-bg)] img-ring-inset overflow-hidden mb-1.5"
                             >
                               {product.image_url ? (
                                 <Image
@@ -568,7 +610,7 @@ export function TelegramMiniAppView({
 
                               {/* Badge Sisa Stok Sedikit */}
                               {product.stok > 0 && product.stok <= 5 && (
-                                <span className="absolute top-1.5 right-1.5 px-1.5 py-0.5 rounded-md bg-white/90 backdrop-blur-xs text-[var(--accent-2)] text-[9.5px] font-bold shadow-2xs tabular-nums">
+                                <span className="absolute top-1.5 right-1.5 px-1.5 py-0.5 rounded-md bg-white/95 backdrop-blur-xs text-[var(--accent-2)] text-[9.5px] font-bold shadow-2xs tabular-nums">
                                   Sisa {product.stok}
                                 </span>
                               )}
@@ -606,7 +648,7 @@ export function TelegramMiniAppView({
                                   <span>Beli</span>
                                 </button>
                               ) : (
-                                <div className="flex items-center gap-0.5 bg-[var(--paper)] rounded-xl p-0.5 border border-[var(--line)]">
+                                <div className="flex items-center gap-0.5 bg-[var(--paper)] rounded-xl p-0.5 border border-[var(--line)] animate-pop">
                                   <button
                                     type="button"
                                     aria-label={`Kurangi jumlah ${product.nama}`}
@@ -615,7 +657,10 @@ export function TelegramMiniAppView({
                                   >
                                     <Minus size={11} aria-hidden="true" />
                                   </button>
-                                  <span className="w-4 text-center font-sora font-bold text-[11px] text-[var(--accent-2)] tabular-nums">
+                                  <span
+                                    key={`qty-${product.id}-${qty}`}
+                                    className="w-4 text-center font-sora font-bold text-[11px] text-[var(--accent-2)] tabular-nums animate-pop"
+                                  >
                                     {qty}
                                   </span>
                                   <button
@@ -643,12 +688,12 @@ export function TelegramMiniAppView({
                       return (
                         <div
                           key={product.id}
-                          className="bg-white rounded-2xl p-2.5 border border-[var(--line)] flex items-center gap-2.5 transition-colors hover:border-[var(--accent)]/50 shadow-xs"
+                          className="bg-white rounded-2xl p-2.5 border border-[var(--line)] flex items-center gap-2.5 transition-colors hover:border-[var(--accent)]/50 shadow-card-sm"
                         >
                           {/* Gambar Thumbnail */}
                           <Link
                             href={`/produk/${product.slug}`}
-                            className="size-13 rounded-xl bg-[var(--accent-bg)] relative overflow-hidden shrink-0 border border-[var(--line)]/50"
+                            className="size-13 rounded-xl bg-[var(--accent-bg)] img-ring-inset relative overflow-hidden shrink-0"
                           >
                             {product.image_url ? (
                               <Image

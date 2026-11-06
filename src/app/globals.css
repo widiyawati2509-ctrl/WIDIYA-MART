@@ -31,17 +31,17 @@
   --text-title: 16px;
   --text-heading: 18px;
 
-  /* Consistent Clean Shadow Scale */
-  --shadow-3d: 0 1px 3px 0 rgba(43, 24, 16, 0.06), 0 1px 2px -1px rgba(43, 24, 16, 0.04);
+  /* Consistent Clean Shadow Scale (mengto/beautiful-shadows: multi-layered warm umber + top specular highlight) */
+  --shadow-3d: 0 1px 2px rgba(43, 24, 16, 0.04), 0 4px 12px -2px rgba(43, 24, 16, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.85);
   --shadow-btn: 0 8px 20px -2px rgba(255,107,53,.42), inset 0 1px 0 rgba(255,255,255,.4);
   --shadow-btn-active: 0 3px 8px -1px rgba(232,85,33,.35), inset 0 2px 4px rgba(0,0,0,.2);
   --shadow-chip-active: 0 6px 16px -2px rgba(255,107,53,.4), inset 0 1px 0 rgba(255,255,255,.3);
   --shadow-nav: 0 16px 35px -6px rgba(43,24,16,.5), inset 0 1px 1px rgba(255,255,255,.18);
   --shadow-pop: 0 20px 40px -10px rgba(0,0,0,.35), inset 0 1px 0 #ffffff;
   --shadow-header: 0 4px 20px -2px rgba(43,24,16,0.06);
-  --shadow-input: 0 4px 10px -2px rgba(43,24,16,.04), inset 0 1px 0 #ffffff;
+  --shadow-input: 0 2px 6px -1px rgba(43,24,16,.04), 0 4px 10px -2px rgba(43,24,16,.03), inset 0 1px 0 #ffffff;
   --shadow-badge: 0 6px 14px -2px rgba(255,107,53,.45), inset 0 1px 0 rgba(255,255,255,.4);
-  --shadow-card-sm: 0 2px 6px rgba(43,24,16,0.04);
+  --shadow-card-sm: 0 1px 2px rgba(43,24,16,0.04), 0 3px 8px -2px rgba(43,24,16,0.05), inset 0 1px 0 rgba(255,255,255,0.85);
   --shadow-card-accent: 0 4px 12px rgba(255,107,53,0.12);
   --shadow-card-dark: 0 12px 28px -4px rgba(43,24,16,0.4);
   --shadow-popover: 0 12px 36px rgba(43,24,16,0.18);
@@ -169,6 +169,28 @@ p {
 
 .tabular-nums {
   font-variant-numeric: tabular-nums;
+}
+
+/* jakubkrehel/better-typography: Custom Warm Coral brand text selection */
+::selection {
+  background-color: rgba(255, 107, 53, 0.22);
+  color: var(--ink);
+}
+
+/* jakubkrehel/better-ui: Subtle inner border ring so light/white product photos never bleed into card surfaces */
+.img-ring-inset {
+  box-shadow: inset 0 0 0 1px rgba(43, 24, 16, 0.065);
+}
+
+/* jakubantalik/transitions-dev: Compositor-only counter & badge pop micro-interaction */
+@keyframes number-pop {
+  0% { transform: scale(0.86); }
+  55% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+.animate-pop {
+  animation: number-pop 190ms var(--ease-spring) forwards;
 }
 
 /* Apple Design §15 & baseline-ui: Size-specific tracking, inverse leading, & text-balance on headings */

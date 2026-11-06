@@ -4,6 +4,7 @@ import Image from 'next/image'
 import { formatRupiah } from '@/lib/utils'
 import { Package } from 'lucide-react'
 import WishlistHeartButton from '@/components/WishlistHeartButton'
+import QuickAddCartButton from '@/components/QuickAddCartButton'
 import type { Product } from '@/types/database'
 
 interface ProductCardProps {
@@ -17,75 +18,86 @@ export default function ProductCard({ product, priority = false }: ProductCardPr
   return (
     <Link href={`/produk/${product.slug}`} prefetch={true} className="block group h-full">
       <div
-        className={`product bg-white border border-[var(--line)] rounded-2xl p-2.5 shadow-xs transition-[transform,border-color,box-shadow] duration-200 h-full flex flex-col justify-between hover:border-[var(--accent)]/50 ${
+        className={`product bg-white border border-[var(--line)] rounded-2xl p-2 shadow-card-sm transition-[transform,border-color,box-shadow] duration-200 h-full flex flex-col justify-between hover:border-[var(--accent)]/50 ${
           outOfStock ? 'opacity-60' : ''
         }`}
       >
-        {/* Thumbnail (12px radius, accent-bg) */}
-        <div className="relative aspect-square w-full rounded-xl bg-[var(--accent-bg)] overflow-hidden mb-1.5">
-          {product.image_url ? (
-            <Image
-              src={product.image_url}
-              alt={product.nama}
-              fill
-              priority={priority}
-              className="object-contain p-1 group-hover:scale-105 transition-transform duration-300"
-              sizes="(max-width: 480px) 50vw, 240px"
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center text-[var(--accent)]/40">
-              <Package className="w-10 h-10 stroke-[1.5]" />
-            </div>
-          )}
+        <div>
+          {/* Thumbnail (Concentric 12px radius, accent-bg + inner optical ring) */}
+          <div className="relative aspect-square w-full rounded-xl bg-[var(--accent-bg)] img-ring-inset overflow-hidden mb-1.5">
+            {product.image_url ? (
+              <Image
+                src={product.image_url}
+                alt={product.nama}
+                fill
+                priority={priority}
+                className="object-contain p-1.5 group-hover:scale-105 transition-transform duration-300"
+                sizes="(max-width: 480px) 50vw, 240px"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center text-[var(--accent)]/40">
+                <Package className="size-10 stroke-[1.5]" aria-hidden="true" />
+              </div>
+            )}
 
-          {/* Promo / Discount Badge */}
-          {product.diskon_persen ? (
-            <div className="absolute top-1.5 left-1.5 z-10">
-              <span className="text-[var(--text-caption)] font-sora font-extrabold bg-gradient-to-r from-red-600 to-orange-500 text-white px-2 py-0.5 rounded-[var(--radius-sm)] shadow-sm tracking-wide">
-                -{product.diskon_persen}%
-              </span>
-            </div>
-          ) : product.badge_text ? (
-            <div className="absolute top-1.5 left-1.5 z-10">
-              <span className="text-[var(--text-caption)] font-sora font-extrabold bg-gradient-to-r from-red-600 to-orange-500 text-white px-1.5 py-0.5 rounded-[var(--radius-sm)] shadow-sm tracking-wide">
-                {product.badge_text}
-              </span>
-            </div>
-          ) : null}
+            {/* Promo / Discount Badge */}
+            {product.diskon_persen ? (
+              <div className="absolute top-1.5 left-1.5 z-10">
+                <span className="text-[10px] font-sora font-extrabold bg-[var(--accent)] text-white px-2 py-0.5 rounded-lg shadow-xs tabular-nums">
+                  -{product.diskon_persen}%
+                </span>
+              </div>
+            ) : product.badge_text ? (
+              <div className="absolute top-1.5 left-1.5 z-10">
+                <span className="text-[10px] font-sora font-extrabold bg-[var(--accent)] text-white px-1.5 py-0.5 rounded-lg shadow-xs">
+                  {product.badge_text}
+                </span>
+              </div>
+            ) : null}
 
-          {outOfStock && (
-            <div className="absolute inset-0 flex items-center justify-center bg-white/70 backdrop-blur-[2px]">
-              <span className="text-[var(--text-caption)] font-bold bg-[var(--paper)] text-[var(--ink-soft)] px-2 py-0.5 rounded-full border border-[var(--line)]">
-                Habis
-              </span>
-            </div>
-          )}
+            {outOfStock && (
+              <div className="absolute inset-0 flex items-center justify-center bg-white/75 backdrop-blur-[2px]">
+                <span className="text-[var(--text-caption)] font-bold bg-[var(--paper)] text-[var(--ink-soft)] px-2.5 py-0.5 rounded-full border border-[var(--line)]">
+                  Stok Habis
+                </span>
+              </div>
+            )}
 
-          {product.stok > 0 && product.stok <= 5 && (
-            <div className="absolute top-1.5 right-1.5">
-              <span className="var-badge text-[var(--text-caption)] font-bold bg-[var(--accent-bg)] text-[var(--accent-2)] px-1.5 py-0.5 rounded-[var(--radius-sm)] shadow-xs">
-                Sisa {product.stok}
-              </span>
-            </div>
-          )}
+            {product.stok > 0 && product.stok <= 5 && (
+              <div className="absolute top-1.5 right-1.5">
+                <span className="var-badge text-[10px] font-bold bg-white/95 text-[var(--accent-2)] px-1.5 py-0.5 rounded-md shadow-2xs tabular-nums">
+                  Sisa {product.stok}
+                </span>
+              </div>
+            )}
+          </div>
+
+          {/* Info Produk */}
+          <h3 className="text-xs font-bold text-[var(--ink)] line-clamp-2 leading-snug mb-1 min-h-[2.1rem] group-hover:text-[var(--accent)] transition-colors">
+            {product.nama}
+          </h3>
         </div>
 
-        {/* Info Produk */}
-        <h3 className="text-[var(--text-body)] font-bold text-[var(--ink)] line-clamp-2 leading-tight mb-0.5 group-hover:text-[var(--accent)] transition-colors">
-          {product.nama}
-        </h3>
+        <div>
+          {/* Harga & Stok (Sora bold, accent-2, tabular-nums) */}
+          <div className="flex items-baseline justify-between gap-1 mb-1.5 tabular-nums">
+            <p className="font-sora font-extrabold text-[var(--accent-2)] text-xs leading-tight truncate">
+              {formatRupiah(product.harga)}
+            </p>
+            <p className="text-[10px] text-[var(--ink-soft)] font-medium shrink-0">
+              {outOfStock ? 'Kosong' : `Stok ${product.stok}`}
+            </p>
+          </div>
 
-        {/* Harga (Sora bold, accent-2) */}
-        <p className="font-sora font-bold text-[var(--accent-2)] text-[var(--text-body)] leading-tight mb-0.5 tabular-nums">
-          {formatRupiah(product.harga)}
-        </p>
-
-        {/* Stok & Tombol Love (Favorit) */}
-        <div className="mt-1.5 pt-1.5 border-t border-[rgba(232,214,205,0.7)] flex items-center justify-between">
-          <p className="text-[var(--text-caption)] text-[var(--ink-soft)] font-medium">
-            {outOfStock ? 'Stok kosong' : `Stok: ${product.stok}`}
-          </p>
-          <WishlistHeartButton product={product} />
+          {/* Footer Aksi Cepat: Tombol Love (Favorit) + Quick Add (+ Beli) */}
+          <div className="pt-1.5 border-t border-[rgba(232,214,205,0.65)] flex items-center justify-between gap-1.5">
+            <WishlistHeartButton product={product} iconSize={14} className="size-8 rounded-[10px]" />
+            <QuickAddCartButton
+              productId={product.id}
+              productName={product.nama}
+              disabled={outOfStock}
+            />
+          </div>
         </div>
       </div>
     </Link>

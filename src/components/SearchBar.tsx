@@ -136,7 +136,7 @@ export default function SearchBar({
           }}
           placeholder={placeholder}
           autoComplete="off"
-          className="w-full min-w-0 rounded-[var(--radius-md)] border border-[var(--line)] bg-white pl-10 pr-10 py-2.5 text-sm text-[var(--ink)] placeholder:text-[var(--ink-soft)] shadow-input outline-none transition-all focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
+          className="w-full min-w-0 rounded-[var(--radius-md)] border border-[var(--line)] bg-white pl-10 pr-10 py-2.5 text-[16px] sm:text-sm text-[var(--ink)] placeholder:text-[var(--ink-soft)] shadow-input outline-none transition-all focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
         />
 
         <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1">
@@ -182,7 +182,7 @@ export default function SearchBar({
                   onClick={() => setIsOpen(false)}
                   className="flex items-center gap-3 p-2.5 hover:bg-[var(--accent-bg)]/40 transition-colors press"
                 >
-                  <div className="w-11 h-11 relative rounded-lg bg-[var(--paper)] border border-[var(--line)] overflow-hidden shrink-0">
+                  <div className="size-11 relative rounded-lg bg-[var(--paper)] img-ring-inset overflow-hidden shrink-0">
                     {item.image_url ? (
                       <Image
                         src={item.image_url}
@@ -193,13 +193,13 @@ export default function SearchBar({
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-[var(--ink-soft)]">
-                        <Package size={18} />
+                        <Package size={18} aria-hidden="true" />
                       </div>
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-xs font-bold text-[var(--ink)] line-clamp-1">{item.nama}</p>
-                    <div className="flex items-center gap-2 mt-0.5">
+                    <div className="flex items-center gap-2 mt-0.5 tabular-nums">
                       <span className="text-xs font-sora font-bold text-[var(--accent-2)]">
                         {formatRupiah(item.harga)}
                       </span>
