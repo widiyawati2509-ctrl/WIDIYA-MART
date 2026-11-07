@@ -53,7 +53,7 @@ export default function QuickAddCartButton({
           ? `${productName} ditambahkan ke keranjang`
           : `Tambah ${productName} ke keranjang`
       }
-      className={`press inline-flex items-center justify-center gap-1 px-2.5 h-8 rounded-[10px] font-sora font-bold text-[11px] transition-[transform,background-color,color,box-shadow] duration-150 disabled:opacity-50 ${
+      className={`press hit-area-expand inline-flex items-center justify-center gap-1 px-2.5 h-8 rounded-[10px] font-sora font-bold text-[11px] transition-[transform,background-color,color,box-shadow] duration-150 disabled:opacity-50 ${
         status === 'added'
           ? 'bg-emerald-600 text-white shadow-xs animate-pop'
           : 'bg-[var(--accent)] hover:bg-[var(--accent-2)] text-white shadow-xs'

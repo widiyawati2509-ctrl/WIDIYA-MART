@@ -132,9 +132,19 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Apple Design §1 & §10: Kill tap disambiguation latency on interactive elements */
+/* Apple Design §1 & §10 + emilkowalski/mobile-native: Kill tap disambiguation latency & prevent accidental text selection on UI controls */
+html, body {
+  overscroll-behavior-x: none;
+}
+
 button, a, input, select, textarea, [role="button"], [role="tab"], [role="checkbox"] {
   touch-action: manipulation;
+}
+
+button, [role="button"], [role="tab"], [role="checkbox"], nav a, aside a {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 /* fixing-accessibility §2 & §7: Visible keyboard focus outline for Tab navigation */
@@ -191,6 +201,40 @@ p {
 
 .animate-pop {
   animation: number-pop 190ms var(--ease-spring) forwards;
+}
+
+/* millionco/interactive-hit-areas & kemiljk/interface-affordances: Invisible 44px touch target expansion for compact buttons */
+.hit-area-expand {
+  position: relative;
+}
+.hit-area-expand::after {
+  content: "";
+  position: absolute;
+  inset: -7px;
+}
+
+/* flornkm/smooth-shadow-ring: Unified 1px shadow-ring + warm elevation without double-border artifacts */
+.smooth-ring-card {
+  background: var(--card);
+  box-shadow:
+    0 0 0 1px rgba(232, 214, 205, 0.92),
+    0 1px 2px rgba(43, 24, 16, 0.04),
+    0 4px 12px -2px rgba(43, 24, 16, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  transition: transform 280ms var(--ease-spring), box-shadow 200ms ease;
+}
+.smooth-ring-card:hover {
+  box-shadow:
+    0 0 0 1px rgba(255, 107, 53, 0.5),
+    0 2px 6px rgba(43, 24, 16, 0.06),
+    0 8px 18px -4px rgba(255, 107, 53, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95);
+}
+
+/* addyosmani/core-web-vitals: Offscreen rendering optimization for long product lists (60fps scroll on mobile) */
+.cv-auto {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 236px;
 }
 
 /* Apple Design §15 & baseline-ui: Size-specific tracking, inverse leading, & text-balance on headings */

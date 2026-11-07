@@ -16,9 +16,9 @@ export default function ProductCard({ product, priority = false }: ProductCardPr
   const outOfStock = product.stok === 0
 
   return (
-    <Link href={`/produk/${product.slug}`} prefetch={true} className="block group h-full">
+    <Link href={`/produk/${product.slug}`} prefetch={true} className="block group h-full cv-auto">
       <div
-        className={`product bg-white border border-[var(--line)] rounded-2xl p-2 shadow-card-sm transition-[transform,border-color,box-shadow] duration-200 h-full flex flex-col justify-between hover:border-[var(--accent)]/50 ${
+        className={`product smooth-ring-card rounded-2xl p-2 h-full flex flex-col justify-between ${
           outOfStock ? 'opacity-60' : ''
         }`}
       >

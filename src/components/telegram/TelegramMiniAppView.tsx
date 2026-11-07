@@ -1,7 +1,7 @@
 // @ts-nocheck
 'use client'
 
-import React, { useState, useMemo, useTransition } from 'react'
+import React, { useState, useMemo, useTransition, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -60,8 +60,48 @@ export function TelegramMiniAppView({
   const [selectedCategory, setSelectedCategory] = useState<string>('all')
   const [checkedIds, setCheckedIds] = useState<Set<string>>(new Set())
   const [cartQuantities, setCartQuantities] = useState<Record<string, number>>({})
+  const [isHydrated, setIsHydrated] = useState(false)
   const [isPending, startTransition] = useTransition()
   const [toast, setToast] = useState<string | null>(null)
+
+  // kemiljk/design-for-repetition: Hydrate & persist shopper progress (checklist, quick-cart, view mode) across refreshes & WhatsApp switches
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('widiya_store_state_v1')
+      if (saved) {
+        const parsed = JSON.parse(saved)
+        if (parsed.viewMode === 'grid' || parsed.viewMode === 'list') {
+          setViewMode(parsed.viewMode)
+        }
+        if (Array.isArray(parsed.checkedIds)) {
+          setCheckedIds(new Set(parsed.checkedIds))
+        }
+        if (parsed.cartQuantities && typeof parsed.cartQuantities === 'object') {
+          setCartQuantities(parsed.cartQuantities)
+        }
+      }
+    } catch {
+      // ignore storage errors safely
+    } finally {
+      setIsHydrated(true)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!isHydrated) return
+    try {
+      localStorage.setItem(
+        'widiya_store_state_v1',
+        JSON.stringify({
+          viewMode,
+          checkedIds: Array.from(checkedIds),
+          cartQuantities,
+        })
+      )
+    } catch {
+      // ignore storage quota errors safely
+    }
+  }, [isHydrated, viewMode, checkedIds, cartQuantities])
 
   // Status Buka/Tutup Toko (WITA)
   const storeStatus = useMemo(() => {
@@ -268,7 +308,7 @@ export function TelegramMiniAppView({
               type="button"
               aria-label="Bersihkan pencarian"
               onClick={() => setSearchQuery('')}
-              className="press absolute inset-y-0 right-2.5 flex items-center text-[var(--ink-soft)] hover:text-[var(--ink)]"
+              className="press hit-area-expand absolute inset-y-0 right-2.5 flex items-center text-[var(--ink-soft)] hover:text-[var(--ink)]"
             >
               <X size={15} aria-hidden="true" />
             </button>
@@ -449,10 +489,10 @@ export function TelegramMiniAppView({
             })}
           </aside>
 
-          {/* KOLOM KANAN: DAFTAR PRODUK UTAMA */}
-          <main className="flex-1 min-w-0 p-2.5 sm:p-3">
+          {/* KOLOM KANAN: DAFTAR PRODUK UTAMA (flornkm/prefer-container-queries: @container) */}
+          <main className="@container flex-1 min-w-0 p-2.5 sm:p-3">
             {/* Baris Judul Kategori Aktif & Saklar Mode Grid/List (jakubantalik/transitions-dev: sliding pill toggle) */}
-            <div className="flex items-center justify-between gap-2 mb-2 bg-white/85 rounded-2xl px-3 py-2 border border-[var(--line)] shadow-card-sm">
+            <div className="flex items-center justify-between gap-2 mb-2 bg-white/90 rounded-2xl px-3 py-2 smooth-ring-card">
               <div className="min-w-0">
                 <div className="flex items-center gap-1.5">
                   <span aria-hidden="true" className="text-sm">{activeCategoryMeta.icon}</span>
@@ -575,14 +615,16 @@ export function TelegramMiniAppView({
                     )}
                   </div>
                 ) : viewMode === 'grid' ? (
-                  /* TAMPILAN GRID 2 KOLOM ESTETIK (QUICK-COMMERCE MINIMARKET) */
-                  <div className="grid grid-cols-2 gap-2">
+                  /* TAMPILAN GRID ADAPTIF (flornkm/prefer-container-queries: grid-cols-2 @[520px]:grid-cols-3) */
+                  <div className="grid grid-cols-2 @[520px]:grid-cols-3 gap-2">
                     {filteredProducts.map((product, idx) => {
                       const qty = cartQuantities[product.id] || 0
                       return (
                         <div
                           key={product.id}
-                          className="bg-white rounded-2xl p-2 border border-[var(--line)] flex flex-col justify-between transition-[transform,border-color,box-shadow] hover:border-[var(--accent)]/50 shadow-card-sm"
+                          className={`rounded-2xl p-2 flex flex-col justify-between smooth-ring-card ${
+                            idx >= 6 ? 'cv-auto' : ''
+                          }`}
                         >
                           <div>
                             {/* Gambar Produk Persegi (jakubkrehel/better-ui: img-ring-inset) */}
@@ -642,7 +684,7 @@ export function TelegramMiniAppView({
                                   onClick={() => updateQty(product.id, 1)}
                                   disabled={product.stok <= 0}
                                   aria-label={`Tambah ${product.nama} ke keranjang`}
-                                  className="press px-2.5 py-1.5 rounded-xl bg-[var(--accent)] text-white font-sora font-bold text-[11px] hover:bg-[var(--accent-2)] transition-colors flex items-center gap-0.5 shadow-xs disabled:opacity-50"
+                                  className="press hit-area-expand px-2.5 py-1.5 rounded-xl bg-[var(--accent)] text-white font-sora font-bold text-[11px] hover:bg-[var(--accent-2)] transition-colors flex items-center gap-0.5 shadow-xs disabled:opacity-50"
                                 >
                                   <Plus size={13} aria-hidden="true" />
                                   <span>Beli</span>
@@ -653,7 +695,7 @@ export function TelegramMiniAppView({
                                     type="button"
                                     aria-label={`Kurangi jumlah ${product.nama}`}
                                     onClick={() => updateQty(product.id, -1)}
-                                    className="press size-6 rounded-lg bg-white flex items-center justify-center text-[var(--ink)] font-bold shadow-2xs"
+                                    className="press hit-area-expand size-6 rounded-lg bg-white flex items-center justify-center text-[var(--ink)] font-bold shadow-2xs"
                                   >
                                     <Minus size={11} aria-hidden="true" />
                                   </button>
@@ -668,7 +710,7 @@ export function TelegramMiniAppView({
                                     aria-label={`Tambah jumlah ${product.nama}`}
                                     onClick={() => updateQty(product.id, 1)}
                                     disabled={qty >= product.stok}
-                                    className="press size-6 rounded-lg bg-[var(--accent)] flex items-center justify-center text-white font-bold shadow-2xs disabled:opacity-50"
+                                    className="press hit-area-expand size-6 rounded-lg bg-[var(--accent)] flex items-center justify-center text-white font-bold shadow-2xs disabled:opacity-50"
                                   >
                                     <Plus size={11} aria-hidden="true" />
                                   </button>
@@ -683,12 +725,14 @@ export function TelegramMiniAppView({
                 ) : (
                   /* TAMPILAN DAFTAR BARIS (LIST COMPACT) */
                   <div className="space-y-2">
-                    {filteredProducts.map((product) => {
+                    {filteredProducts.map((product, idx) => {
                       const qty = cartQuantities[product.id] || 0
                       return (
                         <div
                           key={product.id}
-                          className="bg-white rounded-2xl p-2.5 border border-[var(--line)] flex items-center gap-2.5 transition-colors hover:border-[var(--accent)]/50 shadow-card-sm"
+                          className={`rounded-2xl p-2.5 flex items-center gap-2.5 smooth-ring-card ${
+                            idx >= 8 ? 'cv-auto' : ''
+                          }`}
                         >
                           {/* Gambar Thumbnail */}
                           <Link
@@ -738,7 +782,7 @@ export function TelegramMiniAppView({
                                 onClick={() => updateQty(product.id, 1)}
                                 disabled={product.stok <= 0}
                                 aria-label={`Tambah ${product.nama} ke keranjang`}
-                                className="press px-2.5 py-1.5 rounded-xl bg-[var(--accent-bg)] text-[var(--accent-2)] font-bold text-xs hover:bg-[var(--accent)] hover:text-white transition-colors flex items-center gap-1 disabled:opacity-50 shadow-xs"
+                                className="press hit-area-expand px-2.5 py-1.5 rounded-xl bg-[var(--accent-bg)] text-[var(--accent-2)] font-bold text-xs hover:bg-[var(--accent)] hover:text-white transition-colors flex items-center gap-1 disabled:opacity-50 shadow-xs"
                               >
                                 <Plus size={13} aria-hidden="true" />
                                 <span>Beli</span>
@@ -749,7 +793,7 @@ export function TelegramMiniAppView({
                                   type="button"
                                   aria-label={`Kurangi jumlah ${product.nama}`}
                                   onClick={() => updateQty(product.id, -1)}
-                                  className="press size-6 rounded-lg bg-white flex items-center justify-center text-[var(--ink)] font-bold shadow-2xs"
+                                  className="press hit-area-expand size-6 rounded-lg bg-white flex items-center justify-center text-[var(--ink)] font-bold shadow-2xs"
                                 >
                                   <Minus size={12} aria-hidden="true" />
                                 </button>
@@ -761,7 +805,7 @@ export function TelegramMiniAppView({
                                   aria-label={`Tambah jumlah ${product.nama}`}
                                   onClick={() => updateQty(product.id, 1)}
                                   disabled={qty >= product.stok}
-                                  className="press size-6 rounded-lg bg-[var(--accent)] flex items-center justify-center text-white font-bold shadow-2xs disabled:opacity-50"
+                                  className="press hit-area-expand size-6 rounded-lg bg-[var(--accent)] flex items-center justify-center text-white font-bold shadow-2xs disabled:opacity-50"
                                 >
                                   <Plus size={12} aria-hidden="true" />
                                 </button>

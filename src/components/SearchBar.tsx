@@ -148,10 +148,10 @@ export default function SearchBar({
             <button
               type="button"
               onClick={handleClear}
-              className="p-1 rounded-full text-[var(--ink-soft)] hover:text-[var(--ink)] hover:bg-[var(--paper)] transition-colors"
+              className="press hit-area-expand p-1 rounded-full text-[var(--ink-soft)] hover:text-[var(--ink)] hover:bg-[var(--paper)] transition-colors"
               aria-label="Hapus pencarian"
             >
-              <X className="w-3.5 h-3.5" />
+              <X className="w-3.5 h-3.5" aria-hidden="true" />
             </button>
           )}
         </div>

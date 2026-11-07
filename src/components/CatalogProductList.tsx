@@ -72,11 +72,11 @@ export default function CatalogProductList({
   const remaining = Math.max(0, totalCount - products.length)
 
   return (
-    <div className="space-y-4">
-      {/* Product Grid */}
-      <div className="grid grid-cols-2 gap-2">
-        {products.map((product) => (
-          <ProductCard key={product.id} product={product} />
+    <div className="@container space-y-4">
+      {/* Product Grid (flornkm/prefer-container-queries) */}
+      <div className="grid grid-cols-2 @[520px]:grid-cols-3 gap-2">
+        {products.map((product, idx) => (
+          <ProductCard key={product.id} product={product} priority={idx < 4} />
         ))}
 
         {/* Skeleton cards shown during loading */}
