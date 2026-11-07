@@ -237,6 +237,17 @@ p {
   contain-intrinsic-size: auto 236px;
 }
 
+/* mengto/css-alpha-masking: Soft edge fade masks for scrollable rails and horizontal pill bars */
+.mask-fade-right {
+  -webkit-mask-image: linear-gradient(to right, #000 88%, transparent 100%);
+  mask-image: linear-gradient(to right, #000 88%, transparent 100%);
+}
+
+.mask-fade-bottom {
+  -webkit-mask-image: linear-gradient(to bottom, #000 92%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 92%, transparent 100%);
+}
+
 /* Apple Design §15 & baseline-ui: Size-specific tracking, inverse leading, & text-balance on headings */
 h1, h2, h3, h4, h5, h6, .font-heading {
   font-family: var(--font-sora);

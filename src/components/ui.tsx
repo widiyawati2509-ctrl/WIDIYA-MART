@@ -105,9 +105,9 @@ export function Section({
   )
 }
 
-// INPUT & SELECT (Radius 14px, Line Border, Warm Inset Shadow)
+// INPUT & SELECT (Radius 14px, Line Border, Warm Inset Shadow + iOS Auto-Zoom Prevention)
 export const inputClass =
-  'w-full min-w-0 rounded-[var(--radius-md)] border border-[var(--line)] bg-white px-3.5 py-2.5 text-sm text-[var(--ink)] placeholder:text-[var(--ink-soft)] shadow-input outline-none transition-all focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20 disabled:bg-zinc-100 disabled:opacity-60'
+  'w-full min-w-0 rounded-[var(--radius-md)] border border-[var(--line)] bg-white px-3.5 py-2.5 text-[16px] sm:text-sm text-[var(--ink)] placeholder:text-[var(--ink-soft)] shadow-input outline-none transition-all focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20 disabled:bg-zinc-100 disabled:opacity-60'
 
 export function Input({ className = '', ...props }: React.InputHTMLAttributes<HTMLInputElement>) {
   return <input className={`${inputClass} ${className}`} {...props} />
@@ -205,8 +205,15 @@ export function EmptyState({
     <div
       className={`flex flex-col items-center gap-3 rounded-[var(--radius-lg)] border border-dashed border-[var(--line)] bg-card p-8 text-center shadow-3d ${className}`}
     >
-      <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[var(--accent)] to-[var(--accent-2)] text-white flex items-center justify-center shadow-badge">
-        <Icon size={24} />
+      {/* kemiljk/product-delight: Warm multi-ring spot illustration halo */}
+      <div className="relative flex items-center justify-center">
+        <span
+          aria-hidden="true"
+          className="absolute size-16 rounded-3xl bg-[var(--accent-bg)]/70 -rotate-6"
+        />
+        <div className="relative size-12 rounded-2xl bg-gradient-to-br from-[var(--accent)] to-[var(--accent-2)] text-white flex items-center justify-center shadow-badge">
+          <Icon size={24} aria-hidden="true" />
+        </div>
       </div>
       <p className="text-xs font-medium text-[var(--ink-soft)] max-w-xs">{message}</p>
       {action

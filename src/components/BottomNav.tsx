@@ -57,10 +57,14 @@ export default function BottomNav({ cartCount, isLoggedIn }: BottomNavProps) {
     }
   }, [])
 
+  const activeNavIndex = navItems.findIndex(
+    ({ href }) => pathname === href || (href !== '/' && pathname.startsWith(href))
+  )
+
   return (
     <nav
       aria-label="Navigasi Utama"
-      className={`fixed left-1/2 -translate-x-1/2 bottom-3.5 max-w-[calc(480px-32px)] w-[calc(100%-32px)] rounded-[var(--radius-xl)] p-1 flex items-center justify-between z-50 border border-white/15 shadow-nav backdrop-blur-xl transition-[transform,opacity] duration-300 ease-[var(--ease-spring)] hover:opacity-100 hover:translate-y-0 hover:scale-100 ${
+      className={`fixed left-1/2 -translate-x-1/2 bottom-3.5 max-w-[calc(480px-32px)] w-[calc(100%-32px)] rounded-[var(--radius-xl)] p-1 grid grid-cols-5 items-center z-50 border border-white/15 shadow-nav backdrop-blur-xl transition-[transform,opacity] duration-300 ease-[var(--ease-spring)] hover:opacity-100 hover:translate-y-0 hover:scale-100 ${
         isCollapsed
           ? 'opacity-45 translate-y-2 scale-[0.97]'
           : 'opacity-100 translate-y-0 scale-100'
@@ -69,6 +73,19 @@ export default function BottomNav({ cartCount, isLoggedIn }: BottomNavProps) {
         background: 'linear-gradient(145deg, rgba(43, 24, 16, 0.92), rgba(30, 15, 10, 0.94))',
       }}
     >
+      {/* mickadesign/fluid-functionalism: Shared sliding spring highlight pill */}
+      {activeNavIndex >= 0 && (
+        <div
+          aria-hidden="true"
+          className="absolute top-1 bottom-1 left-1 w-[calc((100%-8px)/5)] rounded-[var(--radius-lg)] border border-[rgba(255,107,53,0.42)] shadow-chip-active pointer-events-none"
+          style={{
+            background: 'linear-gradient(135deg, rgba(255,107,53,0.48), rgba(232,85,33,0.26))',
+            transform: `translateX(${activeNavIndex * 100}%)`,
+            transition: 'transform 280ms var(--ease-spring)',
+          }}
+        />
+      )}
+
       {navItems.map(({ href, label, IconComponent }) => {
         const isActive = pathname === href || (href !== '/' && pathname.startsWith(href))
         const isCart = href === '/keranjang'
@@ -82,19 +99,11 @@ export default function BottomNav({ cartCount, isLoggedIn }: BottomNavProps) {
             href={resolvedHref}
             prefetch={true}
             aria-current={isActive ? 'page' : undefined}
-            className={`flex-1 flex flex-col items-center justify-center py-1.5 px-1 min-h-[42px] min-w-[42px] rounded-[var(--radius-lg)] transition-colors relative press ${
+            className={`relative z-10 flex flex-col items-center justify-center py-1.5 px-1 min-h-[42px] min-w-[42px] rounded-[var(--radius-lg)] transition-colors press ${
               isActive
-                ? 'text-white border border-[rgba(255,107,53,0.4)] shadow-chip-active'
+                ? 'text-white'
                 : 'text-[#A8928B] hover:text-white/80'
             }`}
-            style={
-              isActive
-                ? {
-                    background:
-                      'linear-gradient(135deg, rgba(255,107,53,0.45), rgba(232,85,33,0.25))',
-                  }
-                : undefined
-            }
           >
             <div className="relative">
               <IconComponent

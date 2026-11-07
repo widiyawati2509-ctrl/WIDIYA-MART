@@ -61,6 +61,7 @@ export function TelegramMiniAppView({
   const [checkedIds, setCheckedIds] = useState<Set<string>>(new Set())
   const [cartQuantities, setCartQuantities] = useState<Record<string, number>>({})
   const [isHydrated, setIsHydrated] = useState(false)
+  const [copiedCoupon, setCopiedCoupon] = useState<string | null>(null)
   const [isPending, startTransition] = useTransition()
   const [toast, setToast] = useState<string | null>(null)
 
@@ -397,10 +398,10 @@ export function TelegramMiniAppView({
       {/* 3. QUICK-COMMERCE SPLIT-SIDEBAR LAYOUT (BOROBAZAR / ASTROMART / ALFAGIFT STYLE) */}
       {activeTab !== 'promo' ? (
         <div className="flex items-start min-h-[calc(100dvh-165px)]">
-          {/* KOLOM KIRI: STICKY VERTICAL CATEGORY RAIL */}
+          {/* KOLOM KIRI: STICKY VERTICAL CATEGORY RAIL (mengto/css-alpha-masking: mask-fade-bottom) */}
           <aside
             aria-label="Daftar Kategori Produk"
-            className="w-[82px] sm:w-[92px] shrink-0 sticky top-[146px] max-h-[calc(100dvh-210px)] overflow-y-auto scrollbar-hide bg-[#F2E4DC]/80 border-r border-b border-[var(--line)] rounded-br-2xl py-2 px-1.5 space-y-1.5 select-none"
+            className="w-[82px] sm:w-[92px] shrink-0 sticky top-[146px] max-h-[calc(100dvh-210px)] overflow-y-auto scrollbar-hide mask-fade-bottom bg-[#F2E4DC]/80 border-r border-b border-[var(--line)] rounded-br-2xl py-2 pb-5 px-1.5 space-y-1.5 select-none"
           >
             {/* Tombol Semua Produk */}
             <button
@@ -558,8 +559,8 @@ export function TelegramMiniAppView({
               )}
             </div>
 
-            {/* Quick-Search Popular Essential Pills (pbakaus/clarify & jakubantalik/transitions-dev: 1-tap filter without typing) */}
-            <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide pb-2 mb-0.5">
+            {/* Quick-Search Popular Essential Pills (pbakaus/clarify & mengto/css-alpha-masking: 1-tap filter + mask-fade-right) */}
+            <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide mask-fade-right pr-4 pb-2 mb-0.5">
               <span className="text-[10px] font-bold text-[var(--ink-soft)] shrink-0">Cepat:</span>
               {[
                 { label: '🌾 Beras', kw: 'Beras' },
@@ -958,44 +959,85 @@ export function TelegramMiniAppView({
               <button
                 type="button"
                 onClick={() => {
+                  triggerHaptic(10)
                   navigator.clipboard?.writeText('HEMATDESA')
-                  showToast('Kode kupon HEMATDESA disalin!')
+                  try {
+                    localStorage.setItem('widiya_saved_voucher', 'HEMATDESA')
+                  } catch {}
+                  setCopiedCoupon('HEMATDESA')
+                  setTimeout(() => setCopiedCoupon(null), 2500)
+                  showToast('Kode HEMATDESA disalin & siap dipakai di Keranjang!')
                 }}
-                className="press px-3 py-1.5 rounded-xl border border-[var(--accent)] text-[var(--accent-2)] font-bold text-xs hover:bg-[var(--accent)] hover:text-white transition-colors shrink-0"
+                className={`press hit-area-expand px-3 py-1.5 rounded-xl font-bold text-xs transition-colors shrink-0 flex items-center gap-1 ${
+                  copiedCoupon === 'HEMATDESA'
+                    ? 'bg-emerald-600 text-white border border-emerald-600 animate-pop'
+                    : 'border border-[var(--accent)] text-[var(--accent-2)] hover:bg-[var(--accent)] hover:text-white'
+                }`}
               >
-                Salin
+                {copiedCoupon === 'HEMATDESA' ? (
+                  <>
+                    <Check size={13} aria-hidden="true" />
+                    <span>Tersalin</span>
+                  </>
+                ) : (
+                  <span>Salin</span>
+                )}
               </button>
             </div>
           </div>
         </main>
       )}
 
-      {/* 4. MAINBUTTON MELAYANG KHAS TELEGRAM APP (WARNA CORAL RESMI) */}
-      {(totalLocalCart.count > 0 || checkedIds.size > 0) && (
-        <div className="fixed bottom-20 inset-x-0 z-50 p-3 max-w-lg mx-auto">
-          <div className="bg-gradient-to-r from-[var(--accent)] to-[var(--accent-2)] text-white rounded-2xl p-3.5 shadow-btn flex items-center justify-between animate-fade-in">
-            <div className="tabular-nums">
-              <span className="text-[10px] opacity-90 block font-medium">
-                {totalLocalCart.count > 0
-                  ? `${totalLocalCart.count} Item di Keranjang`
-                  : `${checkedIds.size} Item Terpilih`}
-              </span>
-              <span className="font-sora font-extrabold text-sm">
-                {formatRupiah(
-                  totalLocalCart.count > 0 ? totalLocalCart.total : checklistSummary.total
-                )}
-              </span>
+      {/* 4. MAINBUTTON MELAYANG + FREE-SHIPPING PROGRESS BAR (mengto/scroll-progress-timeline) */}
+      {(totalLocalCart.count > 0 || checkedIds.size > 0) && (() => {
+        const currentTotal = totalLocalCart.count > 0 ? totalLocalCart.total : checklistSummary.total
+        const freeShipTarget = 25000
+        const remainingForFreeShip = Math.max(0, freeShipTarget - currentTotal)
+        const freeShipRatio = Math.min(1, currentTotal / freeShipTarget)
+        return (
+          <div className="fixed bottom-20 inset-x-0 z-50 p-3 max-w-lg mx-auto">
+            <div className="bg-gradient-to-r from-[var(--accent)] to-[var(--accent-2)] text-white rounded-2xl p-3 shadow-btn space-y-2 animate-fade-in">
+              {/* Progress Bar Gratis Ongkir Rp 25.000 */}
+              <div className="bg-black/15 rounded-xl px-2.5 py-1.5 space-y-1">
+                <div className="flex items-center justify-between text-[10px] font-semibold">
+                  <span>
+                    {remainingForFreeShip === 0
+                      ? '🎉 Syarat Gratis Ongkir se-Pengenjek Terpenuhi!'
+                      : `🛵 Tambah ${formatRupiah(remainingForFreeShip)} lagi untuk Gratis Ongkir`}
+                  </span>
+                  <span className="tabular-nums font-bold">{Math.round(freeShipRatio * 100)}%</span>
+                </div>
+                <div className="h-1.5 w-full rounded-full bg-white/25 overflow-hidden">
+                  <div
+                    className="h-full w-full origin-left rounded-full bg-white transition-transform duration-300"
+                    style={{ transform: `scaleX(${freeShipRatio})` }}
+                  />
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between gap-2">
+                <div className="tabular-nums min-w-0">
+                  <span className="text-[10px] opacity-90 block font-medium truncate">
+                    {totalLocalCart.count > 0
+                      ? `${totalLocalCart.count} Item di Keranjang`
+                      : `${checkedIds.size} Item Terpilih`}
+                  </span>
+                  <span className="font-sora font-extrabold text-sm block truncate">
+                    {formatRupiah(currentTotal)}
+                  </span>
+                </div>
+                <Link
+                  href="/keranjang"
+                  className="press shrink-0 px-4 py-2 bg-white text-[var(--accent-2)] font-sora font-bold text-xs rounded-xl flex items-center gap-1.5 shadow-sm hover:bg-[var(--paper)] transition-colors"
+                >
+                  <span>Lanjut Bayar</span>
+                  <ArrowRight size={14} aria-hidden="true" />
+                </Link>
+              </div>
             </div>
-            <Link
-              href="/keranjang"
-              className="press px-4 py-2 bg-white text-[var(--accent-2)] font-sora font-bold text-xs rounded-xl flex items-center gap-1.5 shadow-sm hover:bg-[var(--paper)] transition-colors"
-            >
-              <span>Lanjut Bayar</span>
-              <ArrowRight size={14} aria-hidden="true" />
-            </Link>
           </div>
-        </div>
-      )}
+        )
+      })()}
 
       {/* Toast Notification */}
       {toast && (

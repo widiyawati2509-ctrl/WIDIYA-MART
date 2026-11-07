@@ -27,7 +27,17 @@ export default function CartCouponSection({ subtotal, itemCount }: CartCouponSec
     getAvailableCoupons().then((list) => {
       setAvailableCoupons(list || [])
     })
+    try {
+      const savedVoucher = localStorage.getItem('widiya_saved_voucher')
+      if (savedVoucher && !couponCode) {
+        setCouponCode(savedVoucher)
+      }
+    } catch {}
   }, [])
+
+  const freeShippingTarget = 25000
+  const freeShippingRemaining = Math.max(0, freeShippingTarget - subtotal)
+  const freeShippingProgress = Math.min(100, Math.round((subtotal / freeShippingTarget) * 100))
 
   const handleApply = async (codeToUse?: string) => {
     const code = (codeToUse || couponCode).trim()
@@ -76,6 +86,40 @@ export default function CartCouponSection({ subtotal, itemCount }: CartCouponSec
 
   return (
     <div className="space-y-3 mb-6">
+      {/* mengto/scroll-progress-timeline: Free-Shipping Progress Bar (Rp 25.000) */}
+      <div className="p-3 rounded-2xl bg-white smooth-ring-card space-y-1.5">
+        <div className="flex items-center justify-between gap-2 text-xs">
+          <span className="font-sora font-bold text-[var(--ink)] flex items-center gap-1.5">
+            <span aria-hidden="true">{freeShippingRemaining === 0 ? '🎉' : '🛵'}</span>
+            <span>
+              {freeShippingRemaining === 0
+                ? 'Syarat Gratis Ongkir Terpenuhi!'
+                : `Tambah ${formatRupiah(freeShippingRemaining)} lagi untuk Gratis Ongkir`}
+            </span>
+          </span>
+          <span className="text-[10.5px] font-bold text-[var(--accent-2)] tabular-nums shrink-0">
+            {freeShippingProgress}%
+          </span>
+        </div>
+        <div
+          role="progressbar"
+          aria-valuenow={freeShippingProgress}
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-label="Progress menuju gratis ongkir Rp 25.000"
+          className="h-2 w-full rounded-full bg-[var(--paper)] overflow-hidden border border-[var(--line)]/70"
+        >
+          <div
+            className={`h-full w-full origin-left rounded-full transition-transform duration-300 ${
+              freeShippingRemaining === 0
+                ? 'bg-emerald-500'
+                : 'bg-gradient-to-r from-[var(--accent)] to-[var(--accent-2)]'
+            }`}
+            style={{ transform: `scaleX(${freeShippingProgress / 100})` }}
+          />
+        </div>
+      </div>
+
       {/* Voucher Input Box */}
       <div className="p-3.5 rounded-2xl bg-orange-50/90 border border-orange-200/90 space-y-2.5">
         <div className="flex items-center justify-between">

@@ -68,7 +68,7 @@ export default function CategoryFilter({
   return (
     <aside
       aria-label="Navigasi Kategori Minimarket"
-      className="w-[82px] sm:w-[92px] shrink-0 sticky top-[16px] max-h-[calc(100vh-110px)] overflow-y-auto scrollbar-hide flex flex-col gap-1.5 rounded-r-[var(--radius-md)] bg-white/85 backdrop-blur-md border-y border-r border-[rgba(232,214,205,0.9)] p-1.5 shadow-[var(--shadow-sm)]"
+      className="w-[82px] sm:w-[92px] shrink-0 sticky top-[16px] max-h-[calc(100vh-110px)] overflow-y-auto scrollbar-hide mask-fade-bottom flex flex-col gap-1.5 rounded-r-[var(--radius-md)] bg-white/85 backdrop-blur-md border-y border-r border-[rgba(232,214,205,0.9)] p-1.5 pb-5 shadow-[var(--shadow-sm)]"
     >
       <div className="px-1.5 pt-1 pb-0.5 text-[9px] font-extrabold uppercase tracking-[0.06em] text-[var(--ink-faint)] text-center">
         Kategori
