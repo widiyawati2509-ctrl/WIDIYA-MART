@@ -78,61 +78,58 @@ export default async function KategoriPage({ searchParams }: KategoriPageProps) 
       <PageHeader
         title="Katalog Produk"
         subtitle="Cari dan temukan sembako & kebutuhan harian"
-        className="mb-3.5"
+        className="mb-2.5"
       >
         <SearchBar defaultValue={q} />
       </PageHeader>
 
-      {/* Split-Sidebar Quick-Commerce Minimarket Layout */}
-      <div className="flex items-start gap-2.5 pr-3">
-        {/* Left Fixed/Sticky Vertical Category Rail */}
-        <CategoryFilter categories={categories ?? []} activeSlug={kategori} variant="rail" />
+      {/* TikTok Shop Mall Full-Width Simple Layout: Sticky Horizontal Category Tabs + 2-Column Large Feed */}
+      <div className="px-3.5 space-y-2.5">
+        {/* Sticky Horizontal Category Tabs */}
+        <div className="sticky top-0 z-30 bg-[var(--paper)]/95 backdrop-blur-md py-1.5 -mx-3.5 px-3.5 border-b border-[var(--line)]/60">
+          <CategoryFilter categories={categories ?? []} activeSlug={kategori} variant="chips" />
+        </div>
 
-        {/* Right Main Product Area */}
-        <div className="flex-1 min-w-0">
-          {/* Sorting & Quick Filter Toolbar */}
-          <div className="mb-3">
-            <CatalogSortFilterBar activeSort={urutan} activeFilter={filter} />
-          </div>
+        {/* Sorting & Quick Filter Toolbar */}
+        <CatalogSortFilterBar activeSort={urutan} activeFilter={filter} />
 
-          {/* Product List */}
-          <div>
-            {products && products.length > 0 ? (
-              <>
-                <div className="flex items-center justify-between text-[11px] text-[var(--ink-soft)] font-medium mb-2.5 px-1">
-                  <span>
-                    Menampilkan <strong className="text-[var(--ink)]">{products.length}</strong> dari{' '}
-                    <strong className="text-[var(--ink)]">{totalCount}</strong> produk
+        {/* Full-Width 2-Column Product Feed */}
+        <div>
+          {products && products.length > 0 ? (
+            <>
+              <div className="flex items-center justify-between text-[11px] text-[var(--ink-soft)] font-medium mb-2.5 px-1">
+                <span>
+                  Menampilkan <strong className="text-[var(--ink)]">{products.length}</strong> dari{' '}
+                  <strong className="text-[var(--ink)]">{totalCount}</strong> produk
+                </span>
+                {q && (
+                  <span className="truncate max-w-[160px] italic">
+                    untuk &quot;{q}&quot;
                   </span>
-                  {q && (
-                    <span className="truncate max-w-[130px] italic">
-                      untuk &quot;{q}&quot;
-                    </span>
-                  )}
-                </div>
-                <CatalogProductList
-                  initialProducts={products}
-                  totalCount={totalCount}
-                  kategori={kategori}
-                  q={q}
-                  urutan={urutan}
-                  filter={filter}
-                  pageSize={PAGE_SIZE}
-                />
-              </>
-            ) : (
-              <EmptyState
-                icon={Package}
-                message={
-                  q
-                    ? `Tidak ada produk yang cocok dengan pencarian "${q}".`
-                    : 'Belum ada produk yang sesuai dengan filter yang dipilih.'
-                }
-                actionHref="/kategori"
-                actionLabel="Reset Semua Filter"
+                )}
+              </div>
+              <CatalogProductList
+                initialProducts={products}
+                totalCount={totalCount}
+                kategori={kategori}
+                q={q}
+                urutan={urutan}
+                filter={filter}
+                pageSize={PAGE_SIZE}
               />
-            )}
-          </div>
+            </>
+          ) : (
+            <EmptyState
+              icon={Package}
+              message={
+                q
+                  ? `Tidak ada produk yang cocok dengan pencarian "${q}".`
+                  : 'Belum ada produk yang sesuai dengan filter yang dipilih.'
+              }
+              actionHref="/kategori"
+              actionLabel="Reset Semua Filter"
+            />
+          )}
         </div>
       </div>
     </div>

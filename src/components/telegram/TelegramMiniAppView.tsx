@@ -237,10 +237,18 @@ export function TelegramMiniAppView({
 
   return (
     <div className="min-h-dvh bg-[var(--paper)] text-[var(--ink)] pb-32">
-      {/* 1. HEADER KHAS TOKO WIDIYA MART (WARM CORAL BRANDING + APPLE TRANSLUCENT CHROME) */}
-      <header className="sticky top-0 z-40 apple-material-header px-3.5 pt-2.5 pb-2.5">
-        <div className="flex items-center justify-between gap-2.5">
-          <div className="flex items-center gap-2.5 min-w-0">
+      {/* 1. HEADER KHAS TOKO WIDIYA MART (POLA TIKTOK SHOP MALL — ULTRA-SIMPEL & FULL-WIDTH) */}
+      <header className="sticky top-0 z-40 apple-material-header px-3.5 pt-2.5 pb-2">
+        {/* Baris 1: Identitas Toko + Aksi Cepat (Checklist, Info/Kupon, Chat WA) */}
+        <div className="flex items-center justify-between gap-2">
+          <button
+            type="button"
+            onClick={() => {
+              triggerHaptic(5)
+              setActiveTab('katalog')
+            }}
+            className="flex items-center gap-2.5 min-w-0 text-left"
+          >
             {/* Logo Asli Widiya Mart */}
             <div className="relative size-9 rounded-2xl overflow-hidden shadow-xs shrink-0 border border-[var(--line)] bg-white">
               <Image
@@ -259,7 +267,7 @@ export function TelegramMiniAppView({
                 </h1>
                 <span
                   aria-label="Toko Terverifikasi"
-                  className="inline-flex items-center justify-center size-4 rounded-full bg-[var(--accent)] text-white text-[9px] font-bold"
+                  className="inline-flex items-center justify-center size-4 rounded-full bg-[var(--accent)] text-white text-[9px] font-bold shrink-0"
                 >
                   ✓
                 </span>
@@ -276,22 +284,71 @@ export function TelegramMiniAppView({
                 <span className="truncate">Pengenjek</span>
               </div>
             </div>
-          </div>
+          </button>
 
-          {/* Tombol Chat Kasir WhatsApp */}
-          <a
-            href={formatWhatsAppUrl(adminWa, 'Halo Admin Widiya Mart, saya mau tanya ketersediaan stok')}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Chat Kasir via WhatsApp"
-            className="press flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[var(--accent-bg)] text-[var(--accent-2)] hover:bg-[var(--accent)] hover:text-white transition-colors text-xs font-bold shrink-0 shadow-card-sm"
-          >
-            <MessageCircle size={14} aria-hidden="true" />
-            <span className="hidden xs:inline">Chat Kasir</span>
-          </a>
+          {/* Aksi Kanan: Mode Checklist, Kupon/Info, dan Chat WA Kasir */}
+          <div className="flex items-center gap-1.5 shrink-0">
+            <button
+              type="button"
+              aria-label="Mode Checklist Belanja"
+              aria-pressed={activeTab === 'checklist'}
+              onClick={() => {
+                triggerHaptic(6)
+                setActiveTab(activeTab === 'checklist' ? 'katalog' : 'checklist')
+              }}
+              className={`press relative flex items-center gap-1 px-2.5 py-1.5 rounded-full text-[11px] font-bold transition-colors border ${
+                activeTab === 'checklist'
+                  ? 'bg-[var(--accent)] text-white border-[var(--accent)] shadow-xs'
+                  : 'bg-white text-[var(--ink)] border-[var(--line)] hover:border-[var(--accent)]/60'
+              }`}
+            >
+              <CheckSquare size={13} aria-hidden="true" />
+              <span className="hidden xs:inline">Checklist</span>
+              {checkedIds.size > 0 && (
+                <span
+                  className={`size-4 rounded-full text-[9.5px] font-bold flex items-center justify-center tabular-nums ${
+                    activeTab === 'checklist'
+                      ? 'bg-white text-[var(--accent-2)]'
+                      : 'bg-[var(--accent)] text-white'
+                  }`}
+                >
+                  {checkedIds.size}
+                </span>
+              )}
+            </button>
+
+            <button
+              type="button"
+              aria-label="Kupon & Info Toko"
+              aria-pressed={activeTab === 'promo'}
+              onClick={() => {
+                triggerHaptic(6)
+                setActiveTab(activeTab === 'promo' ? 'katalog' : 'promo')
+              }}
+              className={`press flex items-center gap-1 px-2.5 py-1.5 rounded-full text-[11px] font-bold transition-colors border ${
+                activeTab === 'promo'
+                  ? 'bg-[var(--accent)] text-white border-[var(--accent)] shadow-xs'
+                  : 'bg-white text-[var(--ink)] border-[var(--line)] hover:border-[var(--accent)]/60'
+              }`}
+            >
+              <TicketPercent size={13} aria-hidden="true" />
+              <span className="hidden sm:inline">Info</span>
+            </button>
+
+            <a
+              href={formatWhatsAppUrl(adminWa, 'Halo Admin Widiya Mart, saya mau tanya ketersediaan stok')}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Chat Kasir via WhatsApp"
+              className="press flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-[var(--accent-bg)] text-[var(--accent-2)] hover:bg-[var(--accent)] hover:text-white transition-colors text-[11px] font-bold border border-[rgba(255,107,53,0.25)]"
+            >
+              <MessageCircle size={13} aria-hidden="true" />
+              <span>WA</span>
+            </a>
+          </div>
         </div>
 
-        {/* Input Pencarian Cepat Terintegrasi (jakubkrehel/better-typography: text-[16px] sm:text-xs prevents iOS Safari auto-zoom) */}
+        {/* Baris 2: Input Pencarian Lebar Penuh (jakubkrehel/better-typography: text-[16px] sm:text-xs prevents iOS Safari auto-zoom) */}
         <div className="mt-2 relative">
           <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none text-[var(--ink-soft)]">
             <Search size={15} aria-hidden="true" />
@@ -300,9 +357,12 @@ export function TelegramMiniAppView({
             type="search"
             aria-label="Cari produk di katalog"
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Cari beras, minyak, sabun, alat tulis..."
-            className="w-full pl-9 pr-8 py-2 bg-white border border-[var(--line)] focus:border-[var(--accent)] rounded-xl text-[16px] sm:text-xs font-medium text-[var(--ink)] placeholder-[var(--ink-soft)]/60 outline-none shadow-input transition-colors"
+            onChange={(e) => {
+              setSearchQuery(e.target.value)
+              if (activeTab === 'promo') setActiveTab('katalog')
+            }}
+            placeholder="Cari di Widiya Mart (beras, minyak, sabun, ATK...)"
+            className="w-full pl-9 pr-8 py-2 bg-white border border-[var(--line)] focus:border-[var(--accent)] rounded-xl text-[16px] sm:text-xs font-medium text-[var(--ink)] placeholder-[var(--ink-soft)]/65 outline-none shadow-input transition-colors"
           />
           {searchQuery && (
             <button
@@ -316,196 +376,143 @@ export function TelegramMiniAppView({
           )}
         </div>
 
-        {/* 2. APPLE-STYLE SLIDING SEGMENTED CONTROL */}
-        <div className="mt-2">
-          <div
-            role="tablist"
-            aria-label="Pilih mode tampilan toko"
-            className="relative bg-[rgba(232,214,205,0.65)] p-1 rounded-2xl grid grid-cols-3 items-center shadow-inner"
+        {/* Baris 3: STICKY HORIZONTAL CATEGORY TAB BAR (Pola TikTok Shop Mall — Tanpa Sidebar Kiri) */}
+        <nav
+          aria-label="Tab Kategori Produk"
+          className="mt-2 -mx-3.5 px-3.5 flex items-center gap-1.5 overflow-x-auto scrollbar-hide mask-fade-right pb-0.5 select-none"
+        >
+          <button
+            type="button"
+            onClick={() => {
+              triggerHaptic(6)
+              setSelectedCategory('all')
+              if (activeTab === 'promo') setActiveTab('katalog')
+            }}
+            className={`press shrink-0 px-3 py-1.5 rounded-full text-xs font-sora font-bold transition-all flex items-center gap-1.5 border ${
+              selectedCategory === 'all' && activeTab !== 'promo'
+                ? 'bg-[var(--accent)] text-white border-[var(--accent)] shadow-xs'
+                : 'bg-white/90 text-[var(--ink-soft)] border-[var(--line)] hover:border-[var(--accent)]/60 hover:text-[var(--ink)]'
+            }`}
           >
-            {/* Sliding Active Pill Indicator */}
-            <div
-              aria-hidden="true"
-              className="absolute top-1 bottom-1 left-1 w-[calc((100%-8px)/3)] rounded-xl bg-white shadow-xs pointer-events-none"
-              style={{
-                transform: `translateX(${activeTabIndex * 100}%)`,
-                transition: 'transform 280ms var(--ease-spring)',
-              }}
-            />
-
-            <button
-              type="button"
-              role="tab"
-              aria-selected={activeTab === 'katalog'}
-              onClick={() => {
-                triggerHaptic(6)
-                setActiveTab('katalog')
-              }}
-              className={`relative z-10 py-1.5 text-xs font-bold rounded-xl transition-colors flex items-center justify-center gap-1 press ${
-                activeTab === 'katalog'
-                  ? 'text-[var(--accent-2)]'
-                  : 'text-[var(--ink-soft)] hover:text-[var(--ink)]'
+            <span aria-hidden="true" className="text-xs">🏪</span>
+            <span>Semua</span>
+            <span
+              className={`text-[10px] px-1.5 py-0.2 rounded-full tabular-nums ${
+                selectedCategory === 'all' && activeTab !== 'promo'
+                  ? 'bg-white/20 text-white'
+                  : 'bg-[var(--paper)] text-[var(--ink-soft)]'
               }`}
             >
-              <Zap size={13} aria-hidden="true" className={activeTab === 'katalog' ? 'text-[var(--accent)]' : ''} />
-              <span>Katalog</span>
-            </button>
+              {products.length}
+            </span>
+          </button>
 
-            <button
-              type="button"
-              role="tab"
-              aria-selected={activeTab === 'checklist'}
-              onClick={() => {
-                triggerHaptic(6)
-                setActiveTab('checklist')
-              }}
-              className={`relative z-10 py-1.5 text-xs font-bold rounded-xl transition-colors flex items-center justify-center gap-1 press ${
-                activeTab === 'checklist'
-                  ? 'text-[var(--accent-2)]'
-                  : 'text-[var(--ink-soft)] hover:text-[var(--ink)]'
-              }`}
-            >
-              <CheckSquare size={13} aria-hidden="true" className={activeTab === 'checklist' ? 'text-[var(--accent)]' : ''} />
-              <span>Checklist</span>
-              {checkedIds.size > 0 && (
-                <span className="size-4 rounded-full bg-[var(--accent)] text-white text-[10px] font-bold flex items-center justify-center tabular-nums">
-                  {checkedIds.size}
-                </span>
-              )}
-            </button>
+          {categories.map((cat) => {
+            const count = products.filter(
+              (p) => p.category_id === cat.id || p.categories?.slug === cat.slug
+            ).length
+            if (count === 0) return null
+            const isSelected =
+              (selectedCategory === cat.id || selectedCategory === cat.slug) &&
+              activeTab !== 'promo'
+            const emoji = getCategoryIconEmoji(cat.nama)
 
-            <button
-              type="button"
-              role="tab"
-              aria-selected={activeTab === 'promo'}
-              onClick={() => {
-                triggerHaptic(6)
-                setActiveTab('promo')
-              }}
-              className={`relative z-10 py-1.5 text-xs font-bold rounded-xl transition-colors flex items-center justify-center gap-1 press ${
-                activeTab === 'promo'
-                  ? 'text-[var(--accent-2)]'
-                  : 'text-[var(--ink-soft)] hover:text-[var(--ink)]'
-              }`}
-            >
-              <TicketPercent size={13} aria-hidden="true" className={activeTab === 'promo' ? 'text-[var(--accent)]' : ''} />
-              <span>Kupon &amp; Info</span>
-            </button>
-          </div>
-        </div>
-      </header>
-
-      {/* 3. QUICK-COMMERCE SPLIT-SIDEBAR LAYOUT (BOROBAZAR / ASTROMART / ALFAGIFT STYLE) */}
-      {activeTab !== 'promo' ? (
-        <div className="flex items-start min-h-[calc(100dvh-165px)]">
-          {/* KOLOM KIRI: STICKY VERTICAL CATEGORY RAIL (mengto/css-alpha-masking: mask-fade-bottom) */}
-          <aside
-            aria-label="Daftar Kategori Produk"
-            className="w-[82px] sm:w-[92px] shrink-0 sticky top-[146px] max-h-[calc(100dvh-210px)] overflow-y-auto scrollbar-hide mask-fade-bottom bg-[#F2E4DC]/80 border-r border-b border-[var(--line)] rounded-br-2xl py-2 pb-5 px-1.5 space-y-1.5 select-none"
-          >
-            {/* Tombol Semua Produk */}
-            <button
-              type="button"
-              onClick={() => {
-                triggerHaptic(6)
-                setSelectedCategory('all')
-              }}
-              className={`press relative w-full py-2 px-1 rounded-2xl flex flex-col items-center justify-center text-center transition-colors ${
-                selectedCategory === 'all'
-                  ? 'bg-white border border-[var(--accent)]/60 shadow-xs text-[var(--accent-2)]'
-                  : 'text-[var(--ink-soft)] hover:bg-white/60 hover:text-[var(--ink)] border border-transparent'
-              }`}
-            >
-              {selectedCategory === 'all' && (
-                <span
-                  aria-hidden="true"
-                  className="absolute left-0 top-2.5 bottom-2.5 w-1 rounded-r-full bg-[var(--accent)]"
-                />
-              )}
-              <span
-                aria-hidden="true"
-                className={`size-9 rounded-xl flex items-center justify-center text-lg mb-1 transition-transform ${
-                  selectedCategory === 'all'
-                    ? 'bg-[var(--accent-bg)] scale-105'
-                    : 'bg-white/80 border border-[var(--line)]/60'
+            return (
+              <button
+                key={cat.id}
+                type="button"
+                onClick={() => {
+                  triggerHaptic(6)
+                  setSelectedCategory(cat.slug || cat.id)
+                  if (activeTab === 'promo') setActiveTab('katalog')
+                }}
+                className={`press shrink-0 px-3 py-1.5 rounded-full text-xs font-sora font-bold transition-all flex items-center gap-1.5 border ${
+                  isSelected
+                    ? 'bg-[var(--accent)] text-white border-[var(--accent)] shadow-xs'
+                    : 'bg-white/90 text-[var(--ink-soft)] border-[var(--line)] hover:border-[var(--accent)]/60 hover:text-[var(--ink)]'
                 }`}
               >
-                🏪
-              </span>
-              <span className="text-[10.5px] font-sora font-bold leading-tight line-clamp-2">
-                Semua
-              </span>
-              <span className="text-[9.5px] text-[var(--ink-soft)] font-semibold tabular-nums mt-0.5">
-                {products.length} item
-              </span>
-            </button>
-
-            {/* Daftar Kategori dari Database */}
-            {categories.map((cat) => {
-              const count = products.filter(
-                (p) => p.category_id === cat.id || p.categories?.slug === cat.slug
-              ).length
-              if (count === 0) return null
-              const isSelected = selectedCategory === cat.id || selectedCategory === cat.slug
-              const emoji = getCategoryIconEmoji(cat.nama)
-
-              return (
-                <button
-                  key={cat.id}
-                  type="button"
-                  onClick={() => {
-                    triggerHaptic(6)
-                    setSelectedCategory(cat.slug || cat.id)
-                  }}
-                  className={`press relative w-full py-2 px-1 rounded-2xl flex flex-col items-center justify-center text-center transition-colors ${
+                <span aria-hidden="true" className="text-xs">{emoji}</span>
+                <span>{cat.nama}</span>
+                <span
+                  className={`text-[10px] px-1.5 py-0.2 rounded-full tabular-nums ${
                     isSelected
-                      ? 'bg-white border border-[var(--accent)]/60 shadow-xs text-[var(--accent-2)]'
-                      : 'text-[var(--ink-soft)] hover:bg-white/60 hover:text-[var(--ink)] border border-transparent'
+                      ? 'bg-white/20 text-white'
+                      : 'bg-[var(--paper)] text-[var(--ink-soft)]'
                   }`}
                 >
-                  {isSelected && (
-                    <span
-                      aria-hidden="true"
-                      className="absolute left-0 top-2.5 bottom-2.5 w-1 rounded-r-full bg-[var(--accent)]"
-                    />
-                  )}
-                  <span
-                    aria-hidden="true"
-                    className={`size-9 rounded-xl flex items-center justify-center text-lg mb-1 transition-transform ${
-                      isSelected
-                        ? 'bg-[var(--accent-bg)] scale-105'
-                        : 'bg-white/80 border border-[var(--line)]/60'
-                    }`}
-                  >
-                    {emoji}
-                  </span>
-                  <span className="text-[10.5px] font-sora font-bold leading-tight line-clamp-2 px-0.5">
-                    {cat.nama}
-                  </span>
-                  <span className="text-[9.5px] text-[var(--ink-soft)] font-semibold tabular-nums mt-0.5">
-                    {count}
-                  </span>
-                </button>
-              )
-            })}
-          </aside>
+                  {count}
+                </span>
+              </button>
+            )
+          })}
+        </nav>
+      </header>
 
-          {/* KOLOM KANAN: DAFTAR PRODUK UTAMA (flornkm/prefer-container-queries: @container) */}
-          <main className="@container flex-1 min-w-0 p-2.5 sm:p-3">
-            {/* Baris Judul Kategori Aktif & Saklar Mode Grid/List (jakubantalik/transitions-dev: sliding pill toggle) */}
-            <div className="flex items-center justify-between gap-2 mb-2 bg-white/90 rounded-2xl px-3 py-2 smooth-ring-card">
+      {/* 2. PITA PROMO & GRATIS ONGKIR 1 BARIS (RINGKAS ALA TIKTOK SHOP MALL) */}
+      <div className="px-3.5 pt-2.5">
+        <div className="bg-gradient-to-r from-[#FFF3EC] via-[#FFE6D8] to-[#FFF3EC] border border-[rgba(255,107,53,0.3)] rounded-2xl px-3 py-2 flex items-center justify-between gap-2 shadow-2xs">
+          <div className="flex items-center gap-2 min-w-0">
+            <span
+              aria-hidden="true"
+              className="size-6 rounded-lg bg-[var(--accent)] text-white flex items-center justify-center text-xs shrink-0 shadow-2xs"
+            >
+              🛵
+            </span>
+            <p className="text-[11px] font-bold text-[var(--ink)] truncate">
+              Gratis Ongkir <span className="text-[var(--accent-2)]">min. Rp25rb</span> se-Pengenjek
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              triggerHaptic(10)
+              navigator.clipboard?.writeText('HEMATDESA')
+              try {
+                localStorage.setItem('widiya_saved_voucher', 'HEMATDESA')
+              } catch {}
+              setCopiedCoupon('HEMATDESA')
+              setTimeout(() => setCopiedCoupon(null), 2500)
+              showToast('Voucher HEMATDESA diklaim & otomatis aktif di Keranjang!')
+            }}
+            className={`press hit-area-expand shrink-0 px-2.5 py-1 rounded-xl text-[10.5px] font-sora font-extrabold transition-colors flex items-center gap-1 ${
+              copiedCoupon === 'HEMATDESA'
+                ? 'bg-emerald-600 text-white animate-pop'
+                : 'bg-[var(--accent)] text-white hover:bg-[var(--accent-2)] shadow-2xs'
+            }`}
+          >
+            {copiedCoupon === 'HEMATDESA' ? (
+              <>
+                <Check size={11} aria-hidden="true" />
+                <span>Diklaim</span>
+              </>
+            ) : (
+              <>
+                <span>🎟️ Klaim Kupon</span>
+              </>
+            )}
+          </button>
+        </div>
+      </div>
+
+      {/* 3. KONTEN UTAMA LEBAR PENUH (100% FULL-WIDTH 2-COLUMN LARGE PRODUCT FEED) */}
+      {activeTab !== 'promo' ? (
+        <main className="@container px-3.5 pt-2.5 pb-4">
+          {/* Baris Judul Kategori Aktif & Saklar Mode Grid/Baris */}
+          <div className="flex items-center justify-between gap-2 mb-2.5 bg-white/95 rounded-2xl px-3 py-2 smooth-ring-card">
+            <div className="flex items-center gap-2 min-w-0">
+              <span aria-hidden="true" className="text-base">{activeCategoryMeta.icon}</span>
               <div className="min-w-0">
-                <div className="flex items-center gap-1.5">
-                  <span aria-hidden="true" className="text-sm">{activeCategoryMeta.icon}</span>
-                  <h2 className="font-sora font-bold text-xs text-[var(--ink)] truncate">
-                    {activeCategoryMeta.nama}
-                  </h2>
-                </div>
-                <p className="text-[10px] text-[var(--ink-soft)] font-medium tabular-nums">
-                  Menampilkan {filteredProducts.length} produk tersedia
+                <h2 className="font-sora font-extrabold text-xs text-[var(--ink)] truncate">
+                  {activeCategoryMeta.nama}
+                </h2>
+                <p className="text-[10.5px] text-[var(--ink-soft)] font-medium tabular-nums">
+                  {filteredProducts.length} produk siap diantar
                 </p>
               </div>
+            </div>
 
+            <div className="flex items-center gap-1.5 shrink-0">
               {activeTab === 'katalog' && (
                 <div
                   role="group"
@@ -523,13 +530,13 @@ export function TelegramMiniAppView({
                   />
                   <button
                     type="button"
-                    aria-label="Tampilan Grid 2 Kolom"
+                    aria-label="Tampilan Grid 2 Kolom Besar"
                     aria-pressed={viewMode === 'grid'}
                     onClick={() => {
                       triggerHaptic(5)
                       setViewMode('grid')
                     }}
-                    className={`relative z-10 press px-2 py-1 rounded-lg text-[10px] font-bold flex items-center justify-center gap-1 transition-colors ${
+                    className={`relative z-10 press px-2.5 py-1 rounded-lg text-[10.5px] font-bold flex items-center justify-center gap-1 transition-colors ${
                       viewMode === 'grid'
                         ? 'text-[var(--accent-2)]'
                         : 'text-[var(--ink-soft)] hover:text-[var(--ink)]'
@@ -546,7 +553,7 @@ export function TelegramMiniAppView({
                       triggerHaptic(5)
                       setViewMode('list')
                     }}
-                    className={`relative z-10 press px-2 py-1 rounded-lg text-[10px] font-bold flex items-center justify-center gap-1 transition-colors ${
+                    className={`relative z-10 press px-2.5 py-1 rounded-lg text-[10.5px] font-bold flex items-center justify-center gap-1 transition-colors ${
                       viewMode === 'list'
                         ? 'text-[var(--accent-2)]'
                         : 'text-[var(--ink-soft)] hover:text-[var(--ink)]'
@@ -558,224 +565,106 @@ export function TelegramMiniAppView({
                 </div>
               )}
             </div>
+          </div>
 
-            {/* Quick-Search Popular Essential Pills (pbakaus/clarify & mengto/css-alpha-masking: 1-tap filter + mask-fade-right) */}
-            <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide mask-fade-right pr-4 pb-2 mb-0.5">
-              <span className="text-[10px] font-bold text-[var(--ink-soft)] shrink-0">Cepat:</span>
-              {[
-                { label: '🌾 Beras', kw: 'Beras' },
-                { label: '🌻 Minyak', kw: 'Minyak' },
-                { label: '🍜 Mie', kw: 'Mie' },
-                { label: '🧼 Sabun', kw: 'Sabun' },
-                { label: '🥚 Telur', kw: 'Telur' },
-                { label: '🍬 Gula', kw: 'Gula' },
-              ].map((tag) => {
-                const isTagActive = searchQuery.toLowerCase().trim() === tag.kw.toLowerCase()
-                return (
-                  <button
-                    key={tag.kw}
-                    type="button"
-                    aria-pressed={isTagActive}
-                    onClick={() => {
-                      triggerHaptic(5)
-                      setSearchQuery(isTagActive ? '' : tag.kw)
-                    }}
-                    className={`press shrink-0 px-2.5 py-1 rounded-full text-[10.5px] font-sora font-bold transition-colors border ${
-                      isTagActive
-                        ? 'bg-[var(--accent)] text-white border-[var(--accent)] shadow-xs'
-                        : 'bg-white text-[var(--ink-soft)] border-[var(--line)] hover:border-[var(--accent)]/60 hover:text-[var(--ink)]'
-                    }`}
-                  >
-                    {tag.label}
-                  </button>
-                )
-              })}
-            </div>
-
-            {/* TAB 1: KATALOG (GRID 2 KOLOM ATAU DAFTAR BARIS) */}
-            {activeTab === 'katalog' && (
-              <>
-                {filteredProducts.length === 0 ? (
-                  <div className="bg-white rounded-2xl p-6 text-center border border-[var(--line)] shadow-card-sm">
-                    <p className="text-3xl mb-2" aria-hidden="true">🔍</p>
-                    <p className="font-bold text-sm text-[var(--ink)]">Produk tidak ditemukan</p>
-                    <p className="text-xs text-[var(--ink-soft)] mt-1">
-                      Coba kata kunci lain atau pilih kategori di sebelah kiri
-                    </p>
-                    {(searchQuery || selectedCategory !== 'all') && (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setSearchQuery('')
-                          setSelectedCategory('all')
-                        }}
-                        className="press mt-3 inline-flex items-center justify-center px-3.5 py-1.5 rounded-xl bg-[var(--accent)] text-white text-xs font-sora font-bold shadow-xs"
+          {/* TAB 1: KATALOG (GRID 2 KOLOM BESAR LEBAR PENUH ATAU DAFTAR BARIS) */}
+          {activeTab === 'katalog' && (
+            <>
+              {filteredProducts.length === 0 ? (
+                <div className="bg-white rounded-2xl p-7 text-center border border-[var(--line)] shadow-card-sm">
+                  <p className="text-3xl mb-2" aria-hidden="true">🔍</p>
+                  <p className="font-bold text-sm text-[var(--ink)]">Produk tidak ditemukan</p>
+                  <p className="text-xs text-[var(--ink-soft)] mt-1">
+                    Coba kata kunci lain atau pilih tab kategori di atas
+                  </p>
+                  {(searchQuery || selectedCategory !== 'all') && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSearchQuery('')
+                        setSelectedCategory('all')
+                      }}
+                      className="press mt-3.5 inline-flex items-center justify-center px-4 py-2 rounded-xl bg-[var(--accent)] text-white text-xs font-sora font-bold shadow-xs"
+                    >
+                      Tampilkan Semua Produk
+                    </button>
+                  )}
+                </div>
+              ) : viewMode === 'grid' ? (
+                /* TAMPILAN GRID 2 KOLOM BESAR LEBAR PENUH ALA TIKTOK SHOP MALL */
+                <div className="grid grid-cols-2 @[560px]:grid-cols-3 gap-2.5">
+                  {filteredProducts.map((product, idx) => {
+                    const qty = cartQuantities[product.id] || 0
+                    const isBestSeller = product.stok >= 20
+                    return (
+                      <div
+                        key={product.id}
+                        className={`rounded-2xl p-2.5 flex flex-col justify-between smooth-ring-card bg-white ${
+                          idx >= 6 ? 'cv-auto' : ''
+                        }`}
                       >
-                        Tampilkan Semua Produk
-                      </button>
-                    )}
-                  </div>
-                ) : viewMode === 'grid' ? (
-                  /* TAMPILAN GRID ADAPTIF (flornkm/prefer-container-queries: grid-cols-2 @[520px]:grid-cols-3) */
-                  <div className="grid grid-cols-2 @[520px]:grid-cols-3 gap-2">
-                    {filteredProducts.map((product, idx) => {
-                      const qty = cartQuantities[product.id] || 0
-                      return (
-                        <div
-                          key={product.id}
-                          className={`rounded-2xl p-2 flex flex-col justify-between smooth-ring-card ${
-                            idx >= 6 ? 'cv-auto' : ''
-                          }`}
-                        >
-                          <div>
-                            {/* Gambar Produk Persegi (jakubkrehel/better-ui: img-ring-inset) */}
-                            <Link
-                              href={`/produk/${product.slug}`}
-                              className="block relative aspect-square w-full rounded-xl bg-[var(--accent-bg)] img-ring-inset overflow-hidden mb-1.5"
-                            >
-                              {product.image_url ? (
-                                <Image
-                                  src={product.image_url}
-                                  alt={product.nama}
-                                  fill
-                                  priority={idx < 4}
-                                  className="object-contain p-1.5 transition-transform duration-300 hover:scale-105"
-                                  sizes="(max-width: 480px) 40vw, 180px"
-                                />
-                              ) : (
-                                <div
-                                  className="w-full h-full flex items-center justify-center text-2xl text-[var(--ink-soft)]"
-                                  aria-hidden="true"
-                                >
-                                  📦
-                                </div>
-                              )}
-
-                              {/* Badge Sisa Stok Sedikit */}
-                              {product.stok > 0 && product.stok <= 5 && (
-                                <span className="absolute top-1.5 right-1.5 px-1.5 py-0.5 rounded-md bg-white/95 backdrop-blur-xs text-[var(--accent-2)] text-[9.5px] font-bold shadow-2xs tabular-nums">
-                                  Sisa {product.stok}
-                                </span>
-                              )}
-                            </Link>
-
-                            {/* Nama Produk */}
-                            <Link href={`/produk/${product.slug}`} className="block">
-                              <h3 className="font-bold text-xs leading-snug line-clamp-2 text-[var(--ink)] hover:text-[var(--accent)] min-h-[2.1rem]">
-                                {product.nama}
-                              </h3>
-                            </Link>
-                          </div>
-
-                          {/* Harga & Tombol Stepper Instan */}
-                          <div className="pt-1.5 mt-1 border-t border-[var(--line)]/60 flex items-center justify-between gap-1">
-                            <div className="min-w-0 tabular-nums">
-                              <span className="block font-sora font-extrabold text-xs text-[var(--accent-2)] truncate">
-                                {formatRupiah(product.harga)}
-                              </span>
-                              <span className="block text-[9.5px] text-[var(--ink-soft)]">
-                                Stok {product.stok}
-                              </span>
-                            </div>
-
-                            <div className="shrink-0">
-                              {qty === 0 ? (
-                                <button
-                                  type="button"
-                                  onClick={() => updateQty(product.id, 1)}
-                                  disabled={product.stok <= 0}
-                                  aria-label={`Tambah ${product.nama} ke keranjang`}
-                                  className="press hit-area-expand px-2.5 py-1.5 rounded-xl bg-[var(--accent)] text-white font-sora font-bold text-[11px] hover:bg-[var(--accent-2)] transition-colors flex items-center gap-0.5 shadow-xs disabled:opacity-50"
-                                >
-                                  <Plus size={13} aria-hidden="true" />
-                                  <span>Beli</span>
-                                </button>
-                              ) : (
-                                <div className="flex items-center gap-0.5 bg-[var(--paper)] rounded-xl p-0.5 border border-[var(--line)] animate-pop">
-                                  <button
-                                    type="button"
-                                    aria-label={`Kurangi jumlah ${product.nama}`}
-                                    onClick={() => updateQty(product.id, -1)}
-                                    className="press hit-area-expand size-6 rounded-lg bg-white flex items-center justify-center text-[var(--ink)] font-bold shadow-2xs"
-                                  >
-                                    <Minus size={11} aria-hidden="true" />
-                                  </button>
-                                  <span
-                                    key={`qty-${product.id}-${qty}`}
-                                    className="w-4 text-center font-sora font-bold text-[11px] text-[var(--accent-2)] tabular-nums animate-pop"
-                                  >
-                                    {qty}
-                                  </span>
-                                  <button
-                                    type="button"
-                                    aria-label={`Tambah jumlah ${product.nama}`}
-                                    onClick={() => updateQty(product.id, 1)}
-                                    disabled={qty >= product.stok}
-                                    className="press hit-area-expand size-6 rounded-lg bg-[var(--accent)] flex items-center justify-center text-white font-bold shadow-2xs disabled:opacity-50"
-                                  >
-                                    <Plus size={11} aria-hidden="true" />
-                                  </button>
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                      )
-                    })}
-                  </div>
-                ) : (
-                  /* TAMPILAN DAFTAR BARIS (LIST COMPACT) */
-                  <div className="space-y-2">
-                    {filteredProducts.map((product, idx) => {
-                      const qty = cartQuantities[product.id] || 0
-                      return (
-                        <div
-                          key={product.id}
-                          className={`rounded-2xl p-2.5 flex items-center gap-2.5 smooth-ring-card ${
-                            idx >= 8 ? 'cv-auto' : ''
-                          }`}
-                        >
-                          {/* Gambar Thumbnail */}
+                        <div>
+                          {/* Foto Produk Besar Persegi (Full-Width 2-Col ~35% Lebih Lega) */}
                           <Link
                             href={`/produk/${product.slug}`}
-                            className="size-13 rounded-xl bg-[var(--accent-bg)] img-ring-inset relative overflow-hidden shrink-0"
+                            className="block relative aspect-square w-full rounded-xl bg-[var(--accent-bg)]/75 img-ring-inset overflow-hidden mb-2"
                           >
                             {product.image_url ? (
                               <Image
                                 src={product.image_url}
                                 alt={product.nama}
                                 fill
-                                className="object-contain p-1"
-                                sizes="56px"
+                                priority={idx < 4}
+                                className="object-contain p-2 transition-transform duration-300 hover:scale-105"
+                                sizes="(max-width: 480px) 48vw, 220px"
                               />
                             ) : (
                               <div
-                                className="w-full h-full flex items-center justify-center text-xs text-[var(--ink-soft)]"
+                                className="w-full h-full flex items-center justify-center text-3xl text-[var(--ink-soft)]"
                                 aria-hidden="true"
                               >
                                 📦
                               </div>
                             )}
+
+                            {/* Badge Kiri Atas: Diskon atau Terlaris */}
+                            {product.diskon_persen ? (
+                              <span className="absolute top-1.5 left-1.5 px-2 py-0.5 rounded-lg bg-[var(--accent)] text-white text-[10px] font-sora font-extrabold shadow-2xs tabular-nums">
+                                -{product.diskon_persen}%
+                              </span>
+                            ) : isBestSeller ? (
+                              <span className="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded-md bg-[var(--accent)]/95 text-white text-[9.5px] font-sora font-bold shadow-2xs">
+                                🔥 Laris
+                              </span>
+                            ) : null}
+
+                            {/* Badge Kanan Atas: Sisa Stok Sedikit */}
+                            {product.stok > 0 && product.stok <= 5 && (
+                              <span className="absolute top-1.5 right-1.5 px-1.5 py-0.5 rounded-md bg-white/95 backdrop-blur-xs text-[var(--accent-2)] text-[9.5px] font-bold shadow-2xs tabular-nums">
+                                Sisa {product.stok}
+                              </span>
+                            )}
                           </Link>
 
-                          {/* Informasi Produk */}
-                          <div className="flex-1 min-w-0">
-                            <Link href={`/produk/${product.slug}`} className="block">
-                              <h3 className="font-bold text-xs leading-snug line-clamp-2 text-[var(--ink)] hover:text-[var(--accent)]">
-                                {product.nama}
-                              </h3>
-                            </Link>
-                            <div className="flex items-center gap-2 mt-1 tabular-nums">
-                              <span className="font-sora font-extrabold text-xs text-[var(--accent-2)]">
-                                {formatRupiah(product.harga)}
-                              </span>
-                              <span className="text-[10px] text-[var(--ink-soft)]">
-                                Stok: {product.stok}
-                              </span>
-                            </div>
+                          {/* Nama Produk (Lebih Besar & Jelas Dibaca) */}
+                          <Link href={`/produk/${product.slug}`} className="block">
+                            <h3 className="font-bold text-[13px] leading-snug line-clamp-2 text-[var(--ink)] hover:text-[var(--accent)] min-h-[2.25rem]">
+                              {product.nama}
+                            </h3>
+                          </Link>
+                        </div>
+
+                        {/* Harga Besar & Tombol + Beli / Stepper */}
+                        <div className="pt-2 mt-1.5 border-t border-[var(--line)]/60 flex items-center justify-between gap-1.5">
+                          <div className="min-w-0 tabular-nums">
+                            <span className="block font-sora font-extrabold text-[15px] text-[var(--accent-2)] leading-tight truncate">
+                              {formatRupiah(product.harga)}
+                            </span>
+                            <span className="block text-[10px] text-[var(--ink-soft)] font-medium mt-0.5">
+                              Stok {product.stok}
+                            </span>
                           </div>
 
-                          {/* Tombol Stepper / Tambah */}
                           <div className="shrink-0">
                             {qty === 0 ? (
                               <button
@@ -783,22 +672,25 @@ export function TelegramMiniAppView({
                                 onClick={() => updateQty(product.id, 1)}
                                 disabled={product.stok <= 0}
                                 aria-label={`Tambah ${product.nama} ke keranjang`}
-                                className="press hit-area-expand px-2.5 py-1.5 rounded-xl bg-[var(--accent-bg)] text-[var(--accent-2)] font-bold text-xs hover:bg-[var(--accent)] hover:text-white transition-colors flex items-center gap-1 disabled:opacity-50 shadow-xs"
+                                className="press hit-area-expand px-3 py-1.5 rounded-xl bg-[var(--accent)] text-white font-sora font-bold text-xs hover:bg-[var(--accent-2)] transition-colors flex items-center gap-1 shadow-xs disabled:opacity-50"
                               >
-                                <Plus size={13} aria-hidden="true" />
+                                <Plus size={14} aria-hidden="true" />
                                 <span>Beli</span>
                               </button>
                             ) : (
-                              <div className="flex items-center gap-1 bg-[var(--paper)] rounded-xl p-1 border border-[var(--line)]">
+                              <div className="flex items-center gap-1 bg-[var(--paper)] rounded-xl p-0.5 border border-[var(--line)] animate-pop">
                                 <button
                                   type="button"
                                   aria-label={`Kurangi jumlah ${product.nama}`}
                                   onClick={() => updateQty(product.id, -1)}
                                   className="press hit-area-expand size-6 rounded-lg bg-white flex items-center justify-center text-[var(--ink)] font-bold shadow-2xs"
                                 >
-                                  <Minus size={12} aria-hidden="true" />
+                                  <Minus size={11} aria-hidden="true" />
                                 </button>
-                                <span className="w-5 text-center font-sora font-bold text-xs text-[var(--accent-2)] tabular-nums">
+                                <span
+                                  key={`qty-${product.id}-${qty}`}
+                                  className="w-4 text-center font-sora font-bold text-xs text-[var(--accent-2)] tabular-nums animate-pop"
+                                >
                                   {qty}
                                 </span>
                                 <button
@@ -808,31 +700,127 @@ export function TelegramMiniAppView({
                                   disabled={qty >= product.stok}
                                   className="press hit-area-expand size-6 rounded-lg bg-[var(--accent)] flex items-center justify-center text-white font-bold shadow-2xs disabled:opacity-50"
                                 >
-                                  <Plus size={12} aria-hidden="true" />
+                                  <Plus size={11} aria-hidden="true" />
                                 </button>
                               </div>
                             )}
                           </div>
                         </div>
-                      )
-                    })}
-                  </div>
-                )}
-              </>
-            )}
+                      </div>
+                    )
+                  })}
+                </div>
+              ) : (
+                /* TAMPILAN DAFTAR BARIS (LIST COMPACT LEBAR PENUH) */
+                <div className="space-y-2">
+                  {filteredProducts.map((product, idx) => {
+                    const qty = cartQuantities[product.id] || 0
+                    return (
+                      <div
+                        key={product.id}
+                        className={`rounded-2xl p-2.5 flex items-center gap-3 smooth-ring-card bg-white ${
+                          idx >= 8 ? 'cv-auto' : ''
+                        }`}
+                      >
+                        {/* Gambar Thumbnail */}
+                        <Link
+                          href={`/produk/${product.slug}`}
+                          className="size-14 rounded-xl bg-[var(--accent-bg)] img-ring-inset relative overflow-hidden shrink-0"
+                        >
+                          {product.image_url ? (
+                            <Image
+                              src={product.image_url}
+                              alt={product.nama}
+                              fill
+                              className="object-contain p-1.5"
+                              sizes="56px"
+                            />
+                          ) : (
+                            <div
+                              className="w-full h-full flex items-center justify-center text-sm text-[var(--ink-soft)]"
+                              aria-hidden="true"
+                            >
+                              📦
+                            </div>
+                          )}
+                        </Link>
 
-            {/* TAB 2: CHECKLIST KILAT (DENGAN SIDEBAR KATEGORI DI KIRI) */}
-            {activeTab === 'checklist' && (
-              <div>
-                <div className="bg-[var(--accent-bg)] rounded-2xl p-2.5 mb-2.5 border border-[rgba(255,107,53,0.3)] flex items-center justify-between gap-2">
-                  <div>
-                    <p className="font-bold text-xs text-[var(--ink)]">
-                      Centang Barang Belanjaan
-                    </p>
-                    <p className="text-[10px] text-[var(--ink-soft)]">
-                      Pilih kategori di kiri lalu centang barang
-                    </p>
-                  </div>
+                        {/* Informasi Produk */}
+                        <div className="flex-1 min-w-0">
+                          <Link href={`/produk/${product.slug}`} className="block">
+                            <h3 className="font-bold text-[13px] leading-snug line-clamp-2 text-[var(--ink)] hover:text-[var(--accent)]">
+                              {product.nama}
+                            </h3>
+                          </Link>
+                          <div className="flex items-center gap-2 mt-1 tabular-nums">
+                            <span className="font-sora font-extrabold text-sm text-[var(--accent-2)]">
+                              {formatRupiah(product.harga)}
+                            </span>
+                            <span className="text-[10.5px] text-[var(--ink-soft)]">
+                              Stok: {product.stok}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Tombol Stepper / Tambah */}
+                        <div className="shrink-0">
+                          {qty === 0 ? (
+                            <button
+                              type="button"
+                              onClick={() => updateQty(product.id, 1)}
+                              disabled={product.stok <= 0}
+                              aria-label={`Tambah ${product.nama} ke keranjang`}
+                              className="press hit-area-expand px-3 py-1.5 rounded-xl bg-[var(--accent)] text-white font-sora font-bold text-xs hover:bg-[var(--accent-2)] transition-colors flex items-center gap-1 disabled:opacity-50 shadow-xs"
+                            >
+                              <Plus size={13} aria-hidden="true" />
+                              <span>Beli</span>
+                            </button>
+                          ) : (
+                            <div className="flex items-center gap-1 bg-[var(--paper)] rounded-xl p-1 border border-[var(--line)]">
+                              <button
+                                type="button"
+                                aria-label={`Kurangi jumlah ${product.nama}`}
+                                onClick={() => updateQty(product.id, -1)}
+                                className="press hit-area-expand size-6 rounded-lg bg-white flex items-center justify-center text-[var(--ink)] font-bold shadow-2xs"
+                              >
+                                <Minus size={12} aria-hidden="true" />
+                              </button>
+                              <span className="w-5 text-center font-sora font-bold text-xs text-[var(--accent-2)] tabular-nums">
+                                {qty}
+                              </span>
+                              <button
+                                type="button"
+                                aria-label={`Tambah jumlah ${product.nama}`}
+                                onClick={() => updateQty(product.id, 1)}
+                                disabled={qty >= product.stok}
+                                className="press hit-area-expand size-6 rounded-lg bg-[var(--accent)] flex items-center justify-center text-white font-bold shadow-2xs disabled:opacity-50"
+                              >
+                                <Plus size={12} aria-hidden="true" />
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              )}
+            </>
+          )}
+
+          {/* TAB 2: CHECKLIST KILAT LEBAR PENUH */}
+          {activeTab === 'checklist' && (
+            <div>
+              <div className="bg-[var(--accent-bg)] rounded-2xl p-3 mb-2.5 border border-[rgba(255,107,53,0.3)] flex items-center justify-between gap-2">
+                <div>
+                  <p className="font-bold text-xs text-[var(--ink)]">
+                    📋 Mode Checklist Belanja Bulanan
+                  </p>
+                  <p className="text-[10.5px] text-[var(--ink-soft)]">
+                    Centang barang-barang yang ingin dibeli sekaligus
+                  </p>
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
                   <button
                     type="button"
                     onClick={() => {
@@ -842,84 +830,84 @@ export function TelegramMiniAppView({
                         setCheckedIds(new Set(filteredProducts.map((p) => p.id)))
                       }
                     }}
-                    className="text-xs font-bold text-[var(--accent-2)] hover:underline shrink-0"
+                    className="text-xs font-bold text-[var(--accent-2)] hover:underline"
                   >
                     {checkedIds.size === filteredProducts.length ? 'Batal Semua' : 'Pilih Semua'}
                   </button>
                 </div>
-
-                <div className="space-y-1.5">
-                  {filteredProducts.map((product) => {
-                    const isChecked = checkedIds.has(product.id)
-                    return (
-                      <button
-                        key={`check-${product.id}`}
-                        type="button"
-                        role="checkbox"
-                        aria-checked={isChecked}
-                        onClick={() => toggleCheck(product.id)}
-                        className={`w-full text-left p-2.5 rounded-2xl border transition-colors cursor-pointer flex items-center justify-between gap-2.5 ${
-                          isChecked
-                            ? 'bg-[var(--accent-bg)]/80 border-[var(--accent)]'
-                            : 'bg-white border-[var(--line)]'
-                        }`}
-                      >
-                        <div className="flex items-center gap-2.5 min-w-0">
-                          <div className="text-[var(--accent)] shrink-0" aria-hidden="true">
-                            {isChecked ? (
-                              <CheckSquare size={19} />
-                            ) : (
-                              <Square size={19} className="text-[var(--ink-soft)]/50" />
-                            )}
-                          </div>
-                          <div className="min-w-0">
-                            <p
-                              className={`text-xs font-bold line-clamp-1 ${
-                                isChecked ? 'text-[var(--accent-2)]' : 'text-[var(--ink)]'
-                              }`}
-                            >
-                              {product.nama}
-                            </p>
-                            <p className="text-[10px] text-[var(--ink-soft)] tabular-nums">
-                              Sisa stok: {product.stok}
-                            </p>
-                          </div>
-                        </div>
-
-                        <span className="font-sora font-extrabold text-xs text-[var(--ink)] shrink-0 tabular-nums">
-                          {formatRupiah(product.harga)}
-                        </span>
-                      </button>
-                    )
-                  })}
-                </div>
-
-                {/* Checklist Floating Action Bar */}
-                {checklistSummary.count > 0 && (
-                  <div className="mt-4 p-3 bg-white rounded-2xl border border-[var(--accent)] shadow-md flex items-center justify-between">
-                    <div className="tabular-nums">
-                      <span className="text-[10px] text-[var(--ink-soft)] font-medium block">
-                        {checklistSummary.count} Item Dicentang
-                      </span>
-                      <span className="font-sora font-extrabold text-sm text-[var(--accent-2)]">
-                        {formatRupiah(checklistSummary.total)}
-                      </span>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={handleAddAllChecklist}
-                      disabled={isPending}
-                      className="press px-3.5 py-2 rounded-xl bg-[var(--accent)] text-white font-bold text-xs hover:bg-[var(--accent-2)] transition-colors flex items-center gap-1.5 shadow-btn"
-                    >
-                      <ShoppingCart size={14} aria-hidden="true" />
-                      <span>{isPending ? 'Menyimpan...' : 'Beli Semua'}</span>
-                    </button>
-                  </div>
-                )}
               </div>
-            )}
-          </main>
-        </div>
+
+              <div className="space-y-1.5">
+                {filteredProducts.map((product) => {
+                  const isChecked = checkedIds.has(product.id)
+                  return (
+                    <button
+                      key={`check-${product.id}`}
+                      type="button"
+                      role="checkbox"
+                      aria-checked={isChecked}
+                      onClick={() => toggleCheck(product.id)}
+                      className={`w-full text-left p-2.5 rounded-2xl border transition-colors cursor-pointer flex items-center justify-between gap-2.5 ${
+                        isChecked
+                          ? 'bg-[var(--accent-bg)]/80 border-[var(--accent)]'
+                          : 'bg-white border-[var(--line)]'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <div className="text-[var(--accent)] shrink-0" aria-hidden="true">
+                          {isChecked ? (
+                            <CheckSquare size={19} />
+                          ) : (
+                            <Square size={19} className="text-[var(--ink-soft)]/50" />
+                          )}
+                        </div>
+                        <div className="min-w-0">
+                          <p
+                            className={`text-xs font-bold line-clamp-1 ${
+                              isChecked ? 'text-[var(--accent-2)]' : 'text-[var(--ink)]'
+                            }`}
+                          >
+                            {product.nama}
+                          </p>
+                          <p className="text-[10px] text-[var(--ink-soft)] tabular-nums">
+                            Sisa stok: {product.stok}
+                          </p>
+                        </div>
+                      </div>
+
+                      <span className="font-sora font-extrabold text-xs text-[var(--ink)] shrink-0 tabular-nums">
+                        {formatRupiah(product.harga)}
+                      </span>
+                    </button>
+                  )
+                })}
+              </div>
+
+              {/* Checklist Action Card */}
+              {checklistSummary.count > 0 && (
+                <div className="mt-4 p-3 bg-white rounded-2xl border border-[var(--accent)] shadow-md flex items-center justify-between">
+                  <div className="tabular-nums">
+                    <span className="text-[10px] text-[var(--ink-soft)] font-medium block">
+                      {checklistSummary.count} Item Dicentang
+                    </span>
+                    <span className="font-sora font-extrabold text-sm text-[var(--accent-2)]">
+                      {formatRupiah(checklistSummary.total)}
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleAddAllChecklist}
+                    disabled={isPending}
+                    className="press px-3.5 py-2 rounded-xl bg-[var(--accent)] text-white font-bold text-xs hover:bg-[var(--accent-2)] transition-colors flex items-center gap-1.5 shadow-btn"
+                  >
+                    <ShoppingCart size={14} aria-hidden="true" />
+                    <span>{isPending ? 'Menyimpan...' : 'Beli Semua'}</span>
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+        </main>
       ) : (
         /* TAB 3: PROMO & INFORMASI TOKO */
         <main className="px-4 mt-3 space-y-3">

@@ -73,8 +73,8 @@ export default function CatalogProductList({
 
   return (
     <div className="@container space-y-4">
-      {/* Product Grid (flornkm/prefer-container-queries) */}
-      <div className="grid grid-cols-2 @[520px]:grid-cols-3 gap-2">
+      {/* Product Grid (flornkm/prefer-container-queries: Full-Width 2-Col Large Feed) */}
+      <div className="grid grid-cols-2 @[560px]:grid-cols-3 gap-2.5">
         {products.map((product, idx) => (
           <ProductCard key={product.id} product={product} priority={idx < 4} />
         ))}

@@ -17,7 +17,7 @@ interface CategoryFilterProps {
 export default function CategoryFilter({
   categories,
   activeSlug,
-  variant = 'rail',
+  variant = 'chips',
 }: CategoryFilterProps) {
   const searchParams = useSearchParams()
 
@@ -40,13 +40,22 @@ export default function CategoryFilter({
 
   if (variant === 'chips') {
     return (
-      <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide py-1">
+      <nav
+        aria-label="Tab Kategori Produk"
+        className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide mask-fade-right py-1 pr-4 select-none"
+      >
         <Link
           href={buildCategoryUrl()}
           prefetch={true}
-          className={`cat-chip shrink-0 ${!activeSlug ? 'active' : ''}`}
+          aria-current={!activeSlug ? 'page' : undefined}
+          className={`press shrink-0 px-3.5 py-2 rounded-full text-xs font-sora font-bold transition-all flex items-center gap-1.5 border ${
+            !activeSlug
+              ? 'bg-[var(--accent)] text-white border-[var(--accent)] shadow-xs'
+              : 'bg-white text-[var(--ink-soft)] border-[rgba(232,214,205,0.9)] hover:border-[var(--accent)]/60 hover:text-[var(--ink)]'
+          }`}
         >
-          Semua
+          <span aria-hidden="true" className="text-xs">🏪</span>
+          <span>Semua</span>
         </Link>
         {categories.map((cat) => {
           const isActive = activeSlug === cat.slug
@@ -55,13 +64,21 @@ export default function CategoryFilter({
               key={cat.id}
               href={buildCategoryUrl(cat.slug)}
               prefetch={true}
-              className={`cat-chip shrink-0 ${isActive ? 'active' : ''}`}
+              aria-current={isActive ? 'page' : undefined}
+              className={`press shrink-0 px-3.5 py-2 rounded-full text-xs font-sora font-bold transition-all flex items-center gap-1.5 border ${
+                isActive
+                  ? 'bg-[var(--accent)] text-white border-[var(--accent)] shadow-xs'
+                  : 'bg-white text-[var(--ink-soft)] border-[rgba(232,214,205,0.9)] hover:border-[var(--accent)]/60 hover:text-[var(--ink)]'
+              }`}
             >
-              {cat.nama}
+              <span aria-hidden="true" className="text-xs">
+                {getCategoryIconEmoji(cat.nama)}
+              </span>
+              <span>{cat.nama}</span>
             </Link>
           )
         })}
-      </div>
+      </nav>
     )
   }
 
