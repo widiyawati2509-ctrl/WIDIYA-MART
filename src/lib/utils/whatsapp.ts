@@ -43,7 +43,7 @@ export function buildOrderWhatsAppMessage(
       ? order.order_items
           .map(
             (item: any, idx: number) =>
-              `${idx + 1}. ${item.nama_produk || 'Produk'} (${item.qty}x) - ${formatRupiah(
+              `${idx + 1}. ${item.nama_produk || 'Produk'} (${item.qty}x) — ${formatRupiah(
                 item.subtotal || item.harga_saat_beli * item.qty
               )}`
           )
@@ -59,54 +59,65 @@ export function buildOrderWhatsAppMessage(
     : 'Rp 0 (Ambil di Toko)'
 
   const lines = [
-    `*PESANAN BARU - ${storeName.toUpperCase()}*`,
-    '----------------------------------------',
-    `*ID Pesanan:* ${orderId}`,
-    `*Waktu:* ${dateStr}`,
+    `*PESANAN BARU — ${storeName.toUpperCase()}*`,
+    '═════════════════════════',
+    `🆔 *ID Pesanan:* ${orderId}`,
+    `📅 *Waktu:* ${dateStr}`,
     '',
     '*DATA PEMESAN:*',
-    `Nama: ${order.nama_pemesan || 'Pelanggan'}`,
-    `No. HP: ${order.no_hp_pemesan || '-'}`,
-    `Metode: ${isDelivery ? 'Diantar ke Alamat (COD)' : 'Ambil di Toko (COD)'}`,
+    `👤 Nama: ${order.nama_pemesan || 'Pelanggan'}`,
+    `📱 No. HP/WA: ${order.no_hp_pemesan || '-'}`,
+    `📦 Metode: ${isDelivery ? '🚚 Diantar ke Alamat (COD)' : '🏪 Ambil di Toko (COD)'}`,
   ]
 
   if (isDelivery) {
     if (order.dusun_pengiriman) {
-      lines.push(`Dusun / Area: ${order.dusun_pengiriman}`)
+      lines.push(`📍 Dusun: ${order.dusun_pengiriman}`)
     }
-    lines.push(`Alamat Lengkap: ${order.alamat_pengiriman || '-'}`)
+    lines.push(`🏠 Alamat: ${order.alamat_pengiriman || '-'}`)
     if (order.estimasi_menit) {
-      lines.push(`Target Pengantaran: ±${order.estimasi_menit} Menit`)
+      lines.push(`⏱️ Estimasi Sampai: ±${order.estimasi_menit} Menit`)
+    }
+    if (order.alamat_pengiriman) {
+      const gmapsQuery = encodeURIComponent(
+        `${order.alamat_pengiriman}, ${order.dusun_pengiriman || 'Pengenjek'}, Jonggat`
+      )
+      lines.push(`🗺️ Google Maps: https://www.google.com/maps/search/?api=1&query=${gmapsQuery}`)
     }
   }
 
   lines.push('')
   lines.push('*RINCIAN PRODUK:*')
   lines.push(itemsList)
-  lines.push('----------------------------------------')
+  lines.push('─────────────────────────')
   lines.push(`Subtotal Produk: ${subtotalStr}`)
   lines.push(`Biaya Pengiriman: ${ongkirStr}`)
 
   if (order.kode_kupon || order.diskon_kupon > 0) {
     const couponCode = order.kode_kupon ? ` (${order.kode_kupon})` : ''
-    lines.push(`Voucher Diskon${couponCode}: -${formatRupiah(order.diskon_kupon || 0)}`)
+    lines.push(`🏷️ Diskon Kupon${couponCode}: -${formatRupiah(order.diskon_kupon || 0)}`)
   }
 
   if (order.diskon_poin > 0) {
     const points = order.poin_digunakan ? ` (${order.poin_digunakan} poin)` : ''
-    lines.push(`Diskon Poin${points}: -${formatRupiah(order.diskon_poin)}`)
+    lines.push(`🪙 Diskon Poin${points}: -${formatRupiah(order.diskon_poin)}`)
   }
 
-  lines.push('----------------------------------------')
+  lines.push('═════════════════════════')
   lines.push(`*TOTAL PEMBAYARAN (COD): ${formatRupiah(order.total)}*`)
-  lines.push('----------------------------------------')
+  lines.push('═════════════════════════')
 
   if (order.catatan) {
-    lines.push(`Catatan: ${order.catatan}`)
+    lines.push(`📝 *Catatan Pembeli:* ${order.catatan}`)
     lines.push('')
   }
 
-  lines.push(`Halo Admin ${storeName}, mohon konfirmasi dan proses pesanan saya di atas ya. Terima kasih! 🙏`)
+  if (order.id) {
+    lines.push(`🔗 *Lacak Pesanan:* https://widiya-mart.vercel.app/pesanan/${order.id}`)
+    lines.push('')
+  }
+
+  lines.push(`Halo Admin ${storeName}, mohon konfirmasi dan segera diproses ya. Terima kasih! 🙏`)
 
   return lines.join('\n')
 }

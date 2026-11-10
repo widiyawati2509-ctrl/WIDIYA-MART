@@ -54,7 +54,7 @@ export default function UnduhApkPage() {
           {/* Download Button */}
           <a
             href="https://github.com/widiyawati2509-ctrl/WIDIYA-MART/raw/main/android/release/PENGENJEK-MART.apk"
-            download="PENGENJEK-MART.apk"
+            download="WIDIYA-MART.apk"
             className="btn-primary w-full py-3.5 px-6 text-sm gap-2"
           >
             <Download className="w-4 h-4" />

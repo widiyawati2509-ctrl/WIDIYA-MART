@@ -7,6 +7,7 @@ import Link from 'next/link'
 import type { Viewport } from 'next'
 
 const UserOrderNotifier = dynamic(() => import('@/components/UserOrderNotifier'))
+const PwaInstallPrompt = dynamic(() => import('@/components/PwaInstallPrompt'))
 
 export async function generateViewport(): Promise<Viewport> {
   const user = await getAuthUser()
@@ -101,6 +102,7 @@ export default async function StoreLayout({
         </div>
       )}
       <UserOrderNotifier />
+      <PwaInstallPrompt />
       <main className="animate-page-in">{children}</main>
       <BottomNav cartCount={cartCount} isLoggedIn={!!user} />
     </div>

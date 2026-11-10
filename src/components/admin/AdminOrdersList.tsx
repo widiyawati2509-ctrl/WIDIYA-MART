@@ -15,7 +15,8 @@ import {
   deleteOrders, 
   deleteAllOrders, 
   deleteSingleOrder,
-  checkAndExpirePickupOrders
+  checkAndExpirePickupOrders,
+  updateOrderStatus
 } from '@/lib/actions/orders'
 import { 
   Search, 
@@ -75,6 +76,35 @@ const statusFilters = [
   { value: 'dibatalkan', label: 'Dibatalkan' },
 ]
 
+function getNextStatusAction(status: string, metode?: string) {
+  if (status === 'menunggu_diproses') {
+    return {
+      nextStatus: 'diproses',
+      label: 'Proses',
+      icon: '⚡',
+      className: 'bg-blue-600 hover:bg-blue-700 text-white',
+    }
+  }
+  if (status === 'diproses') {
+    const isDelivery = metode === 'antar_alamat'
+    return {
+      nextStatus: 'siap_diambil',
+      label: isDelivery ? 'Siap Antar' : 'Siap Ambil',
+      icon: isDelivery ? '🛵' : '📦',
+      className: 'bg-emerald-600 hover:bg-emerald-700 text-white',
+    }
+  }
+  if (status === 'siap_diambil') {
+    return {
+      nextStatus: 'selesai',
+      label: 'Selesai',
+      icon: '✅',
+      className: 'bg-emerald-700 hover:bg-emerald-800 text-white',
+    }
+  }
+  return null
+}
+
 export default function AdminOrdersList({ initialOrders, initialStatus }: AdminOrdersListProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -131,6 +161,49 @@ export default function AdminOrdersList({ initialOrders, initialStatus }: AdminO
     mode: 'selected',
   })
   const [feedbackMsg, setFeedbackMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
+  const [updatingOrderId, setUpdatingOrderId] = useState<string | null>(null)
+
+  const handleQuickStatusChange = async (
+    orderId: string,
+    nextStatus: string,
+    e: React.MouseEvent
+  ) => {
+    e.preventDefault()
+    e.stopPropagation()
+    if (updatingOrderId) return
+
+    setUpdatingOrderId(orderId)
+    if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+      navigator.vibrate(35)
+    }
+
+    try {
+      const res = await updateOrderStatus(orderId, nextStatus)
+      if (res?.error) {
+        setFeedbackMsg({
+          type: 'error',
+          text: res.error,
+        })
+      } else {
+        setOrders((prev) =>
+          prev.map((o) => (o.id === orderId ? { ...o, status: nextStatus } : o))
+        )
+        setFeedbackMsg({
+          type: 'success',
+          text: `Status #${orderId.slice(0, 8).toUpperCase()} berhasil diubah ke "${getOrderStatusLabel(nextStatus)}"`,
+        })
+        router.refresh()
+      }
+    } catch (err: any) {
+      setFeedbackMsg({
+        type: 'error',
+        text: err?.message || 'Gagal memperbarui status',
+      })
+    } finally {
+      setUpdatingOrderId(null)
+      setTimeout(() => setFeedbackMsg(null), 4000)
+    }
+  }
 
   // Sync state when initialOrders prop changes (e.g. after status update or Realtime refresh)
   useEffect(() => {
@@ -544,10 +617,31 @@ export default function AdminOrdersList({ initialOrders, initialStatus }: AdminO
                     )}
                   </div>
 
-                  <div className="text-right shrink-0">
+                  <div className="text-right shrink-0 flex flex-col items-end gap-1.5 pl-2">
                     <p className="font-sora font-bold text-sm text-[var(--accent-2)]">
                       {formatRupiah(order.total)}
                     </p>
+                    {(() => {
+                      const nextAction = getNextStatusAction(order.status, order.metode_pengiriman)
+                      if (!nextAction) return null
+                      const isUpdating = updatingOrderId === order.id
+                      return (
+                        <button
+                          type="button"
+                          onClick={(e) => handleQuickStatusChange(order.id, nextAction.nextStatus, e)}
+                          disabled={isUpdating}
+                          className={`press inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-sora font-bold shadow-xs active:scale-95 transition-all cursor-pointer ${nextAction.className}`}
+                          title={`Ubah status langsung ke "${getOrderStatusLabel(nextAction.nextStatus)}"`}
+                        >
+                          {isUpdating ? (
+                            <Loader2 className="w-3 h-3 animate-spin" />
+                          ) : (
+                            <span>{nextAction.icon}</span>
+                          )}
+                          <span>{nextAction.label}</span>
+                        </button>
+                      )
+                    })()}
                   </div>
                 </Link>
 
