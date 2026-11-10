@@ -16,13 +16,13 @@ export default async function CheckoutPage() {
   if (!user) redirect('/masuk')
 
   const [profileResult, cartResult, storeResult, loyaltySummary, addressesResult] = await Promise.all([
-    supabase.from('profiles').select('nama, no_hp').eq('id', user.id).single(),
+    supabase.from('profiles').select('nama, no_hp').eq('id', user.id).maybeSingle(),
     (async () => {
       const { data: cart } = await supabase
         .from('carts')
         .select('id')
         .eq('user_id', user.id)
-        .single()
+        .maybeSingle()
 
       if (!cart) return { items: [], total: 0 }
 
@@ -42,7 +42,7 @@ export default async function CheckoutPage() {
 
       return { items: safeItems, total }
     })(),
-    supabase.from('store_info').select('*').single(),
+    supabase.from('store_info').select('*').maybeSingle(),
     getUserLoyaltySummary(user.id),
     getUserAddresses(),
   ])

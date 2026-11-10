@@ -19,7 +19,7 @@ export default async function KeranjangPage() {
     .from('carts')
     .select('id')
     .eq('user_id', user.id)
-    .single()
+    .maybeSingle()
 
   let items: unknown[] = []
   if (cart) {

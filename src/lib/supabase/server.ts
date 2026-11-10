@@ -47,16 +47,19 @@ export async function createClient() {
  * Fast auth user check that avoids remote network roundtrips if no session cookie exists.
  */
 export async function getAuthUser() {
-  const cookieStore = await cookies()
-  const allCookies = cookieStore.getAll()
-  const hasAuthCookie = allCookies.some(
-    (c) => c.name.startsWith('sb-') && c.name.includes('-auth-token')
-  )
-  if (!hasAuthCookie) return null
+  try {
+    const cookieStore = await cookies()
+    const allCookies = cookieStore.getAll()
+    const hasAuthCookie = allCookies.some(
+      (c) => c.name.startsWith('sb-') && c.name.includes('-auth-token')
+    )
+    if (!hasAuthCookie) return null
 
-  const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-  return user
+    const supabase = await createClient()
+    const { data, error } = await supabase.auth.getUser()
+    if (error || !data) return null
+    return data.user || null
+  } catch {
+    return null
+  }
 }

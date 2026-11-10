@@ -10,18 +10,21 @@ const UserOrderNotifier = dynamic(() => import('@/components/UserOrderNotifier')
 const PwaInstallPrompt = dynamic(() => import('@/components/PwaInstallPrompt'))
 
 export async function generateViewport(): Promise<Viewport> {
-  const user = await getAuthUser()
   let isAdmin = false
+  try {
+    const user = await getAuthUser()
+    if (user) {
+      const supabase = await createClient()
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', user.id)
+        .maybeSingle()
 
-  if (user) {
-    const supabase = await createClient()
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('role')
-      .eq('id', user.id)
-      .single()
-
-    isAdmin = profile?.role === 'admin'
+      isAdmin = profile?.role === 'admin'
+    }
+  } catch {
+    // safe fallback
   }
 
   return {
@@ -39,36 +42,41 @@ export default async function StoreLayout({
 }: {
   children: React.ReactNode
 }) {
-  const user = await getAuthUser()
-
+  let user = null
   let cartCount = 0
   let isAdmin = false
 
-  if (user) {
-    const supabase = await createClient()
-    const [cartResult, profileResult] = await Promise.all([
-      supabase
-        .from('carts')
-        .select('id')
-        .eq('user_id', user.id)
-        .single(),
-      supabase
-        .from('profiles')
-        .select('role')
-        .eq('id', user.id)
-        .single(),
-    ])
+  try {
+    user = await getAuthUser()
 
-    isAdmin = profileResult.data?.role === 'admin'
+    if (user) {
+      const supabase = await createClient()
+      const [cartResult, profileResult] = await Promise.all([
+        supabase
+          .from('carts')
+          .select('id')
+          .eq('user_id', user.id)
+          .maybeSingle(),
+        supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', user.id)
+          .maybeSingle(),
+      ])
 
-    const cart = cartResult.data
-    if (cart) {
-      const { count } = await supabase
-        .from('cart_items')
-        .select('*', { count: 'exact', head: true })
-        .eq('cart_id', cart.id)
-      cartCount = count ?? 0
+      isAdmin = profileResult?.data?.role === 'admin'
+
+      const cart = cartResult?.data
+      if (cart) {
+        const { count } = await supabase
+          .from('cart_items')
+          .select('*', { count: 'exact', head: true })
+          .eq('cart_id', cart.id)
+        cartCount = count ?? 0
+      }
     }
+  } catch (err) {
+    console.error('StoreLayout safe fallback:', err)
   }
 
   return (

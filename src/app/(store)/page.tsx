@@ -40,7 +40,7 @@ export default async function HomePage() {
         supabase
           .from('store_info')
           .select('*')
-          .single(),
+          .maybeSingle(),
         getPublicPromos(),
       ])
 

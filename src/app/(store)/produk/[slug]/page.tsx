@@ -22,7 +22,7 @@ const getProduct = cache(async (slug: string) => {
     .select('*, categories(nama, slug)')
     .eq('slug', slug)
     .eq('is_active', true)
-    .single()
+    .maybeSingle()
   return data
 })
 
@@ -79,7 +79,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
     supabase
       .from('store_info')
       .select('whatsapp, no_hp_toko')
-      .single(),
+      .maybeSingle(),
     supabase
       .from('product_reviews')
       .select('id, rating, ulasan, nama_reviewer, created_at, order_id')
