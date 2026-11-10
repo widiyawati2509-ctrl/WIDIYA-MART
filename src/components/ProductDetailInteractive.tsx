@@ -184,7 +184,7 @@ export default function ProductDetailInteractive({ product, storePhone = '087816
   const isOutOfStock = activeStock === 0
 
   const getWhatsAppMessage = () => {
-    let msg = `Halo Admin PENGENJEK MART, saya ingin menanyakan apakah stok produk ini masih ada?\n\n*${product.nama}*\nHarga: ${formatRupiah(activePrice)}`
+    let msg = `Halo Admin WIDIYA MART, saya ingin menanyakan apakah stok produk ini masih ada?\n\n*${product.nama}*\nHarga: ${formatRupiah(activePrice)}`
     if (selectedVariant?.nama) {
       msg += `\nVarian: ${selectedVariant.nama}`
     }
@@ -210,7 +210,7 @@ export default function ProductDetailInteractive({ product, storePhone = '087816
             onClick={() => {
               if (!isSwipedRef.current) setShowStockModal(true)
             }}
-            className="w-full h-full text-left relative block focus:outline-none"
+            className="w-full h-full text-left relative block focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] rounded-[var(--radius-xl)]"
             title="Ketuk gambar untuk menanyakan stok produk via WhatsApp"
           >
             {currentImage ? (
@@ -251,7 +251,7 @@ export default function ProductDetailInteractive({ product, storePhone = '087816
           {/* Counter Badge (e.g. 1 / 3) */}
           {allImages.length > 1 && (
             <div className="absolute top-3 right-3 z-10">
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full bg-black/60 text-white text-[var(--text-caption)] font-mono font-medium shadow-sm backdrop-blur-xs">
+              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full bg-black/60 text-white text-[var(--text-caption)] font-mono font-medium shadow-sm backdrop-blur-xs tabular-nums">
                 {activeImageIndex + 1} / {allImages.length}
               </span>
             </div>
@@ -269,7 +269,7 @@ export default function ProductDetailInteractive({ product, storePhone = '087816
                 aria-label="Gambar sebelumnya"
                 className="press absolute left-2 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-white/85 text-[var(--ink)] hover:bg-white shadow-md flex items-center justify-center backdrop-blur-xs transition-transform active:scale-90"
               >
-                <ChevronLeft size={18} />
+                <ChevronLeft size={18} aria-hidden="true" />
               </button>
               <button
                 type="button"
@@ -280,7 +280,7 @@ export default function ProductDetailInteractive({ product, storePhone = '087816
                 aria-label="Gambar selanjutnya"
                 className="press absolute right-2 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-white/85 text-[var(--ink)] hover:bg-white shadow-md flex items-center justify-center backdrop-blur-xs transition-transform active:scale-90"
               >
-                <ChevronRight size={18} />
+                <ChevronRight size={18} aria-hidden="true" />
               </button>
             </>
           )}

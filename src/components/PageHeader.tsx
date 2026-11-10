@@ -46,7 +46,7 @@ export default function PageHeader({
                 className="press p-1.5 -ml-1.5 rounded-full hover:bg-[var(--line)]/50 text-[var(--ink)] shrink-0 transition-colors"
                 aria-label="Kembali"
               >
-                <ChevronLeft className="w-5 h-5" />
+                <ChevronLeft className="w-5 h-5" aria-hidden="true" />
               </Link>
             ) : (
               <button
@@ -55,7 +55,7 @@ export default function PageHeader({
                 className="press p-1.5 -ml-1.5 rounded-full hover:bg-[var(--line)]/50 text-[var(--ink)] shrink-0 transition-colors"
                 aria-label="Kembali"
               >
-                <ChevronLeft className="w-5 h-5" />
+                <ChevronLeft className="w-5 h-5" aria-hidden="true" />
               </button>
             ))}
 

@@ -361,7 +361,7 @@ export function TelegramMiniAppView({
               setSearchQuery(e.target.value)
               if (activeTab === 'promo') setActiveTab('katalog')
             }}
-            placeholder="Cari di Widiya Mart (beras, minyak, sabun, ATK...)"
+            placeholder="Cari di Widiya Mart (beras, minyak, sabun, ATK…)"
             className="w-full pl-9 pr-8 py-2 bg-white border border-[var(--line)] focus:border-[var(--accent)] rounded-xl text-[16px] sm:text-xs font-medium text-[var(--ink)] placeholder-[var(--ink-soft)]/65 outline-none shadow-input transition-colors"
           />
           {searchQuery && (
@@ -901,7 +901,7 @@ export function TelegramMiniAppView({
                     className="press px-3.5 py-2 rounded-xl bg-[var(--accent)] text-white font-bold text-xs hover:bg-[var(--accent-2)] transition-colors flex items-center gap-1.5 shadow-btn"
                   >
                     <ShoppingCart size={14} aria-hidden="true" />
-                    <span>{isPending ? 'Menyimpan...' : 'Beli Semua'}</span>
+                    <span>{isPending ? 'Menyimpan…' : 'Beli Semua'}</span>
                   </button>
                 </div>
               )}

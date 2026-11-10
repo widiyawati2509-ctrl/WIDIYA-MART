@@ -16,7 +16,7 @@ interface SearchBarProps {
 
 export default function SearchBar({
   defaultValue = '',
-  placeholder = 'Cari produk kebutuhan...',
+  placeholder = 'Cari produk kebutuhan…',
 }: SearchBarProps) {
   const router = useRouter()
   const pathname = usePathname()
@@ -127,6 +127,7 @@ export default function SearchBar({
         <input
           type="search"
           name="q"
+          aria-label="Cari produk kebutuhan di Widiya Mart"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onFocus={() => {

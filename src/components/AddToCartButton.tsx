@@ -76,7 +76,7 @@ export default function AddToCartButton({ productId, disabled }: AddToCartButton
             <span className="text-emerald-600">Ditambahkan!</span>
           </>
         ) : loading ? (
-          <span>Menambahkan...</span>
+          <span>Menambahkan…</span>
         ) : (
           <>
             <ShoppingCart size={16} className="shrink-0" />
