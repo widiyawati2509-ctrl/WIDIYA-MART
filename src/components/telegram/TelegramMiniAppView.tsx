@@ -71,7 +71,8 @@ export function TelegramMiniAppView({
   const [isPending, startTransition] = useTransition()
   const [toast, setToast] = useState<string | null>(null)
 
-  // kemiljk/design-for-repetition: Hydrate & persist shopper progress (checklist, quick-cart, view mode) across refreshes & WhatsApp switches
+  // Hanya simpan preferensi tata letak (Grid/Baris) di localStorage.
+  // Jangan pernah menyimpan cartQuantities lokal di localStorage agar kapsul keranjang tidak stuck saat keranjang asli sudah kosong.
   useEffect(() => {
     try {
       const saved = localStorage.getItem('widiya_store_state_v1')
@@ -80,12 +81,11 @@ export function TelegramMiniAppView({
         if (parsed.viewMode === 'grid' || parsed.viewMode === 'list') {
           setViewMode(parsed.viewMode)
         }
-        if (Array.isArray(parsed.checkedIds)) {
-          setCheckedIds(new Set(parsed.checkedIds))
-        }
-        if (parsed.cartQuantities && typeof parsed.cartQuantities === 'object') {
-          setCartQuantities(parsed.cartQuantities)
-        }
+        // Bersihkan sisa cartQuantities / checkedIds basi dari versi lama
+        localStorage.setItem(
+          'widiya_store_state_v1',
+          JSON.stringify({ viewMode: parsed.viewMode === 'list' ? 'list' : 'grid' })
+        )
       }
     } catch {
       // ignore storage errors safely
@@ -101,14 +101,12 @@ export function TelegramMiniAppView({
         'widiya_store_state_v1',
         JSON.stringify({
           viewMode,
-          checkedIds: Array.from(checkedIds),
-          cartQuantities,
         })
       )
     } catch {
       // ignore storage quota errors safely
     }
-  }, [isHydrated, viewMode, checkedIds, cartQuantities])
+  }, [isHydrated, viewMode])
 
   // Status Buka/Tutup Toko (WITA)
   const storeStatus = useMemo(() => {
@@ -260,7 +258,14 @@ export function TelegramMiniAppView({
             {/* Logo Asli Widiya Mart */}
             <div className="relative size-9 rounded-2xl overflow-hidden shadow-xs shrink-0 border border-[var(--line)] bg-white">
               <Image
-                src={storeInfo?.logo_url || '/logo.png'}
+                src={
+                  storeInfo?.logo_url &&
+                  (storeInfo.logo_url.startsWith('http') || storeInfo.logo_url.startsWith('/')) &&
+                  !storeInfo.logo_url.trim().startsWith('[') &&
+                  !storeInfo.logo_url.trim().startsWith('{')
+                    ? storeInfo.logo_url
+                    : '/logo.png'
+                }
                 alt={storeInfo?.nama_toko || 'Widiya Mart'}
                 fill
                 className="object-cover"
@@ -973,22 +978,25 @@ export function TelegramMiniAppView({
         </main>
       )}
 
-      {/* 4. MAINBUTTON MELAYANG + FREE-SHIPPING PROGRESS BAR (mengto/scroll-progress-timeline) */}
+      {/* 4. MAINBUTTON MELAYANG + FREE-SHIPPING PROGRESS BAR */}
       {(totalLocalCart.count > 0 || checkedIds.size > 0) && (() => {
         const currentTotal = totalLocalCart.count > 0 ? totalLocalCart.total : checklistSummary.total
         const freeShipTarget = 25000
         const remainingForFreeShip = Math.max(0, freeShipTarget - currentTotal)
         const freeShipRatio = Math.min(1, currentTotal / freeShipTarget)
         return (
-          <div className="fixed bottom-20 inset-x-0 z-50 p-3 max-w-lg mx-auto">
-            <div className="bg-gradient-to-r from-[var(--accent)] to-[var(--accent-2)] text-white rounded-2xl p-3 shadow-btn space-y-2 animate-fade-in">
+          <div className="fixed bottom-20 inset-x-0 z-50 px-3.5 max-w-[480px] mx-auto">
+            <div className="bg-[var(--accent)] text-white rounded-2xl p-2.5 shadow-floating space-y-2 animate-fade-in">
               {/* Progress Bar Gratis Ongkir Rp 25.000 */}
               <div className="bg-black/15 rounded-xl px-2.5 py-1.5 space-y-1">
                 <div className="flex items-center justify-between text-[10px] font-semibold">
-                  <span>
-                    {remainingForFreeShip === 0
-                      ? '🎉 Syarat Gratis Ongkir se-Pengenjek Terpenuhi!'
-                      : `🛵 Tambah ${formatRupiah(remainingForFreeShip)} lagi untuk Gratis Ongkir`}
+                  <span className="flex items-center gap-1">
+                    <Bike size={12} aria-hidden="true" />
+                    <span>
+                      {remainingForFreeShip === 0
+                        ? 'Syarat Gratis Ongkir se-Pengenjek Terpenuhi!'
+                        : `Tambah ${formatRupiah(remainingForFreeShip)} lagi untuk Gratis Ongkir`}
+                    </span>
                   </span>
                   <span className="tabular-nums font-bold">{Math.round(freeShipRatio * 100)}%</span>
                 </div>
@@ -1004,20 +1012,34 @@ export function TelegramMiniAppView({
                 <div className="tabular-nums min-w-0">
                   <span className="text-[10px] opacity-90 block font-medium truncate">
                     {totalLocalCart.count > 0
-                      ? `${totalLocalCart.count} Item di Keranjang`
+                      ? `${totalLocalCart.count} Item Baru Ditambahkan`
                       : `${checkedIds.size} Item Terpilih`}
                   </span>
                   <span className="font-sora font-extrabold text-sm block truncate">
                     {formatRupiah(currentTotal)}
                   </span>
                 </div>
-                <Link
-                  href="/keranjang"
-                  className="press shrink-0 px-4 py-2 bg-white text-[var(--accent-2)] font-sora font-bold text-xs rounded-xl flex items-center gap-1.5 shadow-sm hover:bg-[var(--paper)] transition-colors"
-                >
-                  <span>Lanjut Bayar</span>
-                  <ArrowRight size={14} aria-hidden="true" />
-                </Link>
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <Link
+                    href="/keranjang"
+                    className="press px-3.5 py-1.5 bg-white text-[var(--accent-2)] font-sora font-bold text-xs rounded-xl flex items-center gap-1 shadow-xs hover:bg-[var(--paper)] transition-colors"
+                  >
+                    <span>Lanjut Bayar</span>
+                    <ArrowRight size={13} aria-hidden="true" />
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      triggerHaptic(5)
+                      setCartQuantities({})
+                      setCheckedIds(new Set())
+                    }}
+                    aria-label="Tutup kapsul keranjang"
+                    className="press size-7 rounded-xl bg-black/20 hover:bg-black/30 text-white flex items-center justify-center transition-colors"
+                  >
+                    <X size={14} aria-hidden="true" />
+                  </button>
+                </div>
               </div>
             </div>
           </div>
