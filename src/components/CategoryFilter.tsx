@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import type { Category } from '@/types/database'
 import { setCachedCategories } from '@/lib/categoryCache'
-import { getCategoryIconEmoji } from '@/components/telegram/TelegramMiniAppView'
+import { Store, Tag } from 'lucide-react'
 
 interface CategoryFilterProps {
   categories: Category[]
@@ -54,7 +54,7 @@ export default function CategoryFilter({
               : 'bg-white text-[var(--ink-soft)] border-[rgba(232,214,205,0.9)] hover:border-[var(--accent)]/60 hover:text-[var(--ink)]'
           }`}
         >
-          <span aria-hidden="true" className="text-xs">🏪</span>
+          <Store size={13} aria-hidden="true" />
           <span>Semua</span>
         </Link>
         {categories.map((cat) => {
@@ -71,9 +71,7 @@ export default function CategoryFilter({
                   : 'bg-white text-[var(--ink-soft)] border-[rgba(232,214,205,0.9)] hover:border-[var(--accent)]/60 hover:text-[var(--ink)]'
               }`}
             >
-              <span aria-hidden="true" className="text-xs">
-                {getCategoryIconEmoji(cat.nama)}
-              </span>
+              <Tag size={12} aria-hidden="true" className={isActive ? 'text-white' : 'text-[var(--accent)]'} />
               <span>{cat.nama}</span>
             </Link>
           )
