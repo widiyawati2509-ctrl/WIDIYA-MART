@@ -13,11 +13,6 @@ export default function PwaInstallPrompt() {
   const [isIos, setIsIos] = useState(false)
   const [showIosGuide, setShowIosGuide] = useState(false)
 
-  // Jangan tampilkan banner PWA di halaman produk atau checkout agar tidak mengganggu transaksi
-  if (pathname.startsWith('/produk/') || pathname.startsWith('/checkout') || pathname.startsWith('/admin')) {
-    return null
-  }
-
   useEffect(() => {
     if (typeof window === 'undefined') return
 
@@ -100,7 +95,9 @@ export default function PwaInstallPrompt() {
     }
   }
 
-  if (!showPrompt) return null
+  // Sembunyikan banner PWA jika state showPrompt false atau sedang di halaman produk/checkout/admin
+  const isHiddenPath = pathname?.startsWith('/produk/') || pathname?.startsWith('/checkout') || pathname?.startsWith('/admin')
+  if (!showPrompt || isHiddenPath) return null
 
   return (
     <>

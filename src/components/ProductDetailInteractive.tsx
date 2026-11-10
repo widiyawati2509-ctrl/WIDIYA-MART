@@ -58,6 +58,9 @@ export default function ProductDetailInteractive({
   const [isWishlisted, setIsWishlisted] = useState(false)
   const [savingWishlist, setSavingWishlist] = useState(false)
   const [toastMessage, setToastMessage] = useState<string | null>(null)
+  const touchStartXRef = useRef<number | null>(null)
+  const touchStartYRef = useRef<number | null>(null)
+  const isSwipedRef = useRef(false)
 
   // Check localStorage on mount
   useEffect(() => {
@@ -159,10 +162,6 @@ export default function ProductDetailInteractive({
   const goToNext = () => {
     setActiveImageIndex((prev) => (prev < galleryImages.length - 1 ? prev + 1 : 0))
   }
-
-  const touchStartXRef = useRef<number | null>(null)
-  const touchStartYRef = useRef<number | null>(null)
-  const isSwipedRef = useRef(false)
 
   const handleTouchStart = (e: React.TouchEvent) => {
     isSwipedRef.current = false
