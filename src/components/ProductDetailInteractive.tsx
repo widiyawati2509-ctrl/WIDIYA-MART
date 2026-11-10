@@ -324,6 +324,23 @@ export default function ProductDetailInteractive({
             </div>
           )}
 
+          {/* Wishlist Heart Button Overlay (Standar E-Commerce) */}
+          <button
+            type="button"
+            onClick={handleToggleWishlist}
+            disabled={savingWishlist}
+            aria-label={isWishlisted ? 'Hapus dari Favorit' : 'Suka Produk'}
+            className="press absolute top-3 right-3 z-10 size-9 rounded-full bg-white/90 hover:bg-white text-[var(--ink-soft)] shadow-md flex items-center justify-center backdrop-blur-xs active:scale-95 transition-all"
+            title={isWishlisted ? 'Tersimpan di Favorit' : 'Suka / Simpan Produk'}
+          >
+            <Heart
+              size={18}
+              className={`transition-transform ${
+                isWishlisted ? 'fill-rose-500 text-rose-500 scale-110' : 'hover:text-rose-500'
+              }`}
+            />
+          </button>
+
           {/* Previous / Next Arrow Overlays */}
           {galleryImages.length > 1 && (
             <>
@@ -551,35 +568,13 @@ export default function ProductDetailInteractive({
           <Link
             href="/keranjang"
             prefetch={true}
-            className="press flex flex-col items-center justify-center min-w-[42px] min-h-[42px] h-11 px-2 rounded-xl text-[var(--ink-soft)] hover:bg-gray-100 active:scale-95 transition-all shrink-0 relative"
+            className="press flex flex-col items-center justify-center min-w-[44px] min-h-[44px] h-11 px-2.5 rounded-xl text-[var(--ink-soft)] hover:bg-gray-100 active:scale-95 transition-all shrink-0 relative"
             title="Buka Keranjang Belanja"
             aria-label="Buka Keranjang Belanja"
           >
             <ShoppingCart size={20} className="shrink-0" />
             <span className="text-[10px] font-sora font-semibold mt-0.5 leading-tight">Keranjang</span>
           </Link>
-
-          {/* Suka / Wishlist Icon */}
-          <button
-            type="button"
-            onClick={handleToggleWishlist}
-            disabled={savingWishlist}
-            className={`press flex flex-col items-center justify-center min-w-[42px] min-h-[42px] h-11 px-2 rounded-xl active:scale-95 transition-all shrink-0 ${
-              isWishlisted ? 'text-rose-600 bg-rose-50' : 'text-[var(--ink-soft)] hover:bg-gray-100'
-            }`}
-            title={isWishlisted ? 'Tersimpan di Favorit' : 'Suka Produk'}
-            aria-label={isWishlisted ? 'Hapus dari Favorit' : 'Suka Produk'}
-          >
-            <Heart
-              size={20}
-              className={`shrink-0 transition-transform ${
-                isWishlisted ? 'fill-rose-500 text-rose-500 scale-110' : ''
-              }`}
-            />
-            <span className="text-[10px] font-sora font-semibold mt-0.5 leading-tight">
-              {isWishlisted ? 'Disukai' : 'Suka'}
-            </span>
-          </button>
 
           {/* Action Buttons: Tambah ke Keranjang & Beli Sekarang */}
           <div className="flex-1 min-w-0 flex items-center gap-2">
