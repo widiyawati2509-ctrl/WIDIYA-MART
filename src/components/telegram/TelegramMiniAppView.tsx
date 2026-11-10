@@ -21,6 +21,12 @@ import {
   TicketPercent,
   LayoutGrid,
   List,
+  Flame,
+  Bike,
+  Sparkles,
+  Tag,
+  Clock,
+  Layers,
 } from 'lucide-react'
 import { formatRupiah, isStoreOpen, formatWhatsAppUrl } from '@/lib/utils'
 import { addToCart } from '@/lib/actions/cart'
@@ -376,7 +382,7 @@ export function TelegramMiniAppView({
           )}
         </div>
 
-        {/* Baris 3: STICKY HORIZONTAL CATEGORY TAB BAR (Pola TikTok Shop Mall — Tanpa Sidebar Kiri) */}
+        {/* Baris 3: STICKY HORIZONTAL CATEGORY TAB BAR (Clean Minimalist Chips) */}
         <nav
           aria-label="Tab Kategori Produk"
           className="mt-2 -mx-3.5 px-3.5 flex items-center gap-1.5 overflow-x-auto scrollbar-hide mask-fade-right pb-0.5 select-none"
@@ -394,7 +400,7 @@ export function TelegramMiniAppView({
                 : 'bg-white/90 text-[var(--ink-soft)] border-[var(--line)] hover:border-[var(--accent)]/60 hover:text-[var(--ink)]'
             }`}
           >
-            <span aria-hidden="true" className="text-xs">🏪</span>
+            <Store size={13} aria-hidden="true" />
             <span>Semua</span>
             <span
               className={`text-[10px] px-1.5 py-0.2 rounded-full tabular-nums ${
@@ -415,7 +421,6 @@ export function TelegramMiniAppView({
             const isSelected =
               (selectedCategory === cat.id || selectedCategory === cat.slug) &&
               activeTab !== 'promo'
-            const emoji = getCategoryIconEmoji(cat.nama)
 
             return (
               <button
@@ -432,7 +437,7 @@ export function TelegramMiniAppView({
                     : 'bg-white/90 text-[var(--ink-soft)] border-[var(--line)] hover:border-[var(--accent)]/60 hover:text-[var(--ink)]'
                 }`}
               >
-                <span aria-hidden="true" className="text-xs">{emoji}</span>
+                <Tag size={12} aria-hidden="true" className={isSelected ? 'text-white' : 'text-[var(--accent)]'} />
                 <span>{cat.nama}</span>
                 <span
                   className={`text-[10px] px-1.5 py-0.2 rounded-full tabular-nums ${
@@ -449,18 +454,18 @@ export function TelegramMiniAppView({
         </nav>
       </header>
 
-      {/* 2. PITA PROMO & GRATIS ONGKIR 1 BARIS (RINGKAS ALA TIKTOK SHOP MALL) */}
-      <div className="px-3.5 pt-2.5">
-        <div className="bg-gradient-to-r from-[#FFF3EC] via-[#FFE6D8] to-[#FFF3EC] border border-[rgba(255,107,53,0.3)] rounded-2xl px-3 py-2 flex items-center justify-between gap-2 shadow-2xs">
+      {/* 2. PITA PROMO & GRATIS ONGKIR (Ramping & Menyatu) */}
+      <div className="px-3.5 pt-2">
+        <div className="bg-white border border-[var(--line)] rounded-xl px-3 py-1.5 flex items-center justify-between gap-2 shadow-2xs">
           <div className="flex items-center gap-2 min-w-0">
             <span
               aria-hidden="true"
-              className="size-6 rounded-lg bg-[var(--accent)] text-white flex items-center justify-center text-xs shrink-0 shadow-2xs"
+              className="size-5 rounded-md bg-[var(--accent-bg)] text-[var(--accent-2)] flex items-center justify-center text-xs shrink-0"
             >
-              🛵
+              <Bike size={12} />
             </span>
-            <p className="text-[11px] font-bold text-[var(--ink)] truncate">
-              Gratis Ongkir <span className="text-[var(--accent-2)]">min. Rp25rb</span> se-Pengenjek
+            <p className="text-[11px] font-medium text-[var(--ink)] truncate">
+              Gratis Ongkir <span className="font-bold text-[var(--accent-2)]">min. Rp25rb</span> se-Pengenjek
             </p>
           </div>
           <button
@@ -475,10 +480,10 @@ export function TelegramMiniAppView({
               setTimeout(() => setCopiedCoupon(null), 2500)
               showToast('Voucher HEMATDESA diklaim & otomatis aktif di Keranjang!')
             }}
-            className={`press hit-area-expand shrink-0 px-2.5 py-1 rounded-xl text-[10.5px] font-sora font-extrabold transition-colors flex items-center gap-1 ${
+            className={`press hit-area-expand shrink-0 px-2 py-0.5 rounded-lg text-[10px] font-sora font-extrabold transition-colors flex items-center gap-1 ${
               copiedCoupon === 'HEMATDESA'
-                ? 'bg-emerald-600 text-white animate-pop'
-                : 'bg-[var(--accent)] text-white hover:bg-[var(--accent-2)] shadow-2xs'
+                ? 'bg-emerald-600 text-white'
+                : 'bg-[var(--accent-bg)] text-[var(--accent-2)] hover:bg-[var(--accent)] hover:text-white border border-[var(--accent)]/30'
             }`}
           >
             {copiedCoupon === 'HEMATDESA' ? (
@@ -488,28 +493,26 @@ export function TelegramMiniAppView({
               </>
             ) : (
               <>
-                <span>🎟️ Klaim Kupon</span>
+                <TicketPercent size={11} aria-hidden="true" />
+                <span>Klaim Kupon</span>
               </>
             )}
           </button>
         </div>
       </div>
 
-      {/* 3. KONTEN UTAMA LEBAR PENUH (100% FULL-WIDTH 2-COLUMN LARGE PRODUCT FEED) */}
+      {/* 3. KONTEN UTAMA LEBAR PENUH */}
       {activeTab !== 'promo' ? (
-        <main className="@container px-3.5 pt-2.5 pb-4">
-          {/* Baris Judul Kategori Aktif & Saklar Mode Grid/Baris */}
-          <div className="flex items-center justify-between gap-2 mb-2.5 bg-white/95 rounded-2xl px-3 py-2 smooth-ring-card">
-            <div className="flex items-center gap-2 min-w-0">
-              <span aria-hidden="true" className="text-base">{activeCategoryMeta.icon}</span>
-              <div className="min-w-0">
-                <h2 className="font-sora font-extrabold text-xs text-[var(--ink)] truncate">
-                  {activeCategoryMeta.nama}
-                </h2>
-                <p className="text-[10.5px] text-[var(--ink-soft)] font-medium tabular-nums">
-                  {filteredProducts.length} produk siap diantar
-                </p>
-              </div>
+        <main className="@container px-3.5 pt-2 pb-4">
+          {/* Subheader Kategori & Saklar Grid/Baris (Streamlined Inline, tanpa box tebal) */}
+          <div className="flex items-center justify-between gap-2 mb-2 px-1">
+            <div className="flex items-center gap-1.5 min-w-0">
+              <h2 className="font-sora font-extrabold text-xs text-[var(--ink)] truncate">
+                {activeCategoryMeta.nama}
+              </h2>
+              <span className="text-[10.5px] text-[var(--ink-soft)] font-medium tabular-nums">
+                ({filteredProducts.length})
+              </span>
             </div>
 
             <div className="flex items-center gap-1.5 shrink-0">
@@ -517,32 +520,23 @@ export function TelegramMiniAppView({
                 <div
                   role="group"
                   aria-label="Pilih tata letak produk"
-                  className="relative grid grid-cols-2 items-center bg-[var(--paper)] p-0.5 rounded-xl border border-[var(--line)] shrink-0"
+                  className="flex items-center bg-white p-0.5 rounded-lg border border-[var(--line)] shrink-0"
                 >
-                  {/* Sliding Active Pill Indicator */}
-                  <div
-                    aria-hidden="true"
-                    className="absolute top-0.5 bottom-0.5 left-0.5 w-[calc((100%-4px)/2)] rounded-lg bg-white shadow-2xs pointer-events-none"
-                    style={{
-                      transform: `translateX(${viewMode === 'list' ? '100%' : '0%'})`,
-                      transition: 'transform 240ms var(--ease-spring)',
-                    }}
-                  />
                   <button
                     type="button"
-                    aria-label="Tampilan Grid 2 Kolom Besar"
+                    aria-label="Tampilan Grid 2 Kolom"
                     aria-pressed={viewMode === 'grid'}
                     onClick={() => {
                       triggerHaptic(5)
                       setViewMode('grid')
                     }}
-                    className={`relative z-10 press px-2.5 py-1 rounded-lg text-[10.5px] font-bold flex items-center justify-center gap-1 transition-colors ${
+                    className={`press px-2 py-1 rounded-md text-[10px] font-bold flex items-center justify-center gap-1 transition-colors ${
                       viewMode === 'grid'
-                        ? 'text-[var(--accent-2)]'
+                        ? 'bg-[var(--accent)] text-white shadow-2xs'
                         : 'text-[var(--ink-soft)] hover:text-[var(--ink)]'
                     }`}
                   >
-                    <LayoutGrid size={12} aria-hidden="true" />
+                    <LayoutGrid size={11} aria-hidden="true" />
                     <span>Grid</span>
                   </button>
                   <button
@@ -553,13 +547,13 @@ export function TelegramMiniAppView({
                       triggerHaptic(5)
                       setViewMode('list')
                     }}
-                    className={`relative z-10 press px-2.5 py-1 rounded-lg text-[10.5px] font-bold flex items-center justify-center gap-1 transition-colors ${
+                    className={`press px-2 py-1 rounded-md text-[10px] font-bold flex items-center justify-center gap-1 transition-colors ${
                       viewMode === 'list'
-                        ? 'text-[var(--accent-2)]'
+                        ? 'bg-[var(--accent)] text-white shadow-2xs'
                         : 'text-[var(--ink-soft)] hover:text-[var(--ink)]'
                     }`}
                   >
-                    <List size={12} aria-hidden="true" />
+                    <List size={11} aria-hidden="true" />
                     <span>Baris</span>
                   </button>
                 </div>
@@ -629,12 +623,13 @@ export function TelegramMiniAppView({
 
                             {/* Badge Kiri Atas: Diskon atau Terlaris */}
                             {product.diskon_persen ? (
-                              <span className="absolute top-1.5 left-1.5 px-2 py-0.5 rounded-lg bg-[var(--accent)] text-white text-[10px] font-sora font-extrabold shadow-2xs tabular-nums">
+                              <span className="absolute top-1.5 left-1.5 px-2 py-0.5 rounded-md bg-[var(--accent)] text-white text-[10px] font-sora font-extrabold shadow-2xs tabular-nums">
                                 -{product.diskon_persen}%
                               </span>
                             ) : isBestSeller ? (
-                              <span className="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded-md bg-[var(--accent)]/95 text-white text-[9.5px] font-sora font-bold shadow-2xs">
-                                🔥 Laris
+                              <span className="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded-md bg-[var(--accent)] text-white text-[9.5px] font-sora font-bold shadow-2xs flex items-center gap-0.5">
+                                <Flame size={10} aria-hidden="true" />
+                                <span>Laris</span>
                               </span>
                             ) : null}
 

@@ -2,7 +2,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { formatRupiah } from '@/lib/utils'
-import { Package } from 'lucide-react'
+import { Package, Flame } from 'lucide-react'
 import WishlistHeartButton from '@/components/WishlistHeartButton'
 import QuickAddCartButton from '@/components/QuickAddCartButton'
 import type { Product } from '@/types/database'
@@ -56,8 +56,9 @@ export default function ProductCard({ product, priority = false }: ProductCardPr
               </div>
             ) : isBestSeller ? (
               <div className="absolute top-1.5 left-1.5 z-10">
-                <span className="text-[9.5px] font-sora font-bold bg-[var(--accent)]/95 text-white px-1.5 py-0.5 rounded-md shadow-2xs">
-                  🔥 Laris
+                <span className="text-[9.5px] font-sora font-bold bg-[var(--accent)] text-white px-1.5 py-0.5 rounded-md shadow-2xs flex items-center gap-0.5">
+                  <Flame size={10} aria-hidden="true" />
+                  <span>Laris</span>
                 </span>
               </div>
             ) : null}
