@@ -38,7 +38,7 @@ const nextConfig: NextConfig = {
           },
           {
             key: 'Content-Disposition',
-            value: 'attachment; filename="PENGENJEK-MART.apk"',
+            value: 'attachment; filename="WIDIYA-MART.apk"',
           },
           {
             key: 'Cache-Control',

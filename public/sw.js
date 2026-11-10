@@ -1,5 +1,5 @@
-// PENGENJEK MART — Lightweight Static Service Worker
-const CACHE_NAME = 'pengenjek-mart-static-v1';
+// WIDIYA MART — Lightweight Static Service Worker
+const CACHE_NAME = 'widiya-mart-static-v2';
 const PRECACHE_ASSETS = [
   '/',
   '/logo.png',
