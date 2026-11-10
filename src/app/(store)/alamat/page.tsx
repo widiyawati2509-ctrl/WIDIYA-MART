@@ -6,8 +6,8 @@ import Link from 'next/link'
 import { ArrowLeft, MapPin, LogIn } from 'lucide-react'
 
 export const metadata = {
-  title: 'Alamat Pengiriman | PENGENJEK MART',
-  description: 'Kelola daftar alamat pengiriman belanja Anda di PENGENJEK MART',
+  title: 'Alamat Pengiriman | WIDIYA MART',
+  description: 'Kelola daftar alamat pengiriman belanja Anda di WIDIYA MART',
 }
 
 export default async function AlamatPage() {

@@ -5,8 +5,8 @@ import PageHeader from '@/components/PageHeader'
 import { Download, AlertCircle, CheckCircle2, ShieldCheck } from 'lucide-react'
 
 export const metadata = {
-  title: 'Download Aplikasi Android - PENGENJEK MART',
-  description: 'Download aplikasi resmi PENGENJEK MART untuk HP Android.',
+  title: 'Download Aplikasi Android - WIDIYA MART',
+  description: 'Download aplikasi resmi WIDIYA MART untuk HP Android.',
 }
 
 export default function UnduhApkPage() {
@@ -15,7 +15,7 @@ export default function UnduhApkPage() {
       {/* Top Header */}
       <PageHeader
         title="Download Aplikasi"
-        subtitle="Aplikasi Android Resmi PENGENJEK MART"
+        subtitle="Aplikasi Android Resmi WIDIYA MART"
         showBack={true}
         backHref="/"
       />
@@ -26,7 +26,7 @@ export default function UnduhApkPage() {
           <div className="w-20 h-20 rounded-[var(--radius-xl)] bg-gradient-to-br from-[var(--accent)] to-[var(--accent-2)] flex items-center justify-center mx-auto shadow-lg p-1.5">
             <Image
               src="/logo.png"
-              alt="PENGENJEK MART Icon"
+              alt="WIDIYA MART Icon"
               width={76}
               height={76}
               className="rounded-[var(--radius-lg)] object-cover"
@@ -36,7 +36,7 @@ export default function UnduhApkPage() {
 
           <div>
             <h2 className="font-sora font-bold text-lg text-[var(--ink)]">
-              PENGENJEK MART
+              WIDIYA MART
             </h2>
             <p className="text-xs text-[var(--ink-soft)] font-medium mt-0.5">
               Aplikasi Resmi Belanja Sembako &amp; Kebutuhan Harian

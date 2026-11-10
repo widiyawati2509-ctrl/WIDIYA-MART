@@ -868,7 +868,7 @@ export default function CheckoutFormClient({
           {isPending || isSubmitting ? (
             <>
               <Loader2 size={15} className="animate-spin" />
-              <span>Memproses...</span>
+              <span>Memproses…</span>
             </>
           ) : (
             <>

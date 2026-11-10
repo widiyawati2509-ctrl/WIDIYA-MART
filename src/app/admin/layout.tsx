@@ -8,13 +8,13 @@ import AdminOrderNotifier from '@/components/admin/AdminOrderNotifier'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Admin Panel | PENGENJEK MART',
-  applicationName: 'PENGENJEK MART Admin',
+  title: 'Admin Panel | WIDIYA MART',
+  applicationName: 'WIDIYA MART Admin',
   manifest: '/admin-manifest.json',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
-    title: 'PENGENJEK MART Admin',
+    title: 'WIDIYA MART Admin',
   },
   icons: {
     icon: [
@@ -65,7 +65,7 @@ export default async function AdminLayout({
           <div className="logo-box flex items-center justify-center p-1 overflow-hidden shrink-0">
             <Image
               src="/logo.png"
-              alt="PENGENJEK MART Logo"
+              alt="WIDIYA MART Logo"
               width={28}
               height={28}
               className="rounded-[var(--radius-sm)] object-cover"
@@ -73,7 +73,7 @@ export default async function AdminLayout({
           </div>
           <div>
             <p className="font-sora font-bold text-sm text-[var(--ink)] leading-tight">Admin Panel</p>
-            <p className="text-xs text-[var(--ink-soft)] font-medium">PENGENJEK MART</p>
+            <p className="text-xs text-[var(--ink-soft)] font-medium">WIDIYA MART</p>
           </div>
         </div>
 

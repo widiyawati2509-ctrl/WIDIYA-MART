@@ -69,7 +69,7 @@ export default async function OrderDetailPage({ params, searchParams }: OrderDet
               <span className="text-2xl">🎉</span>
               <div>
                 <h3 className="font-sora font-extrabold text-sm text-emerald-950">Pesanan Berhasil Dibuat!</h3>
-                <p className="text-[11px] text-emerald-800 font-medium">Terima kasih telah berbelanja di {store?.nama_toko || 'PENGENJEK MART'}</p>
+                <p className="text-[11px] text-emerald-800 font-medium">Terima kasih telah berbelanja di {store?.nama_toko || 'WIDIYA MART'}</p>
               </div>
             </div>
             {shipping.isDelivery ? (
@@ -260,7 +260,7 @@ export default async function OrderDetailPage({ params, searchParams }: OrderDet
                 <MapPin className="w-4 h-4 text-[var(--accent)]" />
                 Lokasi Pengambilan (Ambil di Toko)
               </h2>
-              <p className="font-bold text-xs text-[var(--ink)]">{store?.nama_toko || 'PENGENJEK MART'}</p>
+              <p className="font-bold text-xs text-[var(--ink)]">{store?.nama_toko || 'WIDIYA MART'}</p>
               {store?.alamat_toko && (
                 <p className="text-xs text-[var(--ink-soft)] mt-0.5 font-medium">
                   {store.alamat_toko}, {store.kota}
@@ -275,7 +275,7 @@ export default async function OrderDetailPage({ params, searchParams }: OrderDet
                 <a
                   href={formatWhatsAppUrl(
                     store.whatsapp || store.no_hp_toko,
-                    `Halo Admin PENGENJEK MART, saya ingin menanyakan pesanan #${order.id.slice(0, 8).toUpperCase()}`
+                    `Halo Admin WIDIYA MART, saya ingin menanyakan pesanan #${order.id.slice(0, 8).toUpperCase()}`
                   )}
                   target="_blank"
                   rel="noopener noreferrer"

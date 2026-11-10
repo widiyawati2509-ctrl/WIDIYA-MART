@@ -100,7 +100,7 @@ export default function UserOrderNotifier() {
       switch (newStatus) {
         case 'diproses':
           title = `Pesanan #${shortId} Sedang Diproses`
-          message = 'Toko PENGENJEK MART sedang menyiapkan barang belanjaan Anda.'
+          message = 'Toko WIDIYA MART sedang menyiapkan barang belanjaan Anda.'
           break
         case 'siap_diambil':
           title = `Pesanan #${shortId} Siap Diambil!`
@@ -108,7 +108,7 @@ export default function UserOrderNotifier() {
           break
         case 'selesai':
           title = `Pesanan #${shortId} Selesai 🎉`
-          message = 'Terima kasih telah berbelanja di PENGENJEK MART! Poin belanja Anda telah tercatat.'
+          message = 'Terima kasih telah berbelanja di WIDIYA MART! Poin belanja Anda telah tercatat.'
           break
         case 'dibatalkan':
           title = `Pesanan #${shortId} Dibatalkan`

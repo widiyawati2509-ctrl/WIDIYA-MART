@@ -22,7 +22,7 @@ export function buildOrderWhatsAppMessage(
   if (!order) return ''
 
   const orderId = order.id ? `#${order.id.slice(0, 8).toUpperCase()}` : ''
-  const storeName = store?.nama_toko || 'PENGENJEK MART'
+  const storeName = store?.nama_toko || 'WIDIYA MART'
 
   const dateStr = order.created_at
     ? new Date(order.created_at).toLocaleString('id-ID', {

@@ -61,7 +61,7 @@ export default function HomeHeader({ storeInfo }: HomeHeaderProps) {
             <div className="logo-box flex items-center justify-center p-1 overflow-hidden shrink-0 shadow-badge">
               <Image
                 src="/logo.png"
-                alt="PENGENJEK MART Logo"
+                alt="WIDIYA MART Logo"
                 width={34}
                 height={34}
                 className="rounded-[var(--radius-sm)] object-cover"
@@ -70,7 +70,7 @@ export default function HomeHeader({ storeInfo }: HomeHeaderProps) {
             </div>
             <div>
               <h1 className="font-sora font-bold text-[var(--text-subtitle)] leading-tight text-[var(--ink)]">
-                {storeInfo?.nama_toko ?? 'PENGENJEK MART'}
+                {storeInfo?.nama_toko ?? 'WIDIYA MART'}
               </h1>
               <p className="text-[var(--text-caption)] text-[var(--ink-soft)] leading-tight font-medium">
                 Pesan online, ambil di toko (COD)

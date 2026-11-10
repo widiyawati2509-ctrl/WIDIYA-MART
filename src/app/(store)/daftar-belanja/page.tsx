@@ -7,7 +7,7 @@ import ShoppingListClient from '@/components/ShoppingListClient'
 import { Heart } from 'lucide-react'
 
 export const metadata = {
-  title: 'Daftar Belanja & Favorit | PENGENJEK MART',
+  title: 'Daftar Belanja & Favorit | WIDIYA MART',
 }
 
 export default async function DaftarBelanjaPage() {

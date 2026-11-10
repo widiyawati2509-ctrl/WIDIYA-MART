@@ -3,8 +3,8 @@ import PageHeader from '@/components/PageHeader'
 import { ShieldCheck } from 'lucide-react'
 
 export const metadata = {
-  title: 'Kebijakan Privasi - PENGENJEK MART',
-  description: 'Kebijakan privasi dan perlindungan data pengguna aplikasi PENGENJEK MART.',
+  title: 'Kebijakan Privasi - WIDIYA MART',
+  description: 'Kebijakan privasi dan perlindungan data pengguna aplikasi WIDIYA MART.',
 }
 
 export default function KebijakanPrivasiPage() {

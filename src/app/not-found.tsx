@@ -10,7 +10,7 @@ export default function NotFound() {
       <div className="w-16 h-16 rounded-[var(--radius-lg)] bg-gradient-to-br from-[var(--accent)] to-[var(--accent-2)] flex items-center justify-center mx-auto mb-4 shadow-badge">
         <Image
           src="/logo.png"
-          alt="PENGENJEK MART Logo"
+          alt="WIDIYA MART Logo"
           width={54}
           height={54}
           className="rounded-[var(--radius-md)] object-cover"
