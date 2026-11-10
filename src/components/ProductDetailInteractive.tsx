@@ -529,7 +529,7 @@ export default function ProductDetailInteractive({
       )}
 
       {/* Modern Docked Sticky Bottom Action Bar (Standar E-Commerce: Chat + Keranjang + Suka + Tambah Keranjang + Beli Sekarang) */}
-      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 max-w-[480px] w-full z-40 bg-white/95 backdrop-blur-md border-t border-[rgba(232,214,205,0.9)] px-3 py-2.5 shadow-floating pb-[max(12px,env(safe-area-inset-bottom))]">
+      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 max-w-[480px] w-full z-50 bg-white/95 backdrop-blur-md border-t border-[rgba(232,214,205,0.9)] px-3 py-2.5 shadow-floating pb-[max(14px,env(safe-area-inset-bottom))]">
         <div className="flex items-center gap-2">
           {/* Chat WhatsApp Icon */}
           <a
