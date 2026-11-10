@@ -269,10 +269,11 @@ export default function ProductDetailInteractive({
 
   return (
     <>
-      {/* Interactive Image Gallery / Slider */}
-      <div className="mx-4 mt-3 flex flex-col gap-2.5">
+      {/* 1. SINGLE UNIFIED PRODUCT CARD (Continuous Container — Menghilangkan Card Soup) */}
+      <div className="mx-3.5 mt-2.5 bg-white border border-[var(--line)] rounded-2xl overflow-hidden shadow-xs">
+        {/* Interactive Image Gallery / Slider */}
         <div
-          className="relative aspect-square rounded-[var(--radius-xl)] bg-[var(--accent-bg)] border border-[rgba(232,214,205,0.9)] overflow-hidden shadow-thumb-inset select-none"
+          className="relative aspect-square w-full bg-[var(--accent-bg)] select-none border-b border-[var(--line)]/50"
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
         >
@@ -282,7 +283,7 @@ export default function ProductDetailInteractive({
             onClick={() => {
               if (!isSwipedRef.current) setShowStockModal(true)
             }}
-            className="w-full h-full text-left relative block focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] rounded-[var(--radius-xl)]"
+            className="w-full h-full text-left relative block focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
             title="Ketuk gambar untuk menanyakan stok produk via WhatsApp"
           >
             {currentImage ? (
@@ -382,168 +383,170 @@ export default function ProductDetailInteractive({
           )}
         </div>
 
-        {/* Thumbnail Selector Strip */}
+        {/* Thumbnail Selector Strip (jika > 1 gambar) */}
         {galleryImages.length > 1 && (
-          <div className="flex gap-2 overflow-x-auto scrollbar-hide py-1">
+          <div className="flex gap-2 overflow-x-auto scrollbar-hide p-2 bg-[var(--paper)]/50 border-b border-[var(--line)]/50">
             {galleryImages.map((img, idx) => (
               <button
                 key={idx}
                 type="button"
                 onClick={() => setActiveImageIndex(idx)}
-                className={`relative w-14 h-14 rounded-xl border-2 overflow-hidden shrink-0 transition-all ${
+                className={`relative w-12 h-12 rounded-lg border-2 overflow-hidden shrink-0 transition-all ${
                   activeImageIndex === idx
-                    ? 'border-[var(--accent)] scale-105 shadow-sm ring-2 ring-[var(--accent)]/30'
+                    ? 'border-[var(--accent)] scale-105 shadow-sm ring-1 ring-[var(--accent)]/30'
                     : 'border-[var(--line)] opacity-60 hover:opacity-100 bg-white'
                 }`}
               >
-                <Image src={img.url} alt={`Thumbnail ${idx + 1}`} fill className="object-cover" sizes="56px" />
+                <Image src={img.url} alt={`Thumbnail ${idx + 1}`} fill className="object-cover" sizes="48px" />
               </button>
             ))}
           </div>
         )}
-      </div>
 
-      {/* Product Information Card */}
-      <div className="mx-4 mt-3 bg-white border border-[var(--line)] rounded-2xl p-4 shadow-card-sm">
-        {product.categories && (
-          <Link
-            href={`/kategori?c=${product.categories.slug}`}
-            className="inline-block bg-[var(--accent-bg)] text-[var(--accent-2)] text-[var(--text-caption)] font-bold px-2.5 py-0.5 rounded-full mb-2"
-          >
-            {product.categories.nama}
-          </Link>
-        )}
-        <h1 className="text-base font-sora font-bold text-[var(--ink)] leading-snug mb-1">
-          {product.nama}
-        </h1>
-        <div className="flex items-baseline gap-2 mb-2">
-          <p className="font-sora font-bold text-2xl text-[var(--accent-2)] tabular-nums">
-            {formatRupiah(activePrice)}
-          </p>
-          {selectedVariant && selectedVariant.harga && selectedVariant.harga !== product.harga && (
-            <span className="text-xs text-[var(--ink-soft)] line-through">
-              {formatRupiah(product.harga)}
-            </span>
-          )}
-        </div>
-        <div className="flex items-center justify-between text-xs">
-          <p className="text-[var(--ink-soft)] font-medium">
-            Stok:{' '}
-            <span
-              className={
-                activeStock <= 5 ? 'text-[var(--danger)] font-bold' : 'text-[var(--ink)] font-semibold'
-              }
-            >
-              {activeStock} tersisa
-            </span>
-            {selectedVariant && (
-              <span className="ml-2 text-[var(--text-caption)] text-[var(--accent-2)] font-semibold">
-                ({selectedVariant.nama})
-              </span>
+        {/* Product Information Body (Mengalir Menyatu di Bawah Gambar) */}
+        <div className="p-4 space-y-3.5">
+          <div>
+            {product.categories && (
+              <Link
+                href={`/kategori?c=${product.categories.slug}`}
+                className="inline-block bg-[var(--accent-bg)] text-[var(--accent-2)] text-[10.5px] font-bold px-2.5 py-0.5 rounded-full mb-1.5"
+              >
+                {product.categories.nama}
+              </Link>
             )}
-          </p>
+            <h1 className="text-base font-sora font-extrabold text-[var(--ink)] leading-snug">
+              {product.nama}
+            </h1>
+            <div className="flex items-baseline gap-2 mt-1.5">
+              <p className="font-sora font-extrabold text-2xl text-[var(--accent-2)] tabular-nums">
+                {formatRupiah(activePrice)}
+              </p>
+              {selectedVariant && selectedVariant.harga && selectedVariant.harga !== product.harga && (
+                <span className="text-xs text-[var(--ink-soft)] line-through tabular-nums">
+                  {formatRupiah(product.harga)}
+                </span>
+              )}
+            </div>
+            <div className="flex items-center justify-between text-xs mt-1.5">
+              <p className="text-[var(--ink-soft)] font-medium">
+                Stok:{' '}
+                <span
+                  className={
+                    activeStock <= 5 ? 'text-[var(--danger)] font-bold' : 'text-[var(--ink)] font-semibold'
+                  }
+                >
+                  {activeStock} tersisa
+                </span>
+                {selectedVariant && (
+                  <span className="ml-1.5 text-[11px] text-[var(--accent-2)] font-semibold">
+                    ({selectedVariant.nama})
+                  </span>
+                )}
+              </p>
 
-          <a
-            href={whatsappUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 text-[var(--text-caption)] font-sora font-bold text-emerald-600 hover:text-emerald-700 underline"
-          >
-            <MessageCircle size={12} />
-            <span>Tanya Stok</span>
-          </a>
-        </div>
-
-        {/* Variant Selection Chips */}
-        {variants.length > 0 && (
-          <div className="mt-3.5 pt-3 border-t border-[var(--line)]">
-            <label className="text-[var(--text-caption)] font-bold text-[var(--ink)] mb-2 flex items-center gap-1.5">
-              <Layers className="w-3.5 h-3.5 text-[var(--accent)]" /> Pilih Varian:
-            </label>
-            <div className="flex flex-wrap gap-2">
-              {variants.map((v, i) => {
-                const isSelected = selectedVariant?.nama === v.nama
-                return (
-                  <button
-                    key={i}
-                    type="button"
-                    onClick={() => handleSelectVariant(v)}
-                    className={`press text-xs font-sora font-bold px-3 py-1.5 rounded-xl border transition-all flex items-center gap-1.5 ${
-                      isSelected
-                        ? 'btn-3d btn-3d-coral text-white border-transparent shadow-sm scale-[1.02]'
-                        : 'btn-3d btn-3d-white text-[var(--ink)] border-[var(--line)] hover:border-[var(--accent)]'
-                    }`}
-                  >
-                    {v.image_url && (
-                      <span className="relative w-4 h-4 rounded-md overflow-hidden border border-black/10 shrink-0">
-                        <Image src={v.image_url} alt={v.nama} fill className="object-cover" sizes="16px" />
-                      </span>
-                    )}
-                    {isSelected && <Check className="w-3 h-3" />}
-                    <span>{v.nama}</span>
-                    {v.harga && v.harga !== product.harga && (
-                      <span
-                        className={`text-[var(--text-caption)] font-normal opacity-90 ${
-                          isSelected ? 'text-white' : 'text-[var(--accent-2)]'
-                        }`}
-                      >
-                        ({formatRupiah(v.harga)})
-                      </span>
-                    )}
-                  </button>
-                )
-              })}
+              <a
+                href={whatsappUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 text-[11px] font-sora font-bold text-emerald-600 hover:text-emerald-700 underline"
+              >
+                <MessageCircle size={12} />
+                <span>Tanya Stok</span>
+              </a>
             </div>
           </div>
-        )}
 
-        {/* Quantity Stepper Selector */}
-        <div className="mt-3.5 pt-3 border-t border-[var(--line)] flex items-center justify-between">
-          <div>
-            <label className="text-xs font-sora font-bold text-[var(--ink)] block">
-              Jumlah Pembelian
-            </label>
-            <span className="text-[11px] text-[var(--ink-soft)]">
-              Maksimal {activeStock} pcs
-            </span>
+          {/* Variant Selection Chips */}
+          {variants.length > 0 && (
+            <div className="pt-3 border-t border-[var(--line)]/60">
+              <label className="text-[11px] font-bold text-[var(--ink)] mb-2 flex items-center gap-1.5">
+                <Layers className="w-3.5 h-3.5 text-[var(--accent)]" /> Pilih Varian:
+              </label>
+              <div className="flex flex-wrap gap-1.5">
+                {variants.map((v, i) => {
+                  const isSelected = selectedVariant?.nama === v.nama
+                  return (
+                    <button
+                      key={i}
+                      type="button"
+                      onClick={() => handleSelectVariant(v)}
+                      className={`press text-xs font-sora font-bold px-3 py-1.5 rounded-xl border transition-all flex items-center gap-1.5 ${
+                        isSelected
+                          ? 'bg-[var(--accent)] text-white border-[var(--accent)] shadow-xs'
+                          : 'bg-white text-[var(--ink)] border-[var(--line)] hover:border-[var(--accent)]'
+                      }`}
+                    >
+                      {v.image_url && (
+                        <span className="relative w-4 h-4 rounded-md overflow-hidden border border-black/10 shrink-0">
+                          <Image src={v.image_url} alt={v.nama} fill className="object-cover" sizes="16px" />
+                        </span>
+                      )}
+                      {isSelected && <Check className="w-3 h-3" />}
+                      <span>{v.nama}</span>
+                      {v.harga && v.harga !== product.harga && (
+                        <span
+                          className={`text-[10px] font-normal opacity-90 ${
+                            isSelected ? 'text-white' : 'text-[var(--accent-2)]'
+                          }`}
+                        >
+                          ({formatRupiah(v.harga)})
+                        </span>
+                      )}
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* Quantity Stepper Selector */}
+          <div className="pt-3 border-t border-[var(--line)]/60 flex items-center justify-between">
+            <div>
+              <label className="text-xs font-sora font-bold text-[var(--ink)] block">
+                Jumlah Pembelian
+              </label>
+              <span className="text-[11px] text-[var(--ink-soft)]">
+                Maksimal {activeStock} pcs
+              </span>
+            </div>
+            <div className="flex items-center gap-1 border border-[var(--line)] bg-[var(--paper)] rounded-xl p-0.5 shadow-2xs">
+              <button
+                type="button"
+                onClick={() => setQty((q) => Math.max(1, q - 1))}
+                disabled={qty <= 1 || isOutOfStock}
+                className="press size-7 flex items-center justify-center rounded-lg bg-white text-[var(--ink)] disabled:opacity-30 disabled:cursor-not-allowed shadow-2xs transition-all"
+                aria-label="Kurangi jumlah"
+              >
+                <Minus size={13} />
+              </button>
+              <span className="w-7 text-center font-sora font-bold text-xs text-[var(--ink)] tabular-nums">
+                {qty}
+              </span>
+              <button
+                type="button"
+                onClick={() => setQty((q) => Math.min(activeStock || 99, q + 1))}
+                disabled={qty >= (activeStock || 99) || isOutOfStock}
+                className="press size-7 flex items-center justify-center rounded-lg bg-white text-[var(--ink)] disabled:opacity-30 disabled:cursor-not-allowed shadow-2xs transition-all"
+                aria-label="Tambah jumlah"
+              >
+                <Plus size={13} />
+              </button>
+            </div>
           </div>
-          <div className="flex items-center gap-1 border border-[var(--line)] bg-[var(--paper)] rounded-xl p-1 shadow-card-sm">
-            <button
-              type="button"
-              onClick={() => setQty((q) => Math.max(1, q - 1))}
-              disabled={qty <= 1 || isOutOfStock}
-              className="press w-8 h-8 flex items-center justify-center rounded-lg bg-white hover:bg-gray-100 text-[var(--ink)] disabled:opacity-30 disabled:cursor-not-allowed shadow-xs transition-all"
-              aria-label="Kurangi jumlah"
-            >
-              <Minus size={15} />
-            </button>
-            <span className="w-8 text-center font-sora font-bold text-sm text-[var(--ink)] tabular-nums">
-              {qty}
-            </span>
-            <button
-              type="button"
-              onClick={() => setQty((q) => Math.min(activeStock || 99, q + 1))}
-              disabled={qty >= (activeStock || 99) || isOutOfStock}
-              className="press w-8 h-8 flex items-center justify-center rounded-lg bg-white hover:bg-gray-100 text-[var(--ink)] disabled:opacity-30 disabled:cursor-not-allowed shadow-xs transition-all"
-              aria-label="Tambah jumlah"
-            >
-              <Plus size={15} />
-            </button>
-          </div>
+
+          {/* Description - Terpadu langsung tanpa kartu terpisah */}
+          {cleanDeskripsi && (
+            <div className="pt-3 border-t border-[var(--line)]/60">
+              <h2 className="font-sora font-bold text-xs text-[var(--ink)] mb-1">
+                Deskripsi Produk
+              </h2>
+              <p className="text-[var(--ink-soft)] text-xs leading-relaxed whitespace-pre-line font-inter">
+                {cleanDeskripsi}
+              </p>
+            </div>
+          )}
         </div>
       </div>
-
-      {/* Description - Consistent Rounded & Padding */}
-      {cleanDeskripsi && (
-        <div className="mx-4 mt-2.5 bg-white border border-[var(--line)] rounded-2xl p-3.5 shadow-xs">
-          <h2 className="font-sora font-bold text-xs text-[var(--ink)] mb-1.5 flex items-center gap-1.5">
-            Deskripsi Produk
-          </h2>
-          <p className="text-[var(--ink-soft)] text-xs leading-relaxed whitespace-pre-line font-inter">
-            {cleanDeskripsi}
-          </p>
-        </div>
-      )}
 
       {/* Modern Docked Sticky Bottom Action Bar (Standar E-Commerce: Chat + Keranjang + Suka + Tambah Keranjang + Beli Sekarang) */}
       <div
