@@ -2,14 +2,21 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { usePathname } from 'next/navigation'
 import Image from 'next/image'
 import { Download, X, Share, PlusSquare, Sparkles } from 'lucide-react'
 
 export default function PwaInstallPrompt() {
+  const pathname = usePathname()
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null)
   const [showPrompt, setShowPrompt] = useState(false)
   const [isIos, setIsIos] = useState(false)
   const [showIosGuide, setShowIosGuide] = useState(false)
+
+  // Jangan tampilkan banner PWA di halaman produk atau checkout agar tidak mengganggu transaksi
+  if (pathname.startsWith('/produk/') || pathname.startsWith('/checkout') || pathname.startsWith('/admin')) {
+    return null
+  }
 
   useEffect(() => {
     if (typeof window === 'undefined') return

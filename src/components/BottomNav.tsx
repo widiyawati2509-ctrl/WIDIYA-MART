@@ -61,6 +61,12 @@ export default function BottomNav({ cartCount, isLoggedIn }: BottomNavProps) {
     ({ href }) => pathname === href || (href !== '/' && pathname.startsWith(href))
   )
 
+  // Sembunyikan bottom nav saat berada di halaman detail produk atau checkout
+  // agar layout bersih dan tidak tumpang tindih dengan bar aksi checkout
+  if (pathname.startsWith('/produk/') || pathname.startsWith('/checkout')) {
+    return null
+  }
+
   return (
     <nav
       aria-label="Navigasi Utama"

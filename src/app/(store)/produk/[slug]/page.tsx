@@ -92,7 +92,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
   const storePhone = storeResult.data?.whatsapp || storeResult.data?.no_hp_toko || '087816182036'
 
   return (
-    <div className="w-full pb-44">
+    <div className="w-full pb-24">
       {/* Top Header */}
       <PageHeader
         title={product.nama}
