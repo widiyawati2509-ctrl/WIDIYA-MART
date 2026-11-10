@@ -55,6 +55,13 @@ export default function Error({
           <span>Ke Beranda</span>
         </button>
       </div>
+
+      {error?.message && (
+        <div className="mt-4 p-2.5 bg-red-50 border border-red-200 rounded-xl text-left max-w-xs w-full text-[11px] text-red-800 font-mono break-words">
+          <p className="font-bold text-[10px] uppercase text-red-600 mb-0.5">Detail Error:</p>
+          <p>{error.message}</p>
+        </div>
+      )}
     </div>
   )
 }

@@ -1,11 +1,12 @@
 // @ts-nocheck
-export function formatRupiah(amount: number): string {
+export function formatRupiah(amount: number = 0): string {
+  const safeAmount = Number.isFinite(amount) ? amount : 0
   return new Intl.NumberFormat('id-ID', {
     style: 'currency',
     currency: 'IDR',
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
-  }).format(amount)
+  }).format(safeAmount)
 }
 
 export function slugify(text: string): string {

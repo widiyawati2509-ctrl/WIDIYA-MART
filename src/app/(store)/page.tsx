@@ -23,9 +23,9 @@ export default async function HomePage() {
   const now = Date.now()
 
   if (!homeData || now - homeData.timestamp > HOME_CACHE_TTL) {
-    const supabase = createPublicClient()
-    const [{ data: categories }, { data: products }, { data: storeInfo }, promos] =
-      await Promise.all([
+    try {
+      const supabase = createPublicClient()
+      const [catRes, prodRes, storeRes, promoRes] = await Promise.allSettled([
         supabase
           .from('categories')
           .select('id, nama, slug, icon_url, urutan')
@@ -44,14 +44,26 @@ export default async function HomePage() {
         getPublicPromos(),
       ])
 
-    homeData = {
-      data: { categories, products, storeInfo, promos },
-      timestamp: now,
+      const categories = catRes.status === 'fulfilled' ? catRes.value.data || [] : []
+      const products = prodRes.status === 'fulfilled' ? prodRes.value.data || [] : []
+      const storeInfo = storeRes.status === 'fulfilled' ? storeRes.value.data || null : null
+      const promos = promoRes.status === 'fulfilled' ? promoRes.value || [] : []
+
+      homeData = {
+        data: { categories, products, storeInfo, promos },
+        timestamp: now,
+      }
+      homeCache = homeData
+    } catch (err) {
+      console.error('HomePage data fetch error:', err)
+      homeData = homeCache || {
+        data: { categories: [], products: [], storeInfo: null, promos: [] },
+        timestamp: now,
+      }
     }
-    homeCache = homeData
   }
 
-  const { categories, products, storeInfo, promos } = homeData.data
+  const { categories = [], products = [], storeInfo = null, promos = [] } = homeData?.data || {}
 
   const storeJsonLd = {
     '@context': 'https://schema.org',

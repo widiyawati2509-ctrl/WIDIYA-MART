@@ -124,10 +124,12 @@ export function TelegramMiniAppView({
 
   // Filter produk berdasarkan kategori dan pencarian
   const filteredProducts = useMemo(() => {
-    return products.filter((prod) => {
+    return (products || []).filter((prod) => {
+      if (!prod) return false
+      const prodName = prod.nama || ''
       const matchSearch =
         !searchQuery.trim() ||
-        prod.nama.toLowerCase().includes(searchQuery.toLowerCase().trim())
+        prodName.toLowerCase().includes(searchQuery.toLowerCase().trim())
       const matchCat =
         selectedCategory === 'all' ||
         prod.category_id === selectedCategory ||
