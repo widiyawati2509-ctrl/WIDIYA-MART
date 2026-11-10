@@ -103,7 +103,7 @@ export default async function StoreLayout({
       )}
       <UserOrderNotifier />
       <PwaInstallPrompt />
-      <main className="animate-page-in">{children}</main>
+      <main>{children}</main>
       <BottomNav cartCount={cartCount} isLoggedIn={!!user} />
     </div>
   )
