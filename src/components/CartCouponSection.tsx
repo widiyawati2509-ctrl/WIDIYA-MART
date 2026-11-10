@@ -173,7 +173,7 @@ export default function CartCouponSection({ subtotal, itemCount }: CartCouponSec
                 type="text"
                 value={couponCode}
                 onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
-                placeholder="Masukkan kode kupon (mis: PENGENJEK5K)"
+                placeholder="Masukkan kode voucher (mis: HEMATDESA)"
                 className="w-full px-3 py-2 text-xs font-sora font-semibold bg-white border border-orange-200 rounded-xl uppercase tracking-wider placeholder:normal-case placeholder:font-normal placeholder:text-zinc-400 outline-none focus:border-[var(--accent)]"
               />
             </div>

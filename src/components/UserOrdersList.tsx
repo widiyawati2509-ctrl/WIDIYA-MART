@@ -402,10 +402,10 @@ export default function UserOrdersList({ initialOrders }: UserOrdersListProps) {
               return (
                 <div
                   key={order.id}
-                  className={`bg-white border rounded-2xl transition-all overflow-hidden relative shadow-xs ${
+                  className={`bg-white rounded-2xl transition-all overflow-hidden relative ${
                     isSelected
-                      ? 'border-[var(--accent)] bg-orange-50/40'
-                      : 'border-[var(--line)] hover:border-[var(--accent)]/50'
+                      ? 'border border-[var(--accent)] bg-orange-50/40 shadow-xs ring-1 ring-[var(--accent)]'
+                      : 'smooth-ring-card hover:border-[var(--accent)]/50'
                   }`}
                 >
                   <div className="flex items-start">

@@ -42,12 +42,12 @@ export default function CartItemRow({ item }: CartItemRowProps) {
 
   return (
     <div
-      className={`bg-white border border-[var(--line)] rounded-2xl py-2.5 px-3 shadow-xs flex gap-2.5 items-center ${
+      className={`bg-white smooth-ring-card rounded-2xl p-3 flex gap-3 items-center ${
         isPending ? 'opacity-50' : ''
       } transition-opacity`}
     >
       {/* Thumbnail */}
-      <div className="relative w-14 h-14 rounded-xl bg-[var(--accent-bg)] border border-[var(--line)]/50 shrink-0 overflow-hidden">
+      <div className="relative size-14 rounded-xl bg-[var(--accent-bg)]/75 img-ring-inset shrink-0 overflow-hidden">
         {product.image_url ? (
           <Image src={product.image_url} alt={product.nama} fill className="object-contain p-1" sizes="56px" />
         ) : (
@@ -59,8 +59,8 @@ export default function CartItemRow({ item }: CartItemRowProps) {
 
       {/* Detail */}
       <div className="flex-1 min-w-0">
-        <p className="text-[var(--text-body)] font-bold text-[var(--ink)] line-clamp-1">{product.nama}</p>
-        <p className="font-sora font-bold text-[var(--accent-2)] text-xs mt-0.5 tabular-nums">
+        <p className="text-[13px] font-bold text-[var(--ink)] line-clamp-1 leading-snug">{product.nama}</p>
+        <p className="font-sora font-extrabold text-[var(--accent-2)] text-xs mt-0.5 tabular-nums">
           {formatRupiah(product.harga)}
         </p>
 
